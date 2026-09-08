@@ -1,0 +1,44 @@
+{
+ "fffa_sa_cover": {
+  "title": "Barossa Valley 21.jpg",
+  "artist": "Olivier Lemoine (https://Photo-Terroir.fr)",
+  "lic": "CC BY-SA 4.0",
+  "descurl": "https://commons.wikimedia.org/wiki/File:Barossa_Valley_21.jpg",
+  "px": "3840x2560"
+ },
+ "fffa_sa_fact1_ownroots": {
+  "title": "90 yr Old Grenache Vines.jpg",
+  "artist": "Stephan Ridgway",
+  "lic": "CC BY 2.0",
+  "descurl": "https://commons.wikimedia.org/wiki/File:90_yr_Old_Grenache_Vines.jpg",
+  "px": "3264x1832"
+ },
+ "fffa_sa_fact2_barossasea": {
+  "title": "Barossa Valley 17.jpg",
+  "artist": "Olivier Lemoine (https://Photo-Terroir.fr)",
+  "lic": "CC BY-SA 4.0",
+  "descurl": "https://commons.wikimedia.org/wiki/File:Barossa_Valley_17.jpg",
+  "px": "3840x2560"
+ },
+ "fffa_sa_fact3_barrels": {
+  "title": "Barossa Valley Torbreck barrels.jpg",
+  "artist": "Olivier Lemoine (https://Photo-Terroir.fr)",
+  "lic": "CC BY-SA 4.0",
+  "descurl": "https://commons.wikimedia.org/wiki/File:Barossa_Valley_Torbreck_barrels.jpg",
+  "px": "3840x2560"
+ },
+ "fffa_sa_fact4_terrarossa": {
+  "title": "Wynns Coonawarra - Grapevines.jpg",
+  "artist": "Alpha",
+  "lic": "CC BY-SA 2.0",
+  "descurl": "https://commons.wikimedia.org/wiki/File:Wynns_Coonawarra_-_Grapevines.jpg",
+  "px": "2048x1371"
+ },
+ "fffa_sa_fact5_oldvines": {
+  "title": "Old Grenache Vines.jpg",
+  "artist": "Stephan Ridgway",
+  "lic": "CC BY 2.0",
+  "descurl": "https://commons.wikimedia.org/wiki/File:Old_Grenache_Vines.jpg",
+  "px": "2048x1536"
+ }
+}

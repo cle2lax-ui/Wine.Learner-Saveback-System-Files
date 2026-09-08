@@ -1,0 +1,75 @@
+New [Field Guide / Quick Sips / Guess the Region] project.
+
+Use the v8.0 system: STYLE_GUIDE_v5.md (or QUICK_SIPS_STYLE_GUIDE.md, or
+GTR_STYLE_GUIDE.md for Guess the Region), LESSONS_LEARNED_v5.md,
+CHANGELOG_v7.md, DESIGN_PROCESS_v8.md, NEW_DECK_STARTER_v8_ADDENDUM.md,
+CHANGELOG_v8.md, core.py, modules.py, tokens.py, map_atlas.py,
+guess_the_region.py (only needed if this is a Guess the Region deck),
+specimen.py.
+
+FIRST QUESTION: which format is this?
+- Field Guide (10-12 slide deep-dive)
+- Quick Sips (2-page focused post)
+- Guess the Region (2-page quiz card: page 1 is a photo + four clues,
+  page 2 reveals the region)
+
+--- If Field Guide or Quick Sips ---
+
+Run the guided intake questions from NEW_DECK_STARTER_v7.md
+(series/format already answered above, so continue with photo-heaviness,
+module sequence proposal). Don't assume answers — ask, then build.
+
+--- If Guess the Region ---
+
+This format doesn't use the Field Guide/Quick Sips module-sequence
+process — it's fixed: gtr_cover (photo blade + four lettered clues) then
+gtr_reveal (photo + region name reveal), repeated once per region in the
+round. Skip the photo-heaviness / module-sequence questions from
+NEW_DECK_STARTER_v7.md entirely and ask instead:
+- How many regions in this round, and which ones?
+- For each region: source photo (or should Claude find one), and the
+  four clues that should lead a knowledgeable player to the right
+  answer without giving it away outright
+- Any deck-specific panel_bg color, or default to the locked black panel
+- Confirm the locked header branding ("Guess the Wine Region" + folded-
+  map glyph, gold) stays as-is — this is deliberately NOT customized per
+  deck; only the photo and clues change per round
+
+--- Standing rules for this build, all locked as of v8, apply regardless
+of format ---
+
+- Font hierarchy: headline > lead-in words > body text, strictly, every
+  time. Default every headline() call to show_underline=False -- color-
+  coded hierarchy (pal["LEAD"] distinct from pal["SIGNATURE"]) carries
+  the differentiation now, not an underline. Set pal["LEAD"] and
+  pal["MARK"] explicitly for this deck's palette rather than letting
+  them silently fall back. Note: Guess the Region's header/clue text is
+  its own locked, self-contained rendering (not routed through
+  core.headline()/standfirst()) -- the mechanical fix doesn't apply
+  there, but the underlying principle still governs review: clue text
+  and reveal text must never visually compete with the locked header.
+- Any deck color used for body-weight text on the paper background needs
+  a contrast check before use -- darken an ACCENT-tuned color if it's
+  going to sit on cream paper, don't reuse it as-is.
+- Any map this deck needs (a Field Guide atlas slide, or a map used as a
+  Guess the Region clue/reveal element): use map_atlas.regional_atlas()
+  as the slide function, not deck-local map code. If it's missing
+  something this deck needs, extend map_atlas.py itself so the fix is
+  there for the next deck too. Keep city label lists to 2-3 essential
+  points max.
+- Before final delivery, regardless of format: run the full
+  four-designer review from DESIGN_PROCESS_v8.md Section 5 (Wintour,
+  Chanel, Ive, Vignelli, in that order) over every single slide/page,
+  not a representative sample. This is mandatory, not optional, and not
+  skippable because the deck "already looks good." Do one final
+  full-deck rebuild and re-present the whole deck after all four rounds.
+- Photo sourcing: Pexels as usual. Unsplash is also available
+  (fetch_unsplash.py + key in SETUP_KEYS.md) but was untested against a
+  live network as of the last save-back -- test it early in this session
+  before relying on it, and confirm the network allowlist
+  (api.unsplash.com, images.unsplash.com) is actually reachable first.
+- Run specimen.py before shipping any change to core.py or modules.py
+  themselves, same as always.
+- Diff the working copy of core.py / modules.py against the project's
+  checked-in versions at the start of the session before assuming either
+  is current.

@@ -1,0 +1,29 @@
+[
+ {
+  "slot": "nr_harvest_hands",
+  "source": "Pexels",
+  "id": 5653941,
+  "credit": "Nico Becker / Pexels",
+  "alt": "Two workers picking grapes in a vibrant vineyard, showcasing viticulture practices.",
+  "url": "https://images.pexels.com/photos/5653941/pexels-photo-5653941.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+  "local_path": "/home/claude/styleguide/photos/nr_harvest_hands.jpg"
+ },
+ {
+  "slot": "nr_cellar_pour",
+  "source": "Pexels",
+  "id": 5490193,
+  "credit": "Rachel Claire / Pexels",
+  "alt": "Full body of focused male pouring wine sample into wineglass at table with glassware while standing in winery with unrecognizable photographer",
+  "url": "https://images.pexels.com/photos/5490193/pexels-photo-5490193.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+  "local_path": "/home/claude/styleguide/photos/nr_cellar_pour.jpg"
+ },
+ {
+  "slot": "nr_table_toast",
+  "source": "Pexels",
+  "id": 5876703,
+  "credit": "Monstera Production / Pexels",
+  "alt": "Crop content adult multiracial friends clinking glasses of wine while having festive dinner together at wooden table with tasty meals",
+  "url": "https://images.pexels.com/photos/5876703/pexels-photo-5876703.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+  "local_path": "/home/claude/styleguide/photos/nr_table_toast.jpg"
+ }
+]
