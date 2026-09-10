@@ -645,17 +645,57 @@ def _render(path, title, story, notes, offset):
     return len(PdfReader(path).pages)
 
 
-def build(path, title, body, exam=None, maxpages=16):
-    """Body pages carry the ruled notes column; exam pages run full width."""
+def _stamp_page_number(pdf_path, page_number, page_size=(792.0, 612.0)):
+    """Overlay a running page number onto an already-built single-page PDF.
+    Used for the mind-map insert (see mindmap.py), which is generated
+    independently of this module's Platypus pipeline -- raw reportlab
+    canvas, not a Story flowed through _render() -- so it never passes
+    through _page() and has no page number of its own. Matches the guide's
+    own footer convention exactly: Sans-B 7.8, BURGUNDY, bottom-right."""
+    from reportlab.pdfgen import canvas as _canvas
+    from pypdf import PdfReader, PdfWriter
+    w, h = page_size
+    overlay_path = pdf_path + ".stamp.pdf"
+    oc = _canvas.Canvas(overlay_path, pagesize=(w, h))
+    oc.setFont("Sans-B", 7.8)
+    oc.setFillColor(BURGUNDY)
+    oc.drawRightString(w - 18, 12, str(page_number))
+    oc.save()
+    base = PdfReader(pdf_path).pages[0]
+    stamp = PdfReader(overlay_path).pages[0]
+    base.merge_page(stamp)
+    writer = PdfWriter()
+    writer.add_page(base)
+    stamped_path = pdf_path + ".numbered.pdf"
+    with open(stamped_path, "wb") as fh:
+        writer.write(fh)
+    return stamped_path
+
+
+def build(path, title, body, exam=None, mindmap=None, maxpages=16):
+    """Body pages carry the ruled notes column; exam pages run full width.
+
+    `mindmap` is an optional path to a pre-rendered single-page landscape
+    PDF (see mindmap.py) -- the chapter's closing Content Mind Map Summary,
+    a genuine branching hierarchy of the chapter's content (hub -> branch ->
+    sub -> twig), inserted between body and exam as the standard final
+    element of every chapter starting with Chapter Eleven. Chapters One
+    through Ten predate this convention and are not required to add one
+    retroactively.
+    """
     import tempfile
     from pypdf import PdfReader, PdfWriter
     d = tempfile.mkdtemp()
     a = os.path.join(d, "a.pdf"); b = os.path.join(d, "b.pdf")
     na = _render(a, title, body, notes=True, offset=0)
     parts = [a]
+    nm = 0
+    if mindmap:
+        nm = len(PdfReader(mindmap).pages)
+        parts.append(_stamp_page_number(mindmap, na + 1))
     nb = 0
     if exam:
-        nb = _render(b, title, exam, notes=False, offset=na)
+        nb = _render(b, title, exam, notes=False, offset=na + nm)
         parts.append(b)
     w = PdfWriter()
     for f in parts:
@@ -663,7 +703,7 @@ def build(path, title, body, exam=None, maxpages=16):
             w.add_page(pg)
     with open(path, "wb") as fh:
         w.write(fh)
-    n = na + nb
+    n = na + nm + nb
     flag = "" if n <= maxpages else f"   *** OVER LIMIT ({maxpages}) ***"
-    print(f"{os.path.basename(path):<48} {na:>2} + {nb:>2} = {n:>2} pages{flag}")
+    print(f"{os.path.basename(path):<48} {na:>2} + {nm:>2} + {nb:>2} = {n:>2} pages{flag}")
     return n

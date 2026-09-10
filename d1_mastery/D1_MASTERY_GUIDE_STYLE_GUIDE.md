@@ -20,19 +20,30 @@ mastery.py       — the layout engine: fonts, colours, page geometry, paragraph
 graphics.py      — the bespoke diagram library (14 Flowable classes) plus botanical drawing
                     primitives; imports from mastery.py
 examkit.py       — mcq_section(), swa_section(), exam_traps(), answer_head(), examiner_note()
+mindmap.py       — the Content Mind Map Summary engine: one landscape page per chapter,
+                    hub -> branch -> sub -> twig as a real branching tree, closing the chapter
+                    immediately before its practice test. Imports mastery.py's actual fonts
+                    and colour/line-weight tokens directly (not a separate copy), so it can
+                    never visually drift from the rest of the guide. Standard starting Chapter
+                    Eleven — see §10 and mastery.build()'s mindmap= parameter
+mindmaps/        — one content_chN.py per chapter: the Node-tree data (hub label, branches,
+                    subs, twigs, cross-links, optional inset) that mindmap.py renders. Kept
+                    separate from chN.py itself so the mind map's content can be reviewed and
+                    cross-checked against the locked chapter body independently
 qa_orphans.py    — text-based orphaned-heading scan (fast, coarse — use qa_widows.py for the
                     real check)
 qa_widows.py     — font-aware widow/four-line-rule scan; this is the one that actually
                     matters, see §8
-ch1.py … ch5.py  — one file per chapter, each a flat sequence of s.append(...) calls building
+ch1.py … ch10.py — one file per chapter, each a flat sequence of s.append(...) calls building
                     the body, followed by MCQ/q1/q2 lists and calls into examkit
 ```
 
-All files are flat at project root — no subfolders. A new chapter is a new `ch6.py` living
-alongside these. **Copy `ch5.py` as your starting template** — it's the most recently built
-and carries every convention below already applied. Don't start a chapter from a blank file;
-you will silently drop conventions that live only in the reference chapters (this happened
-before in the sibling wine-deck project and is why this rule exists).
+All files are flat at project root — no subfolders, aside from `fonts/` (regenerated font
+files, see §2) and `mindmaps/` (mind-map content, above). A new chapter is a new `ch11.py`
+living alongside these. **Copy `ch10.py` as your starting template** — it's the most recently
+built and carries every convention below already applied. Don't start a chapter from a blank
+file; you will silently drop conventions that live only in the reference chapters (this
+happened before in the sibling wine-deck project and is why this rule exists).
 
 ---
 
@@ -329,11 +340,19 @@ text, and reuse the established line-weight constants (§3) rather than picking 
      more content recap.
    - `exam_traps([...])` — exactly 5 items, each `("Wrong claim.", "The correction, with the
      right figure or distinction.")`.
-5. **`mcq_section(MCQ)`** — 10 questions. Diagnostic only (the real D1 paper has no MCQ,
+5. **Content Mind Map Summary — standard starting Chapter Eleven.** One landscape page,
+   built via `mindmap.py` from that chapter's `mindmaps/content_chN.py`, inserted via
+   `mastery.build(..., mindmap="path/to/rendered_page.pdf")` between the closing callouts
+   and the practice test — hence its position here, between steps 4 and 6. Not a second
+   pass at writing the chapter: the mind map's content should be checked against what's
+   already locked in that same `chN.py`, not re-derived independently from the source
+   textbook, so the summary and the body can never quietly disagree. Chapters One through
+   Ten predate this convention and are not required to add one retroactively.
+6. **`mcq_section(MCQ)`** — 10 questions. Diagnostic only (the real D1 paper has no MCQ,
    state this once per guide in the exam intro — see `examkit.py`). Each has 4 options, a
    0-indexed `ans`, and a `why=` rationale that names *why the distractors are wrong*, not
    just why the answer is right.
-6. **`swa_section([q1, q2])`** — 2 short written answer questions, each with 2 parts and
+7. **`swa_section([q1, q2])`** — 2 short written answer questions, each with 2 parts and
    stated percentage weights that sum and get framed as "your share of the 90 minutes" (see
    `examkit.py`'s total-percentage logic). Each question gets a full Distinction-standard
    model answer via `answer_head()` + `P()` paragraphs, closing with `examiner_note([...])`
@@ -386,7 +405,7 @@ drift from the syllabus.
 
 ## 13. Building a new chapter — checklist
 
-1. Copy `ch5.py` to `ch6.py` as your starting structure.
+1. Copy `ch10.py` to `ch11.py` as your starting structure.
 2. Regenerate fonts (§2) if starting a fresh session.
 3. Extract the relevant textbook chapter to plain text; work section by section against the
    WSET unit's own structure.
@@ -396,11 +415,20 @@ drift from the syllabus.
    (§10.3).
 6. Pick graphics from §9's table before inventing a new device.
 7. Write Distinction Differentiators (5) and Exam Traps (5) per §10.4.
-8. Build MCQ (10) and SWA (2, with model answers + examiner notes) per §10.5–10.6.
-9. `python3 ch6.py` — check the page count against the 18-page default (§4).
-10. Run **both** `qa_orphans.py` and `qa_widows.py` against the output PDF. Fix until both
-    report clean.
-11. Visual spot-check: render a few pages to image and eyeball spacing, table splits, and
+8. Build the Content Mind Map Summary (`mindmaps/content_ch11.py` + `mindmap.py`) per §10.5
+   — check it against the chapter body you just locked, not the source textbook independently.
+   Render it to its own single-page PDF first and spot-check it alone before wiring it into
+   the full chapter build.
+9. Build MCQ (10) and SWA (2, with model answers + examiner notes) per §10.6–10.7.
+10. `python3 ch11.py`, passing the rendered mind-map page to `build(..., mindmap=...)` — check
+    the page count against your target (§4); a chapter carrying a mind map should budget one
+    extra page over what it would otherwise need.
+11. Run **both** `qa_orphans.py` and `qa_widows.py` against the output PDF. Fix until both
+    report clean. Neither one checks the mind-map page — it doesn't flow text the way the
+    rest of the guide does, so its own QA is a visual label-overlap check instead: verify
+    every sub/twig line is fully enclosed in its panel and no cross-link label sits on top of
+    another element, since it's a fixed-position layout rather than reflowing text.
+12. Visual spot-check: render a few pages to image and eyeball spacing, table splits, and
     diagram legibility — the QA scripts catch structural problems, not aesthetic ones.
-12. Save back into the project (this file, plus the updated chapter `.py` files — see the
+13. Save back into the project (this file, plus the updated chapter `.py` files — see the
     accompanying README for what to replace vs. add).
