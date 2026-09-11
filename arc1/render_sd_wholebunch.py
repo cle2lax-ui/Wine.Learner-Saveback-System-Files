@@ -43,6 +43,7 @@ import os
 
 import core
 import modules
+import sd_brand
 
 OUT = "/home/claude/out_sd_wholebunch"
 os.makedirs(OUT, exist_ok=True)
@@ -54,6 +55,12 @@ PAL = dict(
     LEAD=(126, 54, 66),
     MARK=(58, 26, 46),
 )
+
+# Series mark geometry. RAIL_TEXT_RIGHT is the inner edge of the
+# side_rail text column, which is half the canvas less a gutter.
+MARK_SIZE = 112
+MARK_Y = 96
+RAIL_TEXT_RIGHT = core.W // 2 - 90
 
 CRED_LEMOINE = "Olivier Lemoine / Wikimedia Commons (CC BY-SA 4.0)"
 CRED_AGNE = "Agne27 / Wikimedia Commons (CC BY-SA 3.0)"
@@ -107,11 +114,11 @@ SLIDES = [
         standfirst="Not on style, not on tradition. It depends on whether the stems are "
                    "ripe enough to give without taking.",
         items=[
-            ("What stems give", "Aeration, plus perfume, freshness and fine tannin."),
-            ("What they take", "Unripe stems give green astringent tannin and lower acidity "
-                               "— least welcome in a warm vintage."),
-            ("Our position", "Whole bunch, in the years that earn it. Aromatics are the "
-                             "point here, and stems amplify them."),
+            ("What stems give", "Aeration, perfume, freshness, fine tannin."),
+            ("What they take", "Unripe stems give green tannin and lower acidity — least "
+                               "welcome in a warm vintage."),
+            ("Our position", "Whole bunch, in the years that earn it. Stems amplify the "
+                             "aromatics."),
             # The guide requires the last line to re-open the question,
             # not to land the position. Burgundy is D3's own example and
             # it cuts against us: a whole region destemmed on one
@@ -131,6 +138,20 @@ def build():
     paths = []
     for i, (name, slot) in enumerate(SLIDES, start=1):
         img = modules.MODULES[name](slot, i, len(SLIDES), PAL)
+
+        # Series mark, drawn over the finished page rather than wired
+        # into duel/side_rail — those are shared modules and Split
+        # Decision is the only format that carries this glyph.
+        #
+        # Placement differs per page because the layouts do. Page 1 has
+        # an empty upper right. Page 2's photo occupies the right half
+        # of the canvas, so the mark goes at the right edge of the TEXT
+        # column instead; putting it at the page's top right would drop
+        # it onto the photograph.
+        mw, mh = sd_brand.sd_mark_bbox(MARK_SIZE)
+        mx = (core.W - core.M - mw) if name == "duel" else (RAIL_TEXT_RIGHT - mw)
+        sd_brand.sd_mark(img, int(mx), MARK_Y, MARK_SIZE, PAL)
+
         p = f"{OUT}/{i:02d}_{name}.png"
         img.save(p)
         paths.append(p)

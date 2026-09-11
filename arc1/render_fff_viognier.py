@@ -22,11 +22,13 @@ default is a golden yellow and the subject is a white wine whose D3
 descriptors are honeysuckle, apricot and peach; a deck override exists
 for cases like the Cabernet Franc red deck, and this is not one.
 
-Photography: the two Viognier plant shots are Washington and a French
-vine row, credited as such. Nothing in the captions or copy claims
-either was taken in Condrieu — the Rhône-specific images are the
-Condrieu, Château-Grillet and Côte-Rôtie photographs already sourced
-and location-verified for the Field Guide.
+Photography: the cover cluster is Washington-grown Viognier and the
+harvest bin on page 2 is Chardonnay in the Yakima Valley — neither is
+Rhône fruit, and neither is claimed to be. FFFA fact pages carry no
+photo captions, only credits, so no location assertion is made
+anywhere. The Rhône-specific images are the Condrieu, Château-Grillet
+and Côte-Rôtie photographs already sourced and location-verified for
+the Field Guide.
 
 Social gates on a 6-page facts post:
   save asset ..... the five facts are the asset
@@ -45,31 +47,42 @@ TOTAL = 6
 
 CRED_AGNE = "Agne27 / Wikimedia Commons (CC BY-SA 3.0)"
 CRED_CASAMANCE = "Marianne Casamance / Wikimedia Commons (CC BY-SA 4.0)"
+CRED_AGNE_BIN = "Agne27 / Wikimedia Commons (CC BY-SA 3.0)"
 CRED_LEMOINE = "Olivier Lemoine / Wikimedia Commons (CC BY-SA 4.0)"
 CRED_PHILDIC = "PHILDIC / Wikimedia Commons (CC0)"
 CRED_GOUDAN = "Goudan07 / Wikimedia Commons (CC BY-SA 3.0)"
 CRED_KAREN = "Karen / Wikimedia Commons (CC BY 2.0)"
 
-# Cover takes the vine-row shot, not the cluster. The cluster is a
-# studio-lit bunch against a plain wall — correct as evidence on the
-# picking-window page, wrong as the cover of a luxury-register deck,
-# where it reads like a catalogue entry.
+# Cover is the cluster, per Steve — this reverses my own earlier call
+# to move it off for reading like a catalogue entry. It is the most
+# direct statement of what the deck is about, and a grape-variety deck
+# arguably should open on the grape.
 COVER = dict(
-    photo="fff_viognier_vines.jpg",
+    # Graded cover build, not the raw file: cluster isolated onto near
+    # black and brightened. See build_fff_cover.py for why the wall
+    # needed a 2D background model rather than a threshold.
+    photo="fff_viognier_cover.jpg",
     subject="Viognier",
     photo_anchor=0.45,
-    photo_credit=CRED_CASAMANCE,
+    photo_credit=CRED_AGNE,
 )
 
 FACTS = [
     dict(
         number=1,
-        photo="fff_viognier_cluster.jpg",
-        photo_anchor=0.45,
+        # New image for this page now the cluster has gone to the cover.
+        # White grapes already in the bin at the end of a row: the
+        # picking decision has been made and executed, which is what the
+        # fact is about. A refractometer shot was the first candidate —
+        # thematically exact, since brix is how the call gets made — but
+        # it is a stainless sink, a plastic jug and a camera flash, and
+        # nothing in the frame carries the register.
+        photo="fff_harvest_bin.jpg",
+        photo_anchor=0.62,
         headline="The Picking Window Is Brutally Narrow",
         body="Pick early and the pronounced aromas never arrive. Pick late and it loses "
              "flavour and acidity, and gains sugar fast.",
-        photo_credit=CRED_AGNE,
+        photo_credit=CRED_AGNE_BIN,
     ),
     dict(
         number=2,

@@ -330,10 +330,14 @@ SLIDES = [
         rows=[
             ("Size", "250 ha", "137 ha"),
             ("The slope", "Terraces, built by hand", "One hill, south-facing"),
-            ("Reputation", "Perfume, lift, finesse", "Structure, tannin, longevity"),
-            ("In the red", "Up to 20% Viognier, co-fermented",
-                           "Marsanne and Roussanne, rarely used"),
-            ("White wine", "None", "A third of the appellation"),
+            ("Reputation", "Perfume, lift, finesse", "Structure, tannin"),
+            # "In the red" and "White wine" were split apart during the
+            # Wintour pass because the old single row compared unlike
+            # things. At the larger body size five rows no longer fit, so
+            # the two halves are recombined — but LABELLED, so the
+            # distinction that split them survives.
+            ("White grapes", "20% Viognier in the red",
+                             "A third of the AOC is white"),
         ],
     )),
 

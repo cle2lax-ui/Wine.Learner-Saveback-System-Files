@@ -25,8 +25,13 @@ TYPE = dict(
     display_md=112,     # standard page headline
     standfirst_hero=92, # hero standfirst
     standfirst=74,      # standard standfirst
-    lead=74,            # serif run-in lead
-    body=64,            # body text
+    lead=80,            # serif run-in lead -- moves WITH body (was 74).
+                        # It sits on the same baseline as the body text
+                        # it introduces; leaving it behind would break
+                        # that alignment on every run-in paragraph.
+    body=70,            # body text (was 64). Paragraph copy only --
+                        # the display sizes above are deliberately
+                        # untouched, the headlines were judged right.
     caption=60,         # captions, footer, micro-labels (FLOOR)
 )
 FLOOR = 60              # absolute type floor
