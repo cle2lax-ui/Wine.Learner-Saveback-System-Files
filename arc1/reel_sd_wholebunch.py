@@ -42,12 +42,30 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 PHOTOS = os.path.join(REPO, "photos")
 FONTS = os.path.join(REPO, "fonts")
+
+# The real Split Decision mark, not a look-alike. tokens.PHOTO_DIR
+# points at the styleguide working tree, which is not where the asset
+# lives in this repo, so both the module constant and the path
+# sd_brand resolved at import time are repointed before first use.
+sys.path[:0] = [os.path.join(REPO, "engine"), os.path.join(REPO, "formats")]
+import core  # noqa: E402
+core.PHOTO_DIR = PHOTOS
+import sd_brand  # noqa: E402
+sd_brand.GLASS_PATH = os.path.join(PHOTOS, "QS_glass_icon_ink.png")
 OUT = "/home/claude/out_reel_sd"
 
 W, H = 1080, 1920
 FPS = 30
 BEAT_SECONDS = 3.0
 SS = 2  # type supersample factor
+
+# Kickers and pole labels carry the structure of the argument, and at
+# 34px they were the smallest thing on a screen being read at arm's
+# length with the sound off. Raised to 58 -- nearly the body size, and
+# now the second-largest element after the headline.
+KICKER_PT = 58
+MARK_SIZE = 104          # per-glass; sd_mark_bbox returns ~1.7x this wide
+MARK_X, MARK_Y = 64, 84
 
 # Arc 1 signature palette, identical to render_sd_wholebunch.py.
 SIGNATURE = (58, 26, 46)
@@ -168,21 +186,18 @@ def scrim(layer):
         d.line([(0, y), (W, y)], fill=SIGNATURE + (min(a, 246),))
 
 
-def sd_glasses(d, x, y, size):
-    """Two tilted bowls, drawn from primitives.
+def place_mark(layer):
+    """The Split Decision mark, at 2x, top left.
 
-    The deck's mark composites the real Quick Sips glass PNG. At reel
-    scale that glyph reduces to mush, and the mark's own docstring warns
-    the asset has shipped broken twice. Two simple bowls in the two pole
-    colours carry the same "clink" idea legibly at 40px.
+    sd_brand.sd_mark takes a palette and pulls SIGNATURE and ACCENT for
+    the two glasses. The deck's own SIGNATURE is a near-black plum that
+    disappears against a dark photograph, so the reel passes PAPER in
+    its place: same mark, same two-colour construction, legible over a
+    vineyard at arm's length. Gold on the left glass keeps it tied to
+    the STEMS IN pole.
     """
-    for i, col in enumerate((ACCENT, PAPER)):
-        cx = x + i * int(size * 0.78)
-        lean = -1 if i == 0 else 1
-        d.ellipse([cx, y, cx + size, y + int(size * 0.78)], outline=col, width=4)
-        d.line([(cx + size // 2 + lean * 4, y + int(size * 0.72)),
-                (cx + size // 2 + lean * int(size * 0.22), y + size + 12)],
-               fill=col, width=4)
+    pal = dict(SIGNATURE=PAPER, ACCENT=ACCENT)
+    sd_brand.sd_mark(layer, MARK_X * SS, MARK_Y * SS, MARK_SIZE * SS, pal)
 
 
 def type_layer(beat):
@@ -193,12 +208,10 @@ def type_layer(beat):
     lay = big.resize((W * SS, H * SS), Image.BILINEAR)
     d = ImageDraw.Draw(lay)
 
-    f_kick = font("ArchivoCond-SemiBold.ttf", 34 * SS)
+    f_kick = font("ArchivoCond-SemiBold.ttf", KICKER_PT * SS)
     f_head = font("Playfair-Bold.ttf", 92 * SS)
     f_body = font("Archivo-Medium.ttf", 40 * SS)
     f_cred = font("Archivo-Light.ttf", 17 * SS)
-
-    sd_glasses(d, 64 * SS, 92 * SS, 44 * SS)
 
     # Everything above the fold-line is set from the bottom up, so the
     # block sits on a fixed baseline regardless of how many lines the
@@ -227,11 +240,20 @@ def type_layer(beat):
         # nothing at all. Same face, same size, same weight, same rule
         # width -- only the hue moves.
         col = POLE_COLOUR.get(tag, ACCENT)
-        d.text((64 * SS, head_top - 52 * SS), tag, font=f_kick, fill=col)
+        # Gaps scale off the kicker so raising KICKER_PT cannot collide
+        # the tag with the headline above it or the rule below it.
+        gap_above = int(KICKER_PT * 1.34) * SS
+        rule_y = head_top - int(KICKER_PT * 0.30) * SS
+        d.text((64 * SS, head_top - gap_above), tag, font=f_kick, fill=col)
         tw = d.textlength(tag, font=f_kick)
-        d.line([(64 * SS, head_top - 14 * SS),
-                (64 * SS + tw, head_top - 14 * SS)],
-               fill=col, width=3 * SS)
+        d.line([(64 * SS, rule_y), (64 * SS + tw, rule_y)],
+               fill=col, width=4 * SS)
+
+    # Mark on the first and last beat only. It is series identification,
+    # which belongs at the open and the close; on the three middle beats
+    # it was competing with the argument for the same corner.
+    if beat["kind"] in ("hook", "reopen"):
+        place_mark(lay)
 
     d.text((64 * SS, int(H * SS * 0.945)), beat["credit"], font=f_cred,
            fill=(232, 226, 220, 205))
