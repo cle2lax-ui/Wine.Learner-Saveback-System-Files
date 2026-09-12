@@ -42,12 +42,24 @@ def _qs_glass(img, gx, gy, gh, tone="white"):
 def qs_mark_overlay(img, d, pal, scrim_on=True, text_color=None, qa=None):
     """Corner brand for photo backgrounds (page 1 / cover use): glass
     glyph + wordmark, soft top scrim for legibility, anchored top-left.
-    scrim_on=False skips the chip -- safe only when the photo already
-    has natural contrast under the wordmark color without it; pass qa
-    to get a real pixel-sampled check rather than trusting that by eye.
-    text_color overrides the wordmark's default PAPER fill -- do this
-    together with scrim_on=False on a light photo, since PAPER/white
-    is exactly the fill a scrim was covering for."""
+    scrim_on=False skips the full-width chip -- safe only when the
+    photo already has natural contrast under the wordmark color
+    without it, OR when fill is light enough to need its own tight
+    backing chip (see below); pass qa to get a real pixel-sampled
+    check rather than trusting either case by eye.
+    text_color overrides the wordmark's default PAPER fill.
+
+    scrim_on=False + a light fill (PAPER/white) is a real combination,
+    not a contradiction: dropping the full-width top scrim doesn't mean
+    dropping ALL legibility backing, it means dropping the specific
+    "black bar across the top of the image" look. When fill is light
+    and the scrim is off, this draws a small chip sized tightly to the
+    icon+wordmark's own footprint instead -- enough for the text to
+    read against a bright or midtone sky, without reintroducing a
+    full-width bar. This is a REAL rendered rectangle (core.chip()),
+    not a text shadow -- it actually darkens the pixels the QA contrast
+    check below samples, unlike a shadow trick that would look better
+    but not register as legible on the actual sampled luminance."""
     pad, gap = 40, 32
     gh = 144
     tf = font("display_bold", 120)
@@ -55,20 +67,36 @@ def qs_mark_overlay(img, d, pal, scrim_on=True, text_color=None, qa=None):
     asc, desc = tf.getmetrics()
     content_h = max(gh, asc + desc)
     scrim_h = pad + content_h + pad + 20
+    fill = text_color or PAPER
+    is_light = sum(fill[:3]) / 3 > 128
+    tw_probe = text_w(d, txt, tf)
+    # Icon tone/width need to be known before the chip is drawn (the
+    # chip must sit UNDER both the icon and the text), so peek at the
+    # source PNG's aspect ratio here rather than calling _qs_glass yet
+    # -- _qs_glass pastes immediately as a side effect, which would put
+    # the chip on top of the icon instead of behind it.
+    icon_tone = "white" if is_light else "ink"
+    icon_fname = "QS_glass_icon.png" if icon_tone == "white" else "QS_glass_icon_ink.png"
+    with Image.open(f"{PHOTO_DIR}/{icon_fname}") as _probe:
+        gw = int(_probe.size[0] * (gh / _probe.size[1]))
     if scrim_on:
         chip(img, (0, 0, W, scrim_h), (10, 10, 10), opacity=0.62)
+    elif is_light:
+        tight_pad = 24
+        chip(img, (pad - tight_pad, pad - tight_pad,
+                    pad + gw + gap + tw_probe + tight_pad,
+                    pad + content_h + tight_pad),
+             (10, 10, 10), opacity=0.55)
     d = ImageDraw.Draw(img)
     gy = pad + (content_h - gh) // 2
-    fill = text_color or PAPER
     # Glass glyph tone follows the wordmark: "white" is the light outline
-    # (right for a scrim or a dark photo); anything else falls through to
-    # _qs_glass's pre-rendered ink tone, which is what we want once the
-    # scrim is gone and the wordmark itself has gone dark to hold
-    # contrast against a light sky. _qs_glass only has these two
+    # (right for a scrim/tight chip or a dark photo); anything else falls
+    # through to _qs_glass's pre-rendered ink tone, for a dark wordmark
+    # on an unprotected light sky. _qs_glass only has these two
     # pre-rendered tones -- it is not pal-tintable -- so this does not
     # attempt to match the wordmark's exact forest green, only its
     # darkness.
-    gw = _qs_glass(img, pad, gy, gh, tone="white" if fill == PAPER else "ink")
+    gw = _qs_glass(img, pad, gy, gh, tone=icon_tone)
     d = ImageDraw.Draw(img)
     ink_top, _, _, ink_bot = d.textbbox((0, 0), txt, font=tf)
     ink_center = ink_top + (ink_bot - ink_top) / 2
@@ -436,13 +464,27 @@ def quick_sip_cover(slot, slide_no, total, pal):
             pc_y = mark_band_center - (pasc + pdesc) // 2
         else:
             pc_y = photo_h - 66
+        # Tight chip, same reasoning as qs_mark_overlay's: top_right sits
+        # outside both the caption_chip and title_scrim zones (those only
+        # cover the bottom of the photo), so a light caption color there
+        # has no backing at all unless this deck also lit up mark_scrim.
+        # Only fires for top_right + a light color -- bottom_right is
+        # unaffected, it already sits inside the protected zone above.
+        is_light_caption = sum(pc_color[:3]) / 3 > 128
+        if pos == "top_right" and is_light_caption:
+            tight_pad = 20
+            chip(img, (W - M - pcw - tight_pad, pc_y - tight_pad,
+                        W - M + tight_pad, pc_y + pasc + pdesc + tight_pad),
+                 (10, 10, 10), opacity=0.55)
+            d = ImageDraw.Draw(img)
         d.text((W - M - pcw, pc_y), slot["photo_caption"], font=pcf, fill=pc_color)
         qa.size("!photo_caption", core.CAPTION_SIZE - 8)
         # Real pixel check, not an assumed background -- a scrim can look
         # fine in code and still fail against the actual photo underneath
-        # (region_luminance's own docstring). Only meaningful once no chip
-        # or scrim sits behind the text, i.e. exactly the case this option
-        # exists for.
+        # (region_luminance's own docstring). Now meaningful even with a
+        # chip present: the chip is a real rendered rectangle, so this
+        # samples ITS luminance, not the raw photo's, and correctly
+        # reflects whether the chip actually did its job.
         qa.check_photo_contrast(
             img, (W - M - pcw, pc_y, W - M, pc_y + pasc + pdesc),
             sum(pc_color[:3]) / 3, "photo_caption")

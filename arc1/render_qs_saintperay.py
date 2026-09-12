@@ -90,6 +90,7 @@ import os
 import core
 import modules  # noqa: F401  (imported for parity with the arc's other renderers)
 import quick_sips
+from tokens import PAPER
 
 OUT = "/home/claude/out_qs_saintperay"
 os.makedirs(OUT, exist_ok=True)
@@ -147,12 +148,20 @@ SLIDES = [
         photo_anchor=0.30,
         caption_chip=False,
         title_scrim=True,
+        # White per Steve's review -- full-width black scrim is still
+        # gone, but white on this sky needs SOME backing to actually
+        # read (measured earlier: white vs this sky's real pixels is
+        # 2.27:1 contrast, well under any usable floor). qs_mark_overlay
+        # and the photo_caption block both now draw a tight chip sized
+        # to just the text's own footprint when the color is light and
+        # the scrim is off -- not a bar across the top, just enough
+        # behind the letters themselves. See formats/quick_sips.py.
         mark_scrim=False,
-        mark_color=PAL["SIGNATURE"],
+        mark_color=PAPER,
         photo_credit=CRED_CRUSSOL,
         photo_caption="The Crussol massif, above Saint-P\u00e9ray",
         photo_caption_pos="top_right",
-        photo_caption_color=PAL["SIGNATURE"],
+        photo_caption_color=PAPER,
         # Pad reduction alone satisfies "move the title/tagline down" --
         # the earlier attempt also bumped title_size/tagline_size, which
         # cascaded into overflow on para1/para2, the dashboard and the
@@ -194,14 +203,19 @@ SLIDES = [
         # body pushes the dashboard/caption start down the page -- same
         # mechanism as the cover page's paragraph-overlap check). Copy
         # cut, not type.
+        # "Marsanne alone" struck per Steve's review -- Saint-Peray
+        # permits both grapes (Ch. 7: Marsanne "the vast majority," some
+        # Roussanne), and the Biguet bottle itself is 100% Marsanne, but
+        # the appellation's wines generally are not, so "alone" overstated
+        # it as a rule rather than describing this one producer's choice.
         body="Traditional method, same as Champagne \u2014 but almost nothing "
-             "else matches. Champagne blends three grapes across chalk; this "
-             "is Marsanne alone, on limestone and granite that holds water "
-             "and drains at once. The result leans riper and more textured, "
-             "with a mineral edge from the same ground as the still wine "
-             "next door. Ten to twelve months on the lees here, against "
-             "several years in Champagne \u2014 and the style is increasingly "
-             "rare.",
+             "else matches. Champagne blends three grapes across chalk; the "
+             "wines in Saint-P\u00e9ray are based on Marsanne and Roussanne, on "
+             "limestone and granite that holds water and drains at once. The "
+             "result leans riper and more textured, with a mineral edge from "
+             "the same ground as the still wine next door. Ten to twelve "
+             "months on the lees here, against several years in Champagne "
+             "\u2014 and the style is increasingly rare.",
         body_lead_words=3,
         structure=STRUCTURE_BIGUET,
         bench_heading="THE SPARKLING WINE",
