@@ -23,6 +23,7 @@ arc1/render_fff_viognier.py
 arc1/render_fg_northern_rhone.py
 arc1/render_gtr_cornas.py
 arc1/render_qs_cornas.py
+arc1/render_qs_saintperay.py
 arc1/render_sd_wholebunch.py
 arc2/ARC2_GERMANY_PLAN.md
 arc2/CAPTION_FG_mosel.md
@@ -170,6 +171,7 @@ photos/nr_echalas_condrieu.jpg
 photos/nr_grillet.jpg
 photos/nr_harvest_hands.jpg
 photos/nr_hermitage_hill.jpg
+photos/nr_saintperay_crussol.jpg
 photos/nr_syrah_bunch.jpg
 photos/nr_syrah_plants.jpg
 photos/nr_table_toast.jpg

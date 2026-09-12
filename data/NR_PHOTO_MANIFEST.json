@@ -266,5 +266,20 @@
   "slot": "fff_viognier_vines",
   "local_path": "/home/claude/work/photos/fff_viognier_vines.jpg",
   "credit": "Marianne Casamance / Wikimedia Commons (CC BY-SA 4.0)"
+ },
+ {
+  "title": "File:Montagne de Crussol.JPG",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Montagne_de_Crussol.JPG",
+  "width": 4288,
+  "height": 2848,
+  "author": "Toutaitanous",
+  "license": "CC BY-SA 3.0",
+  "description": "Château de Crussol seen from the Drôme. The limestone massif above the commune of Saint-Péray.",
+  "slot": "nr_saintperay_crussol",
+  "credit": "Toutaitanous / Wikimedia Commons (CC BY-SA 3.0)",
+  "local_path": "/home/claude/work/photos/nr_saintperay_crussol.jpg",
+  "thumb_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Montagne_de_Crussol.JPG/1920px-Montagne_de_Crussol.JPG",
+  "thumb_w": 1920,
+  "thumb_h": 1275
  }
 ]
