@@ -778,10 +778,10 @@ def side_rail(slot, slide_no, total, pal):
         # Sit the block ABOVE the footer row, not on it. The old baseline
         # put the last credit line on FOOTER_Y at the text column's x --
         # which, whenever the photo is on the right, is the left margin,
-        # exactly where the swipe cue is drawn. A one-line credit then
-        # overprinted "SWIPE" on every right-side slide. Lifting the whole
-        # block by one line height puts it in the gutter above, clear of
-        # the footer furniture at either side setting.
+        # exactly where the read-more cue is drawn. A one-line credit then
+        # overprinted the footer label on every right-side slide. Lifting
+        # the whole block by one line height puts it in the gutter above,
+        # clear of the footer furniture at either side setting.
         credit_y0 = FOOTER_Y - 4 - len(credit_lines) * credit_lh
         cy2 = credit_y0
         for ln in credit_lines:
@@ -872,8 +872,8 @@ def side_rail(slot, slide_no, total, pal):
     # NOTE: photo_credit is already drawn above (wrapped to the text
     # column, per this module's docstring) -- passing credit= to
     # _finish() here as well double-renders it via the default centered
-    # footer treatment, colliding with the swipe-cue label. Omit it.
-    # The swipe-cue/page-number label always sits bottom-left (x=M).
+    # footer treatment, colliding with the read-more label. Omit it.
+    # The read-more/page-number label always sits bottom-left (x=M).
     # When the photo is on that side (side="left"), the existing bottom
     # scrim() gradient is sometimes not enough on its own -- scrim fades
     # to zero strength at its far edge by design (see scrim()'s

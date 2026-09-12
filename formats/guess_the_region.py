@@ -303,21 +303,28 @@ def gtr_cover(slot, slide_no, total, pal):
     qa.size("body", cf_size)
     qa.add_words(" ".join(clues))
 
-    # ---- swipe cue: centered on the panel, right under the clues ----
+    # ---- read-more cue: centered on the panel, right under the clues ----
+    # Was "SWIPE TO SEE THE ANSWER" -- changed system-wide to "READ MORE",
+    # same word substitution as core.footer()'s default label and
+    # fff_facts.py's swipe_label param. This module draws its own cue
+    # independently rather than going through core.footer()'s label
+    # param (it needs the longer "...TO SEE THE ANSWER" phrasing, centered
+    # on the panel rather than left-margin), so it doesn't inherit the
+    # core.py default and has to be changed here explicitly too.
     sf = font("kicker_bold", 88)
-    swipe_txt = "SWIPE TO SEE THE ANSWER  ←"
-    sw = text_w(d, swipe_txt, sf) + 4 * len(swipe_txt)
+    read_more_txt = "READ MORE TO SEE THE ANSWER  ←"
+    sw = text_w(d, read_more_txt, sf) + 4 * len(read_more_txt)
     swipe_y = clues_bottom + 170
     swipe_x = content_x0 + (content_w - sw) // 2
-    tracked_text(d, (swipe_x, swipe_y), swipe_txt, sf, gold, tracking=4)
+    tracked_text(d, (swipe_x, swipe_y), read_more_txt, sf, gold, tracking=4)
     sa, sd = sf.getmetrics()
-    qa.box("!swipe_cue", (swipe_x, swipe_y, swipe_x + sw, swipe_y + sa + sd))
-    qa.size("!swipe_cue", 88)
+    qa.box("!read_more_cue", (swipe_x, swipe_y, swipe_x + sw, swipe_y + sa + sd))
+    qa.size("!read_more_cue", 88)
     if swipe_y + sa + sd > CONTENT_BOTTOM:
-        qa.notes.append(f"FAIL swipe-footer: swipe cue bottom {swipe_y + sa + sd} > CONTENT_BOTTOM {CONTENT_BOTTOM}")
+        qa.notes.append(f"FAIL read-more-footer: cue bottom {swipe_y + sa + sd} > CONTENT_BOTTOM {CONTENT_BOTTOM}")
 
-    # The footer's swipe-cue/page-number label sits over the photo blade
-    # here (unlike other series where it's on paper/panel), so MUTED's
+    # The footer's read-more-cue/page-number label sits over the photo
+    # blade here (unlike other series where it's on paper/panel), so MUTED's
     # fixed gray can go illegible against busy or warm-toned photo areas
     # (e.g. dry gold grass) -- sample the actual pixels under the label
     # zone and pick a readable color rather than assuming MUTED works.

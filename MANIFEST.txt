@@ -177,7 +177,9 @@ photos/nr_syrah_plants.jpg
 photos/nr_table_toast.jpg
 photos/nr_tain_rhone.jpg
 photos/nr_tournon_quai.jpg
+photos/qs_bottle_biguet_sp.png
 photos/qs_bottle_clape.png
+photos/qs_bottle_clape_sp.png
 photos/qs_bottle_paris.png
 photos/qs_bottle_placeholder.png
 photos/qs_cornas_church.jpg

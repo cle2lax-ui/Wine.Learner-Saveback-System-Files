@@ -281,5 +281,10 @@
   "thumb_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Montagne_de_Crussol.JPG/1920px-Montagne_de_Crussol.JPG",
   "thumb_w": 1920,
   "thumb_h": 1275
+ },
+ {
+  "title": "Steve-supplied bottle photograph, cut out via core.remove_background",
+  "note": "Not from Wikimedia Commons -- Steve's own bottle photos, product/catalog style on white. Retained in manifest for provenance tracking only, not for a photo_credit line.",
+  "slot": "qs_bottle_clape_sp / qs_bottle_biguet_sp"
  }
 ]

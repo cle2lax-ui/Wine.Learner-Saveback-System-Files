@@ -25,21 +25,28 @@ def font(role, size):
 def new_canvas(bg=None):
     return Image.new("RGB", (W, H), bg or PAPER)
 
-def footer(d, slide_no, total, label="SWIPE  \u2190", page_pos="right", credit=None, fill=None, img=None,
+def footer(d, slide_no, total, label="READ MORE  \u2190", page_pos="right", credit=None, fill=None, img=None,
            show_page_num=True, footer_size=None, credit_size=34):
-    """Every slide's bottom furniture: the swipe cue, the page number,
-    and (optionally) a small-print photo credit centered in the gutter
-    between them.
+    """Every slide's bottom furniture: the read-more cue, the page
+    number, and (optionally) a small-print photo credit centered in
+    the gutter between them.
 
-    The arrow points LEFT (\u2190) deliberately -- it's the swipe *gesture*
-    direction (a thumb moves left to advance a carousel), not an arrow
-    toward where the next slide's content visually sits. This was wired
-    backwards for a while; if you're ever tempted to "fix" it to \u2192,
-    don't -- that's the bug, not a valid alternate style.
+    Label text changed from "SWIPE" to "READ MORE" system-wide (this
+    default is what every module inherits unless it draws its own
+    footer text independently -- see guess_the_region.py's swipe_txt
+    and fff_facts.py's swipe_label param, both updated alongside this).
 
-    page_pos="right" (default) puts the swipe label at the left margin
-    and the page number at the right; "left" swaps them, keeping the
-    page number near the swipe cue instead of opposite it (used by the
+    The arrow still points LEFT (\u2190) deliberately -- it's the swipe
+    *gesture* direction (a thumb moves left to advance a carousel), not
+    an arrow toward where the next slide's content visually sits. That
+    physical gesture didn't change when the label wording did, so the
+    arrow direction doesn't either. This was wired backwards for a
+    while; if you're ever tempted to "fix" it to \u2192, don't -- that's
+    the bug, not a valid alternate style.
+
+    page_pos="right" (default) puts the read-more label at the left
+    margin and the page number at the right; "left" swaps them, keeping
+    the page number near the label instead of opposite it (used by the
     Quick Sips series). credit, when given, is NOT drawn on the photo
     -- see photo_band()'s docstring for why that changed.
 
@@ -61,9 +68,9 @@ def footer(d, slide_no, total, label="SWIPE  \u2190", page_pos="right", credit=N
     was never going to be right for every photo, same lesson as the
     page-2 caption before it.
 
-    footer_size overrides the page-number/swipe-cue font size (default
-    TYPE["caption"]=60) -- Quick Sips calls with 76 for a slightly
-    heavier footer row than Field Guide's default."""
+    footer_size overrides the page-number/read-more-cue font size
+    (default TYPE["caption"]=60) -- Quick Sips calls with 76 for a
+    slightly heavier footer row than Field Guide's default."""
     f = font("kicker", footer_size or TYPE["caption"])
     txt = f"{slide_no:02d}/{total:02d}"
     tw = d.textbbox((0, 0), txt, font=f)[2]
@@ -95,25 +102,25 @@ def footer(d, slide_no, total, label="SWIPE  \u2190", page_pos="right", credit=N
         if show_page_num:
             _draw((W - M - tw, FOOTER_Y - 4), txt, f)
     if credit:
-        # small print, centered in the gutter between the swipe cue and
-        # the page number -- the footer row is the standard home for any
-        # third-party photo credit, not an overlay on the photo itself
+        # small print, centered in the gutter between the read-more cue
+        # and the page number -- the footer row is the standard home for
+        # any third-party photo credit, not an overlay on the photo itself
         # credit_size defaults to 34 (unchanged for every existing caller);
         # FFFA passes 28 -- at 2160px wide the credit line now carries a
         # photographer, "Wikimedia Commons" and a licence string, which at
-        # 34 competed with the swipe cue instead of sitting under it.
-        # The gutter is what is left between the swipe cue and the page
-        # number, not the full canvas. A two-photo slide credits two
+        # 34 competed with the read-more cue instead of sitting under it.
+        # The gutter is what is left between the read-more cue and the
+        # page number, not the full canvas. A two-photo slide credits two
         # photographers plus two licences on one line, and at a fixed 34
         # that ran straight through both -- "Daniel CULSAN / Wikimedia
         # Commons (CC BY-SA 3.0) - Vive la Rosiere / ..." overprinted
-        # SWIPE on the left and 09/12 on the right simultaneously. Step
-        # the size down until it fits, then ellipsize only if even the
-        # floor is too small. Credits are a licence obligation, so the
-        # failure mode has to be "smaller", never "clipped in half by the
-        # page number".
-        swipe_w = d.textbbox((0, 0), label, font=f)[2]
-        left_edge = M + swipe_w + 30
+        # READ MORE on the left and 09/12 on the right simultaneously.
+        # Step the size down until it fits, then ellipsize only if even
+        # the floor is too small. Credits are a licence obligation, so
+        # the failure mode has to be "smaller", never "clipped in half
+        # by the page number".
+        label_w = d.textbbox((0, 0), label, font=f)[2]
+        left_edge = M + label_w + 30
         right_edge = (W - M - tw - 30) if show_page_num else (W - M)
         avail = max(200, right_edge - left_edge)
 

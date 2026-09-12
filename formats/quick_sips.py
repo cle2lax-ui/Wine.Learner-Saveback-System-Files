@@ -39,12 +39,15 @@ def _qs_glass(img, gx, gy, gh, tone="white"):
     return gw
 
 
-def qs_mark_overlay(img, d, pal, scrim_on=True, text_color=None):
+def qs_mark_overlay(img, d, pal, scrim_on=True, text_color=None, qa=None):
     """Corner brand for photo backgrounds (page 1 / cover use): glass
     glyph + wordmark, soft top scrim for legibility, anchored top-left.
     scrim_on=False skips the chip -- safe only when the photo already
-    has natural contrast under white text without it; default stays on.
-    text_color overrides the wordmark's default PAPER fill."""
+    has natural contrast under the wordmark color without it; pass qa
+    to get a real pixel-sampled check rather than trusting that by eye.
+    text_color overrides the wordmark's default PAPER fill -- do this
+    together with scrim_on=False on a light photo, since PAPER/white
+    is exactly the fill a scrim was covering for."""
     pad, gap = 40, 32
     gh = 144
     tf = font("display_bold", 120)
@@ -56,13 +59,29 @@ def qs_mark_overlay(img, d, pal, scrim_on=True, text_color=None):
         chip(img, (0, 0, W, scrim_h), (10, 10, 10), opacity=0.62)
     d = ImageDraw.Draw(img)
     gy = pad + (content_h - gh) // 2
-    gw = _qs_glass(img, pad, gy, gh, tone="white")
+    fill = text_color or PAPER
+    # Glass glyph tone follows the wordmark: "white" is the light outline
+    # (right for a scrim or a dark photo); anything else falls through to
+    # _qs_glass's pre-rendered ink tone, which is what we want once the
+    # scrim is gone and the wordmark itself has gone dark to hold
+    # contrast against a light sky. _qs_glass only has these two
+    # pre-rendered tones -- it is not pal-tintable -- so this does not
+    # attempt to match the wordmark's exact forest green, only its
+    # darkness.
+    gw = _qs_glass(img, pad, gy, gh, tone="white" if fill == PAPER else "ink")
     d = ImageDraw.Draw(img)
     ink_top, _, _, ink_bot = d.textbbox((0, 0), txt, font=tf)
     ink_center = ink_top + (ink_bot - ink_top) / 2
     icon_center = gy + gh / 2
     ty = int(icon_center - ink_center)
-    d.text((pad + gw + gap, ty), txt, font=tf, fill=text_color or PAPER)
+    d.text((pad + gw + gap, ty), txt, font=tf, fill=fill)
+    if qa is not None and not scrim_on:
+        # Real pixel check under the wordmark text band -- the whole
+        # point of dropping the scrim is that this needs to hold up
+        # against the actual photo, not an assumed dark background.
+        qa.check_photo_contrast(
+            img, (pad + gw + gap, ty, pad + gw + gap + text_w(d, txt, tf), ty + asc + desc),
+            sum(fill[:3]) / 3, "qs_mark_wordmark")
     return pad + content_h
 
 
@@ -314,7 +333,7 @@ def quick_sip_cover(slot, slide_no, total, pal):
     # caption_chip so nothing changes for existing decks.
     qs_mark_overlay(img, d, pal,
                     scrim_on=slot.get("mark_scrim", slot.get("caption_chip", True)),
-                    text_color=slot.get("mark_color"))
+                    text_color=slot.get("mark_color"), qa=qa)
 
     title_size = slot.get("title_size", 110)
     title_align = slot.get("title_align", "left")
@@ -352,7 +371,11 @@ def quick_sip_cover(slot, slide_no, total, pal):
     # tagline sits a fixed pad above the photo's bottom edge, title sits
     # directly above the tagline (not independently positioned), so the
     # two always read as one anchored unit regardless of title length.
-    bottom_pad = 60
+    # Overridable so a deck that reclaims vertical space elsewhere on the
+    # photo (e.g. moving photo_caption off the bottom-right corner) can
+    # sit the title/tagline block lower, closer to the photo's true
+    # bottom edge, rather than leaving that space empty.
+    bottom_pad = slot.get("title_bottom_pad", 60)
     block_gap = 20
     tga, tgd = tgf.getmetrics()
     tgy = photo_h - bottom_pad - (tga + tgd)
@@ -395,11 +418,34 @@ def quick_sip_cover(slot, slide_no, total, pal):
         # face here, so the two series' photo captions match, and one
         # size down from the shared constant since this one sits inside
         # the title chip rather than on bare photo.
+        #
+        # photo_caption_pos: "bottom_right" (default, unchanged) sits
+        # inside the title/tagline legibility zone as before. "top_right"
+        # pairs it with the top-left wordmark instead -- for decks that
+        # move the caption up to reclaim bottom-of-photo space for a
+        # larger title/tagline block. Vertically centred on the mark's
+        # own band (pad=40, content_h=144 from qs_mark_overlay) so the
+        # two read as a matched top-left/top-right pair.
         pcf = font(core.CAPTION_FACE, core.CAPTION_SIZE - 8)
         pcw = text_w(d, slot["photo_caption"], pcf)
-        d.text((W - M - pcw, photo_h - 66), slot["photo_caption"], font=pcf,
-               fill=(240, 235, 224))
+        pc_color = slot.get("photo_caption_color", (240, 235, 224))
+        pos = slot.get("photo_caption_pos", "bottom_right")
+        pasc, pdesc = pcf.getmetrics()
+        if pos == "top_right":
+            mark_band_center = 40 + 144 // 2
+            pc_y = mark_band_center - (pasc + pdesc) // 2
+        else:
+            pc_y = photo_h - 66
+        d.text((W - M - pcw, pc_y), slot["photo_caption"], font=pcf, fill=pc_color)
         qa.size("!photo_caption", core.CAPTION_SIZE - 8)
+        # Real pixel check, not an assumed background -- a scrim can look
+        # fine in code and still fail against the actual photo underneath
+        # (region_luminance's own docstring). Only meaningful once no chip
+        # or scrim sits behind the text, i.e. exactly the case this option
+        # exists for.
+        qa.check_photo_contrast(
+            img, (W - M - pcw, pc_y, W - M, pc_y + pasc + pdesc),
+            sum(pc_color[:3]) / 3, "photo_caption")
 
     if slot.get("eyebrow"):
         ey_f = font("kicker_bold", 60)
