@@ -82,11 +82,19 @@ def qs_mark_overlay(img, d, pal, scrim_on=True, text_color=None, qa=None):
     if scrim_on:
         chip(img, (0, 0, W, scrim_h), (10, 10, 10), opacity=0.62)
     elif is_light:
-        tight_pad = 24
+        # Kept as small as the real contrast check allows -- Steve's ask
+        # was "basically right under the letters if it's needed at all."
+        # tight_pad went from 24 to 6 (barely more than antialiasing
+        # bleed) and opacity from 0.55 to 0.4 (a light wash, not a
+        # visible panel). Still verified against the actual rendered
+        # pixels below, not assumed -- if this ever gets shrunk further,
+        # re-check qa.check_photo_contrast's real min_delta margin rather
+        # than eyeballing it.
+        tight_pad = 6
         chip(img, (pad - tight_pad, pad - tight_pad,
                     pad + gw + gap + tw_probe + tight_pad,
                     pad + content_h + tight_pad),
-             (10, 10, 10), opacity=0.55)
+             (10, 10, 10), opacity=0.40)
     d = ImageDraw.Draw(img)
     gy = pad + (content_h - gh) // 2
     # Glass glyph tone follows the wordmark: "white" is the light outline
@@ -472,10 +480,11 @@ def quick_sip_cover(slot, slide_no, total, pal):
         # unaffected, it already sits inside the protected zone above.
         is_light_caption = sum(pc_color[:3]) / 3 > 128
         if pos == "top_right" and is_light_caption:
-            tight_pad = 20
+            # Same reduction as qs_mark_overlay's chip -- see its comment.
+            tight_pad = 6
             chip(img, (W - M - pcw - tight_pad, pc_y - tight_pad,
                         W - M + tight_pad, pc_y + pasc + pdesc + tight_pad),
-                 (10, 10, 10), opacity=0.55)
+                 (10, 10, 10), opacity=0.40)
             d = ImageDraw.Draw(img)
         d.text((W - M - pcw, pc_y), slot["photo_caption"], font=pcf, fill=pc_color)
         qa.size("!photo_caption", core.CAPTION_SIZE - 8)
