@@ -1,6 +1,6 @@
 """REEL TEST CUT — Split Decision: Whole Bunch or Destemmed. Arc 1.
 
-Per REELS_SPEC_v1.md: 1080x1920, five beats of ~3s, frame 1 carries the
+Per REELS_SPEC_v1.md: 1080x1920, frame 1 carries the
 complete hook, the final beat closes the loop back to frame 1, silent-
 legible throughout, audio left empty, hard cuts only, motion limited to
 a slow scale on a still.
@@ -56,7 +56,7 @@ OUT = "/home/claude/out_reel_sd"
 
 W, H = 1080, 1920
 FPS = 30
-BEAT_SECONDS = 3.0
+BEAT_SECONDS = 4.0
 SS = 2  # type supersample factor
 
 # Kickers and pole labels carry the structure of the argument, and at
@@ -249,11 +249,12 @@ def type_layer(beat):
         d.line([(64 * SS, rule_y), (64 * SS + tw, rule_y)],
                fill=col, width=4 * SS)
 
-    # Mark on the first and last beat only. It is series identification,
-    # which belongs at the open and the close; on the three middle beats
-    # it was competing with the argument for the same corner.
-    if beat["kind"] in ("hook", "reopen"):
-        place_mark(lay)
+    # Every beat. v2 carried the mark on the open and close only, on the
+    # reasoning that it competed with the argument in between; held
+    # through all five it reads as a fixed frame element rather than
+    # something that appears and disappears, and it means any beat
+    # screenshotted or scrubbed to still carries the series.
+    place_mark(lay)
 
     d.text((64 * SS, int(H * SS * 0.945)), beat["credit"], font=f_cred,
            fill=(232, 226, 220, 205))
