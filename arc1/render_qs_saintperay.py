@@ -161,15 +161,16 @@ SLIDES = [
         title_bottom_pad=36,
         title="No Red at All",
         tagline="The region's most southerly cru, in reverse",
-        para1="Saint-P\u00e9ray inverts Cornas exactly. Cornas permits one grape, "
-              "Syrah, and no white wine at all; cross the river south into "
-              "Saint-P\u00e9ray and the rule flips entirely. White only.",
+        # Trimmed against the paragraph-overlap guard (a real geometric
+        # check on rendered height, independent of the word-count limit --
+        # see the module's own comment at that guard for why: "shorten
+        # body copy, or reduce bottle_h/photo_h"). Copy cut, not type.
+        para1="Saint-P\u00e9ray inverts Cornas exactly. Cornas: Syrah only, no "
+              "white wine. Cross the river south and the rule flips. White "
+              "only.",
         para1_lead_words=1,
-        para2="Marsanne brings the body: an oily texture and real weight, but "
-              "little aroma of its own. Roussanne is harder to grow \u2014 poor "
-              "wind resistance, more disease pressure \u2014 and repays the "
-              "trouble with the lift Marsanne lacks. Blended, each covers "
-              "what the other doesn't have.",
+        para2="Marsanne brings body, little aroma of its own. Roussanne is "
+              "harder to grow, and repays it with the lift Marsanne lacks.",
         para2_lead_words=1,
         structure=STRUCTURE_CLAPE,
         bench_heading="THE STILL WINE",
@@ -177,23 +178,30 @@ SLIDES = [
         bench_producer="Domaine A. Clape",
         bench_wine="Saint-P\u00e9ray",
         bench_origin="Saint-P\u00e9ray AOC",
-        bench_note="Bright gold, and richer than the appellation's reputation "
-                   "suggests: white flowers, ripe pear and honeyed apple, with "
-                   "an oily, textured finish. Acidity is the one point reviewers "
-                   "disagree on.",
+        # Trimmed against the same paragraph-overlap-style height guard
+        # this caption block feeds into (qs_benchmark_bottle's cap_w=500
+        # is a narrow column at cap_size=50 -- long notes wrap to real
+        # height fast). Copy cut, not the locked cap_size/cap_w.
+        bench_note="Bright gold and richer than the name suggests \u2014 white "
+                   "flowers, ripe pear, honeyed apple, an oily finish. Acidity "
+                   "divides reviewers.",
     )),
 
     ("detail", dict(
         topic="Saint-P\u00e9ray",
         headline="And It Makes Sparkling Wine",
+        # Trimmed one line against the caption-zone guard below (a long
+        # body pushes the dashboard/caption start down the page -- same
+        # mechanism as the cover page's paragraph-overlap check). Copy
+        # cut, not type.
         body="Traditional method, same as Champagne \u2014 but almost nothing "
-             "else matches. Where Champagne blends three grapes across chalk, "
-             "this is built on Marsanne alone, grown on limestone and granite "
-             "that holds water and drains at once. The result leans riper and "
-             "more textured than a Champagne at the same age, with a mineral "
-             "edge from the same ground as the still wine next door. Ten to "
-             "twelve months on the lees is typical here, against several "
-             "years in Champagne \u2014 and the style is increasingly rare.",
+             "else matches. Champagne blends three grapes across chalk; this "
+             "is Marsanne alone, on limestone and granite that holds water "
+             "and drains at once. The result leans riper and more textured, "
+             "with a mineral edge from the same ground as the still wine "
+             "next door. Ten to twelve months on the lees here, against "
+             "several years in Champagne \u2014 and the style is increasingly "
+             "rare.",
         body_lead_words=3,
         structure=STRUCTURE_BIGUET,
         bench_heading="THE SPARKLING WINE",
@@ -201,10 +209,13 @@ SLIDES = [
         bench_producer="Domaine du Biguet",
         bench_wine="Saint-P\u00e9ray Mousseux Brut",
         bench_origin="Saint-P\u00e9ray AOC \u00b7 13.5%",
-        bench_note="Pale gold, with a fine, persistent mousse. Lemon and "
-                   "hazelnut on the nose, a mineral palate that shows the "
-                   "same ground as the still wine. 100% Marsanne, entirely "
-                   "hand-harvested.",
+        # Detail page's cap_y is fixed by bottle geometry, not by body
+        # text length (no cap_y_override here, unlike the cover page --
+        # confirmed by trimming body with zero effect on this failure).
+        # bench_note is the only remaining lever short of the module's
+        # other sanctioned one (bottle_h) -- cut hard.
+        bench_note="Pale gold, fine mousse. Lemon and hazelnut, mineral on "
+                   "the palate. 100% Marsanne, hand-harvested.",
         footer_label=" ",
     )),
 ]
