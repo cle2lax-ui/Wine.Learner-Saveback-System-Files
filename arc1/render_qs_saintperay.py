@@ -208,10 +208,19 @@ SLIDES = [
         # Roussanne), and the Biguet bottle itself is 100% Marsanne, but
         # the appellation's wines generally are not, so "alone" overstated
         # it as a rule rather than describing this one producer's choice.
+        #
+        # "holds water and drains at once" (Ch. 7's own phrase is "good
+        # water-holding capacity and drainage") read as a contradiction on
+        # a second pass -- soil that does both at the same time sounds
+        # like a paradox. It isn't: they're two different jobs at two
+        # different moments (moisture in reserve through a dry summer,
+        # no standing water after a storm), just badly compressed into
+        # one clause. Rewritten to state the two conditions separately.
         body="Traditional method, same as Champagne \u2014 but almost nothing "
              "else matches. Champagne blends three grapes across chalk; the "
              "wines in Saint-P\u00e9ray are based on Marsanne and Roussanne, on "
-             "limestone and granite that holds water and drains at once. The "
+             "limestone and granite that keep the vines watered through a "
+             "dry summer without ever leaving the roots sitting wet. The "
              "result leans riper and more textured, with a mineral edge from "
              "the same ground as the still wine next door. Ten to twelve "
              "months on the lees here, against several years in Champagne "
