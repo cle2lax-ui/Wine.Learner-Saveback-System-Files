@@ -162,7 +162,7 @@ fingerprint.
 ## 8. Reels layer
 
 Vertical cuts are a distribution treatment, not a series. See
-`REELS_SPEC_v1.md`. Two per week, assembled from arc content already
+`REELS_SPEC_v2.md`. Two per week, assembled from arc content already
 built. No separate editorial.
 
 The critical constraint: slides are 2160×2700 (4:5). Cropping to 9:16

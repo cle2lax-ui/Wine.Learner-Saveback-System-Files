@@ -286,5 +286,18 @@
   "title": "Steve-supplied bottle photograph, cut out via core.remove_background",
   "note": "Not from Wikimedia Commons -- Steve's own bottle photos, product/catalog style on white. Retained in manifest for provenance tracking only, not for a photo_credit line.",
   "slot": "qs_bottle_clape_sp / qs_bottle_biguet_sp"
+ },
+ {
+  "title": "File:Sarras vigne et village.jpg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Sarras_vigne_et_village.jpg",
+  "width": 1250,
+  "height": 940,
+  "author": "François Bassaget",
+  "license": "CC BY-SA 4.0",
+  "description": "Sarras vue partielle -- Syrah vines in autumn colour on the hillside above Sarras, Ardèche, with the village and the Rhône below. Sarras is a Saint-Joseph AOC commune.",
+  "slot": "nr_saintjoseph_sarras_vigne",
+  "credit": "François Bassaget / Wikimedia Commons (CC BY-SA 4.0)",
+  "local_path": "/home/claude/repo/photos/nr_saintjoseph_sarras_vigne.jpg",
+  "sourcing_note": "Found via commune-level search (Sarras), not the AOC name -- 'Saint-Joseph' as a search term on Commons returns almost nothing but the Catholic saint and EU regulatory PDFs. Category:Saint-Joseph (AOC) has 0 members. This is the pattern to repeat for any future Saint-Joseph sourcing: search by commune (Mauves, Tournon-sur-Rhône, Saint-Jean-de-Muzols, Sarras, Chavanay, Charnas, Saint-Désirat), never by the appellation name."
  }
 ]

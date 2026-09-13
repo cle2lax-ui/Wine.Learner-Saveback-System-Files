@@ -13,6 +13,7 @@ arc1/CAPTION_SD_coferment.md
 arc1/CAPTION_SD_wholebunch.md
 arc1/CAPTION_TW_syrah.md
 arc1/CHANGELOG_northern_rhone.md
+arc1/REEL_THREE_WAYS_STORYBOARD.md
 arc1/build_fff_cover.py
 arc1/build_fonts.py
 arc1/build_nrhone_geo.py
@@ -121,7 +122,7 @@ guides/LESSONS_LEARNED_v5.md
 guides/NEW_DECK_STARTER_v8_2_ADDENDUM.md
 guides/QUICK_SIPS_STYLE_GUIDE.md
 guides/README_v8.md
-guides/REELS_SPEC_v1.md
+guides/REELS_SPEC_v2.md
 guides/SD_BRAND_SPEC.md
 guides/SERIES_SYSTEM_v9.md
 guides/SETUP_KEYS.md
@@ -171,6 +172,7 @@ photos/nr_echalas_condrieu.jpg
 photos/nr_grillet.jpg
 photos/nr_harvest_hands.jpg
 photos/nr_hermitage_hill.jpg
+photos/nr_saintjoseph_sarras_vigne.jpg
 photos/nr_saintperay_crussol.jpg
 photos/nr_syrah_bunch.jpg
 photos/nr_syrah_plants.jpg
