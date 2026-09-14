@@ -312,5 +312,39 @@
   "credit": "Mr Fougerolle / Wikimedia Commons (CC BY-SA 4.0)",
   "local_path": "/home/claude/repo/photos/nr_crozes_chanoscurson.jpg",
   "sourcing_note": "Same commune-search pattern as Saint-Peray and Saint-Joseph: 'Crozes-Hermitage' as a search term is drowned out by EU Official Journal PDFs (the AOC name appears in hundreds of multilingual regulatory filings). The whole Crozes-Hermitage Commons category has only 7 files, none usable. Direct commune searches (Larnage, Gervans, Mercurol, Beaumont-Monteux, Pont-de-l'Isere) also came up empty -- mostly civic/administrative content. The find came from Category:Vineyards in Drome, a small (12-file) but well-curated category that doesn't surface on name-based searches at all. Worth checking 'Vineyards in <department>' categories before concluding a commune search has failed."
+ },
+ {
+  "title": "Pexels stock photo -- vineyard at golden hour",
+  "source": "Pexels",
+  "pexels_id": 5873803,
+  "width": 3648,
+  "height": 5472,
+  "author": "Anna Hinckel",
+  "license": "Pexels License (free to use)",
+  "description": "A scenic view of a vibrant vineyard during sunset, showcasing lush green foliage. No specific location given by the photographer -- used as a general Rhone-valley-appropriate cover image, not as a claim about a specific site.",
+  "slot": "nr_cover_goldenhour",
+  "credit": "Anna Hinckel / Pexels",
+  "local_path": "/home/claude/repo/photos/nr_cover_goldenhour.jpg",
+  "sourcing_note": "Steve rejected nr_tain_rhone as the cover/loop photo (wanted 'a more beautiful shot'). Commons search for a dramatic golden-hour Rhone shot hit repeated rate-limit errors (HTTP 429) this session and the searches that did complete returned nothing beyond what was already in the library (all checked and rejected as not beautiful enough -- see build commit). Moved to Pexels via the project's existing fetch_pexels.py / PEXELS_API_KEY pattern (sourcing/fetch_pexels.py, documented in guides/SETUP_KEYS.md)."
+ },
+ {
+  "title": "Pexels stock photo -- French vineyard, autumn",
+  "source": "Pexels",
+  "pexels_id": 35518184,
+  "width": 3024,
+  "height": 4032,
+  "author": "Alisa Skripina",
+  "license": "Pexels License (free to use)",
+  "description": "Scenic view of vineyards in France during autumn, with picturesque rural landscape -- photographer gives no specific commune or AOC. Used as an explicitly generic 'lifestyle' stand-in for Saint-Joseph, per Steve's own instruction, not asserted as an authentic Saint-Joseph vineyard.",
+  "slot": "nr_saintjoseph_pexels",
+  "credit": "Alisa Skripina / Pexels",
+  "local_path": "/home/claude/repo/photos/nr_saintjoseph_pexels.jpg",
+  "sourcing_note": "Replaces nr_saintjoseph_sarras_vigne (1250x940, too soft at reel crop -- Steve's call). Steve explicitly authorized a Pexels lifestyle shot as fallback if authentic Saint-Joseph photography couldn't be found at better resolution; two other strong candidates from the same Pexels search (a misty terraced valley, a lakeside terraced slope) were rejected despite being more dramatic because they are Koge, Denmark and Lavaux, Switzerland respectively -- using either for a 'Saint-Joseph' beat would have been a geography error, not just an authenticity compromise Steve already signed off on."
+ },
+ {
+  "title": "Steve-supplied bottle photograph -- Domaine Jean-Louis Chave, L'Hermitage 2023",
+  "note": "Not from Wikimedia Commons or Pexels -- Steve's own photograph. Bottle on rock, blurred green background, natural light. Used as the Hermitage beat's photo in place of nr_chapoutier_vy.jpg, which Steve judged too dull/low (flat overcast light, cluttered foreground, low camera angle). No photo_credit line -- this is not third-party material requiring attribution.",
+  "slot": "nr_hermitage_chave_bottle",
+  "local_path": "/home/claude/repo/photos/nr_hermitage_chave_bottle.jpg"
  }
 ]

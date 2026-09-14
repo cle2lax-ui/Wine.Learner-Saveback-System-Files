@@ -84,56 +84,115 @@ BEAT_SECONDS = 4.0  # REELS_SPEC_v2.md default
 SS = 2
 
 SIGNATURE = (58, 26, 46)
-ACCENT = (186, 149, 74)
+ACCENT = (232, 181, 79)  # brightened per Steve's review -- was (186,149,74),
+# a fairly desaturated, muted gold. This is a genuinely more saturated,
+# higher-luminance value, not a cosmetic nudge: old vs new luminance
+# (simple avg) is 136 vs 164, about a 20% lift, and it reads as
+# noticeably punchier gold on an actual rendered frame rather than
+# brownish -- confirmed below, not assumed from the RGB numbers alone.
 PAPER = (251, 249, 244)
 
 BAR_MAX = 50.0  # hL/ha -- shared scale, see docstring point 2
 
 CRED_TAIN = "Guerinf / Wikimedia Commons (CC BY-SA 4.0)"
+CRED_COVER = "Anna Hinckel / Pexels"
 CRED_CROZES = "Mr Fougerolle / Wikimedia Commons (CC BY-SA 4.0)"
-CRED_SJ = "François Bassaget / Wikimedia Commons (CC BY-SA 4.0)"
-CRED_HERM = "Vive la Rosière / Wikimedia Commons (CC BY-SA 3.0)"
+CRED_SJ = "Alisa Skripina / Pexels"
+CRED_HERM = ""  # Steve's own photograph -- no third-party credit needed
+
+
+def _chip(lay, region, color, opacity):
+    """Flat rounded rectangle behind text, drawn directly onto the RGBA
+    layer being composed. Not core.chip() -- that one converts to RGB at
+    the end, which would drop the alpha this layer still needs before
+    it's composited over the photo."""
+    x0, y0, x1, y1 = region
+    d = ImageDraw.Draw(lay, "RGBA")
+    d.rounded_rectangle([x0, y0, x1, y1], radius=28 * SS,
+                          fill=(*color, int(255 * opacity)))
 
 
 def font(name, size):
     return ImageFont.truetype(os.path.join(FONTS, name), size)
 
 
+def _wrap(text, fnt, max_w, d):
+    """Greedy word-wrap against an actual measured width (d.textlength),
+    not a guessed character count -- the blurb copy varies enough in
+    character width (percent signs, en dashes, digits) that a fixed
+    chars-per-line rule would wrap inconsistently across the three
+    region beats' blurb lines."""
+    words = text.split()
+    lines, cur = [], ""
+    for w in words:
+        trial = (cur + " " + w).strip()
+        if d.textlength(trial, font=fnt) <= max_w or not cur:
+            cur = trial
+        else:
+            lines.append(cur)
+            cur = w
+    if cur:
+        lines.append(cur)
+    return lines
+
+
 BEATS = [
     dict(
-        kind="hook", photo="nr_tain_rhone", credit=CRED_TAIN,
+        kind="hook", photo="nr_cover_goldenhour", credit=CRED_COVER,
         head="Three Ways\nInto Syrah",
         sub="One grape. Three regions.\nThree very different prices.",
         node=None, stat_frac=None, zoom=(1.02, 1.10),
-        crop_anchor=0.45,
+        crop_anchor=0.40,
     ),
     dict(
         kind="region", photo="nr_crozes_chanoscurson", credit=CRED_CROZES,
         label="CROZES-HERMITAGE",
+        # 10-12 word style+history line, D3 Ch.7: "The AOC was created in
+        # 1937 and extended... in 1956... the soils are deeper and more
+        # fertile than in neighbouring Hermitage and the resulting wines
+        # have lower concentration."
+        blurb="Created in 1937, enlarged in 1956 \u2014 deeper soil, softer "
+              "wines than Hermitage.",
         stat="~1,700 HA  \u00b7  45 HL/HA  \u00b7  MID-PRICED",
         node=0, stat_frac=45 / BAR_MAX, zoom=(1.00, 1.08),
         crop_anchor=0.42,
     ),
     dict(
-        kind="region", photo="nr_saintjoseph_sarras_vigne", credit=CRED_SJ,
+        kind="region", photo="nr_saintjoseph_pexels", credit=CRED_SJ,
         label="SAINT-JOSEPH",
+        # D3 Ch.7: "Nearly 90 per cent of the wines are red... extended in
+        # 1994... today the debate is whether to reduce the appellation."
+        blurb="Nearly 90% red, wide price range \u2014 extended in 1994, "
+              "still debated today.",
         stat="50 KM OF APPELLATION  \u00b7  40 HL/HA",
         node=1, stat_frac=40 / BAR_MAX, zoom=(1.05, 1.13),
-        crop_anchor=0.50,
+        crop_anchor=0.38,
     ),
     dict(
-        kind="region", photo="nr_chapoutier_vy", credit=CRED_HERM,
+        kind="region", photo="nr_hermitage_chave_bottle", credit=CRED_HERM,
         label="HERMITAGE",
+        # D3 Ch.7: "producing wine since the Greco-Roman era"; "a model of
+        # the world's most structured and long-lived Syrah wines."
+        blurb="Vines since Roman times. Structured, long-lived reds \u2014 "
+              "the region's most respected.",
         stat="137 HA  \u00b7  40 HL/HA  \u00b7  MOSTLY SUPER-PREMIUM",
-        node=2, stat_frac=40 / BAR_MAX, zoom=(1.08, 1.00),
-        crop_anchor=0.30,  # keeps the CHAPOUTIER wall as a lower detail
+        node=2, stat_frac=40 / BAR_MAX, zoom=(1.03, 1.00),
+        text_chip=True,  # see type_layer -- the bottle's own paper label
+        # sits directly in the text zone; the global scrim alone can't
+        # hold text over printed type at that contrast.
+        # A product shot, not a landscape -- gentle zoom only (1.03->1.00,
+        # the smallest range of any beat) since the bottle itself is the
+        # subject and shouldn't drift far. crop_anchor centres on the
+        # label rather than following the landscape beats' rule-of-thirds
+        # logic, which doesn't apply to a portrait product photo.
+        crop_anchor=0.28,
     ),
     dict(
-        kind="close", photo="nr_tain_rhone", credit=CRED_TAIN,
+        kind="close", photo="nr_cover_goldenhour", credit=CRED_COVER,
         head="Three Ways\nInto Syrah",
         sub="Same grape. The difference is the soil \u2014\nand how steeply it sits.",
         node="complete", stat_frac=None, zoom=(1.10, 1.02),
-        crop_anchor=0.45,
+        crop_anchor=0.40,
     ),
 ]
 
@@ -295,7 +354,12 @@ def type_layer(beat, t_beat, dur):
 
     f_head = font("Playfair-Bold.ttf", 84 * SS)
     f_sub = font("Archivo-Medium.ttf", 34 * SS)
-    f_label = font("ArchivoCond-SemiBold.ttf", 58 * SS)
+    # Label bumped 58 -> 78 per Steve's review -- noticeably the biggest
+    # text element on a region beat now apart from the headline on the
+    # hook/close beats, which is the right hierarchy: the region name is
+    # the thing a viewer should read first on beats 2-4.
+    f_label = font("ArchivoCond-SemiBold.ttf", 78 * SS)
+    f_blurb = font("Archivo-Medium.ttf", 32 * SS)
     f_stat = font("Archivo-Medium.ttf", 30 * SS)
     f_cred = font("Archivo-Light.ttf", 15 * SS)
 
@@ -317,13 +381,47 @@ def type_layer(beat, t_beat, dur):
             d.text((64 * SS, head_top + i * hh + yoff * SS), ln, font=f_head,
                    fill=PAPER + (a255,))
     else:
-        d.text((64 * SS, baseline - 70 * SS + yoff * SS), beat["stat"],
-               font=f_stat, fill=PAPER + (int(220 * alpha),))
-        d.text((64 * SS, baseline - 150 * SS + yoff * SS), beat["label"],
-               font=f_label, fill=ACCENT + (a255,))
+        # Three lines now, stacked bottom-up from the stat line so adding
+        # the blurb didn't require re-deriving every offset by hand:
+        # stat -> blurb (wrapped to two lines if it doesn't fit one) ->
+        # label, each anchored to the block above it.
+        stat_y = baseline - 70 * SS + yoff * SS
 
-    d.text((64 * SS, int(H * SS * 0.945)), beat["credit"], font=f_cred,
-           fill=(232, 226, 220, 200))
+        blurb_lines = _wrap(beat["blurb"], f_blurb, (W - 128) * SS, d)
+        bh = int(f_blurb.size * 1.32)
+        blurb_top = stat_y - 24 * SS - len(blurb_lines) * bh
+
+        label_top = blurb_top - 26 * SS - int(f_label.size * 1.05)
+
+        # Text chip -- new, and only for beats that ask for one (only
+        # Hermitage does). The global bottom scrim (~54% opacity at this
+        # height) is nowhere near dark enough to hold text over a busy
+        # background; on every other region beat the background there is
+        # open sky, distant hillside or plain ground, so the scrim alone
+        # was enough. The Chave bottle photo's OWN paper label sits
+        # directly in this text band, and its cream ground with dark
+        # serif type was reading right through our supers, turning both
+        # into noise -- caught by looking at an actual rendered frame,
+        # not from the layout math alone. A real, deliberately visible
+        # dark card behind the block, not a subtle assist, since nothing
+        # subtle was going to beat printed label type at this contrast.
+        if beat.get("text_chip"):
+            chip_top = label_top - 24 * SS
+            chip_bottom = stat_y + int(f_stat.size * 1.3)
+            _chip(lay, (0, chip_top, W * SS, chip_bottom),
+                  (10, 8, 14), opacity=0.72)
+
+        d.text((64 * SS, stat_y), beat["stat"], font=f_stat,
+               fill=PAPER + (int(220 * alpha),))
+        for i, ln in enumerate(blurb_lines):
+            d.text((64 * SS, blurb_top + i * bh), ln, font=f_blurb,
+                   fill=PAPER + (int(235 * alpha),))
+        d.text((64 * SS, label_top), beat["label"], font=f_label,
+               fill=ACCENT + (a255,))
+
+    if beat["credit"]:
+        d.text((64 * SS, int(H * SS * 0.945)), beat["credit"], font=f_cred,
+               fill=(232, 226, 220, 200))
 
     return lay.resize((W, H), Image.LANCZOS)
 

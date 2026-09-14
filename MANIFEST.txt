@@ -167,13 +167,16 @@ photos/nr_condrieu_pano.jpg
 photos/nr_coterotie_chaillees.jpg
 photos/nr_coterotie_roches.jpg
 photos/nr_cover_coterotie.jpg
+photos/nr_cover_goldenhour.jpg
 photos/nr_crozes_chanoscurson.jpg
 photos/nr_demimuid.jpg
 photos/nr_echalas.jpg
 photos/nr_echalas_condrieu.jpg
 photos/nr_grillet.jpg
 photos/nr_harvest_hands.jpg
+photos/nr_hermitage_chave_bottle.jpg
 photos/nr_hermitage_hill.jpg
+photos/nr_saintjoseph_pexels.jpg
 photos/nr_saintjoseph_sarras_vigne.jpg
 photos/nr_saintperay_crussol.jpg
 photos/nr_syrah_bunch.jpg
