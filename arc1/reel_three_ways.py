@@ -93,6 +93,7 @@ ACCENT = (232, 181, 79)  # brightened per Steve's review -- was (186,149,74),
 PAPER = (251, 249, 244)
 
 BAR_MAX = 50.0  # hL/ha -- shared scale, see docstring point 2
+MARK_PAD = 44  # persistent corner mark's margin from the top-left edge
 
 CRED_TAIN = "Guerinf / Wikimedia Commons (CC BY-SA 4.0)"
 CRED_COVER = "Anna Hinckel / Pexels"
@@ -141,7 +142,13 @@ BEATS = [
         kind="hook", photo="nr_cover_goldenhour", credit=CRED_COVER,
         head="Three Ways\nInto Syrah",
         sub="One grape. Three regions.\nThree very different prices.",
-        node=None, stat_frac=None, zoom=(1.02, 1.10),
+        # Ken Burns ranges widened significantly per Steve's review --
+        # was (1.02,1.10), an 8-point delta that barely read as motion
+        # over 4s. Hook/close now share (1.00,1.24)/(1.24,1.00) so the
+        # loop-close zoom-match still holds (close must END at the exact
+        # zoom hook STARTS at, or the loop seam shows as a visible jump
+        # in framing, not just a cut).
+        node=None, stat_frac=None, zoom=(1.00, 1.24),
         crop_anchor=0.40,
     ),
     dict(
@@ -154,7 +161,7 @@ BEATS = [
         blurb="Created in 1937, enlarged in 1956 \u2014 deeper soil, softer "
               "wines than Hermitage.",
         stat="~1,700 HA  \u00b7  45 HL/HA  \u00b7  MID-PRICED",
-        node=0, stat_frac=45 / BAR_MAX, zoom=(1.00, 1.08),
+        node=0, stat_frac=45 / BAR_MAX, zoom=(1.00, 1.22),
         crop_anchor=0.42,
     ),
     dict(
@@ -165,7 +172,7 @@ BEATS = [
         blurb="Nearly 90% red, wide price range \u2014 extended in 1994, "
               "still debated today.",
         stat="50 KM OF APPELLATION  \u00b7  40 HL/HA",
-        node=1, stat_frac=40 / BAR_MAX, zoom=(1.05, 1.13),
+        node=1, stat_frac=40 / BAR_MAX, zoom=(1.00, 1.24),
         crop_anchor=0.38,
     ),
     dict(
@@ -176,22 +183,21 @@ BEATS = [
         blurb="Vines since Roman times. Structured, long-lived reds \u2014 "
               "the region's most respected.",
         stat="137 HA  \u00b7  40 HL/HA  \u00b7  MOSTLY SUPER-PREMIUM",
-        node=2, stat_frac=40 / BAR_MAX, zoom=(1.03, 1.00),
+        # Still gentler than the landscape beats -- it's a product shot,
+        # and swinging the zoom as hard as the others would send the
+        # bottle drifting out of frame at these anchor settings -- but
+        # meaningfully more motion than the old (1.03,1.00) had.
+        node=2, stat_frac=40 / BAR_MAX, zoom=(1.14, 1.00),
         text_chip=True,  # see type_layer -- the bottle's own paper label
         # sits directly in the text zone; the global scrim alone can't
         # hold text over printed type at that contrast.
-        # A product shot, not a landscape -- gentle zoom only (1.03->1.00,
-        # the smallest range of any beat) since the bottle itself is the
-        # subject and shouldn't drift far. crop_anchor centres on the
-        # label rather than following the landscape beats' rule-of-thirds
-        # logic, which doesn't apply to a portrait product photo.
         crop_anchor=0.28,
     ),
     dict(
         kind="close", photo="nr_cover_goldenhour", credit=CRED_COVER,
         head="Three Ways\nInto Syrah",
         sub="Same grape. The difference is the soil \u2014\nand how steeply it sits.",
-        node="complete", stat_frac=None, zoom=(1.10, 1.02),
+        node="complete", stat_frac=None, zoom=(1.24, 1.00),
         crop_anchor=0.40,
     ),
 ]
@@ -288,6 +294,93 @@ def super_alpha_offset(t_beat, dur):
     return 1.0, 0
 
 
+def mark_alpha(global_t, total_dur):
+    """Fade envelope for the persistent corner mark -- GLOBAL elapsed
+    time across the whole reel, not per-beat t_beat, since this element
+    must survive every hard cut untouched in between. Fades in over the
+    first 0.5s of the entire video and out over the last 0.4s; solid
+    for everything in between, including every beat transition."""
+    fade_in, fade_out = 0.5, 0.4
+    if global_t < fade_in:
+        return ease(global_t / fade_in)
+    if global_t > total_dur - fade_out:
+        return ease((total_dur - global_t) / fade_out)
+    return 1.0
+
+
+MARK_COLORS = [(64, 96, 62), (168, 112, 44), (114, 34, 46)]  # green, amber, garnet
+
+
+def _draw_bottle_icon(d, x, y, h, color):
+    """Simple bottle silhouette -- neck, tapered shoulder, rounded
+    body -- built from primitives rather than a sourced glyph, the same
+    pattern used for the whole-bunch reel's Split Decision mark before
+    a real asset existed for it. Three of these in different colors is
+    "three wine bottles of varying colors," not a specific label design."""
+    neck_w, body_w = h * 0.16, h * 0.46
+    neck_h, shoulder_h = h * 0.30, h * 0.14
+    cx = x + body_w / 2
+    d.rectangle([cx - neck_w / 2, y, cx + neck_w / 2, y + neck_h], fill=color)
+    d.polygon([
+        (cx - neck_w / 2, y + neck_h), (cx + neck_w / 2, y + neck_h),
+        (cx + body_w / 2, y + neck_h + shoulder_h), (cx - body_w / 2, y + neck_h + shoulder_h),
+    ], fill=color)
+    d.rounded_rectangle([cx - body_w / 2, y + neck_h + shoulder_h, cx + body_w / 2, y + h],
+                          radius=body_w * 0.18, fill=color)
+    return body_w
+
+
+def draw_mark_patch(alpha):
+    """Bottle trio + "Three Ways" wordmark, built fresh every frame --
+    unlike type_layer/graphics_layer this is cheap (three simple shapes,
+    one short line of serif text) and doesn't need the settled-frame
+    caching those two require. Returns an RGBA patch sized to its own
+    content, to be pasted at (MARK_PAD, MARK_PAD) on the main frame.
+
+    Carries its own tight backing chip -- checked against an actual
+    rendered frame, not assumed: the mark reads fine against the dark
+    Hermitage background with no help at all, but against the bright
+    golden-hour sky (the hook, close, and half the region beats) PAPER
+    text at this size was nearly unreadable. Same fix as the Quick Sips
+    wordmark's tight chip from an earlier session -- sized to the mark's
+    own content, not a bar across the corner, and light enough (35%)
+    that it doesn't add visible weight on the dark beat where it isn't
+    needed."""
+    bh = 74
+    body_w = bh * 0.46
+    gap = 15
+    row_w = 3 * body_w + 2 * gap
+    text_gap = 26
+    tf = font("Playfair-Bold.ttf", 50 * SS)
+    ascent, descent = tf.getmetrics()
+
+    canvas_w = int((row_w + text_gap) * SS) + 560 * SS
+    canvas_h = int(bh * SS) + 20 * SS
+    lay = Image.new("RGBA", (canvas_w, canvas_h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(lay)
+
+    text_x = int((row_w + text_gap) * SS)
+    text_w = int(d.textlength("Three Ways", font=tf))
+    chip_pad = 18 * SS
+    d.rounded_rectangle(
+        [-chip_pad, -chip_pad, text_x + text_w + chip_pad, int(bh * SS) + chip_pad],
+        radius=20 * SS, fill=(10, 8, 14, int(255 * 0.35)))
+
+    for i, color in enumerate(MARK_COLORS):
+        _draw_bottle_icon(d, i * (body_w + gap) * SS, 0, bh * SS, color)
+    text_y = int(bh * SS / 2 - (ascent + descent) / 2)
+    # Title Case, serif -- Playfair is the same face used for the
+    # hook/close headline, so the mark reads as part of the same family
+    # rather than a mismatched logotype bolted on.
+    d.text((text_x, text_y), "Three Ways", font=tf, fill=PAPER + (255,))
+
+    if alpha < 0.999:
+        r, g, b, a = lay.split()
+        a = a.point(lambda v: int(v * alpha))
+        lay = Image.merge("RGBA", (r, g, b, a))
+    return lay.resize((canvas_w // SS, canvas_h // SS), Image.LANCZOS)
+
+
 # ---- progress strip -----------------------------------------------
 NODE_X = [W // 2 - 220, W // 2, W // 2 + 220]
 NODE_Y = int(H * 0.855)
@@ -295,25 +388,60 @@ NODE_R = 14
 LINE_W = 3
 
 
-def draw_progress(d, lit_count, pulse_t, connecting_t):
-    """lit_count: how many nodes (0-3) are lit, left to right.
-    pulse_t: 0-1 progress of the just-lit node's scale-pulse, or None.
-    connecting_t: 0-1 fill progress of the closing connector line, or
-    None on any beat but the close."""
+def draw_progress(d, lit_through, grow_node, grow_t, finale_t=None):
+    """Redesigned -- the old version set lit_count to this beat's fully-
+    advanced state for the ENTIRE beat, so nodes 2-4 all SNAPPED to
+    "already lit" at frame 0 with only a small decorative scale-pulse;
+    only the close beat (via connecting_t sweeping the whole strip) had
+    real 0-to-1 growth. That is what "broken on all but the last slide"
+    meant -- the earlier three beats never actually animated, they just
+    appeared pre-finished. Every beat with its own node now genuinely
+    grows the new segment in, on the same footing as the close beat.
+
+    lit_through: nodes [0, lit_through) are already SOLID from earlier
+      beats -- drawn at full opacity, no animation, every frame.
+    grow_node: the index (0, 1, or 2) of the node THIS beat is lighting,
+      or None if nothing is animating (the hook beat, or a region beat
+      past its own growth window).
+    grow_t: 0-1 progress of grow_node's own arrival -- for grow_node=0
+      this is a solo pop-in (no segment, nothing precedes the first
+      node); for grow_node>0 a connecting segment from NODE_X[grow_node-1]
+      to NODE_X[grow_node] grows in step with the same t.
+    finale_t: 0-1, close-beat-only -- a synchronized pulse across all
+      three (already fully solid) nodes, the strip's "we're done" beat.
+      Distinct from grow_t: nothing is growing on the close beat, since
+      every segment already completed progressively during beats 2-4.
+    """
     d.line([(NODE_X[0], NODE_Y), (NODE_X[2], NODE_Y)], fill=(255, 255, 255, 70), width=LINE_W)
-    if connecting_t is not None:
-        cx = NODE_X[0] + (NODE_X[2] - NODE_X[0]) * ease(connecting_t)
-        d.line([(NODE_X[0], NODE_Y), (cx, NODE_Y)], fill=ACCENT + (255,), width=LINE_W + 2)
-    elif lit_count > 0:
-        cx = NODE_X[min(lit_count, 3) - 1]
-        d.line([(NODE_X[0], NODE_Y), (cx, NODE_Y)], fill=ACCENT + (230,), width=LINE_W + 2)
+
+    # Solid, already-complete segments -- everything before this beat's
+    # own action, drawn every frame with no animation.
+    if lit_through >= 2:
+        d.line([(NODE_X[0], NODE_Y), (NODE_X[lit_through - 1], NODE_Y)],
+               fill=ACCENT + (240,), width=LINE_W + 2)
+
+    # The segment THIS beat is growing.
+    if grow_node is not None and grow_node > 0 and grow_t is not None:
+        x0, x1 = NODE_X[grow_node - 1], NODE_X[grow_node]
+        cx = x0 + (x1 - x0) * ease(grow_t)
+        d.line([(x0, NODE_Y), (cx, NODE_Y)], fill=ACCENT + (240,), width=LINE_W + 2)
 
     for i, x in enumerate(NODE_X):
-        is_lit = i < lit_count or connecting_t is not None
         r = NODE_R
-        if i == lit_count - 1 and pulse_t is not None and connecting_t is None:
-            bump = 1.0 + 0.35 * (1 - abs(pulse_t * 2 - 1))
+        if finale_t is not None:
+            bump = 1.0 + 0.22 * (1 - abs(finale_t * 2 - 1))
             r = int(NODE_R * bump)
+            is_lit = True
+        elif grow_node is not None and i == grow_node:
+            # The node THIS beat lights: pops in shortly after its
+            # segment (or, for node 0, itself) starts growing, rather
+            # than existing at full size from frame 0.
+            is_lit = grow_t > 0.12
+            bump = 1.0 + 0.35 * ease(min(1.0, grow_t / 0.5)) if grow_t < 0.5 else 1.35 - 0.35 * ease(
+                min(1.0, (grow_t - 0.5) / 0.5))
+            r = int(NODE_R * max(1.0, bump))
+        else:
+            is_lit = i < lit_through
         if is_lit:
             d.ellipse([x - r, NODE_Y - r, x + r, NODE_Y + r], fill=ACCENT + (255,))
         else:
@@ -323,7 +451,8 @@ def draw_progress(d, lit_count, pulse_t, connecting_t):
 
 # ---- stat bar --------------------------------------------------------
 BAR_X0, BAR_X1 = 64, W - 64
-BAR_Y = int(H * 0.79)
+BAR_Y = 1592  # moved down from 0.79H (1516) -- see type_layer's layout
+# comment for the full bottom-up budget this and NODE_Y both belong to.
 BAR_H = 10
 
 
@@ -348,29 +477,43 @@ def type_layer(beat, t_beat, dur):
     muddying the accent gold toward brown (caught by inspecting an
     actual mid-beat frame, not assumed from the code). The scrim is now
     applied once to the base photo in build(), before the graphics
-    layer, so gold stays gold and only the text sits in this layer."""
+    layer, so gold stays gold and only the text sits in this layer.
+
+    LAYOUT, rewritten per Steve's review (fonts up significantly, block
+    lowered into the bottom third). The old version anchored everything
+    off one `baseline` fraction of frame height; that doesn't scale --
+    bigger type needs a bigger budget, and simply sliding one baseline
+    number down pushes the block into the stat bar / progress strip
+    below it. Rebuilt bottom-up instead, each element's position
+    computed from a fixed pixel GAP to the element below it (in 1x
+    units, converted to SS only when actually drawing), so the whole
+    stack can be retuned by adjusting one gap rather than re-deriving
+    every offset. Verified against BAR_Y/NODE_Y/credit's fixed positions
+    by rendering and inspecting an actual frame, not just by the numbers
+    summing correctly on paper."""
     lay = Image.new("RGBA", (W * SS, H * SS), (0, 0, 0, 0))
     d = ImageDraw.Draw(lay)
 
-    f_head = font("Playfair-Bold.ttf", 84 * SS)
-    f_sub = font("Archivo-Medium.ttf", 34 * SS)
-    # Label bumped 58 -> 78 per Steve's review -- noticeably the biggest
-    # text element on a region beat now apart from the headline on the
-    # hook/close beats, which is the right hierarchy: the region name is
-    # the thing a viewer should read first on beats 2-4.
-    f_label = font("ArchivoCond-SemiBold.ttf", 78 * SS)
-    f_blurb = font("Archivo-Medium.ttf", 32 * SS)
-    f_stat = font("Archivo-Medium.ttf", 30 * SS)
-    f_cred = font("Archivo-Light.ttf", 15 * SS)
+    # Sizes roughly 35-40% larger across the board, per Steve's "raise
+    # significantly" -- these are 1x point sizes; SS is applied at the
+    # font() call same as before.
+    f_head = font("Playfair-Bold.ttf", 116 * SS)
+    f_sub = font("Archivo-Medium.ttf", 46 * SS)
+    f_label = font("ArchivoCond-SemiBold.ttf", 104 * SS)
+    f_blurb = font("Archivo-Medium.ttf", 42 * SS)
+    f_stat = font("Archivo-Medium.ttf", 36 * SS)
+    f_cred = font("Archivo-Light.ttf", 15 * SS)  # credit stays small on purpose -- attribution, not a headline
 
     alpha, yoff = super_alpha_offset(t_beat, dur)
     a255 = int(255 * alpha)
-    baseline = int(H * SS * 0.70)
 
     if beat["kind"] in ("hook", "close"):
+        # Bottom-anchored 82px above the progress strip (NODE_Y=1642),
+        # in 1x units -- comfortably clear of it at every font size.
+        sub_bottom = 1560
         sub_lines = beat["sub"].split("\n")
         sh = int(f_sub.size * 1.4)
-        sub_top = baseline - len(sub_lines) * sh
+        sub_top = (sub_bottom * SS) - len(sub_lines) * sh
         for i, ln in enumerate(sub_lines):
             d.text((64 * SS, sub_top + i * sh + yoff * SS), ln, font=f_sub,
                    fill=PAPER + (a255,))
@@ -381,30 +524,28 @@ def type_layer(beat, t_beat, dur):
             d.text((64 * SS, head_top + i * hh + yoff * SS), ln, font=f_head,
                    fill=PAPER + (a255,))
     else:
-        # Three lines now, stacked bottom-up from the stat line so adding
-        # the blurb didn't require re-deriving every offset by hand:
-        # stat -> blurb (wrapped to two lines if it doesn't fit one) ->
-        # label, each anchored to the block above it.
-        stat_y = baseline - 70 * SS + yoff * SS
+        # Bottom-up budget (1x units): stat text sits 36px above the
+        # stat BAR (BAR_Y=1592); blurb sits 30px above the stat text;
+        # label sits 34px above the blurb. Each gap is a real, tuned
+        # value checked against a rendered frame -- not derived from a
+        # formula that assumes it'll just work.
+        stat_bottom = BAR_Y - 36
+        stat_h = int(f_stat.size * 1.3 / SS)
+        stat_y = (stat_bottom - stat_h) * SS + yoff * SS
 
         blurb_lines = _wrap(beat["blurb"], f_blurb, (W - 128) * SS, d)
         bh = int(f_blurb.size * 1.32)
-        blurb_top = stat_y - 24 * SS - len(blurb_lines) * bh
+        blurb_bottom = stat_y - 30 * SS
+        blurb_top = blurb_bottom - len(blurb_lines) * bh
 
-        label_top = blurb_top - 26 * SS - int(f_label.size * 1.05)
+        label_h = int(f_label.size * 1.05)
+        label_bottom = blurb_top - 34 * SS
+        label_top = label_bottom - label_h
 
-        # Text chip -- new, and only for beats that ask for one (only
-        # Hermitage does). The global bottom scrim (~54% opacity at this
-        # height) is nowhere near dark enough to hold text over a busy
-        # background; on every other region beat the background there is
-        # open sky, distant hillside or plain ground, so the scrim alone
-        # was enough. The Chave bottle photo's OWN paper label sits
-        # directly in this text band, and its cream ground with dark
-        # serif type was reading right through our supers, turning both
-        # into noise -- caught by looking at an actual rendered frame,
-        # not from the layout math alone. A real, deliberately visible
-        # dark card behind the block, not a subtle assist, since nothing
-        # subtle was going to beat printed label type at this contrast.
+        # Text chip -- only for beats that ask for one (only Hermitage
+        # does). The global bottom scrim is nowhere near dark enough to
+        # hold text over a busy background; see BEATS' text_chip comment
+        # for why this one specifically needs it.
         if beat.get("text_chip"):
             chip_top = label_top - 24 * SS
             chip_bottom = stat_y + int(f_stat.size * 1.3)
@@ -426,7 +567,7 @@ def type_layer(beat, t_beat, dur):
     return lay.resize((W, H), Image.LANCZOS)
 
 
-def graphics_layer(beat, t_beat, lit_count, pulse_t, connecting_t):
+def graphics_layer(beat, t_beat, lit_through, grow_node, grow_t, finale_t=None):
     """Progress strip + stat bar -- drawn separately from type_layer
     because these are NOT subject to the supers' slide/fade envelope;
     they are the "persistent" element REELS_SPEC_v2.md distinguishes
@@ -434,7 +575,7 @@ def graphics_layer(beat, t_beat, lit_count, pulse_t, connecting_t):
     not type -- no supersampling benefit."""
     lay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(lay)
-    draw_progress(d, lit_count, pulse_t, connecting_t)
+    draw_progress(d, lit_through, grow_node, grow_t, finale_t)
     if beat.get("stat_frac") is not None:
         fill_t = min(1.0, t_beat / 1.2)
         draw_stat_bar(d, beat["stat_frac"], fill_t)
@@ -454,21 +595,14 @@ def build(mp4=None):
         mp4], stdin=subprocess.PIPE)
 
     n_frames = int(BEAT_SECONDS * FPS)
+    total_dur = len(BEATS) * BEAT_SECONDS
     idx = 0
+    mark_cache = {}  # keyed by rounded alpha -- see below
+
     for b, beat in enumerate(BEATS):
         z0, z1 = beat["zoom"]
         zmax = max(z0, z1)
         base = load_fill(beat["photo"], zmax, beat["crop_anchor"])
-        # Scrim applied to the base photo ONCE per beat, before the
-        # per-frame crop/zoom -- not per frame, and not as part of
-        # type_layer (see that function's docstring for why). Baking it
-        # into base means it zooms/pans WITH the photo, which is correct:
-        # the scrim is meant to read as fixed screen-space darkening
-        # at the bottom of frame regardless of zoom, and since the zoom
-        # range here is modest (a few percent) and the scrim's own
-        # gradient is broad, the difference is not visible in practice
-        # -- confirmed by inspecting rendered frames from both the start
-        # and end of a beat's zoom range, not assumed.
         scrim_layer = Image.new("RGBA", base.size, (0, 0, 0, 0))
         scrim_full = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         scrim(scrim_full)
@@ -476,27 +610,18 @@ def build(mp4=None):
         base = Image.alpha_composite(base.convert("RGBA"), scrim_layer).convert("RGB")
         bw, bh = base.size
 
-        lit_before = max(0, beat["node"]) if isinstance(beat["node"], int) else (
-            3 if beat["node"] == "complete" else 0)
-        lit_after = lit_before + 1 if isinstance(beat["node"], int) else lit_before
+        # Progress-bar state machine, rewritten -- see draw_progress's
+        # docstring for why the old version never actually animated on
+        # beats 1-3. GROW_WINDOW is how long this beat's own node/segment
+        # takes to arrive; it must stay <= the caching window below or
+        # the animation gets truncated by the settled-frame cutover.
+        GROW_WINDOW = 0.6
+        node = beat["node"]
+        prior_lit = node if isinstance(node, int) else (3 if node == "complete" else 0)
+        settled_lit = prior_lit + 1 if isinstance(node, int) else prior_lit
 
-        # PERFORMANCE: type_layer/graphics_layer are real per-frame PIL
-        # draws (2160x3840 supersampled text, ellipses, rounded rects).
-        # The first build of this file recomputed both from scratch for
-        # every one of 600 frames and the background process was killed
-        # partway through beat 1 -- almost certainly for taking too
-        # long, not for erroring (nothing in the log but the beat-1
-        # start line). Most of a 4s beat is visually STATIC once the
-        # supers finish sliding in, the bar finishes filling, and the
-        # node finishes pulsing -- there is no reason to redraw
-        # identical pixels 90+ times. Only the frames inside the actual
-        # transition windows get a fresh layer; every other frame reuses
-        # one cached "settled" composite. This is the fix, not a
-        # workaround -- the visual result is unchanged, since the
-        # cached layer IS what those frames would have rendered anyway.
-        type_active_frames = int((0.4 + 0.3) * FPS) + 4  # small margin
-        gfx_active_seconds = 1.2 if beat.get("stat_frac") is not None else (
-            1.0 if beat["node"] == "complete" else 0.3)
+        type_active_frames = int((0.4 + 0.3) * FPS) + 4
+        gfx_active_seconds = max(1.2 if beat.get("stat_frac") is not None else 0, GROW_WINDOW)
         gfx_active_frames = int(gfx_active_seconds * FPS) + 2
 
         type_cache = {}
@@ -511,13 +636,11 @@ def build(mp4=None):
                 type_cache["settled"] = type_layer(beat, 1.5, BEAT_SECONDS)
             return type_cache["settled"]
 
-        def get_gfx(f, t_beat, lit_count, pulse_t, connecting_t):
+        def get_gfx(f, t_beat, lit_through, grow_node, grow_t, finale_t):
             if f < gfx_active_frames:
-                return graphics_layer(beat, t_beat, lit_count, pulse_t, connecting_t)
+                return graphics_layer(beat, t_beat, lit_through, grow_node, grow_t, finale_t)
             if "settled" not in gfx_cache:
-                gfx_cache["settled"] = graphics_layer(
-                    beat, 999, lit_count, None,
-                    1.0 if beat["node"] == "complete" else None)
+                gfx_cache["settled"] = graphics_layer(beat, 999, settled_lit, None, None, None)
             return gfx_cache["settled"]
 
         for f in range(n_frames):
@@ -531,21 +654,43 @@ def build(mp4=None):
             top = (bh - ch) // 2
             frame = base.crop((left, top, left + cw, top + ch)).resize((W, H), Image.BILINEAR)
 
-            pulse_t, connecting_t, lit_count = None, None, lit_before
-            if isinstance(beat["node"], int):
-                pulse_window = 0.3
-                if t_beat < pulse_window:
-                    pulse_t = t_beat / pulse_window
-                lit_count = lit_after
-            elif beat["node"] == "complete":
-                connecting_t = min(1.0, t_beat / 1.0)
-                lit_count = 3
+            lit_through, grow_node, grow_t, finale_t = prior_lit, None, None, None
+            if isinstance(node, int):
+                if t_beat < GROW_WINDOW:
+                    grow_node, grow_t = node, t_beat / GROW_WINDOW
+                else:
+                    lit_through = settled_lit
+            elif node == "complete":
+                lit_through = 3
+                if t_beat < GROW_WINDOW:
+                    finale_t = t_beat / GROW_WINDOW
 
-            gfx = get_gfx(f, t_beat, lit_count, pulse_t, connecting_t)
+            gfx = get_gfx(f, t_beat, lit_through, grow_node, grow_t, finale_t)
             txt = get_type(f, t_beat)
             frame = frame.convert("RGBA")
             frame = Image.alpha_composite(frame, gfx)
             frame = Image.alpha_composite(frame, txt)
+
+            # Persistent mark -- global elapsed time, not t_beat, so it
+            # doesn't reset or re-fade at every hard cut. Cached by
+            # rounded alpha (2 decimal places) rather than recomputed
+            # every frame: during the long solid-alpha=1.0 stretch
+            # (roughly frames 15-587) every call rounds to the same key
+            # and reuses one composite; only the ~27 frames inside the
+            # two fade windows actually redraw it.
+            global_t = idx / FPS
+            m_alpha = mark_alpha(global_t, total_dur)
+            if m_alpha > 0.002:
+                key = round(m_alpha, 2)
+                if key not in mark_cache:
+                    mark_cache.clear()  # alpha only moves one direction
+                    # at a time within a short window, so at most one
+                    # extra entry is ever alive -- clearing keeps this
+                    # from growing across 600 frames for no reason.
+                    mark_cache[key] = draw_mark_patch(m_alpha)
+                patch = mark_cache[key]
+                frame.paste(patch, (MARK_PAD, MARK_PAD), patch)
+
             proc.stdin.write(frame.convert("RGB").tobytes())
             idx += 1
         print(f"  beat {b + 1}  {beat['kind']:7s}  {beat['photo']}", flush=True)
