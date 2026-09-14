@@ -43,13 +43,10 @@ interaction was flagged as the thing most likely to need a second pass):
      over its first ~1s -- the "visibly complete" state the spec calls
      for, so the loop back to beat 1's empty strip reads as a full
      cycle, not a reset.
-  2. Animated stat bars -- same fill-bar visual language as the static
-     decks' dashboards. Fills over the first 1.2s of each region beat,
-     then holds. Scaled against a shared BAR_MAX (50 hL/ha, above the
-     highest sourced value) rather than each region's own range, so
-     Saint-Joseph's and Hermitage's bars render the SAME length (both
-     40 hL/ha) and Crozes' renders longer (45) -- a real comparison
-     across the hard cuts, not decoration.
+  2. [REMOVED in a later revision -- see the "stat bar removed" note
+     further down. This originally described an animated fill bar
+     above the node strip; it read as a second, redundant progress
+     indicator and was cut, not fixed.]
   3. Supers that slide + fade (0.4s in, 0.3s out) rather than sitting
      static for the full beat -- the single change REELS_SPEC_v2.md
      names as most responsible for the "polished" read.
@@ -92,8 +89,13 @@ ACCENT = (232, 181, 79)  # brightened per Steve's review -- was (186,149,74),
 # brownish -- confirmed below, not assumed from the RGB numbers alone.
 PAPER = (251, 249, 244)
 
-BAR_MAX = 50.0  # hL/ha -- shared scale, see docstring point 2
 MARK_PAD = 44  # persistent corner mark's margin from the top-left edge
+MARK_COLORS = [(76, 112, 72), (196, 138, 58), (142, 46, 56)]  # green, amber, garnet --
+# defined here (not near draw_mark_patch/_draw_bottle_icon, where it
+# conceptually belongs) because BEATS, below, needs to reference these
+# same three colors for each region label -- moving BEATS after this
+# file's function definitions would be a bigger reshuffle than moving
+# one three-line constant up.
 
 CRED_TAIN = "Guerinf / Wikimedia Commons (CC BY-SA 4.0)"
 CRED_COVER = "Anna Hinckel / Pexels"
@@ -148,12 +150,13 @@ BEATS = [
         # loop-close zoom-match still holds (close must END at the exact
         # zoom hook STARTS at, or the loop seam shows as a visible jump
         # in framing, not just a cut).
-        node=None, stat_frac=None, zoom=(1.00, 1.24),
+        node=None, zoom=(1.00, 1.24),
         crop_anchor=0.40,
     ),
     dict(
         kind="region", photo="nr_crozes_chanoscurson", credit=CRED_CROZES,
-        label="CROZES-HERMITAGE",
+        label="Crozes-Hermitage",
+        label_color=MARK_COLORS[0],  # matches the first (green) mark bottle
         # 10-12 word style+history line, D3 Ch.7: "The AOC was created in
         # 1937 and extended... in 1956... the soils are deeper and more
         # fertile than in neighbouring Hermitage and the resulting wines
@@ -161,23 +164,25 @@ BEATS = [
         blurb="Created in 1937, enlarged in 1956 \u2014 deeper soil, softer "
               "wines than Hermitage.",
         stat="~1,700 HA  \u00b7  45 HL/HA  \u00b7  MID-PRICED",
-        node=0, stat_frac=45 / BAR_MAX, zoom=(1.00, 1.22),
+        node=0, zoom=(1.00, 1.22),
         crop_anchor=0.42,
     ),
     dict(
         kind="region", photo="nr_saintjoseph_pexels", credit=CRED_SJ,
-        label="SAINT-JOSEPH",
+        label="Saint-Joseph",
+        label_color=MARK_COLORS[1],  # matches the second (amber) mark bottle
         # D3 Ch.7: "Nearly 90 per cent of the wines are red... extended in
         # 1994... today the debate is whether to reduce the appellation."
         blurb="Nearly 90% red, wide price range \u2014 extended in 1994, "
               "still debated today.",
         stat="50 KM OF APPELLATION  \u00b7  40 HL/HA",
-        node=1, stat_frac=40 / BAR_MAX, zoom=(1.00, 1.24),
+        node=1, zoom=(1.00, 1.24),
         crop_anchor=0.38,
     ),
     dict(
         kind="region", photo="nr_hermitage_chave_bottle", credit=CRED_HERM,
-        label="HERMITAGE",
+        label="Hermitage",
+        label_color=MARK_COLORS[2],  # matches the third (garnet) mark bottle
         # D3 Ch.7: "producing wine since the Greco-Roman era"; "a model of
         # the world's most structured and long-lived Syrah wines."
         blurb="Vines since Roman times. Structured, long-lived reds \u2014 "
@@ -187,7 +192,7 @@ BEATS = [
         # and swinging the zoom as hard as the others would send the
         # bottle drifting out of frame at these anchor settings -- but
         # meaningfully more motion than the old (1.03,1.00) had.
-        node=2, stat_frac=40 / BAR_MAX, zoom=(1.14, 1.00),
+        node=2, zoom=(1.14, 1.00),
         text_chip=True,  # see type_layer -- the bottle's own paper label
         # sits directly in the text zone; the global scrim alone can't
         # hold text over printed type at that contrast.
@@ -197,7 +202,7 @@ BEATS = [
         kind="close", photo="nr_cover_goldenhour", credit=CRED_COVER,
         head="Three Ways\nInto Syrah",
         sub="Same grape. The difference is the soil \u2014\nand how steeply it sits.",
-        node="complete", stat_frac=None, zoom=(1.24, 1.00),
+        node="complete", zoom=(1.24, 1.00),
         crop_anchor=0.40,
     ),
 ]
@@ -308,25 +313,36 @@ def mark_alpha(global_t, total_dur):
     return 1.0
 
 
-MARK_COLORS = [(64, 96, 62), (168, 112, 44), (114, 34, 46)]  # green, amber, garnet
-
-
-def _draw_bottle_icon(d, x, y, h, color):
-    """Simple bottle silhouette -- neck, tapered shoulder, rounded
-    body -- built from primitives rather than a sourced glyph, the same
-    pattern used for the whole-bunch reel's Split Decision mark before
-    a real asset existed for it. Three of these in different colors is
-    "three wine bottles of varying colors," not a specific label design."""
+def _draw_bottle_icon(d, x, y, h, color, stroke=3):
+    """Line-art bottle -- outline only, no fill, plus a single stroke
+    near the top of the neck for the foil capsule. Traced as one closed
+    path (d.line with the start point repeated at the end) rather than
+    three separately-outlined shapes, so the neck/shoulder/body joins
+    are continuous lines with no doubled or misaligned seams at the
+    corners -- outlining a rectangle, a polygon and a rounded-rect
+    separately would have left three independent borders meeting at
+    each joint instead of one."""
     neck_w, body_w = h * 0.16, h * 0.46
     neck_h, shoulder_h = h * 0.30, h * 0.14
     cx = x + body_w / 2
-    d.rectangle([cx - neck_w / 2, y, cx + neck_w / 2, y + neck_h], fill=color)
-    d.polygon([
-        (cx - neck_w / 2, y + neck_h), (cx + neck_w / 2, y + neck_h),
-        (cx + body_w / 2, y + neck_h + shoulder_h), (cx - body_w / 2, y + neck_h + shoulder_h),
-    ], fill=color)
-    d.rounded_rectangle([cx - body_w / 2, y + neck_h + shoulder_h, cx + body_w / 2, y + h],
-                          radius=body_w * 0.18, fill=color)
+    pts = [
+        (cx - neck_w / 2, y),
+        (cx + neck_w / 2, y),
+        (cx + neck_w / 2, y + neck_h),
+        (cx + body_w / 2, y + neck_h + shoulder_h),
+        (cx + body_w / 2, y + h),
+        (cx - body_w / 2, y + h),
+        (cx - body_w / 2, y + neck_h + shoulder_h),
+        (cx - neck_w / 2, y + neck_h),
+    ]
+    d.line(pts + [pts[0]], fill=color, width=stroke, joint="curve")
+    # Foil capsule -- a single band near the bottle's mouth, slightly
+    # wider than the neck so it reads as a wrap rather than another
+    # structural line of the bottle itself.
+    cap_y = y + neck_h * 0.28
+    cap_over = neck_w * 0.22
+    d.line([(cx - neck_w / 2 - cap_over, cap_y), (cx + neck_w / 2 + cap_over, cap_y)],
+           fill=color, width=stroke + 1)
     return body_w
 
 
@@ -337,15 +353,13 @@ def draw_mark_patch(alpha):
     caching those two require. Returns an RGBA patch sized to its own
     content, to be pasted at (MARK_PAD, MARK_PAD) on the main frame.
 
-    Carries its own tight backing chip -- checked against an actual
-    rendered frame, not assumed: the mark reads fine against the dark
-    Hermitage background with no help at all, but against the bright
-    golden-hour sky (the hook, close, and half the region beats) PAPER
-    text at this size was nearly unreadable. Same fix as the Quick Sips
-    wordmark's tight chip from an earlier session -- sized to the mark's
-    own content, not a bar across the corner, and light enough (35%)
-    that it doesn't add visible weight on the dark beat where it isn't
-    needed."""
+    NO BACKING CHIP -- removed per Steve's review (it read as a grey
+    box). Legibility against the bright golden-hour sky instead comes
+    from a stroke on the text itself (stroke_width on d.text, a dark
+    outline around each glyph) rather than a rectangle behind the whole
+    lockup -- the same contrast problem, solved without adding a shape
+    that reads as a plaque. Checked against both the brightest and
+    darkest backgrounds in the reel after the change, not assumed."""
     bh = 74
     body_w = bh * 0.46
     gap = 15
@@ -359,20 +373,15 @@ def draw_mark_patch(alpha):
     lay = Image.new("RGBA", (canvas_w, canvas_h), (0, 0, 0, 0))
     d = ImageDraw.Draw(lay)
 
-    text_x = int((row_w + text_gap) * SS)
-    text_w = int(d.textlength("Three Ways", font=tf))
-    chip_pad = 18 * SS
-    d.rounded_rectangle(
-        [-chip_pad, -chip_pad, text_x + text_w + chip_pad, int(bh * SS) + chip_pad],
-        radius=20 * SS, fill=(10, 8, 14, int(255 * 0.35)))
-
     for i, color in enumerate(MARK_COLORS):
         _draw_bottle_icon(d, i * (body_w + gap) * SS, 0, bh * SS, color)
+    text_x = int((row_w + text_gap) * SS)
     text_y = int(bh * SS / 2 - (ascent + descent) / 2)
     # Title Case, serif -- Playfair is the same face used for the
     # hook/close headline, so the mark reads as part of the same family
     # rather than a mismatched logotype bolted on.
-    d.text((text_x, text_y), "Three Ways", font=tf, fill=PAPER + (255,))
+    d.text((text_x, text_y), "Three Ways", font=tf, fill=PAPER + (255,),
+           stroke_width=int(50 * SS * 0.09), stroke_fill=(10, 8, 14, 235))
 
     if alpha < 0.999:
         r, g, b, a = lay.split()
@@ -450,21 +459,6 @@ def draw_progress(d, lit_through, grow_node, grow_t, finale_t=None):
 
 
 # ---- stat bar --------------------------------------------------------
-BAR_X0, BAR_X1 = 64, W - 64
-BAR_Y = 1592  # moved down from 0.79H (1516) -- see type_layer's layout
-# comment for the full bottom-up budget this and NODE_Y both belong to.
-BAR_H = 10
-
-
-def draw_stat_bar(d, frac, fill_t):
-    d.rounded_rectangle([BAR_X0, BAR_Y, BAR_X1, BAR_Y + BAR_H],
-                          radius=BAR_H // 2, fill=(255, 255, 255, 55))
-    fw = int((BAR_X1 - BAR_X0) * frac * ease(fill_t))
-    if fw > BAR_H:
-        d.rounded_rectangle([BAR_X0, BAR_Y, BAR_X0 + fw, BAR_Y + BAR_H],
-                              radius=BAR_H // 2, fill=ACCENT + (255,))
-
-
 def type_layer(beat, t_beat, dur):
     """Composed fresh every frame at 2x (unlike the whole-bunch reel,
     this one changes within a beat -- supers move and bars fill -- so
@@ -483,14 +477,15 @@ def type_layer(beat, t_beat, dur):
     lowered into the bottom third). The old version anchored everything
     off one `baseline` fraction of frame height; that doesn't scale --
     bigger type needs a bigger budget, and simply sliding one baseline
-    number down pushes the block into the stat bar / progress strip
-    below it. Rebuilt bottom-up instead, each element's position
-    computed from a fixed pixel GAP to the element below it (in 1x
-    units, converted to SS only when actually drawing), so the whole
-    stack can be retuned by adjusting one gap rather than re-deriving
-    every offset. Verified against BAR_Y/NODE_Y/credit's fixed positions
-    by rendering and inspecting an actual frame, not just by the numbers
-    summing correctly on paper."""
+    number down pushes the block into the progress strip below it.
+    Rebuilt bottom-up instead, each element's position computed from a
+    fixed pixel GAP to the element below it (in 1x units, converted to
+    SS only when actually drawing), so the whole stack can be retuned
+    by adjusting one gap rather than re-deriving every offset. Verified
+    against NODE_Y/credit's fixed positions by rendering and inspecting
+    an actual frame, not just by the numbers summing correctly on
+    paper. (Originally anchored to a since-removed animated stat bar's
+    own position -- see the "stat bar removed" note further down.)"""
     lay = Image.new("RGBA", (W * SS, H * SS), (0, 0, 0, 0))
     d = ImageDraw.Draw(lay)
 
@@ -499,7 +494,10 @@ def type_layer(beat, t_beat, dur):
     # font() call same as before.
     f_head = font("Playfair-Bold.ttf", 116 * SS)
     f_sub = font("Archivo-Medium.ttf", 46 * SS)
-    f_label = font("ArchivoCond-SemiBold.ttf", 104 * SS)
+    f_label = font("Playfair-Bold.ttf", 104 * SS)  # serif, title case,
+    # per Steve's review -- was ArchivoCond-SemiBold in all caps. Same
+    # face as f_head so headline and region-name treatments read as one
+    # family rather than two competing type systems.
     f_blurb = font("Archivo-Medium.ttf", 42 * SS)
     f_stat = font("Archivo-Medium.ttf", 36 * SS)
     f_cred = font("Archivo-Light.ttf", 15 * SS)  # credit stays small on purpose -- attribution, not a headline
@@ -524,12 +522,14 @@ def type_layer(beat, t_beat, dur):
             d.text((64 * SS, head_top + i * hh + yoff * SS), ln, font=f_head,
                    fill=PAPER + (a255,))
     else:
-        # Bottom-up budget (1x units): stat text sits 36px above the
-        # stat BAR (BAR_Y=1592); blurb sits 30px above the stat text;
-        # label sits 34px above the blurb. Each gap is a real, tuned
-        # value checked against a rendered frame -- not derived from a
-        # formula that assumes it'll just work.
-        stat_bottom = BAR_Y - 36
+        # Bottom-up budget (1x units): stat text sits directly above the
+        # progress strip (NODE_Y) now that the redundant animated stat
+        # bar between them is gone -- was anchored to that bar's own
+        # position (BAR_Y - 36); re-anchored to NODE_Y directly so
+        # removing the bar didn't leave a dead gap where it used to be.
+        # Blurb sits 30px above the stat text; label sits 34px above
+        # the blurb -- unchanged.
+        stat_bottom = NODE_Y - 40
         stat_h = int(f_stat.size * 1.3 / SS)
         stat_y = (stat_bottom - stat_h) * SS + yoff * SS
 
@@ -542,15 +542,28 @@ def type_layer(beat, t_beat, dur):
         label_bottom = blurb_top - 34 * SS
         label_top = label_bottom - label_h
 
-        # Text chip -- only for beats that ask for one (only Hermitage
-        # does). The global bottom scrim is nowhere near dark enough to
-        # hold text over a busy background; see BEATS' text_chip comment
-        # for why this one specifically needs it.
+        # Text chips -- rewritten per Steve's review. The old version
+        # drew ONE rectangle spanning the full frame width behind the
+        # whole three-line block, which read as a flat grey panel
+        # rather than something sitting behind the words -- exactly the
+        # "gray box" look he flagged, worst on Hermitage where it was
+        # most visible against the bottle. Now each LINE gets its own
+        # chip, snug to that line's actual rendered glyph bounds
+        # (d.textbbox, not an estimated line-height) plus a small pad --
+        # so the backing follows the text's own shape (three different
+        # widths: label, each blurb line, stat line) instead of one
+        # box wide enough for the longest line and empty air everywhere
+        # else. Only fires for beats that ask for one (only Hermitage).
         if beat.get("text_chip"):
-            chip_top = label_top - 24 * SS
-            chip_bottom = stat_y + int(f_stat.size * 1.3)
-            _chip(lay, (0, chip_top, W * SS, chip_bottom),
-                  (10, 8, 14), opacity=0.72)
+            pad = 12 * SS
+            for text, fnt, top in (
+                [(beat["label"], f_label, label_top)]
+                + [(ln, f_blurb, blurb_top + i * bh) for i, ln in enumerate(blurb_lines)]
+                + [(beat["stat"], f_stat, stat_y)]
+            ):
+                l, t, r, btm = d.textbbox((64 * SS, top), text, font=fnt)
+                _chip(lay, (l - pad, t - pad, r + pad, btm + pad),
+                      (10, 8, 14), opacity=0.60)
 
         d.text((64 * SS, stat_y), beat["stat"], font=f_stat,
                fill=PAPER + (int(220 * alpha),))
@@ -558,7 +571,7 @@ def type_layer(beat, t_beat, dur):
             d.text((64 * SS, blurb_top + i * bh), ln, font=f_blurb,
                    fill=PAPER + (int(235 * alpha),))
         d.text((64 * SS, label_top), beat["label"], font=f_label,
-               fill=ACCENT + (a255,))
+               fill=beat["label_color"] + (a255,))
 
     if beat["credit"]:
         d.text((64 * SS, int(H * SS * 0.945)), beat["credit"], font=f_cred,
@@ -568,17 +581,24 @@ def type_layer(beat, t_beat, dur):
 
 
 def graphics_layer(beat, t_beat, lit_through, grow_node, grow_t, finale_t=None):
-    """Progress strip + stat bar -- drawn separately from type_layer
-    because these are NOT subject to the supers' slide/fade envelope;
-    they are the "persistent" element REELS_SPEC_v2.md distinguishes
-    from supers. Composed at 1x since these are simple vector shapes,
-    not type -- no supersampling benefit."""
+    """Progress strip only now -- drawn separately from type_layer
+    because it is NOT subject to the supers' slide/fade envelope; it is
+    the "persistent" element REELS_SPEC_v2.md distinguishes from supers.
+    Composed at 1x since these are simple vector shapes, not type -- no
+    supersampling benefit.
+
+    Used to also draw an animated stat bar (yield ceiling as a fraction
+    of a shared max) above the node strip. Removed per Steve's review --
+    a second, separate progress-style indicator floating just above the
+    dotted node line read as redundant rather than additive, since the
+    node strip already carries the "where are we in the sequence"
+    signal. beat[t_beat] is kept as a parameter for call-site
+    compatibility even though nothing here uses it now -- draw_progress
+    takes no time-dependent argument beyond what's already in
+    grow_t/finale_t."""
     lay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(lay)
     draw_progress(d, lit_through, grow_node, grow_t, finale_t)
-    if beat.get("stat_frac") is not None:
-        fill_t = min(1.0, t_beat / 1.2)
-        draw_stat_bar(d, beat["stat_frac"], fill_t)
     return lay
 
 
@@ -621,8 +641,11 @@ def build(mp4=None):
         settled_lit = prior_lit + 1 if isinstance(node, int) else prior_lit
 
         type_active_frames = int((0.4 + 0.3) * FPS) + 4
-        gfx_active_seconds = max(1.2 if beat.get("stat_frac") is not None else 0, GROW_WINDOW)
-        gfx_active_frames = int(gfx_active_seconds * FPS) + 2
+        # Was max(1.2s-for-the-stat-bar-fill, GROW_WINDOW) -- the stat
+        # bar's own 1.2s fill no longer exists (removed above), so the
+        # progress-strip's own growth window is the only thing this
+        # needs to cover.
+        gfx_active_frames = int(GROW_WINDOW * FPS) + 2
 
         type_cache = {}
         gfx_cache = {}
