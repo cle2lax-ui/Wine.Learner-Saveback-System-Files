@@ -20,6 +20,7 @@ arc1/build_nrhone_geo.py
 arc1/build_nrhone_locator.py
 arc1/nr_fetch_photos.py
 arc1/reel_sd_wholebunch.py
+arc1/reel_three_ways.py
 arc1/render_fff_viognier.py
 arc1/render_fg_northern_rhone.py
 arc1/render_gtr_cornas.py
@@ -166,6 +167,7 @@ photos/nr_condrieu_pano.jpg
 photos/nr_coterotie_chaillees.jpg
 photos/nr_coterotie_roches.jpg
 photos/nr_cover_coterotie.jpg
+photos/nr_crozes_chanoscurson.jpg
 photos/nr_demimuid.jpg
 photos/nr_echalas.jpg
 photos/nr_echalas_condrieu.jpg

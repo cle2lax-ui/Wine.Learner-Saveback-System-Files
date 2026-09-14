@@ -299,5 +299,18 @@
   "credit": "François Bassaget / Wikimedia Commons (CC BY-SA 4.0)",
   "local_path": "/home/claude/repo/photos/nr_saintjoseph_sarras_vigne.jpg",
   "sourcing_note": "Found via commune-level search (Sarras), not the AOC name -- 'Saint-Joseph' as a search term on Commons returns almost nothing but the Catholic saint and EU regulatory PDFs. Category:Saint-Joseph (AOC) has 0 members. This is the pattern to repeat for any future Saint-Joseph sourcing: search by commune (Mauves, Tournon-sur-Rhône, Saint-Jean-de-Muzols, Sarras, Chavanay, Charnas, Saint-Désirat), never by the appellation name."
+ },
+ {
+  "title": "File:Les vignes.jpg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Les_vignes.jpg",
+  "width": 4368,
+  "height": 2912,
+  "author": "Mr Fougerolle",
+  "license": "CC BY-SA 4.0",
+  "description": "les vignes de Chanos-Curson -- flat, fertile vineyard plain at Chanos-Curson, a confirmed Crozes-Hermitage AOC commune (one of the 11 communes named in the appellation decree). Aerial/elevated view showing the characteristic deeper, more fertile soils and flat terrain that distinguish Crozes-Hermitage from Hermitage's steep granite slope.",
+  "slot": "nr_crozes_chanoscurson",
+  "credit": "Mr Fougerolle / Wikimedia Commons (CC BY-SA 4.0)",
+  "local_path": "/home/claude/repo/photos/nr_crozes_chanoscurson.jpg",
+  "sourcing_note": "Same commune-search pattern as Saint-Peray and Saint-Joseph: 'Crozes-Hermitage' as a search term is drowned out by EU Official Journal PDFs (the AOC name appears in hundreds of multilingual regulatory filings). The whole Crozes-Hermitage Commons category has only 7 files, none usable. Direct commune searches (Larnage, Gervans, Mercurol, Beaumont-Monteux, Pont-de-l'Isere) also came up empty -- mostly civic/administrative content. The find came from Category:Vineyards in Drome, a small (12-file) but well-curated category that doesn't surface on name-based searches at all. Worth checking 'Vineyards in <department>' categories before concluding a commune search has failed."
  }
 ]
