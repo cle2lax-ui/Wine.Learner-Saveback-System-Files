@@ -359,6 +359,21 @@
   "slot": "nr_cheers_pexels",
   "credit": "juliane Monari / Pexels",
   "local_path": "/home/claude/repo/photos/nr_cheers_pexels.jpg",
-  "sourcing_note": "New closing beat added per Steve's request (a 'Cheers!' slide after the existing close beat). Note for anyone reusing this photo: the wine glasses carry a visible printed winery logo ('Vinícola Salton') -- a real third-party brand incidentally in frame, not something we are endorsing or that relates to any Northern Rhone producer. Acceptable for a generic stock shot per Steve's brief, but worth knowing it's there."
+  "sourcing_note": "New closing beat added per Steve's request (a 'Cheers!' slide after the existing close beat). Note for anyone reusing this photo: the wine glasses carry a visible printed winery logo ('Vinícola Salton') -- a real third-party brand incidentally in frame, not something we are endorsing or that relates to any Northern Rhone producer. Acceptable for a generic stock shot per Steve's brief, but worth knowing it's there.",
+  "superseded_note": "Replaced by nr_cheers_pexels_v2.jpg -- Steve flagged the visible 'Vinicola Salton' winery logo etched on the glasses as unwanted (\"I don't want the logo glasses\") and asked for either a different photo or the logo removed via editing. No reliable generative-inpainting tool was available in this session to cleanly remove a printed logo from curved, transparent glass without risking a visible edit artifact, so a different photo was sourced instead."
+ },
+ {
+  "title": "Pexels stock photo -- two women toasting red wine, restaurant setting",
+  "source": "Pexels",
+  "pexels_id": 19721743,
+  "width": 3648,
+  "height": 5472,
+  "author": "Doğu Tuncer",
+  "license": "Pexels License (free to use)",
+  "description": "Two women clinking glasses of red wine in a warm restaurant ambiance, close on the glasses and hands with one face partially visible. Plain, unbranded stemware -- checked by zooming into the actual glass surface before choosing this photo, specifically because the previous choice had a visible printed winery logo Steve did not want. Red wine confirmed per Steve's explicit requirement.",
+  "slot": "nr_cheers_pexels_v2",
+  "credit": "Doğu Tuncer / Pexels",
+  "local_path": "/home/claude/repo/photos/nr_cheers_pexels_v2.jpg",
+  "sourcing_note": "Second attempt at the closing 'Cheers!' photo. First re-search (candidates c2_a/c2_b, Nano Erdozain, vineyard sunset, two smiling women) was visually the most striking option found but was ALSO carrying a visible etched glass logo once zoomed in, and separately showed white wine, not red -- disqualified on both counts, not just the logo. This photo was chosen only after checking both requirements directly: zoomed on the glass for a logo (none found) and confirmed the wine color (red) before downloading it as final, rather than assuming either from the search alt text."
  }
 ]

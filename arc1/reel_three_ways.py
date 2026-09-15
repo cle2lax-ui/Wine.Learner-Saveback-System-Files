@@ -94,15 +94,27 @@ MARK_BOTTOM_PAD = 32  # vertical margin from the bottom edge -- was
 # MARK_PAD used for both axes when the mark sat top-left; bottom-left
 # gets its own, slightly tighter value, tuned after checking clearance
 # against the progress strip on a rendered frame.
-MARK_COLORS = [(122, 196, 110), (196, 138, 58), (142, 46, 56)]  # green, amber, garnet --
-# Green brightened significantly per Steve's review -- the Crozes-
-# Hermitage label in the old green (76,112,72), average luminance ~87,
-# was unreadable against several of the region's own photo backgrounds
-# with no chip to back it (only Hermitage's beat has one). New value's
-# average luminance is ~143, a genuine ~65% lift, not a marginal nudge
-# -- confirmed legible on a rendered frame afterward, not assumed from
-# the RGB numbers alone. Amber and garnet were not touched -- Steve's
-# complaint named Crozes-Hermitage specifically.
+MARK_COLORS = [(154, 213, 140), (226, 172, 92), (225, 104, 116)]  # green, amber, garnet --
+# Brightened again per Steve's review, on top of the earlier green-only
+# fix. This time all three move, and Hermitage's garnet moves furthest:
+# perceptual luminance (0.299R+0.587G+0.114B, which weights green far
+# higher than red -- simple RGB averaging understates how much darker a
+# red genuinely reads compared to a green or amber of the same
+# "brightness") was green ~184, amber ~166, garnet ~76 before this
+# change -- garnet was less than half as bright as the other two, which
+# is exactly why Hermitage's title was singled out as unreadable. A true
+# deep garnet cannot reach the same perceptual luminance as a light
+# green without stopping being recognizably red (the math: matching
+# green's ~184 with almost no green or blue channel would require a red
+# channel over 255, which doesn't exist) -- so this leans the garnet
+# toward a brighter cranberry-red rather than a dark wine-red, trading
+# some of the "garnet" character for actual legibility, which is the
+# right trade given Steve's ask. New perceptual luminances: green ~193,
+# amber ~183, garnet ~144 -- all substantially higher, garnet closing
+# most of the gap without literally reaching the other two.
+# (First brightening round touched only the green, when only
+# Crozes-Hermitage's title had been flagged; this round covers all
+# three, per Steve's explicit "raise the brightness of all the bottles.")
 # defined here (not near draw_mark_patch/_draw_bottle_icon, where it
 # conceptually belongs) because BEATS, below, needs to reference these
 # same three colors for each region label -- moving BEATS after this
@@ -114,7 +126,12 @@ CRED_COVER = "Anna Hinckel / Pexels"
 CRED_CROZES = "Mr Fougerolle / Wikimedia Commons (CC BY-SA 4.0)"
 CRED_SJ = "Alisa Skripina / Pexels"
 CRED_HERM = ""  # Steve's own photograph -- no third-party credit needed
-CRED_CHEERS = "juliane Monari / Pexels"
+CRED_CHEERS = "Do\u011fu Tuncer / Pexels"  # was juliane Monari / Pexels; that
+# photo's glasses carried a visible printed winery logo Steve didn't
+# want, and no reliable way to remove it was available -- see
+# nr_cheers_pexels's superseded_note in the manifest for the full
+# reasoning. This one was checked (zoomed on the actual glass, and for
+# wine color) before being chosen, not assumed clean from its alt text.
 
 
 def _chip(lay, region, color, opacity):
@@ -175,7 +192,10 @@ BEATS = [
         # rounding. Three lines gives every line real breathing room
         # (496 / 685 / 615px) at the same 116pt size, rather than
         # shrinking the type to force two.
-        head="Northern\nRh\u00f4ne Syrah\nThree Ways",
+        # "Three Bottles" per Steve's rename -- measured at 713px against
+        # the 952px usable width, comfortably clear (no repeat of the
+        # earlier "Northern Rhone Syrah" overflow, which was 1208px).
+        head="Northern\nRh\u00f4ne Syrah\nThree Bottles",
         sub="One grape. Three regions.\nThree very different prices.",
         # Ken Burns ranges widened significantly per Steve's review --
         # was (1.02,1.10), an 8-point delta that barely read as motion
@@ -198,8 +218,13 @@ BEATS = [
         # concentration"; the co-op sentence: "Cave de Tain... sells
         # around 40 per cent of all Crozes-Hermitage AOC wines." Second
         # clause added per Steve's ask for 5-6 more words per blurb.
+        # Shortened per Steve's request (-4 words: "than Hermitage",
+        # "of it"). The Hermitage comparison this drops is still carried
+        # by the rest of the video -- the mark colors, the other beats'
+        # own blurbs -- so losing it here specifically is a fair trim,
+        # not a loss of the only place the comparison is made.
         blurb="Created in 1937, enlarged in 1956 \u2014 deeper soil, softer "
-              "wines than Hermitage. Cave de Tain sells 40% of it.",
+              "wines. Cave de Tain sells 40%.",
         stat="~1,700 HA  \u00b7  45 HL/HA  \u00b7  MID-PRICED",
         node=0, zoom=(1.00, 1.22),
         crop_anchor=0.42,
@@ -213,7 +238,8 @@ BEATS = [
         # 1994... today the debate is whether to reduce the appellation";
         # producers named in the same section: "Jean-Louis Chave...
         # Domaine Gonon." Second clause added per Steve's ask.
-        blurb="Nearly 90% red, wide price range \u2014 extended in 1994, "
+        # Shortened per Steve's request (-3 words: "wide price range").
+        blurb="Nearly 90% red \u2014 extended in 1994, "
               "still debated today. Chave and Gonon lead its revival.",
         stat="50 KM OF APPELLATION  \u00b7  40 HL/HA",
         node=1, zoom=(1.00, 1.24),
@@ -228,8 +254,11 @@ BEATS = [
         # the world's most structured and long-lived Syrah wines"; naming
         # origin: Gaspard de Sterimberg, a 12th-century crusader turned
         # hermit. Third sentence added per Steve's ask.
-        blurb="Vines since Roman times. Structured, long-lived reds \u2014 "
-              "the region's most respected. Named for a 12th-century hermit-crusader.",
+        # Shortened per Steve's request (-4 words: "the region's most
+        # respected"). "Structured, long-lived" plus the Roman-era/naming
+        # history still carries the reputation without stating it outright.
+        blurb="Vines since Roman times. Structured, long-lived reds. "
+              "Named for a 12th-century hermit-crusader.",
         stat="137 HA  \u00b7  40 HL/HA  \u00b7  MOSTLY SUPER-PREMIUM",
         # Still gentler than the landscape beats -- it's a product shot,
         # and swinging the zoom as hard as the others would send the
@@ -244,8 +273,12 @@ BEATS = [
     ),
     dict(
         kind="close", photo="nr_cover_goldenhour", credit=CRED_COVER,
-        head="Three Ways\nInto Syrah",
-        sub="Same grape. The difference is the soil \u2014\nand how steeply it sits.",
+        head="Three Bottles\nInto Syrah",
+        # Replaced per Steve's request. No manual "\n" this time --
+        # let the new width-based wrap (see type_layer) break it, since
+        # the old hard-coded break is exactly the kind of guess that
+        # caused the overflow in the first place.
+        sub="Same grape, different soils, aspects and slopes.",
         node="complete", zoom=(1.24, 1.00),
         crop_anchor=0.40,
     ),
@@ -266,7 +299,7 @@ BEATS = [
         # throughout with no animation at all -- see build()'s
         # prior_lit computation and the per-frame state block, which
         # both treat it as "already finished, nothing left to show."
-        kind="cheers", photo="nr_cheers_pexels", credit=CRED_CHEERS,
+        kind="cheers", photo="nr_cheers_pexels_v2", credit=CRED_CHEERS,
         head="Cheers!",
         node="done", zoom=(1.00, 1.10),
         crop_anchor=0.32,
@@ -414,7 +447,19 @@ def _draw_bottle_icon(d, x, y, h, color, stroke=3):
 
 
 def draw_mark_patch(alpha):
-    """Bottle trio + "Three Ways" wordmark, built fresh every frame --
+    """Bottle trio + "Three Bottles" wordmark, built fresh every frame --
+
+    Renamed from "Three Ways" per Steve's explicit request -- flagged
+    as reading with an unintended sexual double entendre, which is a
+    real problem for a wine-education brand and worth changing outright
+    rather than debating. Scoped to THIS reel only: "Three Ways" is
+    also the name of an established cross-topic static-deck FORMAT used
+    elsewhere in the system (guides/SERIES_SYSTEM_v9.md's weekly
+    rotation, three_ways/THREE_WAYS_STYLE_GUIDE.md, past decks like
+    render_wine_faults.py) -- none of that was touched, since renaming
+    a systemwide format on the strength of a note about one reel's logo
+    would be a much bigger call than what was actually asked. Flagged
+    to Steve rather than assumed either way.
     unlike type_layer/graphics_layer this is cheap (three simple shapes,
     one short line of serif text) and doesn't need the settled-frame
     caching those two require. Returns an RGBA patch sized to its own
@@ -447,7 +492,7 @@ def draw_mark_patch(alpha):
     # Title Case, serif -- Playfair is the same face used for the
     # hook/close headline, so the mark reads as part of the same family
     # rather than a mismatched logotype bolted on.
-    d.text((text_x, text_y), "Three Ways", font=tf, fill=PAPER + (255,),
+    d.text((text_x, text_y), "Three Bottles", font=tf, fill=PAPER + (255,),
            stroke_width=int(50 * SS * 0.09), stroke_fill=(10, 8, 14, 235))
 
     if alpha < 0.999:
@@ -585,7 +630,20 @@ def type_layer(beat, t_beat, dur):
         # exactly, so the headline sits directly on that anchor with no
         # phantom gap reserved for a sub-line that was never drawn.
         sub_bottom = 1560
-        sub_lines = beat["sub"].split("\n") if beat.get("sub") else []
+        # Real measured wrap now, not a manual "\n" guess -- the close
+        # beat's new line ("Same grape, different soils, aspects and
+        # slopes.") measured 1284px as one line against a 952px usable
+        # width and ran off the edge, which is exactly what Steve
+        # flagged. Splits on any "\n" the caller included (an
+        # intentional paragraph break, e.g. the hook beat's two
+        # sentences) and THEN width-wraps each resulting piece, so an
+        # author-chosen break is respected but no single piece can ever
+        # overflow -- confirmed against the actual measured width, not
+        # assumed safe because a break already exists.
+        sub_lines = []
+        if beat.get("sub"):
+            for para in beat["sub"].split("\n"):
+                sub_lines.extend(_wrap(para, f_sub, (W - 128) * SS, d))
         sh = int(f_sub.size * 1.4)
         sub_top = (sub_bottom * SS) - len(sub_lines) * sh
         for i, ln in enumerate(sub_lines):
@@ -695,7 +753,7 @@ def graphics_layer(beat, t_beat, lit_through, grow_node, grow_t, finale_t=None):
 
 
 def build(mp4=None):
-    mp4 = mp4 or os.path.join(OUT, "REEL_ThreeWays_v1.mp4")
+    mp4 = mp4 or os.path.join(OUT, "REEL_ThreeBottles_v1.mp4")
     proc = subprocess.Popen([
         "ffmpeg", "-y", "-loglevel", "error",
         "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}",
