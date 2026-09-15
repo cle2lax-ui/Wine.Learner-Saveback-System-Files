@@ -89,7 +89,11 @@ ACCENT = (232, 181, 79)  # brightened per Steve's review -- was (186,149,74),
 # brownish -- confirmed below, not assumed from the RGB numbers alone.
 PAPER = (251, 249, 244)
 
-MARK_PAD = 44  # persistent corner mark's margin from the top-left edge
+MARK_PAD = 44  # persistent corner mark's horizontal margin from the left edge
+MARK_BOTTOM_PAD = 32  # vertical margin from the bottom edge -- was
+# MARK_PAD used for both axes when the mark sat top-left; bottom-left
+# gets its own, slightly tighter value, tuned after checking clearance
+# against the progress strip on a rendered frame.
 MARK_COLORS = [(76, 112, 72), (196, 138, 58), (142, 46, 56)]  # green, amber, garnet --
 # defined here (not near draw_mark_patch/_draw_bottle_icon, where it
 # conceptually belongs) because BEATS, below, needs to reference these
@@ -142,7 +146,27 @@ def _wrap(text, fnt, max_w, d):
 BEATS = [
     dict(
         kind="hook", photo="nr_cover_goldenhour", credit=CRED_COVER,
-        head="Three Ways\nInto Syrah",
+        # Changed per Steve's request -- slide 1 (this beat) only. The
+        # close beat below still reads "Three Ways / Into Syrah," which
+        # was previously an exact text match for the loop-close (frame 1
+        # and the final frame showed identical words, reinforcing the
+        # "same grape" idea on repeat-view). That exact match no longer
+        # holds now that only one side changed -- flagged to Steve
+        # rather than silently changing the close beat to match, since
+        # he asked for slide 1 specifically.
+        #
+        # Three lines, not two -- measured against the actual font
+        # first, not guessed: "Northern Rhône Syrah" alone is 1208px at
+        # this size against a 952px usable width, and would have run
+        # off the frame edge (it did, on the first render -- caught by
+        # looking at the actual output, not assumed from the string
+        # length). The 2-line split "Northern Rhône" / "Syrah Three
+        # Ways" fits its second line at exactly 952px, the same as the
+        # usable width with zero margin -- too tight to trust against
+        # rounding. Three lines gives every line real breathing room
+        # (496 / 685 / 615px) at the same 116pt size, rather than
+        # shrinking the type to force two.
+        head="Northern\nRh\u00f4ne Syrah\nThree Ways",
         sub="One grape. Three regions.\nThree very different prices.",
         # Ken Burns ranges widened significantly per Steve's review --
         # was (1.02,1.10), an 8-point delta that barely read as motion
@@ -157,12 +181,14 @@ BEATS = [
         kind="region", photo="nr_crozes_chanoscurson", credit=CRED_CROZES,
         label="Crozes-Hermitage",
         label_color=MARK_COLORS[0],  # matches the first (green) mark bottle
-        # 10-12 word style+history line, D3 Ch.7: "The AOC was created in
-        # 1937 and extended... in 1956... the soils are deeper and more
-        # fertile than in neighbouring Hermitage and the resulting wines
-        # have lower concentration."
+        # D3 Ch.7: "The AOC was created in 1937 and extended... in
+        # 1956... the soils are deeper and more fertile than in
+        # neighbouring Hermitage and the resulting wines have lower
+        # concentration"; the co-op sentence: "Cave de Tain... sells
+        # around 40 per cent of all Crozes-Hermitage AOC wines." Second
+        # clause added per Steve's ask for 5-6 more words per blurb.
         blurb="Created in 1937, enlarged in 1956 \u2014 deeper soil, softer "
-              "wines than Hermitage.",
+              "wines than Hermitage. Cave de Tain sells 40% of it.",
         stat="~1,700 HA  \u00b7  45 HL/HA  \u00b7  MID-PRICED",
         node=0, zoom=(1.00, 1.22),
         crop_anchor=0.42,
@@ -172,9 +198,11 @@ BEATS = [
         label="Saint-Joseph",
         label_color=MARK_COLORS[1],  # matches the second (amber) mark bottle
         # D3 Ch.7: "Nearly 90 per cent of the wines are red... extended in
-        # 1994... today the debate is whether to reduce the appellation."
+        # 1994... today the debate is whether to reduce the appellation";
+        # producers named in the same section: "Jean-Louis Chave...
+        # Domaine Gonon." Second clause added per Steve's ask.
         blurb="Nearly 90% red, wide price range \u2014 extended in 1994, "
-              "still debated today.",
+              "still debated today. Chave and Gonon lead its revival.",
         stat="50 KM OF APPELLATION  \u00b7  40 HL/HA",
         node=1, zoom=(1.00, 1.24),
         crop_anchor=0.38,
@@ -184,9 +212,11 @@ BEATS = [
         label="Hermitage",
         label_color=MARK_COLORS[2],  # matches the third (garnet) mark bottle
         # D3 Ch.7: "producing wine since the Greco-Roman era"; "a model of
-        # the world's most structured and long-lived Syrah wines."
+        # the world's most structured and long-lived Syrah wines"; naming
+        # origin: Gaspard de Sterimberg, a 12th-century crusader turned
+        # hermit. Third sentence added per Steve's ask.
         blurb="Vines since Roman times. Structured, long-lived reds \u2014 "
-              "the region's most respected.",
+              "the region's most respected. Named for a 12th-century hermit-crusader.",
         stat="137 HA  \u00b7  40 HL/HA  \u00b7  MOSTLY SUPER-PREMIUM",
         # Still gentler than the landscape beats -- it's a product shot,
         # and swinging the zoom as hard as the others would send the
@@ -574,7 +604,11 @@ def type_layer(beat, t_beat, dur):
                fill=beat["label_color"] + (a255,))
 
     if beat["credit"]:
-        d.text((64 * SS, int(H * SS * 0.945)), beat["credit"], font=f_cred,
+        # Moved to the very top of frame per Steve's review -- the mark
+        # (see build()) is moving from top-left to bottom-left in this
+        # same round, which frees the top-left corner for this instead
+        # of the two competing for the same space at the bottom.
+        d.text((64 * SS, 28 * SS), beat["credit"], font=f_cred,
                fill=(232, 226, 220, 200))
 
     return lay.resize((W, H), Image.LANCZOS)
@@ -712,7 +746,16 @@ def build(mp4=None):
                     # from growing across 600 frames for no reason.
                     mark_cache[key] = draw_mark_patch(m_alpha)
                 patch = mark_cache[key]
-                frame.paste(patch, (MARK_PAD, MARK_PAD), patch)
+                # Bottom-left now, not top-left, per Steve's review --
+                # y computed from the patch's own height so it always
+                # sits MARK_BOTTOM_PAD above the frame edge regardless of
+                # the patch's exact size. Clear of the progress strip
+                # (NODE_Y=1642 plus node radius) by design: the strip's
+                # visual bottom lands around 1660, the mark's top around
+                # 1794 at this patch height -- confirmed by rendering,
+                # not just by the two numbers not colliding on paper.
+                mark_y = H - patch.height - MARK_BOTTOM_PAD
+                frame.paste(patch, (MARK_PAD, mark_y), patch)
 
             proc.stdin.write(frame.convert("RGB").tobytes())
             idx += 1
