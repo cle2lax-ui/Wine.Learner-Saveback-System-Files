@@ -3,13 +3,14 @@
 A distribution treatment, not a series. Two per week, assembled from
 arc content already built and already reviewed.
 
-**v2 supersedes v1 as of Arc 1 week two's Three Ways reel.** v1's
+**v2 supersedes v1 as of Arc 1 week two's Three Bottles reel**
+(built and reviewed under the name "Three Ways"; renamed to "Three Bottles" mid-build after Steve flagged the old name's unintended double entendre -- referred to here by its current, locked name). v1's
 governing idea was restraint: a slow scale on a still, hard cuts only,
 motion capped deliberately low because the format was new and
 unproven. Two builds in (whole-bunch Split Decision, then a duration
 extension on the same file) showed the format holds up under more
 than that — Steve's ask for "more polished and glossy editing, with
-animation of graphic elements" on Three Ways is the point v1's ceiling
+animation of graphic elements" on Three Bottles is the point v1's ceiling
 started actively working against the content rather than protecting
 it. v2 raises that ceiling. It does not lower the bar on anything else
 below.
@@ -92,7 +93,7 @@ default for any beat that doesn't need more):
 
 None of these three are required on every beat of every Reel. A Reel
 built from a two-pole argument (a Split Decision) may only need
-category 3. A Reel built from a numbered sequence (Three Ways, a
+category 3. A Reel built from a numbered sequence (Three Bottles, a
 ranked list) is the natural home for categories 1 and 2 together.
 Match the device to what the content actually has structure in —
 don't add a progress strip to a Reel with nothing sequential to track.
@@ -101,7 +102,7 @@ don't add a progress strip to a Reel with nothing sequential to track.
 
 v1 didn't address this because it didn't need to — one Reel, one
 source photo set, shot consistently enough not to need reconciling.
-Three Ways pulls from three different photographers across two
+Three Bottles pulls from three different photographers across two
 Commons categories of very different quality and colour temperature.
 v2 calls for a light, consistent treatment across every photo in a
 single Reel — a unifying colour grade and a shared vignette
@@ -118,7 +119,7 @@ before being called done.
 ## Source formats
 
 FFFA and Split Decision still cut best on structure — both are already
-beat-structured. Three Ways is now a confirmed third: N discrete
+beat-structured. Three Bottles is now a confirmed third: N discrete
 things (2–4) map close to 1:1 onto hook / thing / thing / thing / close,
 often more cleanly than Split Decision's two-pole shape, which needs an
 explicit "turn" beat to avoid feeling like two disconnected halves.

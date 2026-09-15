@@ -1,4 +1,15 @@
 # TUE 15 SEP · THREE WAYS · Syrah
+
+**SUPERSEDED — this static 1-page post was never published.** The
+Tuesday slot for this topic became a Reel instead (see
+arc1/reel_three_bottles.py and arc1/REEL_THREE_BOTTLES_STORYBOARD.md),
+built under the format's current name, "Three Bottles" (renamed from
+"Three Ways" -- see three_bottles/THREE_BOTTLES_STYLE_GUIDE.md for
+why). This file is kept as a record of the original static plan and
+its caption draft, not rewritten to use the new name throughout, since
+that would misrepresent what this file actually was at the time it
+was drafted.
+
 "Three Ways Into Syrah" · 1 page · Arc 1, week two
 
 ## CAPTION — paste as-is

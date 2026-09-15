@@ -2,7 +2,7 @@
 
 The publishing layer that sits above the individual style guides. Every
 existing series doc (`STYLE_GUIDE_v5.md`, `QUICK_SIPS_STYLE_GUIDE.md`,
-`FFFA_STYLE_GUIDE.md`, `GTR_STYLE_GUIDE.md`, `THREE_WAYS_STYLE_GUIDE.md`)
+`FFFA_STYLE_GUIDE.md`, `GTR_STYLE_GUIDE.md`, `THREE_BOTTLES_STYLE_GUIDE.md`)
 governs how a deck is *built*. This document governs what gets built,
 when, and why — the editorial calendar, the arc structure, and the
 division of labour across review sessions.
@@ -40,7 +40,7 @@ build two formats that chase the same one.
 | Quick Sips | 2 slides | sends | 3–4 |
 | GTR | 2 slides | comments (short) | 1–3 |
 | **Split Decision** | 2 slides | comments (long) | all |
-| Three Ways | 1 slide | saves, purchase intent | 2–4 |
+| Three Bottles | 1 slide | saves, purchase intent | 2–4 |
 | Letter Wine List | print | — | off-platform |
 
 **Split Decision is new in v9.** See `SPLIT_DECISION_STYLE_GUIDE.md`.
@@ -55,7 +55,7 @@ back catalogue was weakest on.
 | Day | Format |
 |---|---|
 | Mon | Quick Sips |
-| Tue | Field Guide (wk 1) / Three Ways (wk 2) |
+| Tue | Field Guide (wk 1) / Three Bottles (wk 2) |
 | Wed | GTR |
 | Thu | FFFA |
 | Sat | Split Decision |
@@ -75,7 +75,7 @@ Ten consecutive posts share one subject spine, normally a single D3
 chapter.
 
 **Week 1** — Quick Sips · **Field Guide (pillar)** · GTR · FFFA · Split Decision
-**Week 2** — Quick Sips · **Three Ways** · GTR · FFFA · Split Decision
+**Week 2** — Quick Sips · **Three Bottles** · GTR · FFFA · Split Decision
 
 Why arcs rather than daily variety:
 - The grid reads as a coherent body of work rather than a stream.

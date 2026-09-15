@@ -29,7 +29,7 @@ starting new ones. That is what a second week is for.
 | # | Date | Format | Subject | Working title |
 |---|---|---|---|---|
 | 6 | Mon 14 Sep | Quick Sips (2pp) | Saint-Péray | **The Cru Next Door Makes No Red at All** |
-| 7 | Tue 15 Sep | Three Ways (1pp) | Crozes / Saint-Joseph / Hermitage | **Three Ways Into Syrah** |
+| 7 | Tue 15 Sep | Three Bottles (1pp \u2192 became a Reel) | Crozes / Saint-Joseph / Hermitage | **Three Bottles: Northern Rh\u00f4ne Syrah** |
 | 8 | Wed 16 Sep | GTR (2pp) | Saint-Joseph | *(answer withheld on page 1)* |
 | 9 | Thu 17 Sep | FFFA (6pp) | Hermitage | **Five Fascinating Facts About Hermitage** |
 | 10 | Sat 19 Sep | Split Decision (2pp) | Viognier in Côte-Rôtie | **Co-ferment, or Don't** |
@@ -80,7 +80,15 @@ Dashboard: 5-row white. No tannin row. No values pre-written.
 
 ---
 
-## 7 — Tue 15 Sep · Three Ways · Syrah
+## 7 — Tue 15 Sep · Three Bottles · Syrah
+
+*This entry describes the original static 1-page plan. What actually
+shipped was a Reel -- see arc1/REEL_THREE_BOTTLES_STORYBOARD.md and
+arc1/reel_three_bottles.py -- built under the format's current name,
+"Three Bottles" (renamed from "Three Ways" after this plan was
+written; see three_bottles/THREE_BOTTLES_STYLE_GUIDE.md for why). The
+subject matter and sourcing below are still accurate to what was
+actually built, just not the format.*
 
 **The idea.** One grape, one region, three appellations, three prices.
 The ladder is built from the chapter's own numbers, and it is not a

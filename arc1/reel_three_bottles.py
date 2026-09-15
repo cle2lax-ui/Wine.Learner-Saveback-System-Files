@@ -1,8 +1,8 @@
-"""REEL — Three Ways Into Syrah. Arc 1 week two, Tue 15 Sep.
+"""REEL — Three Bottles: Northern Rhône Syrah. Arc 1 week two, Tue 15 Sep.
 
 First Reel built under REELS_SPEC_v2.md. Replaces the originally-planned
-1-page static Three Ways post; same sourced numbers (D3 Ch. 7), new
-format. Storyboard: arc1/REEL_THREE_WAYS_STORYBOARD.md.
+1-page static Three Bottles post; same sourced numbers (D3 Ch. 7), new
+format. Storyboard: arc1/REEL_THREE_BOTTLES_STORYBOARD.md.
 
 SOURCING, resolved this session -- all three region photos found by
 commune-name search or department-level category, never by searching
@@ -172,14 +172,17 @@ def _wrap(text, fnt, max_w, d):
 BEATS = [
     dict(
         kind="hook", photo="nr_cover_goldenhour", credit=CRED_COVER,
-        # Changed per Steve's request -- slide 1 (this beat) only. The
-        # close beat below still reads "Three Ways / Into Syrah," which
-        # was previously an exact text match for the loop-close (frame 1
-        # and the final frame showed identical words, reinforcing the
-        # "same grape" idea on repeat-view). That exact match no longer
-        # holds now that only one side changed -- flagged to Steve
-        # rather than silently changing the close beat to match, since
-        # he asked for slide 1 specifically.
+        # Changed per Steve's request -- slide 1 (this beat) only, at
+        # the time this was written. The close beat below originally
+        # still read "Three Ways / Into Syrah" here, breaking what had
+        # been an exact text match against this beat for the loop-close
+        # (frame 1 and the final frame showing identical words,
+        # reinforcing the "same grape" idea on repeat-view). That gap
+        # was closed later anyway: the whole format was renamed to
+        # "Three Bottles" in a subsequent round (see draw_mark_patch's
+        # docstring), and the close beat's head now reads "Three
+        # Bottles / Into Syrah" -- so both beats match again, just under
+        # the new name rather than the old one.
         #
         # Three lines, not two -- measured against the actual font
         # first, not guessed: "Northern Rhône Syrah" alone is 1208px at
@@ -452,14 +455,18 @@ def draw_mark_patch(alpha):
     Renamed from "Three Ways" per Steve's explicit request -- flagged
     as reading with an unintended sexual double entendre, which is a
     real problem for a wine-education brand and worth changing outright
-    rather than debating. Scoped to THIS reel only: "Three Ways" is
-    also the name of an established cross-topic static-deck FORMAT used
-    elsewhere in the system (guides/SERIES_SYSTEM_v9.md's weekly
-    rotation, three_ways/THREE_WAYS_STYLE_GUIDE.md, past decks like
-    render_wine_faults.py) -- none of that was touched, since renaming
-    a systemwide format on the strength of a note about one reel's logo
-    would be a much bigger call than what was actually asked. Flagged
-    to Steve rather than assumed either way.
+    rather than debating. Originally scoped to THIS reel only: "Three
+    Ways" was also the name of an established cross-topic static-deck
+    FORMAT used elsewhere in the system, and renaming that on the
+    strength of a note about one reel's logo would have been a much
+    bigger call than what was actually asked -- flagged to Steve rather
+    than assumed either way. He then explicitly asked for the format-
+    wide rename too ("Make Three Bottles the name of the entire
+    series"), which is a separate, later commit -- see
+    three_bottles/THREE_BOTTLES_STYLE_GUIDE.md (renamed from
+    THREE_WAYS_STYLE_GUIDE.md) for that change. This reel's own on-
+    screen content was already correct by that point; that commit's
+    work was the rest of the repo catching up to match.
     unlike type_layer/graphics_layer this is cheap (three simple shapes,
     one short line of serif text) and doesn't need the settled-frame
     caching those two require. Returns an RGBA patch sized to its own

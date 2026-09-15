@@ -1,4 +1,6 @@
-# SAVE-BACK — Three Ways v1
+# SAVE-BACK — Three Bottles v1
+
+*Format renamed from "Three Ways" to "Three Bottles" after this save-back landed -- see THREE_BOTTLES_STYLE_GUIDE.md. File names below reflect the current, renamed files in the repo, not the literal names as originally delivered in this save-back's zip.*
 
 ## What's in this zip
 
@@ -9,14 +11,14 @@
   copy (which had gone stale — see CHANGELOG for what that means and
   why it mattered). Safe to save over the current file; it contains
   everything currently in the project plus one small addition.
-- `THREE_WAYS_STYLE_GUIDE.md` — the series style guide. Save into the
+- `THREE_BOTTLES_STYLE_GUIDE.md` — the series style guide. Save into the
   project alongside `GTR_STYLE_GUIDE.md`, `QUICK_SIPS_STYLE_GUIDE.md`,
   `FFFA_STYLE_GUIDE.md`.
-- `NEW_DECK_STARTER_three_ways.md` — kickoff checklist for the next
-  Three Ways deck.
-- `CHANGELOG_three_ways_v1.md` — exactly what changed in the code and
+- `NEW_DECK_STARTER_three_bottles.md` — kickoff checklist for the next
+  Three Bottles deck.
+- `CHANGELOG_three_bottles_v1.md` — exactly what changed in the code and
   why, function by function.
-- `render_three_ways_EXAMPLE_zinfandel.py` — the finished "Three Faces
+- `render_three_bottles_EXAMPLE_zinfandel.py` — the finished "Three Faces
   of Zinfandel" render script, as a working template for the next
   deck. Not meant to be run as-is against your project (it references
   photo filenames from this session's working directory) — copy it
@@ -26,12 +28,12 @@
 
 1. Save `core.py`, `modules.py`, `quick_sips.py` over the current
    project versions.
-2. Add `THREE_WAYS_STYLE_GUIDE.md` and
-   `NEW_DECK_STARTER_three_ways.md` to the project files.
-3. Keep `CHANGELOG_three_ways_v1.md` for reference; doesn't need to be
+2. Add `THREE_BOTTLES_STYLE_GUIDE.md` and
+   `NEW_DECK_STARTER_three_bottles.md` to the project files.
+3. Keep `CHANGELOG_three_bottles_v1.md` for reference; doesn't need to be
    "used," just useful if a future session needs to know what changed
    and when.
-4. `render_three_ways_EXAMPLE_zinfandel.py` is a reference, not
+4. `render_three_bottles_EXAMPLE_zinfandel.py` is a reference, not
    something to run directly — the bottle/region photos it points to
    only exist in this session's temp workspace.
 
@@ -57,5 +59,5 @@ original addition.
 ## Regression coverage
 
 Re-rendered end to end before packaging: Quick Sips (Piedmont), GTR
-(Puglia), FFFA (Santa Barbara County), Three Ways (Zinfandel). All
+(Puglia), FFFA (Santa Barbara County), Three Bottles (Zinfandel). All
 four passed QA clean against the final files in this zip.

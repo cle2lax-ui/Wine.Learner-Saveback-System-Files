@@ -47,7 +47,7 @@ Every post below sits somewhere on that line. Nothing in this arc is
 | # | Date | Day | Format | Subject | Working title |
 |---|---|---|---|---|---|
 | 6 | Mon 28 Sep | Mon | Quick Sips (2pp) | Spätburgunder at the northern limit | **Germany's Other Grape** |
-| 7 | Tue 29 Sep | Tue | Three Ways (1pp) | Three routes into German Riesling | **Three Ways Into Riesling** |
+| 7 | Tue 29 Sep | Tue | Three Bottles (1pp) | Three routes into German Riesling | **Three Bottles: German Riesling** |
 | 8 | Wed 30 Sep | Wed | GTR (2pp) | Franken | *(answer withheld on page 1)* |
 | 9 | Thu 1 Oct | Thu | FFFA (6pp) | German wine law | **Five Fascinating Facts About German Wine Law** |
 | 10 | Sat 3 Oct | Sat | Split Decision (2pp) | Must weight vs place | **Should Oechsle Decide?** |

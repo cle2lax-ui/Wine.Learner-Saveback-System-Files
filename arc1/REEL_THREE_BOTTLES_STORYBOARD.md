@@ -1,7 +1,20 @@
-# Reel — Three Ways Into Syrah
+# Reel — Three Bottles: Northern Rhône Syrah
+
+*Storyboard reflects the INITIAL plan for this reel, written before
+build. The actual reel (arc1/reel_three_bottles.py) went through many
+rounds of revision after this was written -- new photos, brightened
+colors, per-beat timing, a redesigned persistent mark, an added
+closing beat, and more -- and this document was not rewritten to
+track each change. Treat this as a historical planning record, not a
+current spec; the source file and its own commit history are the
+authoritative reference for what actually shipped. Renamed from "Three
+Ways" to "Three Bottles" for consistency with the locked, current name
+-- see three_bottles/THREE_BOTTLES_STYLE_GUIDE.md for why the format
+itself was renamed.*
+
 **Arc 1 week two, Tuesday 15 September — first Reel built under REELS_SPEC_v2.md**
 
-Replaces the originally-planned 1-page Three Ways static post. Same
+Replaces the originally-planned 1-page Three Bottles static post. Same
 subject, same sourced numbers (D3 Ch. 7), new format.
 
 ---
@@ -12,7 +25,7 @@ Three discrete things (Crozes-Hermitage / Saint-Joseph / Hermitage)
 map close to 1:1 onto hook / thing / thing / thing / close — no filler
 beat needed, unlike a two-pole Split Decision, which needs an explicit
 "turn" beat to avoid feeling like two disconnected halves. Noted in
-REELS_SPEC_v2.md's Source Formats section as the reason Three Ways is
+REELS_SPEC_v2.md's Source Formats section as the reason Three Bottles is
 now a confirmed third good source format alongside FFFA and Split
 Decision.
 
@@ -58,7 +71,7 @@ worked for Saint-Joseph.
 ### Beat 1 — Hook (0:00–0:04)
 **Visual:** Wide shot, Tain-l'Hermitage / the Rhône (`nr_tain_rhone.jpg`),
 slow scale per the still-photo default.
-**Super:** "Three Ways Into Syrah" (slides up + fades in at 0:00.2,
+**Super:** "Three Bottles Into Syrah" (superseded -- the actual reel's hook title became "Northern Rhône Syrah / Three Bottles" across several later revisions; slides up + fades in at 0:00.2,
 holds, fades out 0:03.6)
 **v2 motion:** Progress strip draws in at bottom third — three small
 nodes on a thin horizontal line, all unlit/empty. This is the frame

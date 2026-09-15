@@ -1,4 +1,6 @@
-# THREE WAYS — SERIES STYLE GUIDE (v1)
+# THREE BOTTLES — SERIES STYLE GUIDE (v1)
+
+*Renamed from "Three Ways" -- the name read with an unintended sexual double entendre, flagged during the Northern Rhone Syrah reel build and fixed system-wide at that point rather than left inconsistent between one deck and the rest of the format's own documentation. The concept -- three bottles side by side -- was already exactly what the new name says.*
 
 ## Concept
 
@@ -14,10 +16,10 @@ this is built to stand alone (a single Instagram post, not a carousel).
 ## System
 
 Built entirely on the existing Field Guide module `showcase_shelf`
-(`modules.py`, "M08"), not a new module. Three Ways is a *palette and
+(`modules.py`, "M08"), not a new module. Three Bottles is a *palette and
 slot-recipe* on top of that shared module, plus a handful of new
 `showcase_shelf` capabilities added specifically to make this deck
-possible (see CHANGELOG_three_ways_v1.md for exactly what's new).
+possible (see CHANGELOG_three_bottles_v1.md for exactly what's new).
 
 Canvas, fonts, QA harness: all shared with Field Guide/Quick Sips/GTR/
 FFFA via `core.py` and `tokens.py`. Nothing series-specific at that
@@ -44,7 +46,7 @@ slot = dict(
 ```
 
 This isn't locked the way GTR's gold or Quick Sips' garnet+gold are —
-each Three Ways deck can run its own palette. What *is* the series
+each Three Bottles deck can run its own palette. What *is* the series
 convention is the **structure**: black page, off-white scrim panel
 for the reading copy, bottles reaching up out of the black into the
 kicker row, region photos full-bleed at the bottom. Riff the colors
@@ -80,7 +82,7 @@ per deck; keep the structure.
    furniture, both of which are usually turned off for a one-pager —
    see below).
 
-## Slot reference (showcase_shelf, Three Ways-relevant keys)
+## Slot reference (showcase_shelf, Three Bottles-relevant keys)
 
 All of these default to `showcase_shelf`'s original Field Guide
 behavior when omitted — a plain deck that doesn't set any of them

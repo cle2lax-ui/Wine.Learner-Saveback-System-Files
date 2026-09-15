@@ -1,9 +1,11 @@
-# CHANGELOG — Three Ways v1
+# CHANGELOG — Three Bottles v1
+
+*This is a historical engineering log of the v1 build -- the format was called "Three Ways" at the time these changes were made, and the narrative below is left as it was written. Only the title and filename are updated, to match the format's current name (see THREE_BOTTLES_STYLE_GUIDE.md for why it changed) and the file's new name in this repo.*
 
 New series, built entirely on the existing Field Guide `showcase_shelf`
 module. No new module file; all changes are extensions to
 `core.py` / `modules.py` (plus one small `quick_sips.py` addition made
-earlier this session, unrelated to Three Ways itself but bundled here
+earlier this session, unrelated to Three Ways (as the format was called at the time) itself but bundled here
 since it touches the same file). Every change below defaults to prior
 behavior — no existing deck's output changes unless it explicitly
 opts into a new slot key.
@@ -126,6 +128,6 @@ opts into a new slot key.
 Before packaging, all four existing series were re-rendered end to
 end against the final `core.py`/`modules.py`/`quick_sips.py` in this
 save-back: Quick Sips (Piedmont), GTR (Puglia), FFFA (Santa Barbara
-County), and the new Three Ways (Zinfandel) deck itself. All passed
+County), and the new Three Ways (Zinfandel) deck itself, as the format was called at the time. All passed
 QA clean. This is also what caught the `footer_size` mismatch above —
-it would not have surfaced from a Three Ways-only test.
+it would not have surfaced from a Three Ways-only test. (Same historical naming note as above.)

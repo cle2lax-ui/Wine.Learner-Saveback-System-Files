@@ -1,7 +1,9 @@
-# NEW DECK STARTER — Three Ways (v1)
+# NEW DECK STARTER — Three Bottles (v1)
 
-Kickoff checklist for a new "Three Ways" one-pager. Read
-THREE_WAYS_STYLE_GUIDE.md first if this is your first one — this doc
+Kickoff checklist for a new "Three Bottles" one-pager (renamed from
+"Three Ways" -- see THREE_BOTTLES_STYLE_GUIDE.md's header note for
+why). Read
+THREE_BOTTLES_STYLE_GUIDE.md first if this is your first one — this doc
 is the fast path once you already know the system.
 
 ## 1. Pick the three bottles
@@ -39,7 +41,7 @@ white/near-white background studio shots, upright, full bottle in
 frame, one per wine. Build the rest of the layout with placeholder
 bottle silhouettes in the meantime so there's something to review
 before the real photos arrive (see
-`render_three_ways_EXAMPLE_zinfandel.py` for how the placeholder
+`render_three_bottles_EXAMPLE_zinfandel.py` for how the placeholder
 bottles were generated).
 
 ## 5. Process each bottle photo
@@ -66,12 +68,19 @@ A tilted bottle photo can leave an isolated pocket of background in a
 corner that survives `remove_background()`'s flood fill — invisible
 on a paper-colored page, glaring on a dark one. If you find one,
 reseed a flood fill from a point inside the pocket rather than
-re-cropping blind (see modules.py's Three Ways changelog entry, or
+re-cropping blind (see modules.py's Three Bottles changelog entry, or
 just: BFS from a known-bad pixel, clear same-color-neighbors' alpha).
 
 ## 6. Build the render script
 
-Copy `render_three_ways_EXAMPLE_zinfandel.py` as your starting point.
+Copy `render_three_bottles_EXAMPLE_zinfandel.py` as your starting point.
+
+*(Flagged while touching this reference during the rename sweep, not
+something new: this example file is referenced here and in
+README_SAVEBACK_three_bottles_v1.md as delivered, but does not
+actually exist anywhere in the repo. Pre-existing gap, not something
+this rename created -- worth resolving before the next person tries to
+copy a file that isn't there.)*
 It's a complete, working reference for: the palette recipe, the
 region-photo-aligned column grid, `bottle_lift` + `panel_gap` tuned
 together, the off-white scrim, and bold shrink-to-fit captions. Swap
