@@ -374,6 +374,21 @@
   "slot": "nr_cheers_pexels_v2",
   "credit": "Doğu Tuncer / Pexels",
   "local_path": "/home/claude/repo/photos/nr_cheers_pexels_v2.jpg",
-  "sourcing_note": "Second attempt at the closing 'Cheers!' photo. First re-search (candidates c2_a/c2_b, Nano Erdozain, vineyard sunset, two smiling women) was visually the most striking option found but was ALSO carrying a visible etched glass logo once zoomed in, and separately showed white wine, not red -- disqualified on both counts, not just the logo. This photo was chosen only after checking both requirements directly: zoomed on the glass for a logo (none found) and confirmed the wine color (red) before downloading it as final, rather than assuming either from the search alt text."
+  "sourcing_note": "Second attempt at the closing 'Cheers!' photo. First re-search (candidates c2_a/c2_b, Nano Erdozain, vineyard sunset, two smiling women) was visually the most striking option found but was ALSO carrying a visible etched glass logo once zoomed in, and separately showed white wine, not red -- disqualified on both counts, not just the logo. This photo was chosen only after checking both requirements directly: zoomed on the glass for a logo (none found) and confirmed the wine color (red) before downloading it as final, rather than assuming either from the search alt text.",
+  "superseded_note": "Replaced by nr_cheers_pexels_v2.jpg -- Steve asked for a different image where fingers aren't on the bowl of the glass, holding by the stem only. This photo's own grip wasn't checked against that specific standard when it was chosen (it was chosen to fix the earlier logo/wine-color problems, and happened to also not be checked for stem vs bowl grip)."
+ },
+ {
+  "title": "Pexels stock photo -- couple toasting red wine, dimly lit restaurant",
+  "source": "Pexels",
+  "pexels_id": 38632392,
+  "width": 4664,
+  "height": 6996,
+  "author": "Omega Edicion",
+  "license": "Pexels License (free to use)",
+  "description": "An intimate wine toast in a dimly lit restaurant. Both hands grip the glass stem, not the bowl -- checked specifically against that standard before choosing this photo, per Steve's explicit request. Smiling woman visible (softly out of focus), glasses in sharp focus, red wine confirmed, a wine bottle (Rutini Malbec, a real Argentine producer) visible on the table in the background -- an incidental, expected background detail at a wine-focused table, not flagged as a concern the way the earlier glass-etched logo was, but noted here for completeness.",
+  "slot": "nr_cheers_pexels_v3",
+  "credit": "Omega Edicion / Pexels",
+  "local_path": "/home/claude/repo/photos/nr_cheers_pexels_v3.jpg",
+  "sourcing_note": "Third attempt at the closing 'Cheers!' photo. Steve's stated reason for rejecting nr_cheers_pexels_v2 was specifically the hand grip (fingers on the bowl rather than the stem) -- a genuine wine-service correctness issue, not just an aesthetic preference, worth getting right for an education brand. Checked four new candidates by zooming into each one's actual hand position before choosing: two (Alena Darmel; Jhonny Salas Brochero) were clear bowl-grips and rejected outright; this one and one other (Gaspar Zaldo, not chosen) held by the stem. This one was chosen over the other stem-grip candidate for its stronger composition and atmosphere."
  }
 ]

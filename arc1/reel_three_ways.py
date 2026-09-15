@@ -126,12 +126,12 @@ CRED_COVER = "Anna Hinckel / Pexels"
 CRED_CROZES = "Mr Fougerolle / Wikimedia Commons (CC BY-SA 4.0)"
 CRED_SJ = "Alisa Skripina / Pexels"
 CRED_HERM = ""  # Steve's own photograph -- no third-party credit needed
-CRED_CHEERS = "Do\u011fu Tuncer / Pexels"  # was juliane Monari / Pexels; that
-# photo's glasses carried a visible printed winery logo Steve didn't
-# want, and no reliable way to remove it was available -- see
-# nr_cheers_pexels's superseded_note in the manifest for the full
-# reasoning. This one was checked (zoomed on the actual glass, and for
-# wine color) before being chosen, not assumed clean from its alt text.
+CRED_CHEERS = "Omega Edicion / Pexels"  # third choice for this beat --
+# v1 (juliane Monari) had a visible glass logo; v2 (Dogu Tuncer) fixed
+# that and the wine color, but Steve then flagged its hand grip
+# (fingers on the bowl, not the stem) as a real wine-service issue, not
+# just aesthetics. This one was checked specifically for stem-vs-bowl
+# grip before being chosen -- see nr_cheers_pexels_v3's sourcing_note.
 
 
 def _chip(lay, region, color, opacity):
@@ -299,7 +299,7 @@ BEATS = [
         # throughout with no animation at all -- see build()'s
         # prior_lit computation and the per-frame state block, which
         # both treat it as "already finished, nothing left to show."
-        kind="cheers", photo="nr_cheers_pexels_v2", credit=CRED_CHEERS,
+        kind="cheers", photo="nr_cheers_pexels_v3", credit=CRED_CHEERS,
         head="Cheers!",
         node="done", zoom=(1.00, 1.10),
         crop_anchor=0.32,
