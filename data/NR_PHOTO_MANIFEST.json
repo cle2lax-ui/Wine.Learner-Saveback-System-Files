@@ -346,5 +346,19 @@
   "note": "Not from Wikimedia Commons or Pexels -- Steve's own photograph. Bottle on rock, blurred green background, natural light. Used as the Hermitage beat's photo in place of nr_chapoutier_vy.jpg, which Steve judged too dull/low (flat overcast light, cluttered foreground, low camera angle). No photo_credit line -- this is not third-party material requiring attribution.",
   "slot": "nr_hermitage_chave_bottle",
   "local_path": "/home/claude/repo/photos/nr_hermitage_chave_bottle.jpg"
+ },
+ {
+  "title": "Pexels stock photo -- couple toasting with red wine in a vineyard",
+  "source": "Pexels",
+  "pexels_id": 34635711,
+  "width": 4000,
+  "height": 6000,
+  "author": "juliane Monari",
+  "license": "Pexels License (free to use)",
+  "description": "Couple toasting with red wine in a sunny vineyard, close-up on clinking glasses. No specific location given by the photographer -- used as a generic closing 'cheers' image per Steve's explicit instruction that a generic shot is fine, not asserted as depicting any of the three named appellations.",
+  "slot": "nr_cheers_pexels",
+  "credit": "juliane Monari / Pexels",
+  "local_path": "/home/claude/repo/photos/nr_cheers_pexels.jpg",
+  "sourcing_note": "New closing beat added per Steve's request (a 'Cheers!' slide after the existing close beat). Note for anyone reusing this photo: the wine glasses carry a visible printed winery logo ('Vinícola Salton') -- a real third-party brand incidentally in frame, not something we are endorsing or that relates to any Northern Rhone producer. Acceptable for a generic stock shot per Steve's brief, but worth knowing it's there."
  }
 ]

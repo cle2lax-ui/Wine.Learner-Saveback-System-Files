@@ -94,7 +94,15 @@ MARK_BOTTOM_PAD = 32  # vertical margin from the bottom edge -- was
 # MARK_PAD used for both axes when the mark sat top-left; bottom-left
 # gets its own, slightly tighter value, tuned after checking clearance
 # against the progress strip on a rendered frame.
-MARK_COLORS = [(76, 112, 72), (196, 138, 58), (142, 46, 56)]  # green, amber, garnet --
+MARK_COLORS = [(122, 196, 110), (196, 138, 58), (142, 46, 56)]  # green, amber, garnet --
+# Green brightened significantly per Steve's review -- the Crozes-
+# Hermitage label in the old green (76,112,72), average luminance ~87,
+# was unreadable against several of the region's own photo backgrounds
+# with no chip to back it (only Hermitage's beat has one). New value's
+# average luminance is ~143, a genuine ~65% lift, not a marginal nudge
+# -- confirmed legible on a rendered frame afterward, not assumed from
+# the RGB numbers alone. Amber and garnet were not touched -- Steve's
+# complaint named Crozes-Hermitage specifically.
 # defined here (not near draw_mark_patch/_draw_bottle_icon, where it
 # conceptually belongs) because BEATS, below, needs to reference these
 # same three colors for each region label -- moving BEATS after this
@@ -106,6 +114,7 @@ CRED_COVER = "Anna Hinckel / Pexels"
 CRED_CROZES = "Mr Fougerolle / Wikimedia Commons (CC BY-SA 4.0)"
 CRED_SJ = "Alisa Skripina / Pexels"
 CRED_HERM = ""  # Steve's own photograph -- no third-party credit needed
+CRED_CHEERS = "juliane Monari / Pexels"
 
 
 def _chip(lay, region, color, opacity):
@@ -176,6 +185,8 @@ BEATS = [
         # in framing, not just a cut).
         node=None, zoom=(1.00, 1.24),
         crop_anchor=0.40,
+        duration=3.0,  # was the shared 4.0s default -- "title slide,
+        # one second less," per Steve's review.
     ),
     dict(
         kind="region", photo="nr_crozes_chanoscurson", credit=CRED_CROZES,
@@ -192,6 +203,7 @@ BEATS = [
         stat="~1,700 HA  \u00b7  45 HL/HA  \u00b7  MID-PRICED",
         node=0, zoom=(1.00, 1.22),
         crop_anchor=0.42,
+        duration=5.0,  # was 4.0 -- region slides hold one second longer.
     ),
     dict(
         kind="region", photo="nr_saintjoseph_pexels", credit=CRED_SJ,
@@ -206,6 +218,7 @@ BEATS = [
         stat="50 KM OF APPELLATION  \u00b7  40 HL/HA",
         node=1, zoom=(1.00, 1.24),
         crop_anchor=0.38,
+        duration=5.0,
     ),
     dict(
         kind="region", photo="nr_hermitage_chave_bottle", credit=CRED_HERM,
@@ -227,6 +240,7 @@ BEATS = [
         # sits directly in the text zone; the global scrim alone can't
         # hold text over printed type at that contrast.
         crop_anchor=0.28,
+        duration=5.0,
     ),
     dict(
         kind="close", photo="nr_cover_goldenhour", credit=CRED_COVER,
@@ -234,6 +248,29 @@ BEATS = [
         sub="Same grape. The difference is the soil \u2014\nand how steeply it sits.",
         node="complete", zoom=(1.24, 1.00),
         crop_anchor=0.40,
+    ),
+    dict(
+        # New closing beat, added per Steve's request. kind="cheers"
+        # reuses the hook/close headline treatment (see type_layer) --
+        # same bottom-anchored, left-aligned block as every other beat,
+        # rather than inventing a one-off centered layout just for
+        # this slide. No sub-line: the closing thought was already
+        # delivered on the previous beat, so this one is a single
+        # word, not a second argument.
+        #
+        # node="done" is a new, distinct sentinel from "complete" --
+        # "complete" (the beat above) triggers the synchronized
+        # finale pulse across all three nodes; replaying that same
+        # pulse a second time, one beat later, would read as a glitch
+        # rather than a flourish. "done" just holds the strip solid
+        # throughout with no animation at all -- see build()'s
+        # prior_lit computation and the per-frame state block, which
+        # both treat it as "already finished, nothing left to show."
+        kind="cheers", photo="nr_cheers_pexels", credit=CRED_CHEERS,
+        head="Cheers!",
+        node="done", zoom=(1.00, 1.10),
+        crop_anchor=0.32,
+        duration=3.5,
     ),
 ]
 
@@ -523,23 +560,32 @@ def type_layer(beat, t_beat, dur):
     # significantly" -- these are 1x point sizes; SS is applied at the
     # font() call same as before.
     f_head = font("Playfair-Bold.ttf", 116 * SS)
-    f_sub = font("Archivo-Medium.ttf", 46 * SS)
+    # Body fonts (sub/blurb/stat) raised significantly per Steve's ask
+    # to "quickly read them" -- roughly +30-35% each. f_head/f_label
+    # (the two already-largest elements) are untouched; this round is
+    # specifically about the smaller supporting text, not the headline
+    # hierarchy on top of it.
+    f_sub = font("Archivo-Medium.ttf", 60 * SS)
     f_label = font("Playfair-Bold.ttf", 104 * SS)  # serif, title case,
     # per Steve's review -- was ArchivoCond-SemiBold in all caps. Same
     # face as f_head so headline and region-name treatments read as one
     # family rather than two competing type systems.
-    f_blurb = font("Archivo-Medium.ttf", 42 * SS)
-    f_stat = font("Archivo-Medium.ttf", 36 * SS)
+    f_blurb = font("Archivo-Medium.ttf", 56 * SS)
+    f_stat = font("Archivo-Medium.ttf", 48 * SS)
     f_cred = font("Archivo-Light.ttf", 15 * SS)  # credit stays small on purpose -- attribution, not a headline
 
     alpha, yoff = super_alpha_offset(t_beat, dur)
     a255 = int(255 * alpha)
 
-    if beat["kind"] in ("hook", "close"):
+    if beat["kind"] in ("hook", "close", "cheers"):
         # Bottom-anchored 82px above the progress strip (NODE_Y=1642),
         # in 1x units -- comfortably clear of it at every font size.
+        # sub is now OPTIONAL (the new "cheers" beat has none) -- when
+        # absent, sub_lines is empty and sub_top collapses to sub_bottom
+        # exactly, so the headline sits directly on that anchor with no
+        # phantom gap reserved for a sub-line that was never drawn.
         sub_bottom = 1560
-        sub_lines = beat["sub"].split("\n")
+        sub_lines = beat["sub"].split("\n") if beat.get("sub") else []
         sh = int(f_sub.size * 1.4)
         sub_top = (sub_bottom * SS) - len(sub_lines) * sh
         for i, ln in enumerate(sub_lines):
@@ -547,7 +593,8 @@ def type_layer(beat, t_beat, dur):
                    fill=PAPER + (a255,))
         head_lines = beat["head"].split("\n")
         hh = int(f_head.size * 1.08)
-        head_top = sub_top - 30 * SS - len(head_lines) * hh
+        head_gap = 30 * SS if sub_lines else 0
+        head_top = sub_top - head_gap - len(head_lines) * hh
         for i, ln in enumerate(head_lines):
             d.text((64 * SS, head_top + i * hh + yoff * SS), ln, font=f_head,
                    fill=PAPER + (a255,))
@@ -559,13 +606,23 @@ def type_layer(beat, t_beat, dur):
         # removing the bar didn't leave a dead gap where it used to be.
         # Blurb sits 30px above the stat text; label sits 34px above
         # the blurb -- unchanged.
+        #
+        # stat now wraps too, not just blurb -- at the larger stat font
+        # size (36->48pt this round), Hermitage's stat line ("137 HA ·
+        # 40 HL/HA · MOSTLY SUPER-PREMIUM", 1091px) overran the 952px
+        # usable width and was clipped clean off the right edge of the
+        # frame. Caught on the actual rendered frame, not predicted from
+        # the font-size change alone -- the other two beats' stat lines
+        # (839px, 816px) still fit on one line at this size and still
+        # will, since _wrap only breaks where a line actually needs it.
         stat_bottom = NODE_Y - 40
-        stat_h = int(f_stat.size * 1.3 / SS)
-        stat_y = (stat_bottom - stat_h) * SS + yoff * SS
+        stat_lines = _wrap(beat["stat"], f_stat, (W - 128) * SS, d)
+        stat_h = int(f_stat.size * 1.3)
+        stat_top = (stat_bottom * SS) - len(stat_lines) * stat_h + yoff * SS
 
         blurb_lines = _wrap(beat["blurb"], f_blurb, (W - 128) * SS, d)
         bh = int(f_blurb.size * 1.32)
-        blurb_bottom = stat_y - 30 * SS
+        blurb_bottom = stat_top - 30 * SS
         blurb_top = blurb_bottom - len(blurb_lines) * bh
 
         label_h = int(f_label.size * 1.05)
@@ -580,23 +637,24 @@ def type_layer(beat, t_beat, dur):
         # most visible against the bottle. Now each LINE gets its own
         # chip, snug to that line's actual rendered glyph bounds
         # (d.textbbox, not an estimated line-height) plus a small pad --
-        # so the backing follows the text's own shape (three different
-        # widths: label, each blurb line, stat line) instead of one
-        # box wide enough for the longest line and empty air everywhere
-        # else. Only fires for beats that ask for one (only Hermitage).
+        # so the backing follows the text's own shape (label, each
+        # blurb line, each stat line) instead of one box wide enough
+        # for the longest line and empty air everywhere else. Only
+        # fires for beats that ask for one (only Hermitage).
         if beat.get("text_chip"):
             pad = 12 * SS
             for text, fnt, top in (
                 [(beat["label"], f_label, label_top)]
                 + [(ln, f_blurb, blurb_top + i * bh) for i, ln in enumerate(blurb_lines)]
-                + [(beat["stat"], f_stat, stat_y)]
+                + [(ln, f_stat, stat_top + i * stat_h) for i, ln in enumerate(stat_lines)]
             ):
                 l, t, r, btm = d.textbbox((64 * SS, top), text, font=fnt)
                 _chip(lay, (l - pad, t - pad, r + pad, btm + pad),
                       (10, 8, 14), opacity=0.60)
 
-        d.text((64 * SS, stat_y), beat["stat"], font=f_stat,
-               fill=PAPER + (int(220 * alpha),))
+        for i, ln in enumerate(stat_lines):
+            d.text((64 * SS, stat_top + i * stat_h), ln, font=f_stat,
+                   fill=PAPER + (int(220 * alpha),))
         for i, ln in enumerate(blurb_lines):
             d.text((64 * SS, blurb_top + i * bh), ln, font=f_blurb,
                    fill=PAPER + (int(235 * alpha),))
@@ -648,12 +706,23 @@ def build(mp4=None):
         "-r", str(FPS), "-movflags", "+faststart",
         mp4], stdin=subprocess.PIPE)
 
-    n_frames = int(BEAT_SECONDS * FPS)
-    total_dur = len(BEATS) * BEAT_SECONDS
+    # Per-beat duration, new -- BEAT_SECONDS is now only the DEFAULT for
+    # any beat that doesn't specify its own via beat["duration"]. Steve's
+    # ask ("title slide one second less, region slides one second
+    # longer") means the beats no longer share one duration, so
+    # n_frames/t_beat can no longer be computed once outside the loop --
+    # each beat now computes its own from beat.get("duration",
+    # BEAT_SECONDS). total_dur sums every beat's actual duration, since
+    # the persistent mark's global fade-out timing depends on the TRUE
+    # total length, not beat-count times a constant that's no longer
+    # uniform.
+    total_dur = sum(b.get("duration", BEAT_SECONDS) for b in BEATS)
     idx = 0
     mark_cache = {}  # keyed by rounded alpha -- see below
 
     for b, beat in enumerate(BEATS):
+        beat_duration = beat.get("duration", BEAT_SECONDS)
+        n_frames = int(beat_duration * FPS)
         z0, z1 = beat["zoom"]
         zmax = max(z0, z1)
         base = load_fill(beat["photo"], zmax, beat["crop_anchor"])
@@ -671,7 +740,7 @@ def build(mp4=None):
         # the animation gets truncated by the settled-frame cutover.
         GROW_WINDOW = 0.6
         node = beat["node"]
-        prior_lit = node if isinstance(node, int) else (3 if node == "complete" else 0)
+        prior_lit = node if isinstance(node, int) else (3 if node in ("complete", "done") else 0)
         settled_lit = prior_lit + 1 if isinstance(node, int) else prior_lit
 
         type_active_frames = int((0.4 + 0.3) * FPS) + 4
@@ -684,13 +753,13 @@ def build(mp4=None):
         type_cache = {}
         gfx_cache = {}
 
-        def get_type(f, t_beat):
+        def get_type(f, t_beat, n_frames=n_frames, beat_duration=beat_duration):
             near_start = f < int(0.4 * FPS) + 2
             near_end = f > n_frames - int(0.3 * FPS) - 2
             if near_start or near_end:
-                return type_layer(beat, t_beat, BEAT_SECONDS)
+                return type_layer(beat, t_beat, beat_duration)
             if "settled" not in type_cache:
-                type_cache["settled"] = type_layer(beat, 1.5, BEAT_SECONDS)
+                type_cache["settled"] = type_layer(beat, 1.5, beat_duration)
             return type_cache["settled"]
 
         def get_gfx(f, t_beat, lit_through, grow_node, grow_t, finale_t):
@@ -702,7 +771,7 @@ def build(mp4=None):
 
         for f in range(n_frames):
             t = f / (n_frames - 1)
-            t_beat = t * BEAT_SECONDS
+            t_beat = t * beat_duration
             e = ease(t)
             z = z0 + (z1 - z0) * e
             cw, ch = int(W * (zmax / z)), int(H * (zmax / z))

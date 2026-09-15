@@ -163,6 +163,7 @@ photos/nr_ampuis_parcelles.jpg
 photos/nr_cellar_foudre.jpg
 photos/nr_cellar_pour.jpg
 photos/nr_chapoutier_vy.jpg
+photos/nr_cheers_pexels.jpg
 photos/nr_condrieu_pano.jpg
 photos/nr_coterotie_chaillees.jpg
 photos/nr_coterotie_roches.jpg
