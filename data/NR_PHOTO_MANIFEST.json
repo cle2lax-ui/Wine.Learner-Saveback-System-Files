@@ -390,5 +390,14 @@
   "credit": "Omega Edicion / Pexels",
   "local_path": "/home/claude/repo/photos/nr_cheers_pexels_v3.jpg",
   "sourcing_note": "Third attempt at the closing 'Cheers!' photo. Steve's stated reason for rejecting nr_cheers_pexels_v2 was specifically the hand grip (fingers on the bowl rather than the stem) -- a genuine wine-service correctness issue, not just an aesthetic preference, worth getting right for an education brand. Checked four new candidates by zooming into each one's actual hand position before choosing: two (Alena Darmel; Jhonny Salas Brochero) were clear bowl-grips and rejected outright; this one and one other (Gaspar Zaldo, not chosen) held by the stem. This one was chosen over the other stem-grip candidate for its stronger composition and atmosphere."
+ },
+ {
+  "title": "Derived from nr_cheers_pexels_v3.jpg -- wine label blurred",
+  "source": "Derived asset, not independently sourced",
+  "description": "Steve asked for the wine bottle label (Rutini Malbec) to be cropped out or blurred, since it's a real, identifiable producer unrelated to Northern Rhone Syrah. Cropping was ruled out because the crop window moves during this beat's Ken Burns pan, so a crop that hides the label at one moment could reveal it at another -- a feathered Gaussian blur baked directly into the source image works regardless of any crop/zoom applied later. Label region identified by drawing the actual rectangle bounds on the image and checking them against the label before touching any pixels (two earlier coordinate guesses landed on the bottle's shoulder, not the label, and were caught and corrected before finalizing). GaussianBlur(70) inside an elliptical mask feathered with a further GaussianBlur(90) on the mask itself, so the blurred region blends into the bottle's dark glass with no visible hard edge. Confirmed illegible at both close inspection and full-frame scale before use.",
+  "slot": "nr_cheers_pexels_v3_blurred",
+  "credit": "Omega Edicion / Pexels",
+  "local_path": "/home/claude/repo/photos/nr_cheers_pexels_v3_blurred.jpg",
+  "derived_from": "nr_cheers_pexels_v3.jpg"
  }
 ]

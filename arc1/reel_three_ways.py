@@ -299,7 +299,7 @@ BEATS = [
         # throughout with no animation at all -- see build()'s
         # prior_lit computation and the per-frame state block, which
         # both treat it as "already finished, nothing left to show."
-        kind="cheers", photo="nr_cheers_pexels_v3", credit=CRED_CHEERS,
+        kind="cheers", photo="nr_cheers_pexels_v3_blurred", credit=CRED_CHEERS,
         head="Cheers!",
         node="done", zoom=(1.00, 1.10),
         crop_anchor=0.32,
