@@ -165,12 +165,24 @@ def headline(d, text, y, size_key="display_md", fill=INK, x=M, show_underline=Tr
     size = TYPE[size_key]
     floor = TYPE["standfirst"] + HIERARCHY_GAP  # never shrink below the locked hierarchy margin
     f = font("display_black", size)
-    while d.textbbox((0, 0), text, font=f)[2] > avail_w and size > floor:
+    lines = text.split("\n")
+    while max(d.textbbox((0, 0), ln, font=f)[2] for ln in lines) > avail_w and size > floor:
         size -= 2
         f = font("display_black", size)
-    d.text((x, y), text, font=f, fill=fill)
     asc, desc = f.getmetrics()
-    new_y = y + int((asc + desc) * 1.02)
+    line_h = int((asc + desc) * 1.02)
+    # PIL's own d.text() silently renders an embedded "\n" as multiple
+    # lines using its own default spacing -- but this function's y
+    # advance was computed for ONE line's height regardless of how many
+    # lines the text actually had, so a 2-line headline's own second
+    # line collided with whatever was drawn next (a standfirst, in
+    # every case that surfaced this in the first build of this deck).
+    # Draws each line explicitly at this function's own line_h now,
+    # rather than handing a multi-line string to d.text() and hoping
+    # its spacing matches what new_y assumes.
+    for i, ln in enumerate(lines):
+        d.text((x, y + i * line_h), ln, font=f, fill=fill)
+    new_y = y + len(lines) * line_h
     # Rand filter: a short accent-color underline anchors the headline
     # to the system as a graphic element, not just colored type floating
     # on the page. Uses DEFAULT_PALETTE's ACCENT directly (not a `pal`

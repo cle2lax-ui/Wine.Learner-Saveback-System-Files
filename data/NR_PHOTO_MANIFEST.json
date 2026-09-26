@@ -399,5 +399,41 @@
   "credit": "Omega Edicion / Pexels",
   "local_path": "/home/claude/repo/photos/nr_cheers_pexels_v3_blurred.jpg",
   "derived_from": "nr_cheers_pexels_v3.jpg"
+ },
+ {
+  "title": "File:Hatzenport, Blick von der Rabenlay.jpg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Hatzenport%2C_Blick_von_der_Rabenlay.jpg",
+  "width": 12108,
+  "height": 5000,
+  "author": "Rolf Kranz",
+  "license": "CC BY-SA 4.0",
+  "description": "High-resolution panorama of Hatzenport on the Terrassenmosel -- river, village, church, and clearly visible steep vineyard terracing in one frame. Used as the Mosel Field Guide's cover, slide 4 and closing photo.",
+  "slot": "de_hatzenport_mosel",
+  "credit": "Rolf Kranz / Wikimedia Commons (CC BY-SA 4.0)",
+  "local_path": "/home/claude/repo/photos/de_hatzenport_mosel.jpg"
+ },
+ {
+  "title": "File:Bernkastel from Burg Landshut (2506440374).jpg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Bernkastel_from_Burg_Landshut_%282506440374%29.jpg",
+  "width": 1000,
+  "height": 557,
+  "author": "Roger W",
+  "license": "CC BY-SA 2.0",
+  "description": "Classic elevated Mosel river-bend view -- steep vineyard slope on the right bank, town on the left. Reused across several Mosel Field Guide slides given this arc's limited photo library (3 photos total).",
+  "slot": "de_bernkastel_castle_view",
+  "credit": "Roger W / Wikimedia Commons (CC BY-SA 2.0)",
+  "local_path": "/home/claude/repo/photos/de_bernkastel_castle_view.jpg"
+ },
+ {
+  "title": "File:10 Piesport 46DSC 0481 (45697676324).jpg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/9/9b/10_Piesport_46DSC_0481_%2845697676324%29.jpg",
+  "width": 1612,
+  "height": 1031,
+  "author": "János Korom Dr.",
+  "license": "CC BY-SA 2.0",
+  "description": "Aerial-ish view of Piesport vineyards with the actual 'Piesporter Goldtröpfchen' Einzellage sign visible in the vine rows. Sourced for the Mosel Field Guide but NOT used in the final build -- slide 10 (Two Wines Called Piesporter) uses card_grid, which doesn't take a photo band, and no other slide needed it. A real, worthwhile candidate for a future revision of that slide (e.g. switching to fact_file) or for Saturday's planned Split Decision post, which covers the same subject.",
+  "slot": "de_piesport_goldtropfchen_sign",
+  "credit": "János Korom Dr. / Wikimedia Commons (CC BY-SA 2.0)",
+  "local_path": "/home/claude/repo/photos/de_piesport_goldtropfchen_sign.jpg"
  }
 ]

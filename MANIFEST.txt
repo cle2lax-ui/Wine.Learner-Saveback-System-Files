@@ -33,6 +33,8 @@ arc2/CAPTION_GTR_saar.md
 arc2/CAPTION_QS_trocken.md
 arc2/GTR_SAAR_SPEC.md
 arc2/QS_TROCKEN_SPEC.md
+arc2/prepare_map_data.py
+arc2/render_fg_mosel.py
 archive/CHANGELOG_fffa_v4.md
 archive/CHANGELOG_quicksips_rrv.md
 archive/CHANGELOG_saveback_v2.md
@@ -87,6 +89,9 @@ data/NR_PHOTO_MANIFEST.json
 data/NR_STOCK_MANIFEST.json
 data/cdn_geo.json
 data/france_locator.json
+data/geo/germany.geojson
+data/geo/mosel_river.geojson
+data/geo/rhineland_palatinate.geojson
 data/nrhone_geo.json
 data/nrhone_locator.json
 engine/build.py
@@ -152,6 +157,9 @@ logo/mark_reversed_256.png
 logo/mark_reversed_512.png
 photos/QS_glass_icon.png
 photos/QS_glass_icon_ink.png
+photos/de_bernkastel_castle_view.jpg
+photos/de_hatzenport_mosel.jpg
+photos/de_piesport_goldtropfchen_sign.jpg
 photos/fff_harvest_bin.jpg
 photos/fff_viognier_cluster.jpg
 photos/fff_viognier_cover.jpg
