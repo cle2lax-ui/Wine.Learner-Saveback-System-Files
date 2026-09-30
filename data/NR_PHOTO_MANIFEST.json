@@ -435,5 +435,17 @@
   "slot": "de_piesport_goldtropfchen_sign",
   "credit": "János Korom Dr. / Wikimedia Commons (CC BY-SA 2.0)",
   "local_path": "/home/claude/repo/photos/de_piesport_goldtropfchen_sign.jpg"
+ },
+ {
+  "title": "Cochem on the Mosel (castle, town, vineyard slope, river)",
+  "url": "https://unsplash.com/photos/alc9VdhOIn8",
+  "width": 9498,
+  "height": 6332,
+  "author": "Philipp",
+  "license": "Unsplash License (free to use)",
+  "description": "Reichsburg castle above Cochem, a terraced vineyard slope beneath it, the town along the bank, and the Mosel with a passenger boat in the foreground. Verified location (Cochem, Germany) via Unsplash's own location metadata before use -- checked in preference to a visually stronger candidate (vine leaves in extreme close-up foreground with the river below) whose exact location Unsplash had no metadata for. Replaces de_hatzenport_mosel.jpg as the Field Guide's cover photo per Steve's review (wanted steep vineyards and the river both visible).",
+  "slot": "de_cochem_mosel",
+  "credit": "Philipp / Unsplash",
+  "local_path": "/home/claude/repo/photos/de_cochem_mosel.jpg"
  }
 ]

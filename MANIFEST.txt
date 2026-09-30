@@ -158,6 +158,7 @@ logo/mark_reversed_512.png
 photos/QS_glass_icon.png
 photos/QS_glass_icon_ink.png
 photos/de_bernkastel_castle_view.jpg
+photos/de_cochem_mosel.jpg
 photos/de_hatzenport_mosel.jpg
 photos/de_piesport_goldtropfchen_sign.jpg
 photos/fff_harvest_bin.jpg

@@ -103,16 +103,28 @@ def render_cover(slot, slide_no, total, pal):
         img.paste(layer, (int(x - pad + offset * 0.4), int(y - pad + offset)), layer)
         d.text((x, y), text, font=f, fill=fill)
 
-    kf = font("kicker_bold", 40)
-    shadow_text((M, 120), slot["kicker"], kf, pal["ACCENT"], shadow_alpha=210, blur=8, offset=4)
+    # Kicker: dot icon + considerably larger type, per Steve's review
+    # (was a bare text line at 40pt with no mark at all).
+    kicker_size = 68
+    kf = font("kicker_bold", kicker_size)
+    dot_r = int(kicker_size * 0.19)
+    dot_cy = 120 + int(kicker_size * 0.42)
+    d.ellipse([M, dot_cy - dot_r, M + 2 * dot_r, dot_cy + dot_r],
+              fill=pal["ACCENT"])
+    shadow_text((M + 2 * dot_r + 20, 120), slot["kicker"], kf, pal["ACCENT"],
+                shadow_alpha=210, blur=8, offset=4)
 
-    tf = font("display_black", 150)
+    # Title: raised higher on the frame and doubled in size, per Steve's
+    # review (was 150pt anchored at H*0.72 -- far too low to hold a
+    # 300pt title without running off the bottom of the canvas).
+    title_size = 300
+    tf = font("display_black", title_size)
     lines = slot["title"].split("\n")
     asc, desc = tf.getmetrics()
     line_h = int((asc + desc) * 1.0)
-    ty = int(H * 0.72)
+    ty = int(H * 0.42)
     for ln in lines:
-        shadow_text((M, ty), ln, tf, PAPER, shadow_alpha=200, blur=15, offset=9)
+        shadow_text((M, ty), ln, tf, PAPER, shadow_alpha=200, blur=18, offset=10)
         ty += line_h
 
     core_footer(d, slide_no, total, credit=slot.get("photo_credit"), img=img)
@@ -123,16 +135,23 @@ SLIDES = [
 
     # ── 1 · COVER ──────────────────────────────────────────────────
     ("cover", dict(
-        photo="de_hatzenport_mosel",
+        # Swapped for a photo showing both a steep terraced vineyard
+        # slope and the Mosel itself, per Steve's review -- Cochem,
+        # its castle, and the river, all in one frame. Chosen over a
+        # visually stronger candidate (vine leaves in extreme close-up
+        # foreground with the river below) because that one's exact
+        # location couldn't be confirmed via Unsplash's own location
+        # data -- this one is verified (Cochem, Germany).
+        photo="de_cochem_mosel",
         photo_anchor=0.42,
-        photo_zoom=1.15,
+        photo_zoom=1.0,
         kicker="THE FIELD GUIDE: THE MOSEL",
-        # Way less copy, per Steve's review of the first build --
-        # title only. The 91%-white/62%-Riesling stats and the past-
-        # tense cover hook ("ripeness WAS the law") move to slide 8,
-        # which is where the spec puts the region's own numbers anyway.
-        title="Ripeness Was\nthe Law",
-        photo_credit=CRED_HATZENPORT,
+        # Title text changed per Steve's review; the 91%-white/62%-
+        # Riesling stats and the prior "ripeness WAS the law" framing
+        # live on slide 8, which is where the spec puts the region's
+        # own numbers anyway.
+        title="Ripeness is\nEverything",
+        photo_credit="Philipp / Unsplash",
     )),
 
     # ── 2 · TWO GERMANYS ─────────────────────────────────────────────
