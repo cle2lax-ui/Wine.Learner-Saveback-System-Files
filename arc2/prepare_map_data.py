@@ -186,3 +186,57 @@ if __name__ == "__main__":
     print("inset: outline pts", len(inset["outline"]), "marker", inset["marker"])
     for name, pt in inset["regions"].items():
         print(f"  {name:22s} {pt}")
+
+
+# ---------------------------------------------------------------------
+# Full 13-Anbaugebiete map (slide 3, per Steve's review: "a standard
+# wine region map of the 13 German Anbaugebiete"). Region shapes come
+# from data/geo/anbaugebiete.geojson -- traced from a CC BY-SA Commons
+# SVG and georeferenced against its own 33 city markers (RMS 3.0 km,
+# max 5.8 km; see that file's source_note). Drawn over the full Germany
+# outline dissolved from the 16 state files, because the source SVG
+# itself is cropped to southern Germany (straight cut along its top
+# edge) and can't supply a whole-country outline on its own.
+# ---------------------------------------------------------------------
+def build_anbaugebiete_map():
+    germany = _dissolved_shape("germany.geojson")
+    regions_fc = json.load(open(os.path.join(GEO, "anbaugebiete.geojson")))
+    rivers_fc = json.load(open(os.path.join(GEO, "de_rivers.geojson")))
+    minx, miny, maxx, maxy = germany.bounds
+    pad = 0.15
+    minx -= pad; maxx += pad; miny -= pad; maxy += pad
+    lon_scale = math.cos(math.radians((miny + maxy) / 2))
+    aspect = (maxx - minx) * lon_scale / (maxy - miny)
+
+    def project(lon, lat):
+        return ((lon - minx) / (maxx - minx), 1 - (lat - miny) / (maxy - miny))
+
+    g = germany.simplify(0.02, preserve_topology=True)
+    polys = list(g.geoms) if g.geom_type == "MultiPolygon" else [g]
+    main_poly = max(polys, key=lambda p: p.area)
+    outline = [project(x, y) for x, y in main_poly.exterior.coords]
+    islands = [[project(x, y) for x, y in p.exterior.coords]
+               for p in polys if p is not main_poly and p.area > 0.02]
+
+    regions, targets = [], {}
+    for f in regions_fc["features"]:
+        name = f["properties"]["name"]
+        geom = shape(f["geometry"])
+        parts = list(geom.geoms) if geom.geom_type == "MultiPolygon" else [geom]
+        for p in parts:
+            regions.append((name, [project(x, y) for x, y in p.exterior.coords]))
+        rp = max(parts, key=lambda p: p.area).representative_point()
+        targets[name] = project(rp.x, rp.y)
+
+    from shapely.geometry import box
+    frame = box(minx, miny, maxx, maxy)
+    rivers = {}
+    for f in rivers_fc["features"]:
+        geom = shape(f["geometry"]).intersection(frame)
+        if geom.is_empty:
+            continue
+        lines = list(geom.geoms) if hasattr(geom, "geoms") else [geom]
+        rivers.setdefault(f["properties"]["name"], []).extend(
+            [[project(x, y) for x, y in ln.coords] for ln in lines if ln.geom_type == "LineString"])
+    return dict(aspect=aspect, outline=outline, islands=islands,
+                regions=regions, targets=targets, rivers=rivers)

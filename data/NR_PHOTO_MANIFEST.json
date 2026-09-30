@@ -447,5 +447,53 @@
   "slot": "de_cochem_mosel",
   "credit": "Philipp / Unsplash",
   "local_path": "/home/claude/repo/photos/de_cochem_mosel.jpg"
+ },
+ {
+  "title": "de_steep_stairs_climber",
+  "url": "https://www.pexels.com/photo/black-and-white-stairs-in-vineyard-with-person-ascending-36107650/",
+  "width": 3209,
+  "height": 4493,
+  "author": "Peter Dyllong",
+  "license": "Pexels License (free to use)",
+  "description": "Black-and-white: a person climbing stone stairs through a very steep vineyard. No location data (Pexels has none); captioned by subject ('Stairs, not rows'), not by place. Page 5 blade.",
+  "slot": "de_steep_stairs_climber",
+  "credit": "Peter Dyllong / Pexels",
+  "local_path": "/home/claude/repo/photos/de_steep_stairs_climber.jpg"
+ },
+ {
+  "title": "de_harvest_pickers_slope",
+  "url": "https://www.pexels.com/photo/people-at-a-vineyard-5653941/",
+  "width": 6336,
+  "height": 9504,
+  "author": "Nico Becker",
+  "license": "Pexels License (free to use)",
+  "description": "Two pickers harvesting by hand on a slope, shot from above. No location data; captioned by subject ('Picked by hand'). Page 5 blade.",
+  "slot": "de_harvest_pickers_slope",
+  "credit": "Nico Becker / Pexels",
+  "local_path": "/home/claude/repo/photos/de_harvest_pickers_slope.jpg"
+ },
+ {
+  "title": "de_bremm_mosel_loop",
+  "url": "https://www.pexels.com/photo/aerial-view-of-moselle-river-bend-near-bremm-germany-18610633/",
+  "width": 5472,
+  "height": 3648,
+  "author": "tom analogicus",
+  "license": "Pexels License (free to use)",
+  "description": "The Mosel loop at Bremm (Calmont country), per the photographer's own title; geography is consistent with the Bremm meander. Page 5 blade.",
+  "slot": "de_bremm_mosel_loop",
+  "credit": "tom analogicus / Pexels",
+  "local_path": "/home/claude/repo/photos/de_bremm_mosel_loop.jpg"
+ },
+ {
+  "title": "de_eiswein_frozen_cluster",
+  "url": "https://www.pexels.com/photo/close-up-of-a-grapevine-covered-in-snow-13070793/",
+  "width": 4000,
+  "height": 6000,
+  "author": "Ivonne Arceo",
+  "license": "Pexels License (free to use)",
+  "description": "Golden white-grape cluster under snow, still on the vine, bird netting behind -- standard for fruit left hanging into winter. No location data; captioned 'Frozen on the vine'. Page 11 hero.",
+  "slot": "de_eiswein_frozen_cluster",
+  "credit": "Ivonne Arceo / Pexels",
+  "local_path": "/home/claude/repo/photos/de_eiswein_frozen_cluster.jpg"
  }
 ]

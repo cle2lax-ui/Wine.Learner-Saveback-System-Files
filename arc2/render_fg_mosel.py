@@ -86,84 +86,508 @@ INSET = pmd.build_locator_inset()
 # photo, not full-bleed) or the spec's grid_cover (needs 9 photos this
 # project doesn't have).
 # ---------------------------------------------------------------------
+# ---------------------------------------------------------------------
+# Deck-local renderers. Steve's second review asked for layouts the
+# shared modules don't offer (a vertical blade layout, a numbered
+# staircase ladder with the lowest tier at the bottom, a sweetness-
+# scale graphic, a data graphic on the Mosel slide, a full 13-region
+# map). Each lives here, scoped to this deck, rather than as edits to
+# engine/modules.py -- promote one to the shared module set only once
+# a second deck needs it.
+# ---------------------------------------------------------------------
+from core import kicker_block, paragraph, run_in, standfirst, text_w, wrap, photo_band
+from tokens import CONTENT_BOTTOM, TYPE, INK, MUTED, LINE, FLOOR
+
+REGIONS13 = pmd.build_anbaugebiete_map()
+
+
+def _blend(c1, c2, t):
+    return tuple(int(a + (b - a) * t) for a, b in zip(c1, c2))
+
+
+def _one_line_headline(d, text, y, pal, size=TYPE["display_md"], x=M, max_w=None):
+    """Single-line headline -- Steve's standing ask on this deck is that
+    titles don't wrap. Shrinks to fit the measure rather than breaking,
+    never below the hierarchy floor; raises if it still can't fit, so a
+    too-long title fails loudly instead of silently wrapping."""
+    max_w = max_w or (W - x - M)
+    floor = TYPE["standfirst"] + 30
+    f = font("display_black", size)
+    while text_w(d, text, f) > max_w and size > floor:
+        size -= 2
+        f = font("display_black", size)
+    if text_w(d, text, f) > max_w:
+        raise ValueError(f"headline won't fit on one line: {text!r}")
+    d.text((x, y), text, font=f, fill=pal["SIGNATURE"])
+    a, dsc = f.getmetrics()
+    return y + int((a + dsc) * 1.02), size
+
+
 def render_cover(slot, slide_no, total, pal):
+    """Full-bleed photo, no scrim. Round-2 changes per Steve: no shadow
+    under the kicker (flat type, dot kept), and the title lowered so it
+    sits in the dark water of the river rather than over the town --
+    the water is the one reliably dark field in this photo, so the
+    title reads without any shadow help there either; the soft shadow
+    on the title is kept only as insurance at its lighter upper edge."""
     img = cover_fit(load_photo(slot["photo"]), W, H,
-                     y_anchor=slot.get("photo_anchor", 0.5),
-                     zoom=slot.get("photo_zoom", 1.0))
+                    y_anchor=slot.get("photo_anchor", 0.5),
+                    zoom=slot.get("photo_zoom", 1.0))
     d = ImageDraw.Draw(img, "RGBA")
 
-    def shadow_text(xy, text, f, fill, shadow_alpha=190, blur=12, offset=7):
-        x, y = xy
-        tb = d.textbbox((0, 0), text, font=f)
-        pad = blur * 3
-        layer = Image.new("RGBA", (tb[2] - tb[0] + pad * 2, tb[3] - tb[1] + pad * 2), (0, 0, 0, 0))
-        ld = ImageDraw.Draw(layer)
-        ld.text((pad - tb[0], pad - tb[1]), text, font=f, fill=(0, 0, 0, shadow_alpha))
-        layer = layer.filter(ImageFilter.GaussianBlur(blur))
-        img.paste(layer, (int(x - pad + offset * 0.4), int(y - pad + offset)), layer)
-        d.text((x, y), text, font=f, fill=fill)
-
-    # Kicker: dot icon + considerably larger type, per Steve's review
-    # (was a bare text line at 40pt with no mark at all).
     kicker_size = 68
     kf = font("kicker_bold", kicker_size)
     dot_r = int(kicker_size * 0.19)
-    dot_cy = 120 + int(kicker_size * 0.42)
-    d.ellipse([M, dot_cy - dot_r, M + 2 * dot_r, dot_cy + dot_r],
-              fill=pal["ACCENT"])
-    shadow_text((M + 2 * dot_r + 20, 120), slot["kicker"], kf, pal["ACCENT"],
-                shadow_alpha=210, blur=8, offset=4)
+    ky = 120
+    dot_cy = ky + int(kicker_size * 0.42)
+    d.ellipse([M, dot_cy - dot_r, M + 2 * dot_r, dot_cy + dot_r], fill=pal["ACCENT"])
+    d.text((M + 2 * dot_r + 20, ky), slot["kicker"], font=kf, fill=pal["ACCENT"])
 
-    # Title: raised higher on the frame and doubled in size, per Steve's
-    # review (was 150pt anchored at H*0.72 -- far too low to hold a
-    # 300pt title without running off the bottom of the canvas).
-    title_size = 300
-    tf = font("display_black", title_size)
-    lines = slot["title"].split("\n")
+    tf = font("display_black", 300)
     asc, desc = tf.getmetrics()
-    line_h = int((asc + desc) * 1.0)
-    ty = int(H * 0.42)
-    for ln in lines:
-        shadow_text((M, ty), ln, tf, PAPER, shadow_alpha=200, blur=18, offset=10)
+    line_h = int((asc + desc) * 0.88)
+    ty = int(H * slot.get("title_top", 0.60))
+    for ln in slot["title"].split("\n"):
+        tb = d.textbbox((0, 0), ln, font=tf)
+        pad = 45
+        layer = Image.new("RGBA", (tb[2] + pad * 2, tb[3] + pad * 2), (0, 0, 0, 0))
+        ImageDraw.Draw(layer).text((pad, pad), ln, font=tf, fill=(0, 0, 0, 150))
+        layer = layer.filter(ImageFilter.GaussianBlur(16))
+        img.paste(layer, (M - pad + 4, ty - pad + 8), layer)
+        d.text((M, ty), ln, font=tf, fill=PAPER)
         ty += line_h
-
     core_footer(d, slide_no, total, credit=slot.get("photo_credit"), img=img)
     return img
 
+
+def render_region_map(slot, slide_no, total, pal):
+    """Standard wine-region map: all 13 Anbaugebiete as real traced
+    shapes on the full Germany outline, Mosel in SIGNATURE, the other
+    twelve in a pale ACCENT tint (source + georeferencing error: see
+    prepare_map_data.build_anbaugebiete_map and anbaugebiete.geojson).
+
+    Labels are placed here, not by map_atlas's automatic placer. That
+    algorithm is built for one region's sub-areas; on a national map
+    with eight regions packed along the Rhine it put labels over
+    Germany's own western edge and over each other, and ran Franken's
+    label up the page on a long leader (checked in a render, not
+    assumed). Instead: the map sits right-aligned, the nine western and
+    south-western regions get a clean left-hand column with elbow
+    leader lines, and the four isolated eastern regions are labelled
+    directly beside their own shapes."""
+    img, d, qa = modules._start("map13", slide_no, total, pal)
+    y = kicker_block(d, slot["kicker"], pal, y=150); qa.size("kicker", 70)
+    y, hs = _one_line_headline(d, slot["headline"], y, pal); qa.size("headline", hs, headline=True)
+    m = REGIONS13
+    pale = _blend(pal["ACCENT"], (255, 255, 255), 0.45)
+    regions = [(n, pts, pal["SIGNATURE"] if n == "Mosel" else pale) for n, pts in m["regions"]]
+    panel = dict(aspect=m["aspect"], outline=m["outline"], outlines=m["islands"],
+                 regions=regions, rivers=m["rivers"], river_width=3, labels=[],
+                 outline_smooth=2, map_align="right")
+    map_top = y + 20
+    map_h = slot.get("map_h", 1500)
+    mx0, my0, mw, mh = map_atlas.draw_map_panel(img, d, pal, panel, M, map_top, W - 2 * M, map_h)
+    d = ImageDraw.Draw(img)
+    P = lambda p: (mx0 + p[0] * mw, my0 + p[1] * mh)
+    lf = font("body_bold", FLOOR); mf = font("display_black", 76)
+    qa.size("map_label", FLOOR)
+    a, dsc = lf.getmetrics(); lh = a + dsc
+
+    def dot(x, y_, col):
+        d.ellipse([x - 9, y_ - 9, x + 9, y_ + 9], fill=col, outline=PAPER, width=3)
+
+    # Left column: right-aligned at a fixed edge just outside the map.
+    col_x = mx0 - 40
+    left = [n for n in slot["left_labels"]]
+    items = sorted(((n, P(m["targets"][n])) for n in left), key=lambda t: t[1][1])
+    gap = 22
+    rows, prev = [], None
+    for n, (tx, ty) in items:
+        f = mf if n == "Mosel" else lf
+        fa, fd = f.getmetrics(); h = fa + fd
+        ly = ty - h / 2
+        if prev is not None and ly < prev + gap:
+            ly = prev + gap
+        rows.append((n, tx, ty, ly, h, f)); prev = ly + h
+    # Chain clamp (same rule as map_atlas #2): if the forward push ran
+    # the column past the map's bottom, lift the whole column by the
+    # overflow rather than clamping one label onto its neighbour.
+    over = prev - (my0 + mh)
+    if over > 0:
+        rows = [(n, tx, ty, ly - over, h, f) for n, tx, ty, ly, h, f in rows]
+    for n, tx, ty, ly, h, f in rows:
+        col = pal["SIGNATURE"]
+        tw = text_w(d, n, f)
+        d.text((col_x - tw, ly), n, font=f, fill=col if n == "Mosel" else INK)
+        mid = ly + h / 2 + 4
+        ex = col_x + 24
+        d.line([(col_x + 10, mid), (ex, mid), (tx, ty)], fill=MUTED, width=3)
+        dot(tx, ty, col)
+        qa.box(f"lbl:{n}", (col_x - tw, ly, col_x, ly + h))
+    # Direct labels for the isolated eastern regions: (dx, dy) offset
+    # from the target in px, chosen against a render.
+    for n, (dx, dy) in slot["direct_labels"].items():
+        tx, ty = P(m["targets"][n])
+        dot(tx, ty, pal["SIGNATURE"])
+        d.text((tx + dx, ty + dy), n, font=lf, fill=INK)
+        qa.box(f"lbl:{n}", (tx + dx, ty + dy, tx + dx + text_w(d, n, lf), ty + dy + lh))
+    # No qa.box for the map itself: its bounding rectangle is mostly
+    # empty space, and the direct labels sit inside it by design.
+    ty = map_top + map_h + 50
+    end = run_in(d, (M, ty), slot["summary_lead"], slot["summary"], W - 2 * M, pal)
+    qa.box("summary", (M, ty, W - M, end)); qa.size("summary", TYPE["body"])
+    qa.add_words(slot["summary"])
+    return modules._finish(img, d, qa, slide_no, total, credit=slot.get("credit"))
+
+
+def render_blades(slot, slide_no, total, pal):
+    """Vertical blade layout: three tall, narrow photo strips side by
+    side across the top of the page, separated by thin paper gutters,
+    each with its own caption tab; text runs full-width beneath. The
+    middle blade drops lower than the outer two so the row reads as a
+    stepped composition rather than a flat three-up grid."""
+    img, d, qa = modules._start("blades", slide_no, total, pal)
+    blades = slot["blades"]
+    gut = 18
+    bw = (W - gut * (len(blades) - 1)) // len(blades)
+    base_h = slot.get("blade_h", 1250)
+    drops = slot.get("blade_drop", [0, 110, 0])
+    cf = font("kicker_bold", FLOOR)
+    for i, b in enumerate(blades):
+        x0 = i * (bw + gut)
+        h = base_h + drops[i]
+        im = cover_fit(load_photo(b["photo"]), bw, h, y_anchor=b.get("anchor", 0.5),
+                       zoom=b.get("zoom", 1.0))
+        img.paste(im, (x0, 0))
+        d = ImageDraw.Draw(img)
+        tw = text_w(d, b["caption"], cf)
+        d.rectangle([x0, h - 96, x0 + tw + 60, h], fill=INK)
+        d.text((x0 + 30, h - 86), b["caption"], font=cf, fill=PAPER)
+    qa.size("caption", FLOOR)
+    y = base_h + max(drops) + 70
+    y = kicker_block(d, slot["kicker"], pal, y=y); qa.size("kicker", 70)
+    y, hs = _one_line_headline(d, slot["headline"], y, pal); qa.size("headline", hs, headline=True)
+    y += 40
+    for lead, body in slot["items"]:
+        y0 = y
+        y = run_in(d, (M, y), lead, body, W - 2 * M, pal) + slot.get("item_gap", 50)
+        qa.box(f"runin:{lead}", (M, y0, W - M, y - slot.get("item_gap", 50)))
+        qa.add_words(body)
+    return modules._finish(img, d, qa, slide_no, total, credit=slot.get("photo_credit"))
+
+
+def render_stair_ladder(slot, slide_no, total, pal):
+    """Numbered staircase: rung 1 (Kabinett) at the BOTTOM of the page,
+    rung 5 (TBA) at the top -- ripeness climbs the page, per Steve.
+    Treads are right-aligned and shorten as they rise, so the whole
+    graphic reads as a literal staircase. Eiswein is deliberately NOT a
+    numbered rung: it shares Beerenauslese's minimum must weight and is
+    defined by a harvest condition (frozen on the vine), so it sits in a
+    dashed box beside rung 4 -- a parallel track, per the D3 framing and
+    the DWI-based article Steve supplied, not a sixth step."""
+    img, d, qa = modules._start("stair_ladder", slide_no, total, pal)
+    y = kicker_block(d, slot["kicker"], pal, y=150); qa.size("kicker", 70)
+    y, hs = _one_line_headline(d, slot["headline"], y, pal); qa.size("headline", hs, headline=True)
+    y = standfirst(d, (M, y + 8), slot["standfirst"], W - 2 * M, leading=1.14) + 50
+    qa.size("standfirst", TYPE["standfirst"])
+    rungs = slot["rungs"]  # listed bottom (1) to top (n)
+    n = len(rungs)
+    zone_top, zone_bot = y, CONTENT_BOTTOM - 20
+    gap = 26
+    step_h = (zone_bot - zone_top - gap * (n - 1)) // n
+    dx = slot.get("step_dx", 230)
+    nf = font("display_black", 96); lf = font("display_bold", 78); bf = font("body", FLOOR + 4)
+    qa.size("rung_name", 78); qa.size("rung_note", FLOOR + 4)
+    rung_boxes = []
+    for i, (name, note) in enumerate(rungs):
+        t = i / max(n - 1, 1)
+        color = _blend(_blend(pal["SIGNATURE"], (255, 255, 255), 0.72), pal["ACCENT"], t)
+        x0 = M + i * dx
+        y1 = zone_bot - i * (step_h + gap)
+        y0 = y1 - step_h
+        d.rounded_rectangle([x0, y0, W - M, y1], radius=14, fill=color)
+        dark = sum(color) / 3 < 150
+        fg = PAPER if dark else INK
+        badge_r = 62
+        bcx, bcy = x0 + 40 + badge_r, (y0 + y1) // 2
+        d.ellipse([bcx - badge_r, bcy - badge_r, bcx + badge_r, bcy + badge_r], fill=pal["SIGNATURE"])
+        num = str(i + 1)
+        nw = text_w(d, num, nf); na, nd = nf.getmetrics()
+        d.text((bcx - nw / 2, bcy - (na + nd) / 2 + 4), num, font=nf, fill=PAPER)
+        tx = bcx + badge_r + 40
+        d.text((tx, y0 + 26), name, font=lf, fill=fg)
+        paragraph(d, (tx, y0 + 26 + 100), note, bf, fg, W - M - tx - 30, 1.16)
+        qa.add_words(note)
+        rung_boxes.append((x0, y0, W - M, y1))
+    qa.box("ladder", (M, zone_top, W - M, zone_bot))
+    if slot.get("side_note"):
+        # Box spans the height of its own rung AND the one above -- the
+        # first render sized it to one rung and the note overflowed it.
+        bi = slot["side_note"]["beside"]
+        rx0, ry0, rx1, ry1 = rung_boxes[bi]
+        top = rung_boxes[bi + 1][1] if bi + 1 < len(rung_boxes) else ry0
+        bx0, bx1 = M, rx0 - 60
+        d.rounded_rectangle([bx0, top, bx1, ry1], radius=14, outline=pal["SIGNATURE"], width=5)
+        ry0 = top
+        cy = (rung_boxes[bi][1] + ry1) // 2
+        for xx in range(bx1, rx0, 22):
+            d.line([(xx, cy), (min(xx + 11, rx0), cy)], fill=pal["SIGNATURE"], width=5)
+        sn = slot["side_note"]
+        d.text((bx0 + 36, ry0 + 26), sn["title"], font=lf, fill=pal["SIGNATURE"])
+        paragraph(d, (bx0 + 36, ry0 + 126), sn["note"], bf, INK, bx1 - bx0 - 64, 1.16)
+        qa.add_words(sn["note"])
+    return modules._finish(img, d, qa, slide_no, total)
+
+
+def _hatch(d, box, color, step=26, width=4):
+    x0, y0, x1, y1 = box
+    for k in range(int(x0 - (y1 - y0)), int(x1), step):
+        a = (max(k, x0), y1 - max(0, max(k, x0) - k))
+        b = (min(k + (y1 - y0), x1), y1 - (min(k + (y1 - y0), x1) - k))
+        d.line([a, b], fill=color, width=width)
+
+
+def render_dry_scale(slot, slide_no, total, pal):
+    """Two data graphics in place of a run-in list, per Steve's ask for a
+    more visually impactful page 7: (1) the legal residual-sugar bands
+    for trocken and halbtrocken on one g/L axis -- solid for the base
+    limit, hatched for the acid-dependent extension -- and (2) the 2021
+    share of wine labelled trocken, Baden vs Germany vs the Mosel. Every
+    number is from D3 Ch. 11; nothing is interpolated beyond what the
+    chapter states (Germany's share is drawn at 49% and labelled "just
+    under half," the chapter's own wording, not a precise figure)."""
+    img, d, qa = modules._start("dry_scale", slide_no, total, pal)
+    y = kicker_block(d, slot["kicker"], pal, y=150); qa.size("kicker", 70)
+    y, hs = _one_line_headline(d, slot["headline"], y, pal); qa.size("headline", hs, headline=True)
+    y = standfirst(d, (M, y + 8), slot["standfirst"], W - 2 * M, leading=1.14) + 90
+    qa.size("standfirst", TYPE["standfirst"]); qa.add_words(slot["standfirst"])
+
+    capf = font("kicker_bold", FLOOR); lf = font("display_bold", 76); tick = font("body_bold", FLOOR)
+    qa.size("chart_label", FLOOR)
+    d.text((M, y), "RESIDUAL SUGAR, GRAMS PER LITRE", font=capf, fill=MUTED)
+    y += 100
+    x_label_w = 520
+    ax0, ax1, gmax = M + x_label_w, W - M, 20
+    X = lambda g: ax0 + (ax1 - ax0) * g / gmax
+    row_h, row_gap = 190, 60
+    halb = _blend(pal["ACCENT"], (255, 255, 255), 0.15)
+    rows = [("trocken", pal["SIGNATURE"], 0, 4, 9), ("halbtrocken", halb, 4, 12, 18)]
+    for name, col, g0, gbase, gext in rows:
+        d.text((M, y + 30), name, font=lf, fill=INK)
+        d.rectangle([X(g0), y, X(gbase), y + row_h], fill=col)
+        d.rectangle([X(gbase), y, X(gext), y + row_h], outline=col, width=5)
+        _hatch(d, (X(gbase), y, X(gext), y + row_h), col)
+        y += row_h + row_gap
+    ay = y - row_gap + 20
+    d.line([(ax0, ay), (ax1, ay)], fill=INK, width=3)
+    for g in (0, 4, 9, 12, 18):
+        d.line([(X(g), ay), (X(g), ay + 20)], fill=INK, width=3)
+        tw = text_w(d, str(g), tick)
+        d.text((X(g) - tw / 2, ay + 28), str(g), font=tick, fill=INK)
+    y = ay + 120
+    kf = font("body", FLOOR)
+    d.rectangle([M, y + 8, M + 70, y + 58], fill=INK)
+    d.text((M + 90, y), "base limit", font=kf, fill=INK)
+    hx = M + 90 + text_w(d, "base limit", kf) + 80
+    d.rectangle([hx, y + 8, hx + 70, y + 58], outline=INK, width=4)
+    _hatch(d, (hx, y + 8, hx + 70, y + 58), INK, step=16, width=3)
+    d.text((hx + 90, y), "allowed only if sugar doesn't outrun acid", font=kf, fill=INK)
+    qa.box("scale", (M, ay - 2 * (row_h + row_gap), W - M, y + 70))
+    y += 190
+
+    d.text((M, y), "SHARE OF WINE LABELLED TROCKEN, 2021", font=capf, fill=MUTED)
+    y += 100
+    bars = slot["shares"]
+    bh, bg = 180, 56
+    big = font("display_black", 120)
+    qa.size("share_value", 120, headline=True)
+    for name, pct, shown, is_focus in bars:
+        col = pal["SIGNATURE"] if is_focus else _blend(pal["ACCENT"], (255, 255, 255), 0.35)
+        d.text((M, y + 30), name, font=lf, fill=INK)
+        d.rectangle([ax0, y, ax0 + (ax1 - ax0 - 380) * pct / 100, y + bh], fill=col)
+        vx = ax0 + (ax1 - ax0 - 380) * pct / 100 + 30
+        d.text((vx, y + 2), shown, font=big if is_focus else lf, fill=pal["SIGNATURE"] if is_focus else INK)
+        y += bh + bg
+    qa.box("shares", (M, y - len(bars) * (bh + bg), W - M, y - bg))
+    return modules._finish(img, d, qa, slide_no, total)
+
+
+def _donut(img, cx, cy, r, thick, pct, color, track, ss=3):
+    lay = Image.new("RGBA", (2 * r * ss, 2 * r * ss), (0, 0, 0, 0))
+    ld = ImageDraw.Draw(lay)
+    R = r * ss
+    ld.ellipse([0, 0, 2 * R, 2 * R], fill=track + (255,))
+    ld.pieslice([0, 0, 2 * R, 2 * R], -90, -90 + 360 * pct / 100, fill=color + (255,))
+    t = thick * ss
+    ld.ellipse([t, t, 2 * R - t, 2 * R - t], fill=(0, 0, 0, 0))
+    lay = lay.resize((2 * r, 2 * r), Image.LANCZOS)
+    img.paste(lay, (cx - r, cy - r), lay)
+
+
+def render_valley_stats(slot, slide_no, total, pal):
+    """Side-rail layout (photo right, full height) with a data graphic
+    added per Steve's ask: two ring charts -- share of the Mosel planted
+    to white varieties (91%) and to Riesling alone (62%), both from D3
+    Ch. 11 -- replacing the standfirst that previously stated those two
+    numbers in a sentence."""
+    img, d, qa = modules._start("valley_stats", slide_no, total, pal)
+    rail_x = slot.get("rail_x", 1420)
+    img.paste(cover_fit(load_photo(slot["photo"]), W - rail_x, H, y_anchor=slot.get("anchor", 0.5)), (rail_x, 0))
+    d = ImageDraw.Draw(img)
+    col_w = rail_x - M - 90
+    y = kicker_block(d, slot["kicker"], pal, y=150); qa.size("kicker", 70)
+    hf = font("display_black", TYPE["display_md"])
+    for ln in slot["headline"].split("\n"):
+        d.text((M, y), ln, font=hf, fill=pal["SIGNATURE"])
+        a, dsc = hf.getmetrics(); y += int((a + dsc) * 1.02)
+    qa.size("headline", TYPE["display_md"], headline=True)
+    y += 60
+    r, thick = 250, 70
+    track = _blend(pal["ACCENT"], (255, 255, 255), 0.72)
+    big = font("display_black", 120); cap = font("kicker_bold", FLOOR)
+    qa.size("ring_value", 120, headline=True); qa.size("ring_label", FLOOR)
+    for i, (pct, label, col) in enumerate(slot["rings"]):
+        cx = M + r + i * (col_w // 2 + 20)
+        cy = y + r
+        _donut(img, cx, cy, r, thick, pct, pal[col], track)
+        d = ImageDraw.Draw(img)
+        txt = f"{pct}%"
+        tw = text_w(d, txt, big); a, dsc = big.getmetrics()
+        d.text((cx - tw / 2, cy - (a + dsc) / 2 + 6), txt, font=big, fill=pal["SIGNATURE"])
+        lw = text_w(d, label, cap)
+        d.text((cx - lw / 2, cy + r + 30), label, font=cap, fill=MUTED)
+    y += 2 * r + 150
+    for lead, body in slot["items"]:
+        y0 = y
+        y = run_in(d, (M, y), lead, body, col_w, pal) + 50
+        qa.box(f"runin:{lead}", (M, y0, M + col_w, y - 50))
+        qa.add_words(body)
+    # Caption tab carries the photo credit as a second line: the footer
+    # centres credits on the page, and on this layout that centre point
+    # falls on the photo rail, clipping the credit (seen in a render).
+    cap_txt = slot.get("photo_caption")
+    if cap_txt:
+        crf = font("body", 34)
+        cr = slot.get("photo_credit", "")
+        cw = max(text_w(d, cap_txt, cap), text_w(d, cr, crf))
+        d.rectangle([W - cw - 60, H - 370, W, H - 234], fill=INK)
+        d.text((W - cw - 30, H - 360), cap_txt, font=cap, fill=PAPER)
+        d.text((W - cw - 30, H - 285), cr, font=crf, fill=PAPER)
+    return modules._finish(img, d, qa, slide_no, total, footer_adaptive=True)
+
+
+def render_hero_facts(slot, slide_no, total, pal):
+    """Photo-led layout for page 11, per Steve: a tall hero (well over
+    half the page) of the subject itself, with the text reduced to a
+    kicker, a one-line headline and a compact 2x2 fact grid underneath.
+    No scrim or overlay on the photo -- the caption sits in its own
+    solid tab so the image stays untouched."""
+    img, d, qa = modules._start("hero_facts", slide_no, total, pal)
+    hero_h = slot.get("hero_h", 1500)
+    img.paste(cover_fit(load_photo(slot["photo"]), W, hero_h,
+                        y_anchor=slot.get("anchor", 0.5), zoom=slot.get("zoom", 1.0)), (0, 0))
+    d = ImageDraw.Draw(img)
+    cf = font("kicker_bold", FLOOR)
+    if slot.get("photo_caption"):
+        tw = text_w(d, slot["photo_caption"], cf)
+        d.rectangle([0, hero_h - 96, M + tw + 50, hero_h], fill=INK)
+        d.text((M, hero_h - 86), slot["photo_caption"], font=cf, fill=PAPER)
+    qa.size("caption", FLOOR)
+    y = kicker_block(d, slot["kicker"], pal, y=hero_h + 60); qa.size("kicker", 70)
+    y, hs = _one_line_headline(d, slot["headline"], y, pal); qa.size("headline", hs, headline=True)
+    y += 40
+    gut = 80
+    col_w = (W - 2 * M - gut) // 2
+    lf = font("display_bold", 72); bf = font("body", FLOOR + 4)
+    qa.size("fact_label", 72); qa.size("fact_body", FLOOR + 4)
+    facts = slot["facts"]
+    row_y = y
+    for r in range(0, len(facts), 2):
+        bottoms = []
+        for c, (label, body) in enumerate(facts[r:r + 2]):
+            x = M + c * (col_w + gut)
+            d.line([(x, row_y), (x + col_w, row_y)], fill=pal["ACCENT"], width=4)
+            d.text((x, row_y + 22), label, font=lf, fill=pal["SIGNATURE"])
+            bottoms.append(paragraph(d, (x, row_y + 122), body, bf, INK, col_w, 1.18))
+            qa.add_words(body)
+        row_y = max(bottoms) + 50
+    qa.box("facts", (M, y, W - M, row_y - 50))
+    return modules._finish(img, d, qa, slide_no, total, credit=slot.get("photo_credit"))
+
+
+def render_four_tiles(slot, slide_no, total, pal):
+    """Page 4, round 2: four solid tiles filling the whole content area
+    in a 2x2 checkerboard (slate / pale gold), each carrying a large
+    numeral, a title, a gold sub-line and the body. The shared
+    card_grid() leaves its cards floating in open paper, which is what
+    read as flat in the first pass of this revision."""
+    img, d, qa = modules._start("four_tiles", slide_no, total, pal)
+    y = kicker_block(d, slot["kicker"], pal, y=150); qa.size("kicker", 70)
+    y, hs = _one_line_headline(d, slot["headline"], y, pal); qa.size("headline", hs, headline=True)
+    y = standfirst(d, (M, y + 8), slot["standfirst"], W - 2 * M, leading=1.14) + 60
+    qa.size("standfirst", TYPE["standfirst"]); qa.add_words(slot["standfirst"])
+    gut = 30
+    tw_ = (W - 2 * M - gut) // 2
+    th_ = (CONTENT_BOTTOM - 20 - y - gut) // 2
+    pale = _blend(pal["ACCENT"], (255, 255, 255), 0.62)
+    nf = font("display_black", 160); tf = font("display_bold", 80)
+    sf = font("kicker_bold", FLOOR + 4); bf = font("body", 66)
+    qa.size("tile_title", 80); qa.size("tile_sub", FLOOR + 4); qa.size("tile_body", 66)
+    for k, (title, sub, body) in enumerate(slot["tiles"]):
+        c, rr = k % 2, k // 2
+        x0 = M + c * (tw_ + gut); y0 = y + rr * (th_ + gut)
+        dark = (c + rr) % 2 == 0
+        fill = pal["SIGNATURE"] if dark else pale
+        fg = PAPER if dark else INK
+        d.rounded_rectangle([x0, y0, x0 + tw_, y0 + th_], radius=18, fill=fill)
+        pad = 60
+        d.text((x0 + pad, y0 + 30), f"0{k + 1}", font=nf, fill=pal["ACCENT"] if dark else pal["SIGNATURE"])
+        ty = y0 + 250
+        d.text((x0 + pad, ty), title, font=tf, fill=fg); ty += 110
+        d.text((x0 + pad, ty), sub.upper(), font=sf, fill=pal["ACCENT"] if dark else pal["LEAD"]); ty += 100
+        end = paragraph(d, (x0 + pad, ty), body, bf, fg, tw_ - 2 * pad, 1.2)
+        qa.box(f"tile{k}", (x0, y0, x0 + tw_, max(end, y0 + th_)))
+        qa.add_words(body)
+    return modules._finish(img, d, qa, slide_no, total)
+
+
+RENDERERS = dict(cover=render_cover, map13=render_region_map, blades=render_blades,
+                 stair_ladder=render_stair_ladder, dry_scale=render_dry_scale,
+                 valley_stats=render_valley_stats,
+                 hero_facts=render_hero_facts,
+                 four_tiles=render_four_tiles)
 
 SLIDES = [
 
     # ── 1 · COVER ──────────────────────────────────────────────────
     ("cover", dict(
-        # Swapped for a photo showing both a steep terraced vineyard
-        # slope and the Mosel itself, per Steve's review -- Cochem,
-        # its castle, and the river, all in one frame. Chosen over a
-        # visually stronger candidate (vine leaves in extreme close-up
-        # foreground with the river below) because that one's exact
-        # location couldn't be confirmed via Unsplash's own location
-        # data -- this one is verified (Cochem, Germany).
         photo="de_cochem_mosel",
-        photo_anchor=0.42,
-        photo_zoom=1.0,
+        # zoom + low anchor: the source is landscape, so without a zoom
+        # there's no vertical slack to move; this brings more of the
+        # dark river into frame so the whole title can sit on water.
+        photo_anchor=0.80,
+        photo_zoom=1.12,
         kicker="THE FIELD GUIDE: THE MOSEL",
-        # Title text changed per Steve's review; the 91%-white/62%-
-        # Riesling stats and the prior "ripeness WAS the law" framing
-        # live on slide 8, which is where the spec puts the region's
-        # own numbers anyway.
         title="Ripeness is\nEverything",
+        title_top=0.655,  # round 2: lowered fully into the dark water of the river
         photo_credit="Philipp / Unsplash",
     )),
 
     # ── 2 · TWO GERMANYS ─────────────────────────────────────────────
+    # Round 2: single-line headline (was a 2-line "The Same Country /
+    # Sold Both of These"); the reclaimed line goes back as white space
+    # between the standfirst and the items and between each item.
     ("editorial_lead", dict(
         photo="de_bernkastel_castle_view",
         photo_caption="The Mosel at Bernkastel",
         photo_credit=CRED_BERNKASTEL,
         kicker="THE REPUTATION PROBLEM",
-        headline="The Same Country\nSold Both of These",
+        headline="Two Germanys",
         standfirst="Germany is the world's largest producer of Riesling, "
                    "and the country most people still associate with "
                    "sugared brand wine. Both are true.",
+        standfirst_gap=110,
+        item_gap=110,
         items=[
             ("Riesling", "Nearly a quarter of German plantings -- close "
                           "to 40% of the world's Riesling vineyard area."),
@@ -177,201 +601,130 @@ SLIDES = [
     )),
 
     # ── 3 · THE MAP ──────────────────────────────────────────────────
-    # regional_atlas, per the spec, with a Germany-wide locator inset
-    # (all 13 Anbaugebiete) -- this also directly satisfies Steve's
-    # separate request to rework the map to show Germany's regions.
-    # No public boundary dataset exists for the Mosel Anbaugebiet or
-    # for any of the 13 regions; see prepare_map_data.py's docstring
-    # for the real, verified-point approach used instead.
-    ("regional_atlas", dict(
+    # Round 2: a standard wine-region map of all 13 Anbaugebiete (real
+    # traced shapes, georeferenced -- see render_region_map()), and the
+    # text is now a summary of what makes the Mosel special rather than
+    # a caption for the village map this slide used to carry. Every
+    # clause traces to D3 Ch. 11 via the spec's slides 4 and 8.
+    ("map13", dict(
         kicker="THE PLACE",
-        headline="One River, Two Tributaries",
-        map_h=1500,
-        main=dict(
-            aspect=(MAP["bbox"][2] - MAP["bbox"][0]) * 0.643 /
-                   (MAP["bbox"][3] - MAP["bbox"][1]),
-            outline=MAP["outline"],
-            regions=[],
-            labels=[],
-            rivers={"Mosel": [MAP["mosel"]]},
-            # Cut down from the spec's fuller village list (Piesport,
-            # Brauneberg, Bernkastel, Graach, Wehlen, Urzig, Erden) --
-            # regional_atlas's cities always label to the right of the
-            # dot with no per-city side override, and that full list
-            # produced an illegible overlapping jumble once rendered.
-            # Piesport is dropped from the map entirely, not just
-            # de-emphasized: it sits about 2.5 real km from
-            # Bernkastel-Kues, which at this map's scale put their
-            # labels on top of each other regardless of dot size --
-            # de-emphasizing alone (tried first) didn't fix a true
-            # coordinate overlap, only a rendering-weight one. Piesport
-            # isn't lost from the deck -- it gets its own dedicated
-            # slide (10) and photo (the actual Goldtropfchen sign) later.
-            cities={
-                "Trier": MAP["towns"]["Trier"],
-                "Bernkastel-Kues": MAP["towns"]["Bernkastel-Kues"],
-                "Zell": MAP["towns"]["Zell"],
-                "Wiltingen": MAP["towns"]["Wiltingen"],
-            },
-            city_emphasis={"Bernkastel-Kues"},
-        ),
-        inset=dict(
-            aspect=(0.9),
-            outline=INSET["outline"],
-            regions=[],
-            labels=[],
-            # All 13 real, verified points exist in INSET["regions"]
-            # (see prepare_map_data.py) -- but the western cluster
-            # (Mosel, Nahe, Rheingau, Rheinhessen, all genuinely close
-            # together in real Germany) produced an illegible overlap
-            # at this inset's small size once actually rendered, same
-            # problem as the main map's village cluster. Labeling only
-            # the well-separated regions plus Mosel keeps the inset
-            # legible; the description states the true count of 13.
-            cities={k: v for k, v in INSET["regions"].items()
-                    if k in ("Mosel", "Ahr", "Pfalz", "Baden",
-                             "W\u00fcrttemberg", "Franken",
-                             "Saale-Unstrut", "Sachsen")},
-            city_emphasis={"Mosel"},
-        ),
-        inset_title="GERMANY'S 13 REGIONS",
-        # Explicit positioning -- the default (relative to the drawn
-        # map's own fill area) put the inset on top of Wiltingen and
-        # part of the river, since this map's tall-narrow RP outline
-        # doesn't fill its box the way the function's default assumes.
-        # Checked against an actual render before settling on these.
-        inset_x_frac=0.62,
-        inset_y_frac=0.02,
-        inset_w=650,
-        inset_map_w=560,
-        description="Bernkastel-Kues sits on the Middle Mosel -- the "
-                    "largest of the river's three stretches and home to "
-                    "most of the best-known sites, Piesport among them "
-                    "(slide 10). Wiltingen, on the Saar, is "
-                    "Scharzhofberg's village. The Saar and Ruwer join "
-                    "the Mosel near Trier but aren't traced as rivers "
-                    "here -- no named data for either was found. "
-                    "Inset: 7 of Germany's 13 wine regions, well enough "
-                    "separated to label at this scale.",
+        headline="Thirteen Regions. One Mosel.",
+        map_h=1590,
+        summary_lead="Why it stands apart",
+        summary="Riesling on slopes up to 70%, above a looping river at "
+                "50\u00b0N. Slate stores the day's heat, and the wines come "
+                "out paler, lighter and higher in acid than any other "
+                "German Riesling.",
+        left_labels=["Ahr", "Mittelrhein", "Mosel", "Rheingau", "Nahe",
+                     "Rheinhessen", "Hessische Bergstra\u00dfe", "Pfalz", "Baden"],
+        direct_labels={"Saale-Unstrut": (-190, -95), "Sachsen": (20, 18),
+                       "Franken": (30, -80), "W\u00fcrttemberg": (40, 10)},
+        credit="Region shapes after Wikimedia Commons, CC BY-SA 3.0",
     )),
 
     # ── 4 · WHY ANYONE FARMS A CLIFF ──────────────────────────────────
-    # Spec module "spectrum" doesn't exist in engine/modules.py --
-    # editorial_lead substitutes; same photo+kicker+headline+
-    # standfirst+items shape the spec's own content needs.
-    ("editorial_lead", dict(
-        photo="de_hatzenport_mosel",
-        photo_anchor=0.40,
-        photo_credit=CRED_HATZENPORT,
+    # Round 2: four cards, one per corrective, instead of a photo band +
+    # run-in list; single-line headline.
+    ("four_tiles", dict(
         kicker="THE SLOPE",
-        headline="Everything Here Is a\nWorkaround for Latitude",
-        standfirst="Germany's regions sit at 49-50\u00b0N, among the most "
-                   "northerly in the world. The Mosel is a stack of "
-                   "corrections for that.",
-        items=[
-            ("The river", "Radiates heat, moderates temperature, extends "
-                           "the season."),
-            ("The aspect", "Best sites are steep and south-facing -- "
-                            "gradients reach 70%."),
-            ("The slate", "Dark rock. Takes heat in by day, gives it "
-                           "back at night."),
-            ("The autumn", "Long and dry, which lets sugar accumulate."),
+        headline="Four Fixes for Latitude",
+        standfirst="The Mosel sits near 50\u00b0N, far enough north that "
+                   "ripening Riesling takes help from the land.",
+        tiles=[
+            ("The River", "Warmth by reflection",
+             "Radiates heat, moderates temperature and stretches the "
+             "growing season."),
+            ("The Aspect", "Face the sun",
+             "The best sites are steep and south-facing -- gradients "
+             "reach 70%."),
+            ("The Slate", "A storage heater",
+             "Dark rock takes heat in by day and gives it back at night."),
+            ("The Autumn", "Time on the vine",
+             "Long and dry, which lets sugar keep building before "
+             "harvest."),
         ],
     )),
 
     # ── 5 · THE COST OF THE CORRECTION ────────────────────────────────
-    ("editorial_lead", dict(
-        photo="de_bernkastel_castle_view",
-        photo_caption="The Mosel at Bernkastel",
-        photo_credit=CRED_BERNKASTEL,
+    # Round 2: vertical blade layout; photos of people working steep
+    # slopes. The two worker photos carry no location data (Pexels has
+    # none), so their captions describe the work, not a place; only the
+    # Bremm blade names a location, per its photographer's own title.
+    ("blades", dict(
+        blades=[
+            dict(photo="de_steep_stairs_climber", caption="Stairs, not rows", anchor=0.45),
+            dict(photo="de_harvest_pickers_slope", caption="Picked by hand", anchor=0.40),
+            dict(photo="de_bremm_mosel_loop", caption="The Mosel at Bremm", anchor=0.5, zoom=1.0),
+        ],
+        blade_h=1180,
         kicker="THE LABOR",
-        headline="The Bill for Farming\nat Thirty-Five Degrees",
-        standfirst="Steep sites need substantially more labor than flat "
-                   "ones -- and some of it can't be done any other way.",
+        headline="The Price of a Cliff",
         items=[
             ("Erosion", "Constant enough that winching soil back up the "
                          "slope is routine maintenance, not an emergency."),
             ("Spraying", "Often only practicable by helicopter -- which "
-                          "also makes organic certification hard, since "
-                          "drift onto a neighbor's fruit is a real risk."),
+                          "also makes organic certification hard."),
             ("The blunt version", "On these slopes, often only Riesling "
                                    "commands a price that makes the "
-                                   "farming sustainable."),
+                                   "farming pay."),
         ],
+        photo_credit="Peter Dyllong, Nico Becker, tom analogicus / Pexels",
     )),
 
     # ── 6 · THE LADDER ───────────────────────────────────────────────
-    ("card_grid", dict(
+    # Round 2: numbered, lowest ripeness at the bottom of the page.
+    ("stair_ladder", dict(
         kicker="THE RIPENESS LADDER",
-        headline="Six Rungs, Not One\nof Them Means \"Sweet\"",
-        standfirst="Pr\u00e4dikatswein levels, in ascending must weight -- "
-                   "sugar in the grape at harvest, not sugar in the bottle.",
-        cards=[
-            (None, "Kabinett", "Lowest must weight of the six",
-             "Lightest, highest acid. Dry to medium-sweet."),
-            (None, "Sp\u00e4tlese", "\"Late picked\"",
-             "Usually about two weeks after Kabinett. Riper, fuller."),
-            (None, "Auslese", "\"Selected harvest\"",
-             "Extra-ripe bunches. The last level that can still be dry."),
-            (None, "Beerenauslese", "Individually selected berries",
-             "Hand-harvest compulsory. Always sweet."),
-            (None, "Eiswein", "Same must weight as BA",
-             "But frozen on the vine, not botrytis-affected -- see slide 11."),
-            (None, "Trockenbeerenauslese", "Shrivelled, botrytis-affected",
-             "Germany's most expensive wines. Sometimes under 100 "
-             "bottles made."),
+        headline="Five Rungs. None Means Sweet.",
+        standfirst="Pr\u00e4dikat levels climb by must weight -- sugar in the "
+                   "grape at harvest, not sugar in the bottle.",
+        rungs=[
+            ("Kabinett", "Lightest, highest in acid. Dry to medium-sweet."),
+            ("Sp\u00e4tlese", "\"Late picked\" -- riper, fuller."),
+            ("Auslese", "Extra-ripe bunches. The last level that can "
+                        "still be dry."),
+            ("Beerenauslese", "Selected berries. Always sweet."),
+            ("TBA", "Shrivelled, botrytised berries. Germany's rarest."),
         ],
+        side_note=dict(beside=3, title="Eiswein",
+                       note="Same must weight as BA -- but frozen on the "
+                            "vine. A parallel track, not a rung."),
     )),
 
-    # ── 7 · PRADIKAT IS NOT SWEETNESS ─────────────────────────────────
-    # Spec module "duel, columns" -- substituted with editorial_lead:
-    # this content is a set of definitions and a regional statistic,
-    # not two opposed poles, and reads more clearly as a straight list.
-    ("editorial_lead", dict(
-        photo="de_hatzenport_mosel",
-        photo_anchor=0.55,
-        photo_credit=CRED_HATZENPORT,
+    # ── 7 · DRY IS A MEASUREMENT ─────────────────────────────────────
+    # Round 2: two data graphics replace the run-in list.
+    ("dry_scale", dict(
         kicker="THE WORD ON THE LABEL",
-        headline="Dry Is a\nMeasurement",
-        standfirst="Below Beerenauslese, a wine at any Pr\u00e4dikat level "
-                   "can be made at any sweetness -- and the sweetness "
-                   "terms are numbers, not descriptions.",
-        items=[
-            ("trocken", "No more than 4 g/L residual sugar -- or up to "
-                         "9 g/L where sugar doesn't exceed total acidity "
-                         "by more than 2 g/L."),
-            ("halbtrocken", "4 to 12 g/L -- or up to 18 g/L on the same "
-                             "kind of acid allowance (10 g/L)."),
-            ("The regional tell", "In 2021, trocken was just under 50% "
-                                   "nationally, 64% in Baden -- and only "
-                                   "26% in the Mosel."),
+        headline="Dry Is a Measurement",
+        standfirst="Below Beerenauslese, any Pr\u00e4dikat can be made at "
+                   "any sweetness. The label terms are numbers.",
+        shares=[
+            ("Baden", 64, "64%", False),
+            ("Germany", 49, "Just under half", False),
+            ("Mosel", 26, "26%", True),
         ],
     )),
 
     # ── 8 · THE MOSEL ─────────────────────────────────────────────────
-    ("side_rail", dict(
+    # Round 2: ring-chart graphic added (91% white, 62% Riesling).
+    ("valley_stats", dict(
         photo="de_hatzenport_mosel",
-        side="right",
+        anchor=0.5,
         photo_caption="The Mosel at Hatzenport",
-        photo_credit=CRED_HATZENPORT,
+        photo_credit="Rolf Kranz / Commons, CC BY-SA 4.0",
         kicker="THE MAIN VALLEY",
-        headline="Pale, Light, Built\nto Outlive You",
-        standfirst="91% white. Riesling alone is 62% of it -- the "
-                   "region a sugar-first law fit worst.",
+        headline="Pale, Light,\nBuilt to\nOutlive You",
+        rings=[(91, "WHITE GRAPES", "SIGNATURE"), (62, "RIESLING", "ACCENT")],
         items=[
-            ("Village and vineyard", "Brauneberg (Juffer), \u00dcrzig "
-                                      "(W\u00fcrzgarten), Bernkastel "
-                                      "(Doctor), Piesport "
-                                      "(Goldtr\u00f6pfchen). Village "
-                                      "comes first on the label."),
-            ("In the glass", "Paler, lighter, lower in alcohol and "
-                              "higher in acid than German Riesling from "
-                              "anywhere else."),
-            ("Scale", "About 20% of the region's wine comes from one "
-                       "co-operative -- the world's largest producer of "
-                       "Riesling."),
+            ("In the glass", "Paler, lighter, lower in alcohol and higher "
+                              "in acid than German Riesling from anywhere "
+                              "else."),
+            ("Village first", "Bernkastel (Doctor), Piesport "
+                               "(Goldtr\u00f6pfchen), \u00dcrzig "
+                               "(W\u00fcrzgarten)."),
         ],
     )),
+
 
     # ── 9 · THE SAAR AND THE RUWER ─────────────────────────────────────
     ("side_rail", dict(
@@ -425,26 +778,33 @@ SLIDES = [
         footnote="Grosslage and Grosse Lage are unrelated and one letter "
                  "apart: one was the 1971 collective-site term now being "
                  "retired; the other is the VDP's own top classification "
-                 "tier. This is Saturday's argument -- this slide sets it "
-                 "up and doesn't settle it.",
+                 "tier.",
     )),
 
     # ── 11 · EISWEIN ──────────────────────────────────────────────────
-    ("fact_file", dict(
-        photo="de_bernkastel_castle_view",
-        photo_caption="The Mosel at Bernkastel",
-        photo_credit=CRED_BERNKASTEL,
+    # Round 2: photo-led layout with a hero of frozen white grapes still
+    # on the vine (Ivonne Arceo / Pexels -- no location data, so the
+    # caption describes the subject, not a place). The bird netting
+    # visible behind the cluster is standard practice for fruit left
+    # hanging into winter, which ties to the "real gamble" fact below.
+    ("hero_facts", dict(
+        photo="de_eiswein_frozen_cluster",
+        anchor=0.38,
+        hero_h=1340,
+        photo_caption="Frozen on the vine",
+        photo_credit="Ivonne Arceo / Pexels",
         kicker="THE RUNG THAT ISN'T ABOUT SUGAR",
-        headline="A Pr\u00e4dikat Defined by Temperature",
+        headline="Defined by Temperature",
         facts=[
-            ("Est. 1982", "Its own category since this year."),
-            ("Same must weight as BA", "Not a step up the ladder -- a "
-                                        "parallel track."),
-            ("Picked below \u20137\u00b0C", "Grapes must be frozen solid "
-                                       "at harvest, pressed while still "
-                                       "frozen."),
-            ("A real gamble", "Growers waiting for the freeze often lose "
-                               "part of the crop to rot or birds."),
+            ("Since 1982", "Eiswein has been its own Pr\u00e4dikat since "
+                           "this year."),
+            ("Same must weight as BA", "A parallel track to "
+                                        "Beerenauslese, not a step "
+                                        "above it."),
+            ("Below \u20137\u00b0C", "Picked frozen solid and pressed "
+                                  "while still frozen."),
+            ("A real gamble", "Waiting for the freeze often costs part "
+                              "of the crop to rot or birds."),
         ],
     )),
 
@@ -471,10 +831,11 @@ SLIDES = [
         photo="de_hatzenport_mosel",
         photo_anchor=0.35,
         title="The Law Changed\nIts Mind in 2026",
-        subtitle="On 12 June 2026 the Bundesrat gave Grosses Gew\u00e4chs "
-                 "legal footing. Which sites qualify is still being "
-                 "decided. Saturday: whether must weight should still "
-                 "decide it.",
+        # Round 2: trimmed for brevity, and the Saturday teaser removed --
+        # the series is dropping to 2-3 posts a week, so the close no
+        # longer promises a specific next post.
+        subtitle="Since June 2026, Grosses Gew\u00e4chs has national legal "
+                 "standing. Which sites qualify is still being decided.",
         photo_credit=CRED_HATZENPORT,
     )),
 ]
@@ -487,8 +848,8 @@ def build():
     paths = []
     total = len(SLIDES)
     for i, (name, slot) in enumerate(SLIDES, start=1):
-        if name == "cover":
-            fn = render_cover
+        if name in RENDERERS:
+            fn = RENDERERS[name]
         elif name == "regional_atlas":
             fn = map_atlas.regional_atlas
         else:
