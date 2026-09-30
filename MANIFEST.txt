@@ -160,6 +160,7 @@ logo/mark_reversed_256.png
 logo/mark_reversed_512.png
 photos/QS_glass_icon.png
 photos/QS_glass_icon_ink.png
+photos/de_bernkastel_aerial.jpg
 photos/de_bernkastel_bridge_couple.jpg
 photos/de_bernkastel_castle_view.jpg
 photos/de_bremm_mosel_loop.jpg

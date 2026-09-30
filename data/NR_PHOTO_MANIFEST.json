@@ -422,7 +422,8 @@
   "description": "Classic elevated Mosel river-bend view -- steep vineyard slope on the right bank, town on the left. Reused across several Mosel Field Guide slides given this arc's limited photo library (3 photos total).",
   "slot": "de_bernkastel_castle_view",
   "credit": "Roger W / Wikimedia Commons (CC BY-SA 2.0)",
-  "local_path": "/home/claude/repo/photos/de_bernkastel_castle_view.jpg"
+  "local_path": "/home/claude/repo/photos/de_bernkastel_castle_view.jpg",
+  "superseded_note": "No longer used in the Mosel Field Guide. A scanned vintage film slide with a heavy cyan cast (mean B exceeds R by ~97 levels, saturation ~2x normal) at 1000x557 -- replaced on page 2 by de_bernkastel_aerial after Steve flagged the color. Avoid for future use unless color-corrected."
  },
  {
   "title": "File:10 Piesport 46DSC 0481 (45697676324).jpg",
@@ -507,5 +508,17 @@
   "slot": "de_bernkastel_bridge_couple",
   "credit": "Febe Vanermen / Unsplash",
   "local_path": "/home/claude/repo/photos/de_bernkastel_bridge_couple.jpg"
+ },
+ {
+  "title": "de_bernkastel_aerial",
+  "url": "https://www.pexels.com/photo/scenic-aerial-view-of-bernkastel-kues-germany-38565365/",
+  "width": 5250,
+  "height": 4239,
+  "author": "sajid shiper",
+  "license": "Pexels License (free to use)",
+  "description": "Aerial view of Bernkastel-Kues, the Mosel and the vineyard slopes above (photographer's own title names Bernkastel-Kues). Right ~8% trimmed from the 5707px original to remove a slab of foreground stone at the frame edge. Replaces de_bernkastel_castle_view on page 2.",
+  "slot": "de_bernkastel_aerial",
+  "credit": "sajid shiper / Pexels",
+  "local_path": "/home/claude/repo/photos/de_bernkastel_aerial.jpg"
  }
 ]

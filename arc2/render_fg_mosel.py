@@ -578,9 +578,13 @@ SLIDES = [
     # Sold Both of These"); the reclaimed line goes back as white space
     # between the standfirst and the items and between each item.
     ("editorial_lead", dict(
-        photo="de_bernkastel_castle_view",
+        # Round 3: replaced the old Bernkastel photo, a scan of an aged
+        # film slide with a heavy cyan cast (mean blue exceeded red by
+        # ~97 levels; saturation ~2x a normal photo). This one measures
+        # neutral and is ~6x the resolution.
+        photo="de_bernkastel_aerial",
         photo_caption="The Mosel at Bernkastel",
-        photo_credit=CRED_BERNKASTEL,
+        photo_credit="sajid shiper / Pexels",
         kicker="THE REPUTATION PROBLEM",
         headline="Two Germanys",
         standfirst="Germany is the world's largest producer of Riesling, "
