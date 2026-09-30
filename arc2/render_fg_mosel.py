@@ -727,58 +727,68 @@ SLIDES = [
 
 
     # ── 9 · THE SAAR AND THE RUWER ─────────────────────────────────────
-    ("side_rail", dict(
-        photo="de_bernkastel_castle_view",
-        side="left",  # alternates from slide 8, per the spec's own note
-        photo_caption="The Mosel at Bernkastel",
-        photo_credit=CRED_BERNKASTEL,
+    # Round 3: new photo with people, per Steve (Febe Vanermen / Unsplash,
+    # Unsplash location data: Bernkastel-Kues). Searched Pexels, Unsplash
+    # and Commons for people in the Saar or Ruwer themselves first; the
+    # real Saar/Ruwer photos found (Kanzem vineyards and cycle path,
+    # the Scharzhofberg panorama, the Ruwer-Hochwald cycle path at Kasel)
+    # had nobody in them. So this is honest Middle Mosel, captioned as
+    # Bernkastel, not passed off as a tributary.
+    # Layout moved from side_rail to a wide top band: side_rail centre-
+    # crops a narrow 860px strip, and in this photo the vineyard slope is
+    # on the left and the couple on the right -- no narrow slice holds
+    # both. The wide band keeps them together and frees the headline to
+    # run on one line.
+    ("editorial_lead", dict(
+        photo="de_bernkastel_bridge_couple",
+        band_h=1060,
+        photo_caption="Bernkastel, Middle Mosel",
+        photo_credit="Febe Vanermen / Unsplash",
         kicker="THE TRIBUTARIES",
-        headline="Colder Water,\nHigher Acid",
-        standfirst="Both join the Mosel near Trier, inside the same "
-                   "Anbaugebiet. Neither tastes like the main valley.",
+        headline="Colder Water, Higher Acid",
+        standfirst="The Saar and the Ruwer join the Mosel near Trier, "
+                   "inside the same Anbaugebiet. Neither tastes like the "
+                   "main valley.",
         items=[
-            ("The sites that matter", "Not the main channel -- the "
-                                       "sheltered side valleys, facing "
+            ("The sites that matter", "Sheltered side valleys facing "
                                        "south, south-east or south-west."),
-            ("Why they're different", "Slightly higher altitude than the "
-                                       "Middle Mosel, so slightly lower "
-                                       "temperatures -- and acidity that "
+            ("Why they're different", "Slightly higher and cooler than "
+                                       "the Middle Mosel -- and acidity "
                                        "can run higher still."),
-            ("The name to know", "Scharzhofberg, in the Saar, at "
-                                  "Wiltingen -- the most reputed vineyard "
-                                  "on either tributary."),
+            ("The name to know", "Scharzhofberg, on the Saar."),
         ],
     )),
 
     # ── 10 · TWO WINES CALLED PIESPORTER ──────────────────────────────
-    # Updated for the 2026 reform: the spec's own original version
-    # already flagged this as unresolved ("nothing on the label tells a
-    # consumer which is which"); the reform's actual fix (Region
-    # replacing Grosslage) is now added directly, verified independently
-    # (Jancis Robinson's piece on this is literally titled "The end of
-    # the Grosslage") rather than just carried over from the spec's
-    # 2025-era wording.
+    # Round 3: photo added, per Steve -- the actual Piesporter
+    # Goldtropfchen sign standing in the vines, as a bottom stripe (pages
+    # 9 and 11 both lead with top photos; this varies the rhythm).
+    # Also fixes a silent drop found this round: card_grid() has no
+    # footnote support, so the Grosslage-vs-Grosse-Lage footnote this
+    # slide carried never rendered. It's now a third card, so it renders
+    # and runs through QA. The distinction is one the 2026 origin-reform
+    # article singles out as routinely examined and got wrong.
     ("card_grid", dict(
         kicker="THE LABEL TRAP",
-        headline="Same Village.\nNot the Same Wine.",
-        standfirst="Under the 1971 law, every German vineyard was "
-                   "registered as either an Einzellage or a Grosslage -- "
-                   "and both could say \"Piesporter.\" That changes with "
-                   "the 2026 vintage.",
+        headline="Same Village. Not the Same Wine.",
+        standfirst="Under the 1971 law, every vineyard was registered as "
+                   "an Einzellage or a Grosslage -- and both could say "
+                   "\"Piesporter.\"",
+        row_layout=[3],
         cards=[
-            (None, "Einzellage", "2,658 registered sites",
-             "Under 1 ha to over 200 ha. Piesport's is Goldtr\u00f6pfchen "
-             "-- some of the finest Mosel Riesling."),
-            (None, "Grosslage \u2192 Region", "167 registered zones",
-             "600 to 1,800 ha each. Piesport's is Michelsberg -- largely "
-             "inexpensive wine. From the 2026 vintage the label must say "
-             "Region, not Grosslage, so it stops reading like a named "
-             "vineyard."),
+            (None, "Einzellage", "2,658 sites",
+             "One real vineyard, under 1 ha to over 200. Piesport's is "
+             "Goldtr\u00f6pfchen."),
+            (None, "Grosslage \u2192 Region", "167 zones",
+             "600-1,800 ha. Piesport's is Michelsberg. From 2026 it must "
+             "say Region."),
+            (None, "Grosse Lage", "Not the same thing",
+             "The VDP's own top-site tier -- one letter from Grosslage, "
+             "opposite in meaning."),
         ],
-        footnote="Grosslage and Grosse Lage are unrelated and one letter "
-                 "apart: one was the 1971 collective-site term now being "
-                 "retired; the other is the VDP's own top classification "
-                 "tier.",
+        bottom_stripe=["de_piesport_goldtropfchen_sign"],
+        stripe_captions=["Piesporter Goldtr\u00f6pfchen, in the vines", ""],
+        photo_credit=CRED_PIESPORT,
     )),
 
     # ── 11 · EISWEIN ──────────────────────────────────────────────────

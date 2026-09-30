@@ -431,7 +431,7 @@
   "height": 1031,
   "author": "János Korom Dr.",
   "license": "CC BY-SA 2.0",
-  "description": "Aerial-ish view of Piesport vineyards with the actual 'Piesporter Goldtröpfchen' Einzellage sign visible in the vine rows. Sourced for the Mosel Field Guide but NOT used in the final build -- slide 10 (Two Wines Called Piesporter) uses card_grid, which doesn't take a photo band, and no other slide needed it. A real, worthwhile candidate for a future revision of that slide (e.g. switching to fact_file) or for Saturday's planned Split Decision post, which covers the same subject.",
+  "description": "Piesport vineyards with the actual 'Piesporter Goldtröpfchen' Einzellage sign in the vine rows. Used as the bottom photo stripe on page 10 (Two Wines Called Piesporter) from round 3; unused before that.",
   "slot": "de_piesport_goldtropfchen_sign",
   "credit": "János Korom Dr. / Wikimedia Commons (CC BY-SA 2.0)",
   "local_path": "/home/claude/repo/photos/de_piesport_goldtropfchen_sign.jpg"
@@ -495,5 +495,17 @@
   "slot": "de_eiswein_frozen_cluster",
   "credit": "Ivonne Arceo / Pexels",
   "local_path": "/home/claude/repo/photos/de_eiswein_frozen_cluster.jpg"
+ },
+ {
+  "title": "de_bernkastel_bridge_couple",
+  "url": "https://unsplash.com/photos/DW0xkBQ80R8",
+  "width": 5669,
+  "height": 3779,
+  "author": "Febe Vanermen",
+  "license": "Unsplash License (free to use)",
+  "description": "Older couple walking the Mosel bridge toward Bernkastel, golden terraced slopes behind. Unsplash location data: Bernkastel-Kues. Page 9 (Saar/Ruwer slide) -- chosen because no photo with people in the Saar or Ruwer themselves was found on Pexels, Unsplash or Commons; captioned as Bernkastel, not as a tributary.",
+  "slot": "de_bernkastel_bridge_couple",
+  "credit": "Febe Vanermen / Unsplash",
+  "local_path": "/home/claude/repo/photos/de_bernkastel_bridge_couple.jpg"
  }
 ]
