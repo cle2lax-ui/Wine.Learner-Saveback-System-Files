@@ -105,6 +105,31 @@ def _blend(c1, c2, t):
     return tuple(int(a + (b - a) * t) for a, b in zip(c1, c2))
 
 
+# Chart palette (round 3, Steve: "more color" on pages 6-8, layouts
+# unchanged). The first versions drew every chart from pale blends of
+# SIGNATURE slate and ACCENT gold, which read washed out. These stay in
+# the same family but at full saturation: a ripeness ramp that runs
+# green-gold -> amber -> russet (the colours grapes actually move
+# through), a strong blue reserved for "this is the Mosel", and an ice
+# blue for Eiswein.
+CHART = dict(
+    ripe=[(176, 206, 64), (240, 200, 40), (242, 158, 30), (226, 104, 36), (168, 52, 36)],
+    mosel=(22, 104, 184),
+    amber=(242, 158, 30),
+    gold=(240, 200, 40),
+    grape=(150, 196, 44),
+    ice=(52, 150, 214),
+    ice_fill=(222, 240, 252),
+    ice_text=(22, 98, 156),   # deeper ice for the title: bright ice on ice_fill measured 2.8:1
+    track=(234, 228, 214),
+)
+
+
+def _best_text(bg):
+    """PAPER or INK, whichever has the higher real (WCAG) contrast on bg."""
+    return PAPER if core.contrast(PAPER, bg) >= core.contrast(INK, bg) else INK
+
+
 def _one_line_headline(d, text, y, pal, size=TYPE["display_md"], x=M, max_w=None):
     """Single-line headline -- Steve's standing ask on this deck is that
     titles don't wrap. Shrinks to fit the measure rather than breaking,
@@ -301,13 +326,12 @@ def render_stair_ladder(slot, slide_no, total, pal):
     rung_boxes = []
     for i, (name, note) in enumerate(rungs):
         t = i / max(n - 1, 1)
-        color = _blend(_blend(pal["SIGNATURE"], (255, 255, 255), 0.72), pal["ACCENT"], t)
+        color = CHART["ripe"][i] if n == len(CHART["ripe"]) else _blend(CHART["ripe"][0], CHART["ripe"][-1], t)
         x0 = M + i * dx
         y1 = zone_bot - i * (step_h + gap)
         y0 = y1 - step_h
         d.rounded_rectangle([x0, y0, W - M, y1], radius=14, fill=color)
-        dark = sum(color) / 3 < 150
-        fg = PAPER if dark else INK
+        fg = _best_text(color)
         badge_r = 62
         bcx, bcy = x0 + 40 + badge_r, (y0 + y1) // 2
         d.ellipse([bcx - badge_r, bcy - badge_r, bcx + badge_r, bcy + badge_r], fill=pal["SIGNATURE"])
@@ -327,13 +351,13 @@ def render_stair_ladder(slot, slide_no, total, pal):
         rx0, ry0, rx1, ry1 = rung_boxes[bi]
         top = rung_boxes[bi + 1][1] if bi + 1 < len(rung_boxes) else ry0
         bx0, bx1 = M, rx0 - 60
-        d.rounded_rectangle([bx0, top, bx1, ry1], radius=14, outline=pal["SIGNATURE"], width=5)
+        d.rounded_rectangle([bx0, top, bx1, ry1], radius=14, fill=CHART["ice_fill"], outline=CHART["ice"], width=6)
         ry0 = top
         cy = (rung_boxes[bi][1] + ry1) // 2
         for xx in range(bx1, rx0, 22):
-            d.line([(xx, cy), (min(xx + 11, rx0), cy)], fill=pal["SIGNATURE"], width=5)
+            d.line([(xx, cy), (min(xx + 11, rx0), cy)], fill=CHART["ice"], width=6)
         sn = slot["side_note"]
-        d.text((bx0 + 36, ry0 + 26), sn["title"], font=lf, fill=pal["SIGNATURE"])
+        d.text((bx0 + 36, ry0 + 26), sn["title"], font=lf, fill=CHART["ice_text"])
         paragraph(d, (bx0 + 36, ry0 + 126), sn["note"], bf, INK, bx1 - bx0 - 64, 1.16)
         qa.add_words(sn["note"])
     return modules._finish(img, d, qa, slide_no, total)
@@ -370,8 +394,8 @@ def render_dry_scale(slot, slide_no, total, pal):
     ax0, ax1, gmax = M + x_label_w, W - M, 20
     X = lambda g: ax0 + (ax1 - ax0) * g / gmax
     row_h, row_gap = 190, 60
-    halb = _blend(pal["ACCENT"], (255, 255, 255), 0.15)
-    rows = [("trocken", pal["SIGNATURE"], 0, 4, 9), ("halbtrocken", halb, 4, 12, 18)]
+    halb = CHART["amber"]
+    rows = [("trocken", CHART["mosel"], 0, 4, 9), ("halbtrocken", halb, 4, 12, 18)]
     for name, col, g0, gbase, gext in rows:
         d.text((M, y + 30), name, font=lf, fill=INK)
         d.rectangle([X(g0), y, X(gbase), y + row_h], fill=col)
@@ -402,11 +426,11 @@ def render_dry_scale(slot, slide_no, total, pal):
     big = font("display_black", 120)
     qa.size("share_value", 120, headline=True)
     for name, pct, shown, is_focus in bars:
-        col = pal["SIGNATURE"] if is_focus else _blend(pal["ACCENT"], (255, 255, 255), 0.35)
+        col = CHART["mosel"] if is_focus else {"Baden": CHART["amber"]}.get(name, CHART["gold"])
         d.text((M, y + 30), name, font=lf, fill=INK)
         d.rectangle([ax0, y, ax0 + (ax1 - ax0 - 380) * pct / 100, y + bh], fill=col)
         vx = ax0 + (ax1 - ax0 - 380) * pct / 100 + 30
-        d.text((vx, y + 2), shown, font=big if is_focus else lf, fill=pal["SIGNATURE"] if is_focus else INK)
+        d.text((vx, y + 2), shown, font=big if is_focus else lf, fill=CHART["mosel"] if is_focus else INK)
         y += bh + bg
     qa.box("shares", (M, y - len(bars) * (bh + bg), W - M, y - bg))
     return modules._finish(img, d, qa, slide_no, total)
@@ -443,13 +467,13 @@ def render_valley_stats(slot, slide_no, total, pal):
     qa.size("headline", TYPE["display_md"], headline=True)
     y += 60
     r, thick = 250, 70
-    track = _blend(pal["ACCENT"], (255, 255, 255), 0.72)
+    track = CHART["track"]
     big = font("display_black", 120); cap = font("kicker_bold", FLOOR)
     qa.size("ring_value", 120, headline=True); qa.size("ring_label", FLOOR)
     for i, (pct, label, col) in enumerate(slot["rings"]):
         cx = M + r + i * (col_w // 2 + 20)
         cy = y + r
-        _donut(img, cx, cy, r, thick, pct, pal[col], track)
+        _donut(img, cx, cy, r, thick, pct, CHART[col], track)
         d = ImageDraw.Draw(img)
         txt = f"{pct}%"
         tw = text_w(d, txt, big); a, dsc = big.getmetrics()
@@ -718,7 +742,7 @@ SLIDES = [
         photo_credit="Rolf Kranz / Commons, CC BY-SA 4.0",
         kicker="THE MAIN VALLEY",
         headline="Pale, Light,\nBuilt to\nOutlive You",
-        rings=[(91, "WHITE GRAPES", "SIGNATURE"), (62, "RIESLING", "ACCENT")],
+        rings=[(91, "WHITE GRAPES", "grape"), (62, "RIESLING", "amber")],
         items=[
             ("In the glass", "Paler, lighter, lower in alcohol and higher "
                               "in acid than German Riesling from anywhere "
