@@ -560,15 +560,19 @@ def render_four_tiles(slot, slide_no, total, pal):
     for k, (title, sub, body) in enumerate(slot["tiles"]):
         c, rr = k % 2, k // 2
         x0 = M + c * (tw_ + gut); y0 = y + rr * (th_ + gut)
-        dark = (c + rr) % 2 == 0
-        fill = pal["SIGNATURE"] if dark else pale
-        fg = PAPER if dark else INK
+        # Round 3 (Steve: more color): each tile takes the colour of its
+        # own subject from CHART -- river blue, sun gold, slate charcoal,
+        # autumn orange -- instead of the slate/pale-gold checkerboard.
+        # Body text colour picked by measured contrast.
+        fill, accent = slot["tile_colors"][k] if slot.get("tile_colors") else (
+            (pal["SIGNATURE"], pal["ACCENT"]) if (c + rr) % 2 == 0 else (pale, pal["LEAD"]))
+        fg = _best_text(fill)
         d.rounded_rectangle([x0, y0, x0 + tw_, y0 + th_], radius=18, fill=fill)
         pad = 60
-        d.text((x0 + pad, y0 + 30), f"0{k + 1}", font=nf, fill=pal["ACCENT"] if dark else pal["SIGNATURE"])
+        d.text((x0 + pad, y0 + 30), f"0{k + 1}", font=nf, fill=accent)
         ty = y0 + 250
         d.text((x0 + pad, ty), title, font=tf, fill=fg); ty += 110
-        d.text((x0 + pad, ty), sub.upper(), font=sf, fill=pal["ACCENT"] if dark else pal["LEAD"]); ty += 100
+        d.text((x0 + pad, ty), sub.upper(), font=sf, fill=accent); ty += 100
         end = paragraph(d, (x0 + pad, ty), body, bf, fg, tw_ - 2 * pad, 1.2)
         qa.box(f"tile{k}", (x0, y0, x0 + tw_, max(end, y0 + th_)))
         qa.add_words(body)
@@ -655,6 +659,11 @@ SLIDES = [
     # run-in list; single-line headline.
     ("four_tiles", dict(
         kicker="THE SLOPE",
+        # (fill, accent for numeral + sub-line), in tile order
+        tile_colors=[(CHART["mosel"], CHART["gold"]),        # The River
+                     (CHART["gold"], CHART["ripe"][4]),       # The Aspect
+                     ((44, 50, 62), CHART["amber"]),          # The Slate
+                     (CHART["ripe"][3], (96, 26, 14))],       # The Autumn (russet accent: pale yellow measured 2.9:1)
         headline="Four Fixes for Latitude",
         standfirst="The Mosel sits near 50\u00b0N, far enough north that "
                    "ripening Riesling takes help from the land.",
