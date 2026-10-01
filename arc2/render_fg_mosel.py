@@ -182,8 +182,26 @@ def render_cover(slot, slide_no, total, pal):
     # pins the group's right edge to the page margin instead.
     group_w = 2 * dot_r + 20 + int(d.textlength(slot["kicker"], font=kf))
     kx = (W - M - group_w) if slot.get("kicker_align") == "right" else slot.get("kicker_x", M)
+    text_fill = pal["ACCENT"]
+    chip = slot.get("kicker_chip")
+    if chip:
+        # Translucent chip under the kicker. Geometry: the chip's top sits
+        # on the 120px safe margin, its left edge on the page margin, and
+        # the text is inset by padx/pady -- sized from the real glyph box,
+        # not the font's line height (glyphs sit ~19px below the origin).
+        tb = d.textbbox((0, 0), slot["kicker"], font=kf)
+        padx, pady = chip.get("padx", 44), chip.get("pady", 30)
+        cx0, cy0 = M, chip.get("top", 120)
+        cx1 = cx0 + 2 * padx + 2 * dot_r + 20 + (tb[2] - tb[0])
+        cy1 = cy0 + 2 * pady + (tb[3] - tb[1])
+        d.rounded_rectangle([cx0, cy0, cx1, cy1], radius=chip.get("radius", 22),
+                            fill=tuple(chip["color"]) + (int(255 * chip["alpha"]),))
+        kx = cx0 + padx
+        ky = cy0 + pady - tb[1]
+        dot_cy = ky + int(kicker_size * 0.42)
+        text_fill = tuple(chip.get("text", text_fill))
     d.ellipse([kx, dot_cy - dot_r, kx + 2 * dot_r, dot_cy + dot_r], fill=pal["ACCENT"])
-    d.text((kx + 2 * dot_r + 20, ky), slot["kicker"], font=kf, fill=pal["ACCENT"])
+    d.text((kx + 2 * dot_r + 20, ky), slot["kicker"], font=kf, fill=text_fill)
 
     tf = font("display_black", 300)
     asc, desc = tf.getmetrics()
@@ -613,17 +631,19 @@ SLIDES = [
         photo_anchor=0.80,
         photo_zoom=1.12,
         kicker="THE FIELD GUIDE: THE MOSEL",
-        # Round 3: larger (68 -> 104pt), and moved to the right margin.
-        # Left-aligned, the gold text lands on the castle tower and
-        # "FIELD" disappears into the stonework -- already slightly true
-        # at 68pt, unreadable at 104pt. No shadow/outline fix (Steve had
-        # the shadow removed), and no single text colour works across
-        # pale sky and mid-tone stone, so the fix is position: the open
-        # sky on the right. kicker_y=100 puts the glyph tops (~20px below
-        # the text origin) exactly on the 120px safe margin.
+        # Round 3: larger (68 -> 104pt). Round 4: back at the upper left,
+        # on a light translucent chip, per Steve. Why a CREAM chip with
+        # DARK text, not a dark chip with the old gold text: measured over
+        # the real cover pixels, a translucent DARK chip makes gold text
+        # worse, not better -- at 25-55% it tints the pale sky to a mid-
+        # tone matching the gold's brightness (contrast bottoms out at
+        # 1.0:1) and only reaches 3:1 at ~75% and 3.6:1 at 80%, which is
+        # a solid block, not "light". A cream chip at 45% with dark
+        # water-teal text measures 5.7:1 at the worst 5% of pixels (14.9:1
+        # median). The gold dot stays. Gold-on-dark-chip remains available
+        # (see the commit message) if Steve prefers the gold.
         kicker_size=104,
-        kicker_align="right",
-        kicker_y=100,
+        kicker_chip=dict(color=(250, 246, 236), alpha=0.45, text=CHART["mosel"]),
         title="Ripeness is\nEverything",
         title_top=0.655,  # round 2: lowered fully into the dark water of the river
         photo_credit="Philipp / Unsplash",
