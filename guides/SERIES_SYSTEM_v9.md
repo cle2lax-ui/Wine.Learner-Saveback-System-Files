@@ -43,6 +43,13 @@ build two formats that chase the same one.
 | Three Bottles | 1 slide | saves, purchase intent | 2–4 |
 | Letter Wine List | print | — | off-platform |
 
+**Field Guides are built to the visual benchmark (v10).** The Mosel Field
+Guide (tag `fg-mosel-final`) is the standard: ≥ 8 distinct layouts in a
+12-slide guide, never the same layout twice in a row, ≥ 4 slides led by a
+data graphic, diagram or map, chart colours sampled from the cover photo, a
+full-bleed cover, one-line titles. `engine/variety.py` enforces the layout
+rules at build time. See `VISUAL_BENCHMARK_v10.md`.
+
 **Split Decision is new in v9.** See `SPLIT_DECISION_STYLE_GUIDE.md`.
 It exists because every other format resolves; nothing published before
 v9 was built to be argued with, and comment depth is the signal the

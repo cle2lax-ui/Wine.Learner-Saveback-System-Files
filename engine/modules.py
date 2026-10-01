@@ -38,7 +38,8 @@ import core
 from core import (new_canvas, footer, kicker_block, headline, font, text_w,
                   tracked_text, wrap, paragraph, standfirst, run_in, famous_names,
                   load_photo, load_photo_rgba, cover_fit, scrim, chip, photo_band, photo_stripe, photo_credit, QA,
-                  contrast, region_luminance)
+                  contrast, region_luminance, blend_rgb, best_text_color,
+                  one_line_headline, hatch_fill, donut)
 
 
 def _start(name, slide_no, total, pal, bg_color=None):
@@ -2657,6 +2658,530 @@ def map_facsimile(slot, slide_no, total, pal):
             print("EDGE WARNING:", k, [round(v) for v in b])
 
     return _finish(img, d, qa, slide_no, total)
+# ═══════════════════════════════════════════════════════════════════════
+# M19-M26 · VISUAL-VARIETY MODULES  (promoted from the Mosel Field Guide)
+#
+# The Mosel Field Guide (tag fg-mosel-final) is the system's benchmark for
+# visual variety: twelve slides, eleven distinct layouts (none twice in a row), and a data
+# graphic, illustration or full-bleed photo on nearly every page. The
+# rules are enforced at build time by engine/variety.py. These
+# eight modules began as deck-local renderers in arc2/render_fg_mosel.py
+# and were promoted here, unchanged in output, once Steve declared that
+# deck the new standard. See guides/VISUAL_BENCHMARK_v10.md.
+#
+# Shared conventions across all eight:
+#   * Titles are ONE line (one_line_headline shrinks to fit, never wraps,
+#     and raises if it still can't fit -- cut copy, don't shrink type).
+#   * Chart colours come from slot["chart"] (a dict of RGB tuples), which a
+#     deck derives from its OWN cover photo (arc2/sample_cover_palette.py
+#     is the reference sampler); chart_palette() supplies a neutral default
+#     from the deck palette when a deck doesn't set one.
+#   * Text on any chart fill is chosen by measured WCAG contrast
+#     (best_text_color), never by eye.
+# ═══════════════════════════════════════════════════════════════════════
+
+def chart_palette(slot, pal):
+    """Chart colour dict for a slide: slot["chart"] if the deck set one,
+    else a neutral default built from the deck palette (SIGNATURE for the
+    focus colour, ACCENT-derived warm steps for the rest). Decks should
+    set their own from the cover photo -- see sample_cover_palette.py.
+    Keys: ripe (a 5-step ramp), focus (the highlighted subject), amber,
+    gold, grape, stone, ice, ice_fill, ice_text, track."""
+    if slot.get("chart"):
+        return slot["chart"]
+    sig, acc = pal["SIGNATURE"], pal["ACCENT"]
+    white = (255, 255, 255)
+    return dict(
+        ripe=[blend_rgb(sig, white, 0.7), blend_rgb(acc, white, 0.4), acc,
+              blend_rgb(acc, sig, 0.4), blend_rgb(acc, sig, 0.75)],
+        focus=sig, amber=acc, gold=blend_rgb(acc, white, 0.35),
+        grape=blend_rgb(acc, white, 0.2), stone=blend_rgb(sig, white, 0.35),
+        ice=sig, ice_fill=blend_rgb(sig, white, 0.88), ice_text=sig,
+        track=blend_rgb(acc, white, 0.7),
+    )
+
+
+def cover_bleed(slot, slide_no, total, pal):
+    """M19 COVER BLEED -- full-bleed photo cover, no scrim, no colour block.
+    slots: photo, photo_anchor(0.5), photo_zoom(1.0), kicker, kicker_size
+    (68), kicker_chip(dict color, alpha, text, padx, pady, top, radius),
+    kicker_align('left'|'right'), kicker_x, kicker_y(120), title ('\\n'
+    for 2 lines), title_top (fraction of H, default 0.60), photo_credit.
+
+    Legibility comes from position and an optional translucent chip --
+    never a shadow or scrim. MEASURE before choosing a chip: over a pale
+    sky, a translucent DARK chip makes light text WORSE at low opacity (it
+    tints the sky to a mid-tone matching the text's brightness; contrast
+    bottoms near 1:1 at 25-55%) and only helps once dense (~80%). A light
+    chip with dark text works at low opacity (45% -> 5.7:1). Sample the
+    real pixels behind the chip and compute WCAG contrast, as the Mosel
+    cover did. Does not run through the QA harness (full-bleed by design).
+    """
+    img = cover_fit(load_photo(slot["photo"]), W, H,
+                    y_anchor=slot.get("photo_anchor", 0.5),
+                    zoom=slot.get("photo_zoom", 1.0))
+    d = ImageDraw.Draw(img, "RGBA")
+
+    kicker_size = slot.get("kicker_size", 68)
+    kf = font("kicker_bold", kicker_size)
+    dot_r = int(kicker_size * 0.19)
+    ky = slot.get("kicker_y", 120)
+    dot_cy = ky + int(kicker_size * 0.42)
+    # kicker_x: left edge of the dot+text group; kicker_align="right"
+    # pins the group's right edge to the page margin instead.
+    group_w = 2 * dot_r + 20 + int(d.textlength(slot["kicker"], font=kf))
+    kx = (W - M - group_w) if slot.get("kicker_align") == "right" else slot.get("kicker_x", M)
+    text_fill = pal["ACCENT"]
+    chip = slot.get("kicker_chip")
+    if chip:
+        # Translucent chip under the kicker. Geometry: the chip's top sits
+        # on the 120px safe margin, its left edge on the page margin, and
+        # the text is inset by padx/pady -- sized from the real glyph box,
+        # not the font's line height (glyphs sit ~19px below the origin).
+        tb = d.textbbox((0, 0), slot["kicker"], font=kf)
+        padx, pady = chip.get("padx", 44), chip.get("pady", 30)
+        cx0, cy0 = M, chip.get("top", 120)
+        cx1 = cx0 + 2 * padx + 2 * dot_r + 20 + (tb[2] - tb[0])
+        cy1 = cy0 + 2 * pady + (tb[3] - tb[1])
+        d.rounded_rectangle([cx0, cy0, cx1, cy1], radius=chip.get("radius", 22),
+                            fill=tuple(chip["color"]) + (int(255 * chip["alpha"]),))
+        kx = cx0 + padx
+        ky = cy0 + pady - tb[1]
+        dot_cy = ky + int(kicker_size * 0.42)
+        text_fill = tuple(chip.get("text", text_fill))
+    d.ellipse([kx, dot_cy - dot_r, kx + 2 * dot_r, dot_cy + dot_r], fill=pal["ACCENT"])
+    d.text((kx + 2 * dot_r + 20, ky), slot["kicker"], font=kf, fill=text_fill)
+
+    tf = font("display_black", 300)
+    asc, desc = tf.getmetrics()
+    line_h = int((asc + desc) * 0.88)
+    ty = int(H * slot.get("title_top", 0.60))
+    for ln in slot["title"].split("\n"):
+        tb = d.textbbox((0, 0), ln, font=tf)
+        pad = 45
+        layer = Image.new("RGBA", (tb[2] + pad * 2, tb[3] + pad * 2), (0, 0, 0, 0))
+        ImageDraw.Draw(layer).text((pad, pad), ln, font=tf, fill=(0, 0, 0, 150))
+        layer = layer.filter(ImageFilter.GaussianBlur(16))
+        img.paste(layer, (M - pad + 4, ty - pad + 8), layer)
+        d.text((M, ty), ln, font=tf, fill=PAPER)
+        ty += line_h
+    footer(d, slide_no, total, credit=slot.get("photo_credit"), img=img)
+    return img
+
+
+def region_map(slot, slide_no, total, pal):
+    """M20 REGION MAP -- a country-scale map of named wine regions as real
+    traced shapes, one highlighted, labelled through a deliberate column.
+    slots: kicker, headline(one line), map_h(1500), summary_lead, summary,
+    credit, highlight (region name), left_labels[names] (labelled in a
+    left column with elbow leaders, top to bottom), direct_labels{name:
+    (dx, dy)} (labelled beside their own shape), and map = dict(aspect,
+    outline, islands[], regions[(name, pts)], rivers{name: [segment, ...]},
+    targets{name:
+    (nx, ny)}) in normalised 0-1 map coords -- build it from real data
+    (see arc2/prepare_map_data.build_anbaugebiete_map); never hand-draw.
+
+    Why labels are placed here rather than by map_atlas's automatic
+    placer: that algorithm is built for one region's sub-areas. On a
+    national map with many regions packed along one river it stacked
+    labels over the country's own edge and ran long leaders up the page.
+    The left column + chain clamp (lift the whole column by any overflow)
+    is the fix; direct labels suit isolated regions. Labels sit at the
+    60pt floor and are registered with QA.
+    """
+    import map_atlas  # lazy: map_atlas imports this module
+    img, d, qa = _start("M20 region_map", slide_no, total, pal)
+    y = kicker_block(d, slot["kicker"], pal, y=150); qa.size("kicker", 70)
+    y, hs = one_line_headline(d, slot["headline"], y, pal); qa.size("headline", hs, headline=True)
+    m = slot["map"]
+    pale = blend_rgb(pal["ACCENT"], (255, 255, 255), 0.45)
+    regions = [(n, pts, pal["SIGNATURE"] if n == slot.get("highlight") else pale) for n, pts in m["regions"]]
+    panel = dict(aspect=m["aspect"], outline=m["outline"], outlines=m["islands"],
+                 regions=regions, rivers=m["rivers"], river_width=3, labels=[],
+                 outline_smooth=2, map_align="right")
+    map_top = y + 20
+    map_h = slot.get("map_h", 1500)
+    mx0, my0, mw, mh = map_atlas.draw_map_panel(img, d, pal, panel, M, map_top, W - 2 * M, map_h)
+    d = ImageDraw.Draw(img)
+    P = lambda p: (mx0 + p[0] * mw, my0 + p[1] * mh)
+    lf = font("body_bold", FLOOR); mf = font("display_black", 76)
+    qa.size("map_label", FLOOR)
+    a, dsc = lf.getmetrics(); lh = a + dsc
+
+    def dot(x, y_, col):
+        d.ellipse([x - 9, y_ - 9, x + 9, y_ + 9], fill=col, outline=PAPER, width=3)
+
+    # Left column: right-aligned at a fixed edge just outside the map.
+    col_x = mx0 - 40
+    left = [n for n in slot.get("left_labels", [])]
+    items = sorted(((n, P(m["targets"][n])) for n in left), key=lambda t: t[1][1])
+    gap = 22
+    rows, prev = [], None
+    for n, (tx, ty) in items:
+        f = mf if n == slot.get("highlight") else lf
+        fa, fd = f.getmetrics(); h = fa + fd
+        ly = ty - h / 2
+        if prev is not None and ly < prev + gap:
+            ly = prev + gap
+        rows.append((n, tx, ty, ly, h, f)); prev = ly + h
+    # Chain clamp (same rule as map_atlas #2): if the forward push ran
+    # the column past the map's bottom, lift the whole column by the
+    # overflow rather than clamping one label onto its neighbour.
+    over = prev - (my0 + mh)
+    if over > 0:
+        rows = [(n, tx, ty, ly - over, h, f) for n, tx, ty, ly, h, f in rows]
+    for n, tx, ty, ly, h, f in rows:
+        col = pal["SIGNATURE"]
+        tw = text_w(d, n, f)
+        d.text((col_x - tw, ly), n, font=f, fill=col if n == slot.get("highlight") else INK)
+        mid = ly + h / 2 + 4
+        ex = col_x + 24
+        d.line([(col_x + 10, mid), (ex, mid), (tx, ty)], fill=MUTED, width=3)
+        dot(tx, ty, col)
+        qa.box(f"lbl:{n}", (col_x - tw, ly, col_x, ly + h))
+    # Direct labels for the isolated eastern regions: (dx, dy) offset
+    # from the target in px, chosen against a render.
+    for n, (dx, dy) in slot.get("direct_labels", {}).items():
+        tx, ty = P(m["targets"][n])
+        dot(tx, ty, pal["SIGNATURE"])
+        d.text((tx + dx, ty + dy), n, font=lf, fill=INK)
+        qa.box(f"lbl:{n}", (tx + dx, ty + dy, tx + dx + text_w(d, n, lf), ty + dy + lh))
+    # No qa.box for the map itself: its bounding rectangle is mostly
+    # empty space, and the direct labels sit inside it by design.
+    ty = map_top + map_h + 50
+    end = run_in(d, (M, ty), slot["summary_lead"], slot["summary"], W - 2 * M, pal)
+    qa.box("summary", (M, ty, W - M, end)); qa.size("summary", TYPE["body"])
+    qa.add_words(slot["summary"])
+    return _finish(img, d, qa, slide_no, total, credit=slot.get("credit"))
+
+
+def blades(slot, slide_no, total, pal):
+    """M21 BLADES -- vertical blade layout: N tall narrow photo strips side
+    by side across the top (thin paper gutters, a caption tab on each,
+    the middle one dropped lower for a stepped silhouette), text beneath.
+    slots: blades[dict(photo, caption, anchor, zoom)], blade_h(1250),
+    blade_drop[per-blade extra px, default [0,110,0]], kicker,
+    headline(one line), items[(lead, body)], item_gap(50), photo_credit.
+    Best with 3 blades of subjects that differ in scale (a detail, a
+    figure in landscape, a wide view)."""
+    img, d, qa = _start("M21 blades", slide_no, total, pal)
+    blades = slot["blades"]
+    gut = 18
+    bw = (W - gut * (len(blades) - 1)) // len(blades)
+    base_h = slot.get("blade_h", 1250)
+    drops = slot.get("blade_drop", [0, 110, 0])
+    cf = font("kicker_bold", FLOOR)
+    for i, b in enumerate(blades):
+        x0 = i * (bw + gut)
+        h = base_h + drops[i]
+        im = cover_fit(load_photo(b["photo"]), bw, h, y_anchor=b.get("anchor", 0.5),
+                       zoom=b.get("zoom", 1.0))
+        img.paste(im, (x0, 0))
+        d = ImageDraw.Draw(img)
+        tw = text_w(d, b["caption"], cf)
+        d.rectangle([x0, h - 96, x0 + tw + 60, h], fill=INK)
+        d.text((x0 + 30, h - 86), b["caption"], font=cf, fill=PAPER)
+    qa.size("caption", FLOOR)
+    y = base_h + max(drops) + 70
+    y = kicker_block(d, slot["kicker"], pal, y=y); qa.size("kicker", 70)
+    y, hs = one_line_headline(d, slot["headline"], y, pal); qa.size("headline", hs, headline=True)
+    y += 40
+    for lead, body in slot["items"]:
+        y0 = y
+        y = run_in(d, (M, y), lead, body, W - 2 * M, pal) + slot.get("item_gap", 50)
+        qa.box(f"runin:{lead}", (M, y0, W - M, y - slot.get("item_gap", 50)))
+        qa.add_words(body)
+    return _finish(img, d, qa, slide_no, total, credit=slot.get("photo_credit"))
+
+
+def stair_ladder(slot, slide_no, total, pal):
+    """M22 STAIR LADDER -- numbered staircase ranking. rungs are listed
+    from 1 (bottom of the page) to N (top): the lowest rank sits at the
+    BOTTOM and the ranking climbs the page. Treads right-align and
+    shorten as they rise, so it reads as a literal staircase.
+    slots: kicker, headline(one line), standfirst, rungs[(name, note)]
+    bottom-to-top, side_note = dict(beside=<rung index>, title, note) for
+    a dashed box that sits OUTSIDE the ranking (a parallel track, not a
+    rung -- e.g. Eiswein beside Beerenauslese), chart (palette; ch['ripe']
+    is the N-step ramp, ch['ice'/'ice_fill'/'ice_text'] style the side
+    note). Rung text colour is picked by measured contrast."""
+    ch = chart_palette(slot, pal)
+    img, d, qa = _start("M22 stair_ladder", slide_no, total, pal)
+    y = kicker_block(d, slot["kicker"], pal, y=150); qa.size("kicker", 70)
+    y, hs = one_line_headline(d, slot["headline"], y, pal); qa.size("headline", hs, headline=True)
+    y = standfirst(d, (M, y + 8), slot["standfirst"], W - 2 * M, leading=1.14) + 50
+    qa.size("standfirst", TYPE["standfirst"])
+    rungs = slot["rungs"]  # listed bottom (1) to top (n)
+    n = len(rungs)
+    zone_top, zone_bot = y, CONTENT_BOTTOM - 20
+    gap = 26
+    step_h = (zone_bot - zone_top - gap * (n - 1)) // n
+    dx = slot.get("step_dx", 230)
+    nf = font("display_black", 96); lf = font("display_bold", 78); bf = font("body", FLOOR + 4)
+    qa.size("rung_name", 78); qa.size("rung_note", FLOOR + 4)
+    rung_boxes = []
+    for i, (name, note) in enumerate(rungs):
+        t = i / max(n - 1, 1)
+        color = ch["ripe"][i] if n == len(ch["ripe"]) else blend_rgb(ch["ripe"][0], ch["ripe"][-1], t)
+        x0 = M + i * dx
+        y1 = zone_bot - i * (step_h + gap)
+        y0 = y1 - step_h
+        d.rounded_rectangle([x0, y0, W - M, y1], radius=14, fill=color)
+        fg = best_text_color(color)
+        badge_r = 62
+        bcx, bcy = x0 + 40 + badge_r, (y0 + y1) // 2
+        d.ellipse([bcx - badge_r, bcy - badge_r, bcx + badge_r, bcy + badge_r], fill=pal["SIGNATURE"])
+        num = str(i + 1)
+        nw = text_w(d, num, nf); na, nd = nf.getmetrics()
+        d.text((bcx - nw / 2, bcy - (na + nd) / 2 + 4), num, font=nf, fill=PAPER)
+        tx = bcx + badge_r + 40
+        d.text((tx, y0 + 26), name, font=lf, fill=fg)
+        paragraph(d, (tx, y0 + 26 + 100), note, bf, fg, W - M - tx - 30, 1.16)
+        qa.add_words(note)
+        rung_boxes.append((x0, y0, W - M, y1))
+    qa.box("ladder", (M, zone_top, W - M, zone_bot))
+    if slot.get("side_note"):
+        # Box spans the height of its own rung AND the one above -- the
+        # first render sized it to one rung and the note overflowed it.
+        bi = slot["side_note"]["beside"]
+        rx0, ry0, rx1, ry1 = rung_boxes[bi]
+        top = rung_boxes[bi + 1][1] if bi + 1 < len(rung_boxes) else ry0
+        bx0, bx1 = M, rx0 - 60
+        d.rounded_rectangle([bx0, top, bx1, ry1], radius=14, fill=ch["ice_fill"], outline=ch["ice"], width=6)
+        ry0 = top
+        cy = (rung_boxes[bi][1] + ry1) // 2
+        for xx in range(bx1, rx0, 22):
+            d.line([(xx, cy), (min(xx + 11, rx0), cy)], fill=ch["ice"], width=6)
+        sn = slot["side_note"]
+        d.text((bx0 + 36, ry0 + 26), sn["title"], font=lf, fill=ch["ice_text"])
+        paragraph(d, (bx0 + 36, ry0 + 126), sn["note"], bf, INK, bx1 - bx0 - 64, 1.16)
+        qa.add_words(sn["note"])
+    return _finish(img, d, qa, slide_no, total)
+
+
+def chart_stack(slot, slide_no, total, pal):
+    """M23 CHART STACK -- one or two stacked data graphics under a one-line
+    headline and standfirst.
+    slots: kicker, headline, standfirst, chart (palette), plus either/both:
+      band_chart = dict(title, axis_max, ticks[...], rows[(label,
+          color_key, start, base_end, ext_end)], legend=(base_label,
+          ext_label)) -- horizontal range bands on a numeric axis: solid
+          for the base range, hatched for an extension that applies only
+          under a condition (e.g. the acid-dependent trocken allowance).
+      bar_chart = dict(title, bars[(label, pct, shown_text, color_key,
+          emphasize)]) -- labelled horizontal bars; the emphasised bar's
+          value prints large in its own colour.
+    Colour keys index the chart palette. Numbers must come from the
+    source -- draw a figure the source only gives in words at its word
+    value and label it with those words ("just under half"), not a
+    precise number."""
+    ch = chart_palette(slot, pal)
+    img, d, qa = _start("M23 chart_stack", slide_no, total, pal)
+    y = kicker_block(d, slot["kicker"], pal, y=150); qa.size("kicker", 70)
+    y, hs = one_line_headline(d, slot["headline"], y, pal); qa.size("headline", hs, headline=True)
+    y = standfirst(d, (M, y + 8), slot["standfirst"], W - 2 * M, leading=1.14) + 90
+    qa.size("standfirst", TYPE["standfirst"]); qa.add_words(slot["standfirst"])
+
+    capf = font("kicker_bold", FLOOR); lf = font("display_bold", 76); tick = font("body_bold", FLOOR)
+    qa.size("chart_label", FLOOR)
+    x_label_w = 520
+    ax0, ax1 = M + x_label_w, W - M
+
+    bc = slot.get("band_chart")
+    if bc:
+        d.text((M, y), bc["title"], font=capf, fill=MUTED)
+        y += 100
+        gmax = bc["axis_max"]
+        X = lambda g: ax0 + (ax1 - ax0) * g / gmax
+        row_h, row_gap = 190, 60
+        for name, ckey, g0, gbase, gext in bc["rows"]:
+            col = ch[ckey]
+            d.text((M, y + 30), name, font=lf, fill=INK)
+            d.rectangle([X(g0), y, X(gbase), y + row_h], fill=col)
+            d.rectangle([X(gbase), y, X(gext), y + row_h], outline=col, width=5)
+            hatch_fill(d, (X(gbase), y, X(gext), y + row_h), col)
+            y += row_h + row_gap
+        ay = y - row_gap + 20
+        d.line([(ax0, ay), (ax1, ay)], fill=INK, width=3)
+        for g in bc["ticks"]:
+            d.line([(X(g), ay), (X(g), ay + 20)], fill=INK, width=3)
+            tw = text_w(d, str(g), tick)
+            d.text((X(g) - tw / 2, ay + 28), str(g), font=tick, fill=INK)
+        y = ay + 120
+        kf = font("body", FLOOR)
+        base_lbl, ext_lbl = bc["legend"]
+        d.rectangle([M, y + 8, M + 70, y + 58], fill=INK)
+        d.text((M + 90, y), base_lbl, font=kf, fill=INK)
+        hx = M + 90 + text_w(d, base_lbl, kf) + 80
+        d.rectangle([hx, y + 8, hx + 70, y + 58], outline=INK, width=4)
+        hatch_fill(d, (hx, y + 8, hx + 70, y + 58), INK, step=16, width=3)
+        d.text((hx + 90, y), ext_lbl, font=kf, fill=INK)
+        qa.box("scale", (M, ay - len(bc["rows"]) * (row_h + row_gap), W - M, y + 70))
+        y += 190
+
+    bch = slot.get("bar_chart")
+    if bch:
+        d.text((M, y), bch["title"], font=capf, fill=MUTED)
+        y += 100
+        bars = bch["bars"]
+        bh, bg = 180, 56
+        big = font("display_black", 120)
+        qa.size("share_value", 120, headline=True)
+        for name, pct, shown, ckey, emph in bars:
+            col = ch[ckey]
+            d.text((M, y + 30), name, font=lf, fill=INK)
+            d.rectangle([ax0, y, ax0 + (ax1 - ax0 - 380) * pct / 100, y + bh], fill=col)
+            vx = ax0 + (ax1 - ax0 - 380) * pct / 100 + 30
+            d.text((vx, y + 2), shown, font=big if emph else lf, fill=col if emph else INK)
+            y += bh + bg
+        qa.box("shares", (M, y - len(bars) * (bh + bg), W - M, y - bg))
+    return _finish(img, d, qa, slide_no, total)
+
+
+def rail_rings(slot, slide_no, total, pal):
+    """M24 RAIL RINGS -- side-rail layout (photo full height on one side)
+    with ring (donut) charts above the text.
+    slots: photo, anchor, rail_x(1420), photo_caption, photo_credit
+    (printed as a second line inside the caption tab -- the footer centres
+    credits on the page, which on this layout falls on the photo and clips
+    them), kicker, headline('\\n' allowed, left column is narrow),
+    rings[(pct, label, color_key)] (two fit comfortably), items[(lead,
+    body)], chart (palette; also ch['track'] for the unfilled arc)."""
+    ch = chart_palette(slot, pal)
+    img, d, qa = _start("M24 rail_rings", slide_no, total, pal)
+    rail_x = slot.get("rail_x", 1420)
+    img.paste(cover_fit(load_photo(slot["photo"]), W - rail_x, H, y_anchor=slot.get("anchor", 0.5)), (rail_x, 0))
+    d = ImageDraw.Draw(img)
+    col_w = rail_x - M - 90
+    y = kicker_block(d, slot["kicker"], pal, y=150); qa.size("kicker", 70)
+    hf = font("display_black", TYPE["display_md"])
+    for ln in slot["headline"].split("\n"):
+        d.text((M, y), ln, font=hf, fill=pal["SIGNATURE"])
+        a, dsc = hf.getmetrics(); y += int((a + dsc) * 1.02)
+    qa.size("headline", TYPE["display_md"], headline=True)
+    y += 60
+    r, thick = 250, 70
+    track = ch["track"]
+    big = font("display_black", 120); cap = font("kicker_bold", FLOOR)
+    qa.size("ring_value", 120, headline=True); qa.size("ring_label", FLOOR)
+    for i, (pct, label, col) in enumerate(slot["rings"]):
+        cx = M + r + i * (col_w // 2 + 20)
+        cy = y + r
+        donut(img, cx, cy, r, thick, pct, ch[col], track)
+        d = ImageDraw.Draw(img)
+        txt = f"{pct}%"
+        tw = text_w(d, txt, big); a, dsc = big.getmetrics()
+        d.text((cx - tw / 2, cy - (a + dsc) / 2 + 6), txt, font=big, fill=pal["SIGNATURE"])
+        lw = text_w(d, label, cap)
+        d.text((cx - lw / 2, cy + r + 30), label, font=cap, fill=MUTED)
+    y += 2 * r + 150
+    for lead, body in slot["items"]:
+        y0 = y
+        y = run_in(d, (M, y), lead, body, col_w, pal) + 50
+        qa.box(f"runin:{lead}", (M, y0, M + col_w, y - 50))
+        qa.add_words(body)
+    # Caption tab carries the photo credit as a second line: the footer
+    # centres credits on the page, and on this layout that centre point
+    # falls on the photo rail, clipping the credit (seen in a render).
+    cap_txt = slot.get("photo_caption")
+    if cap_txt:
+        crf = font("body", 34)
+        cr = slot.get("photo_credit", "")
+        cw = max(text_w(d, cap_txt, cap), text_w(d, cr, crf))
+        d.rectangle([W - cw - 60, H - 370, W, H - 234], fill=INK)
+        d.text((W - cw - 30, H - 360), cap_txt, font=cap, fill=PAPER)
+        d.text((W - cw - 30, H - 285), cr, font=crf, fill=PAPER)
+    return _finish(img, d, qa, slide_no, total, footer_adaptive=True)
+
+
+def hero_facts(slot, slide_no, total, pal):
+    """M25 HERO FACTS -- photo-led: a tall hero image (default 1340px,
+    over half the page) with NO scrim or overlay, a caption in its own
+    solid tab, then a kicker, one-line headline and a compact 2-column
+    fact grid. slots: photo, anchor, zoom, hero_h(1340), photo_caption,
+    photo_credit, kicker, headline(one line), facts[(label, body)]
+    (4 fits; 6 will not). Use when the subject itself is the story."""
+    img, d, qa = _start("M25 hero_facts", slide_no, total, pal)
+    hero_h = slot.get("hero_h", 1500)
+    img.paste(cover_fit(load_photo(slot["photo"]), W, hero_h,
+                        y_anchor=slot.get("anchor", 0.5), zoom=slot.get("zoom", 1.0)), (0, 0))
+    d = ImageDraw.Draw(img)
+    cf = font("kicker_bold", FLOOR)
+    if slot.get("photo_caption"):
+        tw = text_w(d, slot["photo_caption"], cf)
+        d.rectangle([0, hero_h - 96, M + tw + 50, hero_h], fill=INK)
+        d.text((M, hero_h - 86), slot["photo_caption"], font=cf, fill=PAPER)
+    qa.size("caption", FLOOR)
+    y = kicker_block(d, slot["kicker"], pal, y=hero_h + 60); qa.size("kicker", 70)
+    y, hs = one_line_headline(d, slot["headline"], y, pal); qa.size("headline", hs, headline=True)
+    y += 40
+    gut = 80
+    col_w = (W - 2 * M - gut) // 2
+    lf = font("display_bold", 72); bf = font("body", FLOOR + 4)
+    qa.size("fact_label", 72); qa.size("fact_body", FLOOR + 4)
+    facts = slot["facts"]
+    row_y = y
+    for r in range(0, len(facts), 2):
+        bottoms = []
+        for c, (label, body) in enumerate(facts[r:r + 2]):
+            x = M + c * (col_w + gut)
+            d.line([(x, row_y), (x + col_w, row_y)], fill=pal["ACCENT"], width=4)
+            d.text((x, row_y + 22), label, font=lf, fill=pal["SIGNATURE"])
+            bottoms.append(paragraph(d, (x, row_y + 122), body, bf, INK, col_w, 1.18))
+            qa.add_words(body)
+        row_y = max(bottoms) + 50
+    qa.box("facts", (M, y, W - M, row_y - 50))
+    return _finish(img, d, qa, slide_no, total, credit=slot.get("photo_credit"))
+
+
+def tile_grid(slot, slide_no, total, pal):
+    """M26 TILE GRID -- four solid tiles in a 2x2 grid filling the content
+    area, each with a large numeral, title, sub-line and body.
+    slots: kicker, headline(one line), standfirst, tiles[(title, sub,
+    body)], tile_colors[(fill, accent)] per tile -- give each tile the
+    colour of its own subject (taken from the cover photo), not an
+    alternating pair. Body text colour is picked by measured contrast;
+    CHECK each accent against its fill (>=3:1 for this large type) --
+    two of the Mosel deck's first accents measured 1.9:1 and 2.8:1."""
+    img, d, qa = _start("M26 tile_grid", slide_no, total, pal)
+    y = kicker_block(d, slot["kicker"], pal, y=150); qa.size("kicker", 70)
+    y, hs = one_line_headline(d, slot["headline"], y, pal); qa.size("headline", hs, headline=True)
+    y = standfirst(d, (M, y + 8), slot["standfirst"], W - 2 * M, leading=1.14) + 60
+    qa.size("standfirst", TYPE["standfirst"]); qa.add_words(slot["standfirst"])
+    gut = 30
+    tw_ = (W - 2 * M - gut) // 2
+    th_ = (CONTENT_BOTTOM - 20 - y - gut) // 2
+    pale = blend_rgb(pal["ACCENT"], (255, 255, 255), 0.62)
+    nf = font("display_black", 160); tf = font("display_bold", 80)
+    sf = font("kicker_bold", FLOOR + 4); bf = font("body", 66)
+    qa.size("tile_title", 80); qa.size("tile_sub", FLOOR + 4); qa.size("tile_body", 66)
+    for k, (title, sub, body) in enumerate(slot["tiles"]):
+        c, rr = k % 2, k // 2
+        x0 = M + c * (tw_ + gut); y0 = y + rr * (th_ + gut)
+        # Round 3 (Steve: more color): each tile takes the colour of its
+        # own subject from CHART -- river blue, sun gold, slate charcoal,
+        # autumn orange -- instead of the slate/pale-gold checkerboard.
+        # Body text colour picked by measured contrast.
+        fill, accent = slot["tile_colors"][k] if slot.get("tile_colors") else (
+            (pal["SIGNATURE"], pal["ACCENT"]) if (c + rr) % 2 == 0 else (pale, pal["LEAD"]))
+        fg = best_text_color(fill)
+        d.rounded_rectangle([x0, y0, x0 + tw_, y0 + th_], radius=18, fill=fill)
+        pad = 60
+        d.text((x0 + pad, y0 + 30), f"0{k + 1}", font=nf, fill=accent)
+        ty = y0 + 250
+        d.text((x0 + pad, ty), title, font=tf, fill=fg); ty += 110
+        d.text((x0 + pad, ty), sub.upper(), font=sf, fill=accent); ty += 100
+        end = paragraph(d, (x0 + pad, ty), body, bf, fg, tw_ - 2 * pad, 1.2)
+        qa.box(f"tile{k}", (x0, y0, x0 + tw_, max(end, y0 + th_)))
+        qa.add_words(body)
+    return _finish(img, d, qa, slide_no, total)
+
+
+NEW_MODULES = dict(
+    cover_bleed=cover_bleed, region_map=region_map, blades=blades,
+    stair_ladder=stair_ladder, chart_stack=chart_stack, rail_rings=rail_rings,
+    hero_facts=hero_facts, tile_grid=tile_grid,
+)
 
 
 MODULES = dict(
@@ -2667,3 +3192,4 @@ MODULES = dict(
     fact_file=fact_file, mosaic=mosaic, photo_quote=photo_quote,
     euler_nesting=euler_nesting, map_facsimile=map_facsimile,
 )
+MODULES.update(NEW_MODULES)

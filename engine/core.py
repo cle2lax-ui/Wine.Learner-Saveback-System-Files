@@ -949,3 +949,58 @@ def lock_deck_zip(png_paths, zip_path):
             z.write(p, os.path.basename(p))
     return zip_path
 
+
+# ───────────── chart / layout helpers (promoted from the Mosel deck) ─────────────
+
+def blend_rgb(c1, c2, t):
+    """Linear blend of two RGB tuples; t=0 -> c1, t=1 -> c2."""
+    return tuple(int(a + (b - a) * t) for a, b in zip(c1, c2))
+
+
+def best_text_color(bg, light=None, dark=None):
+    """PAPER or INK, whichever has the higher measured WCAG contrast on bg.
+    Use this for any text on a chart fill -- never a brightness guess."""
+    light = PAPER if light is None else light
+    dark = INK if dark is None else dark
+    return light if contrast(light, bg) >= contrast(dark, bg) else dark
+
+
+def one_line_headline(d, text, y, pal, size=None, x=M, max_w=None):
+    """Single-line headline. Shrinks to fit the measure, never below the
+    hierarchy floor, and RAISES if it still can't fit -- so an over-long
+    title fails the build instead of silently wrapping. Returns
+    (next_y, size_used). Cut copy; don't shrink type."""
+    size = TYPE["display_md"] if size is None else size
+    max_w = max_w or (W - x - M)
+    floor = TYPE["standfirst"] + 30
+    f = font("display_black", size)
+    while text_w(d, text, f) > max_w and size > floor:
+        size -= 2
+        f = font("display_black", size)
+    if text_w(d, text, f) > max_w:
+        raise ValueError(f"headline won't fit on one line: {text!r}")
+    d.text((x, y), text, font=f, fill=pal["SIGNATURE"])
+    a, dsc = f.getmetrics()
+    return y + int((a + dsc) * 1.02), size
+
+
+def hatch_fill(d, box, color, step=26, width=4):
+    """Diagonal hatching inside a box (marks a conditional/extended range)."""
+    x0, y0, x1, y1 = box
+    for k in range(int(x0 - (y1 - y0)), int(x1), step):
+        a = (max(k, x0), y1 - max(0, max(k, x0) - k))
+        b = (min(k + (y1 - y0), x1), y1 - (min(k + (y1 - y0), x1) - k))
+        d.line([a, b], fill=color, width=width)
+
+
+def donut(img, cx, cy, r, thick, pct, color, track, ss=3):
+    """Anti-aliased ring chart (supersampled), pct of 100 from 12 o'clock."""
+    lay = Image.new("RGBA", (2 * r * ss, 2 * r * ss), (0, 0, 0, 0))
+    ld = ImageDraw.Draw(lay)
+    R = r * ss
+    ld.ellipse([0, 0, 2 * R, 2 * R], fill=track + (255,))
+    ld.pieslice([0, 0, 2 * R, 2 * R], -90, -90 + 360 * pct / 100, fill=color + (255,))
+    t = thick * ss
+    ld.ellipse([t, t, 2 * R - t, 2 * R - t], fill=(0, 0, 0, 0))
+    lay = lay.resize((2 * r, 2 * r), Image.LANCZOS)
+    img.paste(lay, (cx - r, cy - r), lay)

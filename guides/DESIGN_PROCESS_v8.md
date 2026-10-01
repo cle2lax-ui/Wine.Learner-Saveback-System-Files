@@ -418,3 +418,27 @@ review artifact.
   that PDF, for the same reason.
 - When presenting to the person: default to sharing the PDF. Only
   share/mention the ZIP after they've said the deck is locked.
+
+---
+
+## 10. Chart colour and data graphics (v10)
+
+Full detail in `VISUAL_BENCHMARK_v10.md`; the rules that belong in this
+document's lineage:
+
+- **Chart colours are sampled from the deck's own cover photo**
+  (`engine/palette.py`), at full saturation — never pale blends of the brand
+  colours, which read washed out. The saturated mid-light pixels of a named
+  feature give the colour where the light hits, not a shadow-muddied average.
+- **One colour, one meaning** across a deck (the Mosel's river-teal is "the
+  Mosel" wherever it's highlighted).
+- **Contrast is measured, never judged** (`core.contrast`; ≥ 4.5:1 body,
+  ≥ 3:1 large type). Pick text on a chart fill with `core.best_text_color`.
+  Extends §2's luminance rule from photographs to chart fills.
+- **Translucency can lower contrast.** A light-opacity *dark* chip under
+  *light* text tints a pale background to the text's own brightness (≈ 1:1);
+  it only helps once dense. Measure candidate opacities over the real pixels.
+- **Titles are one line** (`core.one_line_headline` raises rather than wraps);
+  consistent with §1's "cut copy, don't shrink type".
+- **Variety is a build rule** (`engine/variety.py`): ≥ 8 distinct layouts per
+  12 slides, none twice in a row, ≥ 4 graphic-led slides.

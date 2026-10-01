@@ -604,3 +604,44 @@ size (not estimate it), identify how many lines needed to disappear,
 and cut enough text to remove a *whole* line — the same discipline
 already established in §1 and §9, still the correct approach and still
 easy to skip under iteration pressure.
+
+---
+
+## v10 — lessons from the Mosel benchmark
+
+Process lessons from building the deck that became the visual benchmark.
+Each cost real time.
+
+1. **`ls specs/` before building anything.** `specs/FG_MOSEL_SPEC.md` — a full
+   12-slide spec, which already anticipated the 2026 origin-law reform — sat
+   in the repo while the first build improvised from the arc plan alone, and
+   had to be redone. The first build's own docstring even claimed no such
+   spec existed.
+2. **Push early and often.** A container reset wiped everything not on
+   GitHub — three weeks of work across five posts — because the last push
+   was weeks old. Commits are not backups until they're pushed.
+3. **A scripted splice can delete its neighbours.** Inserting tile colours
+   with a "replace everything between A and B" edit also removed slide 4's
+   headline and standfirst, which sat between A and B. Diff against `HEAD`
+   after any programmatic edit; it caught this on the first render.
+4. **Identical failure numbers mean it isn't a length problem.** Trimming
+   text three times left the same overflow figure — which exposed that
+   `statement(variant="closing")` was never implemented. A real length
+   problem always responds to cutting.
+5. **QA passing is not the same as looking right.** QA missed a map
+   description running into the footer, illegible label crowding, and a
+   `card_grid` footnote that was silently dropped. Look at every slide.
+6. **Don't trust a dataset's filename.** A repo's `EU-DE.geojson` looked like
+   a Germany outline; its bounding box covered Russia, Turkey and Portugal.
+   Check every file's bounds before using it.
+7. **Verify photo location from metadata.** A "steep vineyard river Germany"
+   hit was Andernach on the Rhine.
+8. **Measure contrast, including through translucency** — see
+   `VISUAL_BENCHMARK_v10.md` §3–4. A low-opacity dark chip made gold text
+   worse, not better.
+9. **Refactors must be pixel-identical.** Promoting the deck's layouts into
+   the shared engine was verified by diffing all 12 pages against the locked
+   PNGs, and is now guarded by `engine/regress.py`.
+10. **The specimen suite had never run in this repo** — its placeholder photos
+    belonged to another deck, so 12 of 18 modules failed on a missing file
+    and went untested. It now substitutes a stand-in and says so.

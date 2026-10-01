@@ -9,11 +9,14 @@ reflects the colour where the light actually hits, not a shadow-muddied
 average. Re-run if the cover photo or its crop changes; paste any new
 values into CHART in render_fg_mosel.py.
 
+The sampling method itself is engine/palette.py (reusable by any deck);
+this file is only the Mosel's configuration of it -- which features, in
+which regions of its cover.
+
 Usage: PYTHONPATH=../engine:../formats python3 sample_cover_palette.py
 """
-import colorsys
-import numpy as np
 from core import cover_fit, load_photo
+from palette import sample_palette
 from tokens import W, H
 import render_fg_mosel as r
 
@@ -34,20 +37,14 @@ FEATURES = {
 def main():
     sl = r.SLIDES[0][1]
     im = cover_fit(load_photo(sl["photo"]), W, H, y_anchor=sl["photo_anchor"],
-                   zoom=sl["photo_zoom"]).convert("RGB").resize((540, 675))
-    a = np.asarray(im).astype(float)
-    hls = np.array([[colorsys.rgb_to_hls(*(p / 255)) for p in row] for row in a])
-    for name, (hue, (r0, r1, c0, c1), min_s, (lo, hi), keep) in FEATURES.items():
-        sub = a[r0:r1, c0:c1].reshape(-1, 3)
-        h = hls[r0:r1, c0:c1, 0].ravel() * 360
-        l = hls[r0:r1, c0:c1, 1].ravel()
-        s = hls[r0:r1, c0:c1, 2].ravel()
-        idx = np.where((h >= hue[0]) & (h <= hue[1]) & (s >= min_s) & (l >= lo) & (l <= hi))[0]
-        if len(idx) < 20:
-            print(f"{name:18s} too few pixels ({len(idx)})"); continue
-        order = idx[np.argsort(-s[idx] * (1 - abs(l[idx] - 0.5)))][:max(20, int(len(idx) * keep))]
-        c = tuple(int(v) for v in sub[order].mean(0))
-        print(f"{name:18s} {c}   ({len(idx)} px)")
+                   zoom=sl["photo_zoom"]).convert("RGB")
+    got = sample_palette(im, FEATURES)
+    for name in FEATURES:
+        if name in got:
+            rgb, n = got[name]
+            print(f"{name:18s} {rgb}   ({n} px)")
+        else:
+            print(f"{name:18s} too few pixels")
 
 
 if __name__ == "__main__":

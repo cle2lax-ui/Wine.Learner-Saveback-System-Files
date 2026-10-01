@@ -6,10 +6,17 @@ module drifts from its own documented schema, this is what catches it —
 nothing else will, until a real deck hits the gap.
 
 Photo names below are placeholders from a working deck's asset library
-(Southeast Australia). Swap for a neutral specimen library if one exists;
-what matters for regression purposes is that every module renders and
-every QA check (including the v5 additions: edge-bounds automatic,
-photo-contrast opt-in) passes clean.
+(Southeast Australia) that is NOT in this repo. Until v10 that made 12 of
+the 18 original modules fail with FileNotFoundError, so they were never
+actually regression-tested. The suite now substitutes a stand-in photo
+for any missing name (and prints which ones), so every module renders and
+every QA check passes clean. What matters for regression purposes is that
+every module renders and every QA check (including the v5 additions:
+edge-bounds automatic, photo-contrast opt-in) passes clean.
+
+v10: M19-M26 (the visual-variety modules promoted from the Mosel Field
+Guide) are covered with neutral synthetic data -- nothing here depends on
+any one deck.
 """
 import sys, json
 sys.path.insert(0, '.')
@@ -17,8 +24,24 @@ import importlib, core, modules
 importlib.reload(core); importlib.reload(modules)
 from tokens import DEFAULT_PALETTE
 
+# Stand-in photos for placeholder names that aren't in this repo (see the
+# docstring). Patched AFTER the reloads above, on both modules, because
+# modules.py binds load_photo by name at import.
+STAND_IN = 'de_bernkastel_aerial'
+substituted = set()
+def _fallback(orig):
+    def wrapped(name, *a, **k):
+        try:
+            return orig(name, *a, **k)
+        except FileNotFoundError:
+            substituted.add(name)
+            return orig(STAND_IN, *a, **k)
+    return wrapped
+core.load_photo = modules.load_photo = _fallback(core.load_photo)
+core.load_photo_rgba = modules.load_photo_rgba = _fallback(core.load_photo_rgba)
+
 pal = dict(DEFAULT_PALETTE)
-TOTAL = 19
+TOTAL = 27
 results = {}
 
 def run(name, no):
@@ -213,6 +236,83 @@ SLOTS = {
     labels={'regions':{}, 'states':{}, 'cities':{}, 'ocean':None},
     city_dots={}),
 
+
+20: dict(  # cover_bleed (M19)
+    photo='vineyard_aerial_rows', photo_anchor=0.6, photo_zoom=1.1,
+    kicker='THE FIELD GUIDE: SPECIMEN', kicker_size=96,
+    kicker_chip=dict(color=(18, 32, 30), alpha=0.80, text=(196, 158, 84)),
+    title='Full Bleed,\nNo Scrim', title_top=0.60, photo_credit='Specimen / stand-in'),
+
+21: dict(  # region_map (M20) -- synthetic geometry, normalised 0-1
+    kicker='M20 · REGION MAP', headline='Five Regions, One Highlighted', map_h=1300,
+    highlight='Beta', summary_lead='Reading it',
+    summary='Real traced shapes on a country outline; one region picked out, the packed western ones labelled in a column.',
+    left_labels=['Alpha', 'Beta', 'Gamma'], direct_labels={'Delta': (30, -70), 'Epsilon': (30, 20)},
+    credit='Synthetic specimen geometry',
+    map=dict(aspect=0.85,
+        outline=[(0.10, 0.08), (0.88, 0.10), (0.96, 0.50), (0.82, 0.94), (0.22, 0.92), (0.05, 0.50)],
+        islands=[],
+        regions=[('Alpha', [(0.20, 0.30), (0.30, 0.28), (0.32, 0.40), (0.22, 0.42)]),
+                 ('Beta', [(0.22, 0.46), (0.32, 0.45), (0.34, 0.58), (0.24, 0.60)]),
+                 ('Gamma', [(0.26, 0.64), (0.36, 0.63), (0.38, 0.76), (0.28, 0.78)]),
+                 ('Delta', [(0.62, 0.30), (0.74, 0.30), (0.74, 0.40), (0.62, 0.40)]),
+                 ('Epsilon', [(0.66, 0.56), (0.78, 0.56), (0.78, 0.66), (0.66, 0.66)])],
+        rivers={'River': [[(0.30, 0.10), (0.34, 0.40), (0.30, 0.70), (0.40, 0.92)]]},
+        targets={'Alpha': (0.26, 0.35), 'Beta': (0.28, 0.52), 'Gamma': (0.32, 0.70),
+                 'Delta': (0.68, 0.35), 'Epsilon': (0.72, 0.61)})),
+
+22: dict(  # blades (M21)
+    blades=[dict(photo='vineyard_aerial_rows', caption='Detail'),
+            dict(photo='vineyard_irrigation_spray', caption='Figure in landscape'),
+            dict(photo='vineyard_sunset_rows_generic', caption='Wide view')],
+    blade_h=1180, kicker='M21 · BLADES', headline='Three Scales, One Subject',
+    items=[('Detail', 'The close view that shows the work.'),
+           ('Figure', 'Someone doing it, for scale.'),
+           ('Wide', 'The place it all sits in.')],
+    photo_credit='Specimen / stand-in'),
+
+23: dict(  # stair_ladder (M22)
+    kicker='M22 · STAIR LADDER', headline='Five Rungs, Lowest at the Bottom',
+    standfirst='Rank climbs the page; a parallel track sits outside the ranking.',
+    rungs=[('Level one', 'The entry rank.'), ('Level two', 'A step up.'),
+           ('Level three', 'The middle of the range.'), ('Level four', 'Rare.'),
+           ('Level five', 'The rarest of all.')],
+    side_note=dict(beside=3, title='Parallel', note='Same threshold as level four, reached another way.')),
+
+24: dict(  # chart_stack (M23)
+    kicker='M23 · CHART STACK', headline='Two Graphics, One Slide',
+    standfirst='A range chart with a conditional extension, and a labelled bar chart.',
+    band_chart=dict(title='RANGE, UNITS', axis_max=20, ticks=[0, 4, 9, 12, 18],
+        rows=[('narrow', 'focus', 0, 4, 9), ('wide', 'amber', 4, 12, 18)],
+        legend=('base range', 'extension, under a condition')),
+    bar_chart=dict(title='SHARE, PERCENT',
+        bars=[('North', 64, '64%', 'amber', False), ('Whole', 49, 'Just under half', 'gold', False),
+              ('Focus', 26, '26%', 'focus', True)])),
+
+25: dict(  # rail_rings (M24)
+    photo='vineyard_aerial_rows', anchor=0.5, photo_caption='Specimen caption',
+    photo_credit='Specimen / stand-in', kicker='M24 · RAIL RINGS',
+    headline='Rings Beside\nA Photo Rail',
+    rings=[(91, 'SHARE ONE', 'grape'), (62, 'SHARE TWO', 'amber')],
+    items=[('Reading', 'Two rings state the headline numbers.'),
+           ('Then', 'The prose carries what the rings cannot.')]),
+
+26: dict(  # hero_facts (M25)
+    photo='vineyard_aerial_rows', anchor=0.4, hero_h=1340, photo_caption='The subject itself',
+    photo_credit='Specimen / stand-in', kicker='M25 · HERO FACTS', headline='Photo First, Facts Second',
+    facts=[('One', 'The first short fact.'), ('Two', 'The second short fact.'),
+           ('Three', 'The third short fact.'), ('Four', 'The fourth short fact.')]),
+
+27: dict(  # tile_grid (M26)
+    kicker='M26 · TILE GRID', headline='Four Tiles, Four Colours',
+    standfirst='Each tile takes the colour of its own subject.',
+    tile_colors=[((18, 32, 30), (201, 151, 3)), ((201, 151, 3), (18, 32, 30)),
+                 ((98, 91, 74), (203, 194, 165)), ((203, 114, 12), (50, 22, 8))],
+    tiles=[('First', 'Sub one', 'Body text for the first tile.'),
+           ('Second', 'Sub two', 'Body text for the second tile.'),
+           ('Third', 'Sub three', 'Body text for the third tile.'),
+           ('Fourth', 'Sub four', 'Body text for the fourth tile.')]),
+
 }
 
 import os
@@ -221,7 +321,9 @@ for no in sorted(SLOTS):
     name = {1:'statement',2:'editorial_lead',3:'mosaic',4:'atlas',5:'feature_trio',
             6:'spotlight',7:'duel',8:'photo_quote',9:'side_rail',10:'showcase_shelf',
             11:'timeline',12:'ladder',13:'lexicon_cloud',14:'process_map',15:'fact_file',
-            16:'card_grid',17:'euler_nesting',18:'stat_wall',19:'map_facsimile'}[no]
+            16:'card_grid',17:'euler_nesting',18:'stat_wall',19:'map_facsimile',
+            20:'cover_bleed',21:'region_map',22:'blades',23:'stair_ladder',
+            24:'chart_stack',25:'rail_rings',26:'hero_facts',27:'tile_grid'}[no]
     if no == 19:
         continue  # map_facsimile needs deck-specific extracted geometry; not specimen-testable in isolation
     run(name, no)
@@ -230,3 +332,5 @@ print()
 print('SPECIMEN RESULTS:', results)
 n_ok = sum(1 for v in results.values() if v == 'OK')
 print(f'{n_ok}/{len(results)} modules pass QA clean')
+if substituted:
+    print('stand-in photo used for:', ', '.join(sorted(substituted)))

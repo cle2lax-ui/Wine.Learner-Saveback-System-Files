@@ -330,7 +330,12 @@ that reads fine as a small map fill can fail contrast at headline size.
 
 ---
 
-## 7 · The nineteen modules
+## 7 · The twenty-seven modules (M01–M26 + M18b)
+
+> **v10:** M19–M26 are the visual-variety modules promoted from the Mosel Field
+> Guide, the system's benchmark. Read `VISUAL_BENCHMARK_v10.md` first — it
+> says *when* to reach for each, and the variety rules `engine/variety.py`
+> enforces (≥ 8 distinct layouts, none twice in a row, ≥ 4 graphic-led slides).
 
 Slot schemas are authoritative in `modules.py` docstrings; the Specimen Deck
 renders one slide per module and doubles as the visual menu + regression
@@ -358,6 +363,14 @@ memory, so it won't drift out of sync with the code again.
 | M16 | `mosaic` | One hero + 2–3 smalls, pacing breather — plain kicker chip **or** large serif overlay title (mutually exclusive — `overlay_title` skips the chip entirely; these are two different slots, not one). New `kicker_serif=True` keeps the colored chip *and* switches its font from sans (Archivo Cond Bold) to the deck's serif (Playfair Bold), for decks that want the chip treatment with serif type | `kicker, kicker_serif, hero_photo, small_photos[], captions{photo: text}, overlay_title` |
 | M17 | `photo_quote` | Full-bleed photo, one large white sentence-case serif quote. `quote_size` now configurable (was hardcoded to 150) | `photo, quote, attribution, quote_size` |
 | M18 | `euler_nesting` | True nested-set containment diagram — branching, siblings, named exceptions a single-path pyramid can't show | `kicker, headline, standfirst, circles[(name,cx,cy,r,parent,label_pos)], exceptions_label, exceptions_label_pos, footnote` |
+| M19 | `cover_bleed` | Full-bleed photo cover — no scrim, no colour block (`statement`'s cover is a photo over a hard colour block, not full-bleed). Optional translucent kicker chip; **measure contrast over the real pixels before choosing chip colour/opacity** (a light-opacity dark chip makes light text *worse*). Not run through QA (full-bleed by design) | `photo, kicker, title` + optional `photo_anchor, photo_zoom, kicker_size, kicker_chip{color,alpha,text,padx,pady,top,radius}, kicker_align, kicker_x, kicker_y, title_top, photo_credit` |
+| M20 | `region_map` | Country-scale map of named regions as real traced shapes, one highlighted; labels placed deliberately (left column with elbow leaders + chain clamp, or direct beside isolated shapes) because `map_atlas`'s auto-placer is built for one region's sub-areas | `kicker, headline, summary_lead, summary, map{aspect,outline,islands,regions[(name,pts)],rivers{name:[seg…]},targets{name:(nx,ny)}}` + optional `highlight, map_h, left_labels[], direct_labels{name:(dx,dy)}, credit` |
+| M21 | `blades` | Vertical blade layout: N tall photo strips (middle one dropped), caption tabs, text beneath | `blades[{photo,caption,anchor,zoom}], kicker, headline, items[(lead,body)]` + optional `blade_h, blade_drop[], item_gap, photo_credit` |
+| M22 | `stair_ladder` | Numbered staircase ranking — **rung 1 at the bottom of the page**; dashed side box for a parallel track that is not a rung | `kicker, headline, standfirst, rungs[(name,note)]` bottom→top + optional `side_note{beside,title,note}, step_dx, chart` |
+| M23 | `chart_stack` | One or two stacked data graphics: range bands (solid base, hatched conditional extension) and/or labelled bars | `kicker, headline, standfirst` + optional `band_chart{title,axis_max,ticks,rows[(label,color_key,start,base_end,ext_end)],legend(base,ext)}, bar_chart{title,bars[(label,pct,shown,color_key,emphasize)]}, chart` |
+| M24 | `rail_rings` | Full-height photo rail + ring (donut) charts above the text; credit prints inside the caption tab (footer centring would clip it on this layout) | `photo, kicker, headline, rings[(pct,label,color_key)], items[(lead,body)]` + optional `anchor, rail_x, photo_caption, photo_credit, chart` |
+| M25 | `hero_facts` | Photo-led: hero image over half the page, **no scrim**, caption in its own solid tab, then a compact fact grid (4 facts fit; 6 don't) | `photo, kicker, headline, facts[(label,body)]` + optional `anchor, zoom, hero_h, photo_caption, photo_credit` |
+| M26 | `tile_grid` | 2×2 solid tiles filling the content area, each in the colour of its own subject; body text by measured contrast — **check each accent ≥ 3:1** | `kicker, headline, standfirst, tiles[(title,sub,body)]` + optional `tile_colors[(fill,accent)]` |
 
 ### New/changed slot detail (v4.2)
 
@@ -666,6 +679,15 @@ to the deck owner, not a fragile workaround.
 
 ## 9 · Regression protocol
 
+**v10:** `python3 engine/regress.py` automates this. It re-renders the specimen
+suite (M01–M26, with a stand-in photo for any placeholder the repo lacks) and
+the locked Mosel Field Guide, hashes every page's pixels, and compares against
+`reference/PIXEL_HASHES.json`; any change exits non-zero. `--freeze` accepts
+the current renders after an *approved* change. Hashes are exact, so a PIL/font
+difference between environments trips it too — find out which it is before
+building a real deck. (The `reference/` PNG folder described below never made
+it into the repo; the hash file replaces it.)
+
 `reference/` holds the frozen specimen renders. At the start of any session that
 touches the system: rebuild the specimen deck and diff against `reference/`
 (pixel-difference tolerance ~1%). Divergence = environment or code drift —
@@ -712,8 +734,13 @@ styleguide/
   tokens.py     ← every number in this spec — SHARED with Quick Sips
   core.py       ← canvas, fonts, text/photo helpers, QA, product-photo
                   pipeline (§8b) — SHARED with Quick Sips
-  modules.py    ← the nineteen wired Field Guide layouts
+  modules.py    ← the twenty-seven wired Field Guide layouts (M19–M26 = the
+                  Mosel-benchmark visual-variety modules, v10)
   build.py      ← manifest → deck (QA-gated)
+  variety.py    ← v10: the visual-variety rules, enforced at build time
+  palette.py    ← v10: derive chart colours from the cover photo
+  regress.py    ← v10: pixel-hash regression guard (specimen + Mosel deck)
+  reference/PIXEL_HASHES.json ← frozen hashes it compares against
   specimen.py   ← the Field Guide specimen manifest — THE REGRESSION
                   SUITE, not a reference doc. Re-render it before any
                   module change ships (§9). A module can drift from its
