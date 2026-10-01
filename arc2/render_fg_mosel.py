@@ -173,13 +173,17 @@ def render_cover(slot, slide_no, total, pal):
                     zoom=slot.get("photo_zoom", 1.0))
     d = ImageDraw.Draw(img, "RGBA")
 
-    kicker_size = 68
+    kicker_size = slot.get("kicker_size", 68)
     kf = font("kicker_bold", kicker_size)
     dot_r = int(kicker_size * 0.19)
-    ky = 120
+    ky = slot.get("kicker_y", 120)
     dot_cy = ky + int(kicker_size * 0.42)
-    d.ellipse([M, dot_cy - dot_r, M + 2 * dot_r, dot_cy + dot_r], fill=pal["ACCENT"])
-    d.text((M + 2 * dot_r + 20, ky), slot["kicker"], font=kf, fill=pal["ACCENT"])
+    # kicker_x: left edge of the dot+text group; kicker_align="right"
+    # pins the group's right edge to the page margin instead.
+    group_w = 2 * dot_r + 20 + int(d.textlength(slot["kicker"], font=kf))
+    kx = (W - M - group_w) if slot.get("kicker_align") == "right" else slot.get("kicker_x", M)
+    d.ellipse([kx, dot_cy - dot_r, kx + 2 * dot_r, dot_cy + dot_r], fill=pal["ACCENT"])
+    d.text((kx + 2 * dot_r + 20, ky), slot["kicker"], font=kf, fill=pal["ACCENT"])
 
     tf = font("display_black", 300)
     asc, desc = tf.getmetrics()
@@ -609,6 +613,17 @@ SLIDES = [
         photo_anchor=0.80,
         photo_zoom=1.12,
         kicker="THE FIELD GUIDE: THE MOSEL",
+        # Round 3: larger (68 -> 104pt), and moved to the right margin.
+        # Left-aligned, the gold text lands on the castle tower and
+        # "FIELD" disappears into the stonework -- already slightly true
+        # at 68pt, unreadable at 104pt. No shadow/outline fix (Steve had
+        # the shadow removed), and no single text colour works across
+        # pale sky and mid-tone stone, so the fix is position: the open
+        # sky on the right. kicker_y=100 puts the glyph tops (~20px below
+        # the text origin) exactly on the 120px safe margin.
+        kicker_size=104,
+        kicker_align="right",
+        kicker_y=100,
         title="Ripeness is\nEverything",
         title_top=0.655,  # round 2: lowered fully into the dark water of the river
         photo_credit="Philipp / Unsplash",
