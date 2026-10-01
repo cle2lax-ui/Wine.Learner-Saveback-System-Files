@@ -105,23 +105,36 @@ def _blend(c1, c2, t):
     return tuple(int(a + (b - a) * t) for a, b in zip(c1, c2))
 
 
-# Chart palette (round 3, Steve: "more color" on pages 6-8, layouts
-# unchanged). The first versions drew every chart from pale blends of
-# SIGNATURE slate and ACCENT gold, which read washed out. These stay in
-# the same family but at full saturation: a ripeness ramp that runs
-# green-gold -> amber -> russet (the colours grapes actually move
-# through), a strong blue reserved for "this is the Mosel", and an ice
-# blue for Eiswein.
+# Chart palette. Round 3 first made the charts vivid (Steve: "more
+# color"); round 3b re-based them on the cover photo (Steve: "match the
+# colors in the cover photo"). Every colour below is sampled from the
+# cover's own crop by sample_cover_palette.py -- the most saturated,
+# mid-light pixels of a named feature -- not picked by eye:
+#   vineyard gold (sunlit slope under the castle)   (201, 151, 3)
+#   leaf yellow   (autumn leaves)                   (171, 142, 3)
+#   lamp orange   (lamp reflections in the river)   (242, 145, 4)
+#   window orange (lit windows along the quay)      (203, 114, 12)
+#   brick red     (roofs)                           (179, 80, 63)
+#   forest green  (the hillside)                    (50, 62, 25)
+#   water teal    (the river, in shade)             (18, 32, 30)
+#   sky           (top of frame)                    (225, 244, 248)
+# Two values are NOT single-feature samples: `stone` is the cover's
+# warm stone/plaster grey, taken from the 5th-largest k-means cluster of
+# the whole crop (98, 91, 74), and `track` its pale sibling (203, 194,
+# 165), another cluster. The ripeness ramp runs forest -> gold -> orange
+# -> deep orange -> brick, i.e. the cover's own greens, golds and
+# russets in the order grapes move through them.
 CHART = dict(
-    ripe=[(176, 206, 64), (240, 200, 40), (242, 158, 30), (226, 104, 36), (168, 52, 36)],
-    mosel=(22, 104, 184),
-    amber=(242, 158, 30),
-    gold=(240, 200, 40),
-    grape=(150, 196, 44),
-    ice=(52, 150, 214),
-    ice_fill=(222, 240, 252),
-    ice_text=(22, 98, 156),   # deeper ice for the title: bright ice on ice_fill measured 2.8:1
-    track=(234, 228, 214),
+    ripe=[(50, 62, 25), (201, 151, 3), (242, 145, 4), (203, 114, 12), (179, 80, 63)],
+    mosel=(18, 32, 30),        # water: "this is the Mosel"
+    amber=(242, 145, 4),       # lamp orange
+    gold=(201, 151, 3),        # vineyard gold
+    grape=(171, 142, 3),       # leaf yellow: white-grape share
+    stone=(98, 91, 74),
+    ice=(18, 32, 30),          # Eiswein outline/connector/title: water teal
+    ice_fill=(225, 244, 248),  # Eiswein box fill: the cover's sky
+    ice_text=(18, 32, 30),
+    track=(203, 194, 165),
 )
 
 
@@ -660,10 +673,10 @@ SLIDES = [
     ("four_tiles", dict(
         kicker="THE SLOPE",
         # (fill, accent for numeral + sub-line), in tile order
-        tile_colors=[(CHART["mosel"], CHART["gold"]),        # The River
-                     (CHART["gold"], CHART["ripe"][4]),       # The Aspect
-                     ((44, 50, 62), CHART["amber"]),          # The Slate
-                     (CHART["ripe"][3], (96, 26, 14))],       # The Autumn (russet accent: pale yellow measured 2.9:1)
+        tile_colors=[(CHART["mosel"], CHART["gold"]),       # The River: the water
+                     (CHART["gold"], CHART["mosel"]),         # The Aspect: sunlit vineyard (water-teal accent; brick measured 1.9:1)
+                     (CHART["stone"], CHART["track"]),       # The Slate: the cover's stone (plaster-cream accent; amber measured 2.8:1)
+                     (CHART["ripe"][3], (50, 22, 8))],       # The Autumn: window orange
         headline="Four Fixes for Latitude",
         standfirst="The Mosel sits near 50\u00b0N, far enough north that "
                    "ripening Riesling takes help from the land.",

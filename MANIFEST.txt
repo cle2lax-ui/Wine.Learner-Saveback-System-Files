@@ -35,6 +35,7 @@ arc2/GTR_SAAR_SPEC.md
 arc2/QS_TROCKEN_SPEC.md
 arc2/prepare_map_data.py
 arc2/render_fg_mosel.py
+arc2/sample_cover_palette.py
 archive/CHANGELOG_fffa_v4.md
 archive/CHANGELOG_quicksips_rrv.md
 archive/CHANGELOG_saveback_v2.md
