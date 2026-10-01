@@ -862,11 +862,11 @@ SLIDES = [
         row_layout=[3],
         cards=[
             (None, "Einzellage", "2,658 sites",
-             "One real vineyard, under 1 ha to over 200. Piesport's is "
-             "Goldtr\u00f6pfchen."),
+             "One named vineyard, under 1 ha to over 200. On the label: "
+             "Piesporter Goldtr\u00f6pfchen."),
             (None, "Grosslage \u2192 Region", "167 zones",
-             "600-1,800 ha. Piesport's is Michelsberg. From 2026 it must "
-             "say Region."),
+             "600\u20131,800 ha each. On the label: Piesporter "
+             "Michelsberg. From 2026 it must say Region."),
             (None, "Grosse Lage", "Not the same thing",
              "The VDP's own top-site tier -- one letter from Grosslage, "
              "opposite in meaning."),
