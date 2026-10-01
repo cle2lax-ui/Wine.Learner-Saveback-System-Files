@@ -631,19 +631,20 @@ SLIDES = [
         photo_anchor=0.80,
         photo_zoom=1.12,
         kicker="THE FIELD GUIDE: THE MOSEL",
-        # Round 3: larger (68 -> 104pt). Round 4: back at the upper left,
-        # on a light translucent chip, per Steve. Why a CREAM chip with
-        # DARK text, not a dark chip with the old gold text: measured over
-        # the real cover pixels, a translucent DARK chip makes gold text
-        # worse, not better -- at 25-55% it tints the pale sky to a mid-
-        # tone matching the gold's brightness (contrast bottoms out at
-        # 1.0:1) and only reaches 3:1 at ~75% and 3.6:1 at 80%, which is
-        # a solid block, not "light". A cream chip at 45% with dark
-        # water-teal text measures 5.7:1 at the worst 5% of pixels (14.9:1
-        # median). The gold dot stays. Gold-on-dark-chip remains available
-        # (see the commit message) if Steve prefers the gold.
+        # Round 3: larger (68 -> 104pt). Round 4: back at the upper left on
+        # a chip. Steve chose the dark chip with the gold text over the
+        # cream chip with dark text (both were rendered and compared).
+        # Measured over the real cover pixels behind it, the dark chip
+        # only works dense: a translucent dark chip at 25-55% makes gold
+        # text WORSE (it tints the pale sky to a mid-tone as bright as
+        # the gold; contrast bottoms at 1.0:1), and gets to 3.07:1 at
+        # 75%, 3.64:1 at 80% (this setting), 4.30:1 at 85%. 3:1 is the
+        # large-text minimum and this is 104pt type. Chip colour is the
+        # cover's own water teal. The cream-chip alternative, if ever
+        # wanted: kicker_chip=dict(color=(250, 246, 236), alpha=0.45,
+        # text=CHART["mosel"]) -- 5.7:1 worst case.
         kicker_size=104,
-        kicker_chip=dict(color=(250, 246, 236), alpha=0.45, text=CHART["mosel"]),
+        kicker_chip=dict(color=CHART["mosel"], alpha=0.80, text=PAL["ACCENT"]),
         title="Ripeness is\nEverything",
         title_top=0.655,  # round 2: lowered fully into the dark water of the river
         photo_credit="Philipp / Unsplash",
