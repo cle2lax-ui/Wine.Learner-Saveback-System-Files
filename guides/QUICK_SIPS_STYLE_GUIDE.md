@@ -738,3 +738,52 @@ styleguide/
   QUICK_SIPS_REFERENCE_HASHES.txt ← Quick Sips hash freeze
   fonts/  photos/           ← shared assets
 ```
+
+---
+
+## 11 · What Am I Drinking? (the redesigned two-pager)
+
+A second Quick Sips layout, in `formats/what_am_i_drinking.py`
+(`wad_page1`, `wad_page2`). It reuses this guide's own parts — the
+`qs_tasting_dashboard`, the glass icon, run-in paragraphs, the footer and the
+130-word budget — and adds two layouts and a logo. Reference deck:
+`arc2/render_wad_loosen_treppchen.py` (Dr. Loosen Erdener Treppchen Riesling
+Auslese 2020).
+
+**Page 1.** Full-bleed hero photo of the wine's place; logo and a large
+two-line "What am I / Drinking?" over scrims; one paragraph on the place and
+producer; TASTING & STRUCTURE (left) beside TASTING NOTES (right); READ MORE
+footer. **Page 2.** The right 30% is a pure-white panel holding the bottle;
+left, in the title font: producer, region · year, wine name; a few more words.
+
+**The logo** is a solid dark disc holding a large question mark floating above
+the series' wine glass. The first version put a small gold "?" inside the bowl:
+too small and too dim to read (and its dot sat on the wine-level line). The
+"?" is now bright gold, 7.2:1 on the disc against 3.1:1 for the series gold.
+The disc is what lets the logo work on any photo (the glass is see-through line
+art).
+
+**Content rules specific to this format**
+- **Every fact and every dashboard value is sourced from published reviews and
+  the producer, and the trace lives in the deck script's docstring** — what was
+  taken from where, and which values are *inferred* rather than measured. The
+  Loosen deck's Sweetness row ("Sweet") is inferred: no residual sugar was
+  published for the 2020, so it rests on the estate's other vintages (76.5–81
+  g/L) and D3's definition of *süss* (> 45 g/L), and says so.
+- **Never use another vintage's analysis as the bottle's.** The producer sheet
+  found was for the 2016; its figures were left out.
+- Dashboard descriptors stay WSET Level 3 terms only (see §7). Flavour language
+  goes in the notes.
+- Name the critic and the vintage for any score (page 2: "Wine Enthusiast gave
+  this 2020 a 93").
+
+**The bottle shot** must have a pure white background (the panel is filled pure
+white so there is no seam) and should be **at least ~1,500px tall**. The
+Loosen shot was 344×1200 and had to be enlarged 2.2×, so it is soft. Check the
+label against the vintage: the supplied shot read 9.0% vol against 8% listed
+for the 2020.
+
+**Line-break care.** The wrapper splits on every space, so a name can break
+across lines ("Dr. / Loosen's", "Ernst / Loosen"). A non-breaking space does
+not help (Python's `str.split()` treats it as whitespace). Reword so the name
+falls early in a line, and look at the render.

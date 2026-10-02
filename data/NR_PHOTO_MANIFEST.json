@@ -544,5 +544,29 @@
   "slot": "de_baden_kaiserstuhl_terraces",
   "credit": "Hanna Schwichtenberg / Unsplash",
   "local_path": "/home/claude/repo/photos/de_baden_kaiserstuhl_terraces.jpg"
+ },
+ {
+  "title": "File:DE-RP Erdener Treppchen.jpg",
+  "url": "https://commons.wikimedia.org/wiki/File:DE-RP_Erdener_Treppchen.jpg",
+  "width": 4689,
+  "height": 3517,
+  "author": "0000ff (Wikimedia Commons user)",
+  "license": "CC BY-SA 4.0",
+  "description": "Vine rows in the red slate of the Erdener Treppchen, the vineyard's name spelled out in the vines. Page 1 hero of the Dr. Loosen What Am I Drinking? deck. Credit printed in the footer.",
+  "slot": "de_erdener_treppchen",
+  "credit": "0000ff / Wikimedia Commons (CC BY-SA 4.0)",
+  "local_path": "/home/claude/repo/photos/de_erdener_treppchen.jpg"
+ },
+ {
+  "title": "Dr. Loosen Erdener Treppchen Riesling Auslese bottle shot",
+  "url": "(supplied by Steve, IMG_2568.WEBP)",
+  "width": 344,
+  "height": 1200,
+  "author": "Steve (supplied)",
+  "license": "supplied for use",
+  "description": "Pure-white-background bottle shot, 344x1200. Enlarged ~2.2x for the page 2 panel, so soft. Its label reads 9.0% vol, which does NOT match the 8% listed for the 2020 vintage -- very probably another vintage's bottle. A larger shot of the 2020 label is wanted.",
+  "slot": "wad_loosen_treppchen_bottle",
+  "credit": "",
+  "local_path": "/home/claude/repo/photos/wad_loosen_treppchen_bottle.png"
  }
 ]
