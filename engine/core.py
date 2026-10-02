@@ -26,7 +26,7 @@ def new_canvas(bg=None):
     return Image.new("RGB", (W, H), bg or PAPER)
 
 def footer(d, slide_no, total, label="READ MORE  \u2190", page_pos="right", credit=None, fill=None, img=None,
-           show_page_num=True, footer_size=None, credit_size=34):
+           show_page_num=True, footer_size=None, credit_size=34, credit_fill=None):
     """Every slide's bottom furniture: the read-more cue, the page
     number, and (optionally) a small-print photo credit centered in
     the gutter between them.
@@ -139,7 +139,14 @@ def footer(d, slide_no, total, label="READ MORE  \u2190", page_pos="right", cred
         cw = d.textbbox((0, 0), text, font=cf)[2]
         cx = left_edge + (avail - cw) // 2
         cy = FOOTER_Y - 4 + (f.getmetrics()[0] - cf.getmetrics()[0]) // 2
-        _draw((cx, cy), text, cf)
+        if credit_fill is not None:
+            # The credit can sit on a different surface from the label
+            # (GTR page 1: label on the photo blade, credit on the black
+            # panel), so it may need its own colour. Default None keeps
+            # every existing caller exactly as before.
+            d.text((cx, cy), text, font=cf, fill=credit_fill)
+        else:
+            _draw((cx, cy), text, cf)
 
 def kicker_block(d, text, pal, x=M, y=170, text_fill=None):
     """Rand filter (system default as of the v7 save-back): a filled

@@ -65,6 +65,23 @@ def _italian_flag(img, x, y, height, width=None):
     d.rectangle([x + 2 * band_w, y, x + width, y + height], fill=red)
     return width, height
 
+def _german_flag(img, x, y, height, width=None):
+    """Flat German tricolour -- three HORIZONTAL bands, black over red
+    over gold, no border. Unlike the French/Italian verticals this one is
+    horizontal, and Germany's flag is 5:3 not 3:2, so width defaults to
+    5/3 of the height (see _FLAG_RATIOS, which gtr_reveal uses to size the
+    group before calling this). Colours are the official black, red
+    (221, 0, 0) and gold (255, 206, 0)."""
+    if width is None:
+        width = int(height * 5 / 3)
+    d = ImageDraw.Draw(img)
+    band_h = height / 3
+    d.rectangle([x, y, x + width, y + band_h], fill=(0, 0, 0))
+    d.rectangle([x, y + band_h, x + width, y + 2 * band_h], fill=(221, 0, 0))
+    d.rectangle([x, y + 2 * band_h, x + width, y + height], fill=(255, 206, 0))
+    return width, height
+
+
 def _image_flag(path):
     """Factory for a flag drawn from an actual flag image asset rather
     than a hand-built vector tricolor -- for flags too complex for the
@@ -84,7 +101,12 @@ def _image_flag(path):
 
 _NZ_FLAG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "flags", "nz.png")
 
-_FLAGS = {"french": _french_flag, "italian": _italian_flag, "nz": _image_flag(_NZ_FLAG_PATH)}
+_FLAGS = {"french": _french_flag, "italian": _italian_flag, "nz": _image_flag(_NZ_FLAG_PATH),
+          "german": _german_flag}
+
+# width / height per flag. Default 3:2; Germany's national flag is 5:3, so
+# drawing it at the default would visibly squash it.
+_FLAG_RATIOS = {"german": 5 / 3}
 
 
 # ------------------------------------------------------------- glyph ---
@@ -330,8 +352,15 @@ def gtr_cover(slot, slide_no, total, pal):
     # zone and pick a readable color rather than assuming MUTED works.
     footer_sample = (M - 20, FOOTER_Y - 20, M + 340, FOOTER_Y + 50)
     footer_fill = INK if _region_luminance(img, footer_sample) > 150 else (255, 255, 255)
+    # The label sits on the photo blade but the credit sits on the panel,
+    # so they need different colours. footer_fill (sampled from the blade)
+    # was being applied to both: a bright blade bottom gave a near-black
+    # credit on the black panel -- invisible, and credits can be a licence
+    # obligation. The credit's colour now follows the PANEL.
+    panel_lum = sum(slot.get("panel_bg", (0, 0, 0))) / 3
+    credit_fill = (255, 255, 255) if panel_lum < 128 else INK
     return _finish(img, d, qa, slide_no, total, page_pos="left", credit=slot.get("photo_credit"),
-                   footer_fill=footer_fill)
+                   footer_fill=footer_fill, credit_fill=credit_fill)
 
 
 # ---------------------------------------------------------- page 2 ----
@@ -340,7 +369,8 @@ def gtr_reveal(slot, slide_no, total, pal):
     serif title case), blurb (2-3 sentences on why the region matters --
     rendered centered below the region name in a light serif), photo_credit
     (optional), flag (optional, one of _FLAGS.keys() -- "french"
-    (default, for backward compat with existing decks), "italian", or
+    (default, for backward compat with existing decks), "italian",
+    "german" (horizontal black/red/gold, drawn at its true 5:3 ratio), or
     "nz" (real flag image asset, not a drawn tricolor -- see
     _image_flag)).
 
@@ -421,7 +451,7 @@ def gtr_reveal(slot, slide_no, total, pal):
     glyph_l, glyph_t, glyph_r, glyph_b = d.textbbox((0, 0), region_txt, font=rf)
     glyph_h = glyph_b - glyph_t
     flag_h = int(glyph_h * 0.82)
-    flag_w = int(flag_h * 1.5)
+    flag_w = int(flag_h * _FLAG_RATIOS.get(slot.get("flag", "french"), 1.5))
     flag_gap = 34
     group_w = rw + flag_gap + flag_w
     group_x0 = (W - group_w) // 2

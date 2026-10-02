@@ -264,3 +264,35 @@ the wrong call.
 - `GTR_REFERENCE_HASHES.txt` — sha256 of the benchmark deck's two
   rendered pages. Rebuild + rehash after any change to `guess_the_region.py`,
   `core.py`, or `tokens.py`.
+
+---
+
+## 9 · v10 additions (found building the Baden deck)
+
+- **Flags.** `slot["flag"]` now also accepts `"german"` — horizontal black /
+  red / gold at Germany's true **5:3** ratio. Ratios are per flag
+  (`_FLAG_RATIOS`; default 3:2), because a German flag drawn at 3:2 is visibly
+  squashed. Add a country by adding a drawing function to `_FLAGS` and, if its
+  ratio isn't 3:2, an entry to `_FLAG_RATIOS`. Existing decks are unchanged
+  (checked pixel-identical).
+- **Cover credit colour.** The footer chose one colour from the photo under the
+  left-hand *label* and applied it to the credit as well — but the credit is
+  centred on the page, i.e. on the black panel. A bright blade bottom made the
+  credit near-invisible, and a credit can be a licence obligation. The cover now
+  gives the credit its own colour, sampled from the panel (`credit_fill` on
+  `core.footer` / `_finish`; `None` keeps every other module as before).
+- **Clue length.** At 88px the panel holds about **24 characters a line**, so
+  two lines is ~45 characters. A first Baden draft ran 65–80 characters a clue
+  and pushed the swipe cue to y=2747 against a 2500 limit. Cut copy; never
+  shrink type. If a fact won't fit, it is probably the wrong clue.
+- **Reveal blurb.** A ~66-word blurb overflowed by 94px even at the 60px type
+  floor; ~45 words fits. Three beats: where it is, the surprise, one number.
+- **Photos are pre-cropped.** `gtr_cover` centre-crops with no anchor, so a
+  landscape photo has to be cropped to the blade (760×2700 aspect) and the
+  reveal (2160×1782) as files, positioned deliberately. Preview both before
+  rendering.
+- **Cue wording.** The swipe cue and footer now read "READ MORE", not "SWIPE"
+  (see `core.footer`); §2 above predates that change.
+- **Regression.** `GTR_REFERENCE_HASHES.txt` named in the header never made it
+  into the repo. The Cornas GTR is now covered by `engine/regress.py` instead;
+  run it after any change to `guess_the_region.py`, `core.py` or `tokens.py`.

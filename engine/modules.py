@@ -50,10 +50,11 @@ def _start(name, slide_no, total, pal, bg_color=None):
 
 
 def _finish(img, d, qa, slide_no, total, page_pos="right", credit=None, footer_fill=None,
-            footer_adaptive=False, footer_label=None, show_page_num=True, footer_size=None):
+            footer_adaptive=False, footer_label=None, show_page_num=True, footer_size=None,
+            credit_fill=None):
     footer_kwargs = dict(page_pos=page_pos, credit=credit, fill=footer_fill,
                           img=img if footer_adaptive else None, show_page_num=show_page_num,
-                          footer_size=footer_size)
+                          footer_size=footer_size, credit_fill=credit_fill)
     if footer_label is not None:
         footer_kwargs["label"] = footer_label
     footer(d, slide_no, total, **footer_kwargs)

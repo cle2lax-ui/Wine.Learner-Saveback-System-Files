@@ -520,5 +520,29 @@
   "slot": "de_bernkastel_aerial",
   "credit": "sajid shiper / Pexels",
   "local_path": "/home/claude/repo/photos/de_bernkastel_aerial.jpg"
+ },
+ {
+  "title": "de_baden_red_grapes",
+  "url": "https://unsplash.com/photos/jSvuS2sX7SE",
+  "width": 4592,
+  "height": 3448,
+  "author": "Sven Finger",
+  "license": "Unsplash License (free to use)",
+  "description": "Red grapes on the vine; Unsplash location data: Waltershofen, Freiburg im Breisgau, Germany (in Baden). No variety claimed. Source for gtr_baden_blade.jpg, a 970x3448 vertical crop centred on the cluster, used as the Baden GTR cover blade.",
+  "slot": "de_baden_red_grapes",
+  "credit": "Sven Finger / Unsplash",
+  "local_path": "/home/claude/repo/photos/de_baden_red_grapes.jpg"
+ },
+ {
+  "title": "de_baden_kaiserstuhl_terraces",
+  "url": "https://unsplash.com/photos/Hx-hSGFgISA",
+  "width": 5184,
+  "height": 3456,
+  "author": "Hanna Schwichtenberg",
+  "license": "Unsplash License (free to use)",
+  "description": "Terraced vineyard slope; photographer-set Unsplash location: kaiserstuhl. Source for gtr_baden_reveal.jpg, a 3265x2693 crop tight on the terraces (the original frame was ~45% sky), used as the Baden GTR reveal.",
+  "slot": "de_baden_kaiserstuhl_terraces",
+  "credit": "Hanna Schwichtenberg / Unsplash",
+  "local_path": "/home/claude/repo/photos/de_baden_kaiserstuhl_terraces.jpg"
  }
 ]

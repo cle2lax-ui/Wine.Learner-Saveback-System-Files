@@ -29,13 +29,15 @@ arc1/render_qs_saintperay.py
 arc1/render_sd_wholebunch.py
 arc2/ARC2_GERMANY_PLAN.md
 arc2/CAPTION_FG_mosel.md
+arc2/CAPTION_GTR_baden.md
 arc2/CAPTION_GTR_saar.md
 arc2/CAPTION_QS_trocken.md
+arc2/GTR_BADEN_SPEC.md
 arc2/GTR_SAAR_SPEC.md
 arc2/QS_TROCKEN_SPEC.md
-arc2/__pycache__/prepare_map_data.cpython-312.pyc
 arc2/prepare_map_data.py
 arc2/render_fg_mosel.py
+arc2/render_gtr_baden.py
 arc2/sample_cover_palette.py
 archive/CHANGELOG_fffa_v4.md
 archive/CHANGELOG_quicksips_rrv.md
@@ -99,11 +101,6 @@ data/geo/rhineland_palatinate.geojson
 data/geo/source_WeinbaugebieteDeutschland.svg
 data/nrhone_geo.json
 data/nrhone_locator.json
-engine/__pycache__/core.cpython-312.pyc
-engine/__pycache__/map_atlas.cpython-312.pyc
-engine/__pycache__/modules.cpython-312.pyc
-engine/__pycache__/tokens.cpython-312.pyc
-engine/__pycache__/variety.cpython-312.pyc
 engine/build.py
 engine/core.py
 engine/map_atlas.py
@@ -171,6 +168,8 @@ logo/mark_reversed_256.png
 logo/mark_reversed_512.png
 photos/QS_glass_icon.png
 photos/QS_glass_icon_ink.png
+photos/de_baden_kaiserstuhl_terraces.jpg
+photos/de_baden_red_grapes.jpg
 photos/de_bernkastel_aerial.jpg
 photos/de_bernkastel_bridge_couple.jpg
 photos/de_bernkastel_castle_view.jpg
@@ -186,6 +185,8 @@ photos/fff_viognier_cluster.jpg
 photos/fff_viognier_cover.jpg
 photos/fff_viognier_vines.jpg
 photos/flag_australia_real.png
+photos/gtr_baden_blade.jpg
+photos/gtr_baden_reveal.jpg
 photos/gtr_cornas_blade.jpg
 photos/gtr_cornas_reveal.jpg
 photos/nr_ampuis_parcelles.jpg
