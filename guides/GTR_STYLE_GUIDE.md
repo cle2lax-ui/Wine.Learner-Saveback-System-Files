@@ -99,6 +99,10 @@ the four clues change deck to deck.
 - The arrow point is the swipe **gesture** direction, not "next page" —
   same convention as `core.footer()`'s default label.
 
+**Per-deck wording:** `slot["swipe_label"]` overrides the cue text (the arrow is
+always appended). Default is "READ MORE TO SEE THE ANSWER", so existing decks
+are unchanged. The Baden deck uses just "READ MORE".
+
 **QA word budget:** 60 words (`qa.word_limit`), covering the locked
 header text + all 4 clues combined. Tight on purpose — this is a quiz
 card, not a fact sheet.

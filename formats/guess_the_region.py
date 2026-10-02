@@ -218,7 +218,8 @@ def _folded_map_icon(img, x, y, size, color, width=6):
 # ---------------------------------------------------------- page 1 ----
 def gtr_cover(slot, slide_no, total, pal):
     """PAGE 1. slots: photo, clues (list of exactly 4 short strings),
-    photo_credit (optional), panel_bg (optional, default pure black --
+    photo_credit (optional), swipe_label (optional, default "READ MORE TO
+    SEE THE ANSWER"; the arrow is always appended), panel_bg (optional, default pure black --
     override for a deck-specific panel color; header/clue-letter/swipe
     text stays pal ACCENT regardless, so keep panel_bg dark enough for
     that to read).
@@ -334,7 +335,9 @@ def gtr_cover(slot, slide_no, total, pal):
     # on the panel rather than left-margin), so it doesn't inherit the
     # core.py default and has to be changed here explicitly too.
     sf = font("kicker_bold", 88)
-    read_more_txt = "READ MORE TO SEE THE ANSWER  ←"
+    # slot["swipe_label"] overrides the wording (the arrow stays); default is
+    # the series-wide phrase, so every existing deck renders as before.
+    read_more_txt = slot.get("swipe_label", "READ MORE TO SEE THE ANSWER") + "  ←"
     sw = text_w(d, read_more_txt, sf) + 4 * len(read_more_txt)
     swipe_y = clues_bottom + 170
     swipe_x = content_x0 + (content_w - sw) // 2

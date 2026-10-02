@@ -72,6 +72,7 @@ PAL["SIGNATURE"] = (114, 47, 55)    # region-name burgundy
 
 SLOT_COVER = dict(
     photo="gtr_baden_blade.jpg",
+    swipe_label="READ MORE",   # Steve: the cue is just "Read More" plus the arrow
     # First draft ran 65-80 characters a clue and pushed the swipe cue to
     # y=2747 against a 2500 limit. The panel holds ~24 characters a line, so
     # two lines is ~45 characters: cut copy, never shrink type. What went:
