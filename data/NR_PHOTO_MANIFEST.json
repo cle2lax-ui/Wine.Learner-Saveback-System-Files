@@ -564,9 +564,21 @@
   "height": 1200,
   "author": "Steve (supplied)",
   "license": "supplied for use",
-  "description": "Pure-white-background bottle shot, 344x1200. Enlarged ~2.2x for the page 2 panel, so soft. Its label reads 9.0% vol, which does NOT match the 8% listed for the 2020 vintage -- very probably another vintage's bottle. A larger shot of the 2020 label is wanted.",
+  "description": "Pure-white-background bottle shot, 344x1200. Enlarged ~2.2x for the page 2 panel, so soft. Its label reads 9.0% vol, which does NOT match the 8% listed for the 2020 vintage -- very probably another vintage's bottle. A larger shot of the 2020 label is wanted. SUPERSEDED by wad_loosen_treppchen_bottle2.jpg (this label reads 9.0%).",
   "slot": "wad_loosen_treppchen_bottle",
   "credit": "",
   "local_path": "/home/claude/repo/photos/wad_loosen_treppchen_bottle.png"
+ },
+ {
+  "title": "Dr. Loosen Erdener Treppchen Riesling Auslese bottle shot, second",
+  "url": "(supplied by Steve, IMG_0753.jpeg)",
+  "width": 235,
+  "height": 706,
+  "author": "Steve (supplied)",
+  "license": "supplied for use",
+  "description": "Near-white-background bottle shot, 235x706 (bottle 681px tall), SMALLER than the first. Label reads 7.5% vol; vintage not visible. Enlarged ~3.5x for the page 2 panel, so soft: large label type legible, fine print not. Original JPEG kept unmodified.",
+  "slot": "wad_loosen_treppchen_bottle2",
+  "credit": "",
+  "local_path": "/home/claude/repo/photos/wad_loosen_treppchen_bottle2.jpg"
  }
 ]

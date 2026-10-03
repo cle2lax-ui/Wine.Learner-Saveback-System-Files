@@ -60,11 +60,16 @@ PHOTOGRAPHS
     Erden is on the Middle Mosel. The photo is uncaptioned and shows "the
     Mosel", not Erden. Pexels carries no location data; the place is from the
     photographer's own title ("aerial view of Moselle river bend near Bremm").
-  Page 2: Steve's bottle shot (IMG_2568). 344x1200 px, pure white
-    background. Enlarged ~2.2x to fill the panel, so it is SOFT. The label
-    in the shot reads 9.0% vol, which does NOT match the 8% listed for the
-    2020 -- the shot is very probably another vintage's bottle. A larger,
-    2020-label shot would fix both.
+  Page 2: Steve's second bottle shot (IMG_0753.jpeg), 235x706 px (the bottle is 681px
+    tall), near-white background. It replaced the first (IMG_2568, 344x1200, whose
+    label read 9.0% vol against the copy's 8%). The new label reads 7.5% vol. It is
+    SMALLER than the one it replaced, so filling the panel is a 3.5x enlargement:
+    the large label type (Dr. Loosen, Erdener Treppchen, Riesling Auslese, Mosel)
+    stays legible, the fine print is not recoverable, and the whole bottle is soft.
+    Denoise-then-upscale was chosen over plain Lanczos (marginally smoother, less
+    JPEG blocking). The label's vintage is not visible. A larger shot would help.
+
+ROUND 3 (the four-designer review, applied): see arc2/REVIEW_WAD_loosen_treppchen.md.
 """
 import glob
 import os
@@ -88,18 +93,35 @@ SLOT_1 = dict(
     # the vineyard's name is spelled out in its vines.
     hidden_terms=["Loosen", "Treppchen", "Erden", "Mosel", "Riesling", "Auslese"],
     photo="de_bremm_mosel_loop",
-    photo_anchor=0.5,
+    # The lockup is in the UPPER-LEFT corner (Steve), the title on ONE line at a smaller
+    # size, with "(find out on the next page!)" in italics beneath it. That changed the
+    # best crop: with the lockup in the corner, photo_anchor 1.0 (the review's pick for a
+    # centred lockup) pushes the vineyard peninsula up under it. At 0.0 the lockup sits in
+    # clear corner space over the sunset sky and hills, the whole vineyard bend stays
+    # visible below it, and the photo is the brightest of the three crops. Scrim swept at
+    # that crop: 0.40 left the title at 3.2:1 (barely over the 3:1 minimum); 0.52 gives
+    # title 4.3:1, gold line 5.1:1 at the 90th percentile, photo luminance 0.160 (the
+    # previous build was 0.154).
+    photo_anchor=0.0,
+    scrim_strength=0.52,
+    lockup_y=80,
+    title_lines=["What am I Drinking?"],
+    title_size=120,
     photo_h=1000,
-    lockup_note="(Try to guess, then see the answer on the next page)",
+    lockup_note="(find out on the next page!)",
     photo_credit="tom analogicus / Pexels",
     paragraph_lead="So steep",
     # First draft (~60 words) overflowed the page by ~200px with the dashboard
     # and notes below it: trimmed, and the photo shortened 1080 -> 1000.
-    paragraph="that stone steps were built into this vineyard centuries ago for "
+    # Review fixes. "this vineyard" -> "the vineyard": "this" pointed at the hero photo,
+    # which is Bremm, not the Treppchen. The last sentence no longer says the estate "has
+    # been built on" ungrafted vines: the importer says the 1988 owner saw ungrafted vines
+    # averaging 60 years old in SOME of the top vineyards as his raw material.
+    paragraph="that stone steps were built into the vineyard centuries ago for "
               "the workers. Its iron-rich red slate gives the wines a spicy, "
-              "almost peppery minerality. One family has held the estate for "
-              "over 200 years, and under one winemaker since 1988 it has been "
-              "built on old, ungrafted vines.",
+              "almost peppery minerality. One family has owned the estate for "
+              "over 200 years; some of its best vineyards carry old, "
+              "ungrafted vines.",
     structure=[
         ("Sweetness", 0.78, "Sweet"),
         ("Acidity", 0.90, "High"),
@@ -108,26 +130,38 @@ SLOT_1 = dict(
         ("Aroma Intensity", 0.90, "Pronounced"),
     ],
     notes=[
-        ("Aromas", "Nectarine, melon, apricot, white peach, citrus zest."),
+        # "zest" dropped (the producer says white peach and citrus); "yet" dropped so
+        # the Finish fits one line instead of leaving "focused." alone on the next.
+        ("Aromas", "Nectarine, melon, apricot, white peach, citrus."),
         ("Palate", "Spice, firm slate, a saline mineral edge."),
-        ("Finish", "Long, unctuous yet focused."),
+        ("Finish", "Long, unctuous, focused."),
     ],
     notes_source="Wine Enthusiast, the producer",
 )
 
 SLOT_2 = dict(
-    bottle=os.path.join(PHOTOS, "wad_loosen_treppchen_bottle.png"),
-    bottle_h=2500,
-    title_top=470,   # centres the text block against the full-height bottle
+    # The 235x706 shot Steve supplied, replacing the 344x1200 one whose label read 9.0%.
+    # The bottle's top sits on the lockup's top line (y=100) and its base on the content
+    # limit (y=2500), so the text column and the bottle share a top and a bottom axis.
+    bottle=os.path.join(PHOTOS, "wad_loosen_treppchen_bottle2.jpg"),
+    bottle_top=100,
+    title_top=470,
     producer="Dr. Loosen",
     region_year="Mosel · 2020",
     wine_lines=["Erdener Treppchen", "Riesling Auslese"],
-    lead="Sweet, never heavy.",
-    body="Auslese is selected harvest: very ripe, partly botrytised bunches, made "
-         "sweet but held in balance by Riesling's crisp acidity at just 8% "
-         "alcohol. The Treppchen's red slate adds spice and a saline edge, and "
-         "the VDP ranks the site Grosse Lage. Wine Enthusiast gave this 2020 a "
-         "93; the producer sees great potential for ageing.",
+    # Review fixes. "never heavy" -> "held in balance": the absolute sat against Wine
+    # Enthusiast's "unctuous" and page 1's own Body row. "Auslese is selected harvest" and
+    # "the producer sees great potential for ageing" cut (redundant / soft). The alcohol is
+    # "7.5-8%", not "8%": the supplied label reads 7.5%, Wine.com lists the 2020 at 8%, and
+    # Wine-Searcher gives 7.5-8%; the label's vintage is not visible, so a single figure
+    # would be a guess.
+    lead="Sweet, held in balance.",
+    body="Very ripe, partly botrytised bunches, kept fresh by crisp acidity at "
+         "just 7.5\u20138% alcohol. The Treppchen's red slate adds spice and a "
+         "saline edge, and the VDP ranks the site Grosse Lage. Wine Enthusiast "
+         "gave this 2020 a 93.",
+    rule=False,             # decorative: size and colour already separate name from body
+    body_anchor="bottom",   # the last line sits on the bottle's base
 )
 
 

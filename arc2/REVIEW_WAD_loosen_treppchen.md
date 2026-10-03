@@ -99,3 +99,30 @@ Both pages are well inside the budget today; the cuts are for quality, not compl
 
 **Not run:** the **Social Pass** (the fifth pass), which wasn't asked for, and no caption
 exists yet.
+
+---
+
+## 7 · Resolution log (the suggestions applied)
+
+Steve supplied a new bottle shot and asked for every fix and recommendation to be
+applied. **All Fix and Recommend items are in; so are the Optional ones I own.**
+
+| Item | Status |
+|---|---|
+| W1 bottle label vs copy | **Resolved differently than proposed.** The new label reads 7.5%; Wine.com lists the 2020 at 8%; Wine-Searcher gives 7.5-8%; the label's vintage is not visible. Copy now says **"7.5-8%"**, true under any reading. |
+| W2 "this vineyard" | Done: "the vineyard". |
+| W3 "built on" ungrafted vines | Done: "some of its best vineyards carry old, ungrafted vines". |
+| W4 "citrus zest" | Done: "citrus". |
+| W5 "never heavy" | Done: "Sweet, held in balance." |
+| C1, C2 cuts | Done. Page 1 88 -> 76 words (also the italic line changed), page 2 66 -> 50. |
+| C3 gold rule | Removed. |
+| C4 6-word italic line | **Not applied**: it was your wording. Superseded anyway: you later asked for "(find out on the next page!)". |
+| I1 hero crop | **Re-decided.** `photo_anchor 1.0` was right for a centred lockup; for the corner lockup you then asked for, it pushed the peninsula under the lockup. **0.0** won; scrim swept to 0.52. |
+| I2 widow | Done: "Long, unctuous, focused." |
+| I3 lockup sizes | Done: page 2 now defaults to page 1's 320 / 160, and the lockup's ink top is aligned to the bottle top. |
+| I4 seam | Done, and verified at **0 levels**. The first attempt left a 1-level step (the processed background had drifted from the original's 255); fixed by measuring after processing. |
+| I5 bottle softness | **Not fixable in code.** The new shot (235x706) is *smaller* than the old (344x1200): 3.5x vs 2.2x enlargement. Large label type legible, fine print not. A shot >=1,500px tall would fix it. |
+| V1 page 2 whitespace | Done as recommended, option (b): the body's last line is bottom-anchored to the bottle's base. **My own regression, caught and fixed:** anchored on the content limit, it ended 57px above the page number; the base now sits 120px higher (177px clearance). |
+
+**Later request, not from the review:** the lockup moved to the upper-left corner,
+title on one line at a smaller size (120 pt, with a build-failing no-wrap check).

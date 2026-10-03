@@ -762,19 +762,32 @@ too small and too dim to read (and its dot sat on the wine-level line). The
 "?" is now bright gold, 7.2:1 on the disc against 3.1:1 for the series gold.
 The disc is what lets the logo work on any photo (the glass is see-through line
 art). The title sits **right beside the disc** as one lockup (`wad_lockup`),
-the text block centred on the disc by its ink box. On page 1 the lockup group (lockup + the
-italic **instruction line** beneath it, `lockup_note`: "(Try to guess, then see
-the answer on the next page)") is **centred vertically on the photo band**. A
-centred lockup needs protection in the middle of the photo, which core `scrim()`
-cannot give (it is a one-sided gradient), so `band_scrim()` lays a feathered dark
-band behind the group, fading out to the right where the lockup ends so the rest
-of the hero keeps its colour. **Sweep its strength; never guess it.** A first
-attempt at 0.80 met every contrast target by a mile (gold line 10:1) but kept
-only 41% of the photo's brightness, and the Mosel lost the colour it was chosen
-for. At 0.40 / feather 100 / pad 25 the title is 4.6:1 and the gold line 3.6:1
-at the 90th percentile of background brightness, keeping 73% of the brightness
-and 95% of the saturation. Measure the text where it actually sits: a stale
-measuring box once reported a nonsense 0.8:1 after the lockup moved.
+the text block centred on the disc by its ink box.
+
+**On page 1 the lockup sits in the upper-left corner** of the hero (`lockup_y`),
+with the title on **one line** (`title_lines=["What am I Drinking?"]`, 120 pt) and
+the italic **instruction line** beneath it (`lockup_note`: "(find out on the next
+page!)"). **The title must not wrap**: if a one-line title runs past the right
+margin the build fails (shrink `title_size` or shorten the copy). History: the
+lockup was first bottom-left, then vertically centred on the photo, then moved to
+the corner at Steve's request; each placement needed its own scrim and its own
+crop.
+
+A lockup anywhere but the photo's edge needs protection that core `scrim()` cannot
+give (it is a one-sided gradient), so `band_scrim()` lays a feathered dark band
+behind the group, fading out to the right where the lockup ends so the rest of the
+hero keeps its colour. **Sweep its strength; never guess it.** At the corner the
+swept value is 0.52 (title 4.3:1, gold line 5.1:1 at the 90th percentile of
+background brightness; photo luminance 0.160). Over-darkening is the real risk: a
+first attempt at 0.80 (centred lockup) met every contrast target by a mile but kept
+only 41% of the photo's brightness and the Mosel lost the colour it was chosen for.
+
+**The crop depends on where the lockup is.** Test `photo_anchor` at 0.0 / 0.5 / 1.0
+with the lockup in place and look. With a centred lockup, 1.0 was best; with the
+corner lockup, 1.0 pushed the vineyard peninsula up under it, and **0.0** won (the
+lockup in clear corner space over the sky and hills, the whole vineyard bend visible
+below, and the brightest photo of the three). Measure the text where it actually
+sits: a stale measuring box once reported a nonsense 0.8:1 after the lockup moved.
 
 The italic line is **bright gold**, the same gold as the logo's "?"
 (`LOGO_MARK`, 255,222,128). Gold is *dimmer* than white (luminance 0.76 vs
@@ -808,11 +821,26 @@ if its location differs from the wine's, say so in the deck script.
 - Name the critic and the vintage for any score (page 2: "Wine Enthusiast gave
   this 2020 a 93").
 
-**The bottle shot** must have a pure white background (the panel is filled pure
-white so there is no seam) and should be **at least ~1,500px tall**. The
-Loosen shot was 344×1200 and had to be enlarged 2.2×, so it is soft. Check the
-label against the vintage: the supplied shot read 9.0% vol against 8% listed
-for the 2020.
+**The bottle shot** should have a near-white background and be **at least ~1,500px
+tall**. The panel takes the shot's own background (the median of its border), scales
+the bottle to the panel, and **multiplies the shot into the page's paper colour**, so
+there is no seam. Two lessons: measure the background *after* the denoise and sharpen
+steps (they drift a near-white backdrop by a level, which left a 1-level step against
+the paper when the original's value was used), and verify the seam on the rendered
+pixels. Small shots are denoised before a two-step upscale (marginally smoother, less
+JPEG blocking than plain Lanczos). **A small shot is still soft**: the Loosen deck's
+first shot was 344x1200 (2.2x enlargement) and the second 235x706 (3.5x); at that size
+the large label type stays legible and the fine print, including the alcohol line, is
+not recoverable. Check the label against the vintage and the copy: the first shot read
+9.0% vol against the copy's 8%, the second 7.5%, so the copy says "7.5-8%".
+
+**Page 2 grid.** The text column and the bottle share a top line (the lockup's
+top-most *ink*, not its disc: the title's capitals overshoot the disc, so the ink is
+measured) and a bottom line (`body_anchor="bottom"` puts the body's last line on the
+bottle's base). The base sits 120px above the content limit, not on it: anchored on
+the limit the body ended 57px above the page number and the two crowded each other
+(page 1 has 230px). The result is measured, not eyeballed: text top y=100 / bottle top
+y=100; body last line 2380 / bottle base 2382; footer clearance 177px.
 
 **Line-break care.** The wrapper splits on every space, so a name can break
 across lines ("Dr. / Loosen's", "Ernst / Loosen"). A non-breaking space does

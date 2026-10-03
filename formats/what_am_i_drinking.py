@@ -29,6 +29,7 @@ bounding box, then applies a light unsharp mask. If the source is small the
 enlargement will look soft: bottle_h is the bottle's height in px on the
 page, and a source under ~1,500px tall should be treated as a placeholder.
 """
+import cv2
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 
@@ -176,7 +177,7 @@ def wad_page1(slot, slide_no, total, pal):
     notes[(lead, text)], notes_source, dash_w(950), notes_heading('TASTING
     NOTES'), lockup_y(90), lockup_note (an italic line under the lockup),
     scrim_strength(0.40), scrim_feather(100), scrim_pad(25), scrim_x_hold(1500),
-    scrim_floor(0.30), lockup_note_gap(40). The lockup group (lockup + italic line)
+    scrim_floor(0.30), lockup_note_gap(40), disc_alpha(0.92). The lockup group (lockup + italic line)
     is centred vertically on the photo unless lockup_y is given."""
     _check_hidden(slot)
     img, d, qa = modules._start("WAD-01 page1", slide_no, total, pal)
@@ -226,8 +227,13 @@ def wad_page1(slot, slide_no, total, pal):
     d = ImageDraw.Draw(img)
 
     tx, ty, tr, tb, line_h = wad_lockup(img, M, ly, logo_h, lines, slot.get("title_size", 160),
-                                        PAPER, pal, gap=slot.get("lockup_gap", 44))
+                                        PAPER, pal, gap=slot.get("lockup_gap", 44),
+                                        badge_alpha=slot.get("disc_alpha", 0.92))
     d = ImageDraw.Draw(img)
+    if len(lines) == 1 and tr > W - M:
+        # Steve: the title must not wrap. A one-line title that runs past the margin
+        # fails the build: shrink title_size or shorten the copy, never wrap it.
+        qa.notes.append(f"FAIL title-wrap: the one-line title ends at x={tr}, past the right margin {W - M}")
     qa.size("title", slot.get("title_size", 160), headline=True)
     qa.add_words(" ".join(lines))
     qa.box("logo", (M, ly, M + logo_h, ly + logo_h))
@@ -280,47 +286,96 @@ def wad_page1(slot, slide_no, total, pal):
     return modules._finish(img, d, qa, slide_no, total, credit=slot.get("photo_credit"))
 
 
-def _bottle_panel(img, path, panel_x, bottle_h, sharpen=True):
-    """Paint the right-hand panel pure white and place the bottle in it,
-    scaled so the BOTTLE (found by its difference from the white background)
-    is bottle_h tall on the page, centred on the panel horizontally and the
-    page vertically."""
+def _bottle_panel(img, path, panel_x, bottle_h, top=None, sharpen=True, denoise=True, paper=PAPER):
+    """Paint the right-hand panel in the PAPER colour and place the bottle in it.
+
+    The bottle (found by its difference from the shot's own background, taken as
+    the median of its border) is scaled to be bottle_h tall on the page, centred
+    on the panel horizontally, with its TOP at `top` (default: centred on the page).
+    The whole shot is then multiplied by paper/background so its near-white
+    backdrop becomes exactly the page's cream: no seam between panel and page (a
+    pure-white panel beside cream was only 4-6 levels apart, which reads as
+    neither a deliberate panel nor a seamless page).
+
+    denoise=True smooths the JPEG blocking before a two-step upscale; it is the
+    better choice for the small shots this format gets (see the guide). Returns
+    the scale and the bottle's top and bottom on the page."""
     src = Image.open(path).convert("RGB")
     a = np.asarray(src).astype(int)
-    diff = np.abs(a - 255).sum(2) > 40
+    border = np.concatenate([a[:3].reshape(-1, 3), a[-3:].reshape(-1, 3),
+                             a[:, :3].reshape(-1, 3), a[:, -3:].reshape(-1, 3)])
+    bg = np.median(border, axis=0)
+    diff = np.abs(a - bg).sum(2) > 40
     ys, xs = np.where(diff)
     bx0, bx1, by0, by1 = xs.min(), xs.max(), ys.min(), ys.max()
     s = bottle_h / float(by1 - by0)
-    big = src.resize((int(src.width * s), int(src.height * s)), Image.LANCZOS)
-    if sharpen:
-        big = big.filter(ImageFilter.UnsharpMask(radius=2.2, percent=70, threshold=3))
+    size = (int(src.width * s), int(src.height * s))
+    if denoise:
+        den = cv2.fastNlMeansDenoisingColored(np.asarray(src)[:, :, ::-1].copy(), None, 5, 5, 5, 15)[:, :, ::-1]
+        big = Image.fromarray(den)
+        big = big.resize((big.width * 2, big.height * 2), Image.LANCZOS).resize(size, Image.LANCZOS)
+        if sharpen:
+            big = big.filter(ImageFilter.UnsharpMask(radius=2.0, percent=80, threshold=2))
+    else:
+        big = src.resize(size, Image.LANCZOS)
+        if sharpen:
+            big = big.filter(ImageFilter.UnsharpMask(radius=2.2, percent=70, threshold=3))
+    # Tone-match using the background AS IT IS AFTER processing: the denoise and the
+    # sharpen shift the near-white backdrop slightly (the original's border is 255, the
+    # processed backdrop was ~254), and scaling by the original's value left a 1-level
+    # step against the page's paper.
+    ba = np.asarray(big).astype(float)
+    bg2 = np.median(np.concatenate([ba[:3].reshape(-1, 3), ba[-3:].reshape(-1, 3),
+                                    ba[:, :3].reshape(-1, 3), ba[:, -3:].reshape(-1, 3)]), axis=0)
+    arr = ba * (np.array(paper, float) / np.maximum(bg2, 1))
+    big = Image.fromarray(np.rint(arr).clip(0, 255).astype("uint8"))
     pw = W - panel_x
-    panel = Image.new("RGB", (pw, H), (255, 255, 255))
+    panel = Image.new("RGB", (pw, H), tuple(paper))
+    top_y = int(top) if top is not None else int((H - bottle_h) / 2)
     cx_big = int((bx0 + bx1) / 2 * s)
-    cy_big = int((by0 + by1) / 2 * s)
-    panel.paste(big, (pw // 2 - cx_big, H // 2 - cy_big))
+    panel.paste(big, (pw // 2 - cx_big, top_y - int(by0 * s)))
     img.paste(panel, (panel_x, 0))
-    return dict(scale=s, src_size=src.size, bottle_px=(int((bx1 - bx0) * s), int((by1 - by0) * s)))
+    return dict(scale=s, src_size=src.size, bottle_px=(int((bx1 - bx0) * s), int((by1 - by0) * s)),
+                top=top_y, bottom=top_y + int(bottle_h), bg=tuple(int(v) for v in bg))
 
 
 def wad_page2(slot, slide_no, total, pal):
-    """slots: bottle (path), panel_frac(0.30), bottle_h(2500), producer,
-    region_year, wine_lines[...], rule(True), lead, body, and the lockup that
-    repeats the page 1 logo: lockup_lines(["I\u2019m", "Drinking"]),
-    lockup_h(300), lockup_size(150), lockup_y(110), lockup_gap(40)."""
+    """slots: bottle (path), panel_frac(0.30), bottle_top(100), bottle_bottom
+    (CONTENT_BOTTOM - 120: the base sits above the footer with room to breathe),
+    producer, region_year, wine_lines[...], rule(True), lead, body,
+    body_anchor('flow' | 'bottom': 'bottom' puts the body's last line on the
+    bottle's base), and the lockup that repeats the page 1 logo, identical in
+    size by default: lockup_lines(["I\u2019m", "Drinking"]), lockup_h(320),
+    lockup_size(160), lockup_y(the bottle's top), lockup_gap(40).
+
+    GRID: the lockup's top and the bottle's top are one line, and (with
+    body_anchor='bottom') the body's last line and the bottle's base are another,
+    so the text column and the bottle share a top and a bottom axis."""
     img, d, qa = modules._start("WAD-02 page2", slide_no, total, pal)
     qa.word_limit = WORD_LIMIT
     panel_x = int(W * (1 - slot.get("panel_frac", 0.30)))
-    info = _bottle_panel(img, slot["bottle"], panel_x, slot.get("bottle_h", 2500))
+    btop = slot.get("bottle_top", 100)
+    # The bottle's base (and, when anchored, the body's last line) sits 120px ABOVE the
+    # content limit, not on it: anchored on the limit itself the body ended 57px above
+    # the page number (page 1 has 230px) and the two crowded each other.
+    info = _bottle_panel(img, slot["bottle"], panel_x,
+                         slot.get("bottle_h", slot.get("bottle_bottom", CONTENT_BOTTOM - 120) - btop),
+                         top=btop, paper=PAPER)
     d = ImageDraw.Draw(img)
-    qa.notes.append(f"info bottle enlarged x{info['scale']:.2f} from {info['src_size']}")
+    qa.notes.append(f"info bottle enlarged x{info['scale']:.2f} from {info['src_size']}; top {info['top']}, base {info['bottom']}")
 
     # The lockup repeats here with the answer's lead-in: the same disc, "?" and
     # glass, set beside "I'm / Drinking" instead of "What am I / Drinking?".
-    lock_h = slot.get("lockup_h", 300)
-    lock_y = slot.get("lockup_y", 110)
+    lock_h = slot.get("lockup_h", 320)          # = page 1's lockup: a repeated mark is identical
     lock_lines = slot.get("lockup_lines", ["I\u2019m", "Drinking"])
-    lock_size = slot.get("lockup_size", 150)
+    lock_size = slot.get("lockup_size", 160)
+    # The lockup's TOP-MOST INK (the title's capitals overshoot the disc by ~9px) sits on
+    # the bottle's top line: measure the ink on a scratch canvas, then offset.
+    sc = Image.new("RGB", (W, H), (255, 255, 255))
+    wad_lockup(sc, M, 400, lock_h, lock_lines, lock_size, pal["SIGNATURE"], pal,
+               gap=slot.get("lockup_gap", 40), badge_alpha=1.0)
+    ink_top = int(np.where((np.abs(np.asarray(sc).astype(int) - 255).sum(2) > 60).any(1))[0].min())
+    lock_y = slot.get("lockup_y", info["top"] - (ink_top - 400))
     lx, lty, lr, lb, _ = wad_lockup(img, M, lock_y, lock_h, lock_lines, lock_size,
                                     pal["SIGNATURE"], pal, gap=slot.get("lockup_gap", 40),
                                     badge_alpha=1.0)
@@ -360,8 +415,25 @@ def wad_page2(slot, slide_no, total, pal):
     if slot.get("rule", True):
         d.line([(tx, y), (tx + 260, y)], fill=GOLD, width=6)
         y += 70
+    ink_bottom, y_body = None, -1
+    if slot.get("body_anchor", "flow") == "bottom":
+        # measure the body's real ink height on a scratch canvas, then place it so its
+        # last line sits on the bottle's base (the content limit by default)
+        scratch = Image.new("RGB", (W, H), (255, 255, 255))
+        run_in(ImageDraw.Draw(scratch), (tx, 0), slot["lead"], slot["body"], tw_max, pal)
+        ink = np.where((np.abs(np.asarray(scratch).astype(int) - 255).sum(2) > 60).any(1))[0]
+        ink_bottom = int(ink.max())
+        y_body = info["bottom"] - ink_bottom
+        if y_body < y + 80:
+            qa.notes.append(f"FAIL body-anchor: body would start at {y_body}, too close to the title stack ending {y}")
+        else:
+            qa.notes.append(f"info body anchored: top {y_body}, last-line ink bottom {y_body + ink_bottom} = bottle base {info['bottom']}")
+            y = y_body
     end = run_in(d, (tx, y), slot["lead"], slot["body"], tw_max, pal)
-    qa.box("body", (tx, y, tx + tw_max, end))
+    # run_in's end includes the line gap BELOW the last line (~41px). When the body is
+    # anchored by its ink to the bottle's base, bound the box by the ink, which is what
+    # the eye aligns and what the content-limit check is protecting.
+    qa.box("body", (tx, y, tx + tw_max, (y + ink_bottom) if (ink_bottom is not None and y_body >= 0) else end))
     qa.size("body", core.TYPE["body"])
     qa.add_words(slot["body"])
     return modules._finish(img, d, qa, slide_no, total, page_pos="left",
