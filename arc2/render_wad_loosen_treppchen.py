@@ -109,7 +109,12 @@ SLOT_1 = dict(
     title_lines=["What am I Drinking?"],
     title_size=120,
     photo_h=1000,
-    lockup_note="(find out on the next page!)",
+    # Steve's wording; parentheses and italics kept from the earlier note, and no "!" since
+    # his new text has none. The line is ~44 characters, so at 64px it ran 131px past the
+    # title's right edge and made the lockup ragged; at the 60px type floor it ends only 48px
+    # past (and 4.5:1 or better across its whole length, measured in its own ink box).
+    lockup_note="(Make a guess, then find out on the next page)",
+    lockup_note_size=60,
     photo_credit="tom analogicus / Pexels",
     paragraph_lead="So steep",
     # First draft (~60 words) overflowed the page by ~200px with the dashboard
