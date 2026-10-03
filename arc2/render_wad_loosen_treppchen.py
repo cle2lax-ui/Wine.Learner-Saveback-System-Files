@@ -8,6 +8,10 @@ dashboard and tasting notes sourced from online reviews, a Read More bug;
 page 2 = bottle shot on the right 30%, producer / region / year / wine name
 in the title font, a few more words on the wine.
 
+LOCKED by Steve (git tag wad-loosen-treppchen-final); pixel hashes in reference/PIXEL_HASHES.json
+(group "wad_loosen"). Changing anything that alters the render means re-freezing with
+`python3 engine/regress.py --freeze` AFTER an approved change, and re-tagging.
+
 Round 2 (Steve): the logo lockup is horizontal (the title right beside the
 glass-and-question-mark disc); page 1 is a "guess the wine" layout, so it
 names nothing (the build FAILS if page 1 contains the wine, producer, vineyard

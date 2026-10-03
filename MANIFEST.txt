@@ -32,6 +32,7 @@ arc2/CAPTION_FG_mosel.md
 arc2/CAPTION_GTR_baden.md
 arc2/CAPTION_GTR_saar.md
 arc2/CAPTION_QS_trocken.md
+arc2/CAPTION_WAD_loosen_treppchen.md
 arc2/GTR_BADEN_SPEC.md
 arc2/GTR_SAAR_SPEC.md
 arc2/QS_TROCKEN_SPEC.md
@@ -136,6 +137,8 @@ fonts/Playfair-MediumItalic.ttf
 fonts/Playfair-Regular.ttf
 fonts/Playfair-XBold.ttf
 formats/__pycache__/guess_the_region.cpython-312.pyc
+formats/__pycache__/quick_sips.cpython-312.pyc
+formats/__pycache__/what_am_i_drinking.cpython-312.pyc
 formats/fff_facts.py
 formats/guess_the_region.py
 formats/quick_sips.py

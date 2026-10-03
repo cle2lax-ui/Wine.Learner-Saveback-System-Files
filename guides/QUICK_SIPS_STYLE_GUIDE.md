@@ -748,7 +748,11 @@ A second Quick Sips layout, in `formats/what_am_i_drinking.py`
 `qs_tasting_dashboard`, the glass icon, run-in paragraphs, the footer and the
 130-word budget — and adds two layouts and a logo. Reference deck:
 `arc2/render_wad_loosen_treppchen.py` (Dr. Loosen Erdener Treppchen Riesling
-Auslese 2020).
+Auslese 2020), **LOCKED** (git tag `wad-loosen-treppchen-final`) and guarded by
+`engine/regress.py`: a change to the shared engine that alters either page's pixels is
+flagged. Its caption (`arc2/CAPTION_WAD_loosen_treppchen.md`) shows the guess-format
+caption rules: nothing in the caption, hashtags included, may name the wine, producer,
+vineyard, grape, region or country.
 
 **Page 1.** Full-bleed hero photo of the wine's place; logo and a large
 two-line "What am I / Drinking?" over scrims; one paragraph on the place and
