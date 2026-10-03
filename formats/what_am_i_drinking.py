@@ -131,7 +131,7 @@ def _check_hidden(slot):
     texts = list(slot.get("title_lines", ["What am I", "Drinking?"]))
     texts += [slot.get("paragraph_lead", ""), slot.get("paragraph", ""),
               slot.get("notes_source", ""), slot.get("photo_credit", ""),
-              slot.get("notes_heading", "")]
+              slot.get("notes_heading", ""), slot.get("lockup_note", "")]
     texts += [t for pair in slot.get("notes", []) for t in pair]
     texts += [str(x) for row in slot.get("structure", []) for x in (row[0], row[2])]
     hits = sorted({t for t in terms for s_ in texts if t in s_.lower()})
@@ -144,7 +144,8 @@ def wad_page1(slot, slide_no, total, pal):
     photo_credit, title_lines(['What am I', 'Drinking?']), title_size(200),
     paragraph_lead, paragraph, structure[(label, frac, descriptor)],
     notes[(lead, text)], notes_source, dash_w(950), notes_heading('TASTING
-    NOTES')."""
+    NOTES'), lockup_y(90), lockup_note (an italic line under the lockup),
+    scrim_h(1.0), scrim_strength(0.90), lockup_note_gap(44)."""
     _check_hidden(slot)
     img, d, qa = modules._start("WAD-01 page1", slide_no, total, pal)
     qa.word_limit = WORD_LIMIT
@@ -160,15 +161,26 @@ def wad_page1(slot, slide_no, total, pal):
     # behind the title's first line fell to 2.8:1 (golden field patches), so the
     # scrim starts earlier and is a little stronger. No text shadow -- not used on
     # this series' photos.
-    scrim(img, (0, int(ph * 0.38), W, ph), dark_at="bottom", strength=0.76)
+    # The lockup now sits in the TOP-LEFT corner (Steve), so the scrim moves to
+    # the top and fades out down the photo: the lower half of the hero stays
+    # untouched and colourful. Strength/height are measured against the
+    # brightest background behind the title and the italic line (see the deck's
+    # notes), not guessed.
+    # Swept on the Bremm hero (brightest-10% contrast behind the italic line):
+    # h .78 / s .78 -> 2.5:1;  .90 / .88 -> 3.0;  1.00 / .90 -> 3.4:1, for a ~12%
+    # drop in the lower photo's brightness. A shorter scrim left the thin italic
+    # strokes unreadable over the sunlit vineyard.
+    scrim(img, (0, 0, W, int(ph * slot.get("scrim_h", 1.0))), dark_at="top",
+          strength=slot.get("scrim_strength", 0.90))
     d = ImageDraw.Draw(img)
 
     # LOGO LOCKUP: the icon and the title side by side (title right next to the
-    # glass and question mark), bottom-left of the photo. The title block is
-    # centred vertically on the disc using its real ink box, not its line box.
+    # glass and question mark), top-left of the photo, with an optional italic
+    # instruction line beneath it. The title block is centred vertically on
+    # the disc using its real ink box, not its line box.
     logo_h = slot.get("logo_h", 380)
     lines = slot.get("title_lines", ["What am I", "Drinking?"])
-    ly = ph - 70 - logo_h
+    ly = slot.get("lockup_y", 90)
     tx, ty, tr, tb, line_h = wad_lockup(img, M, ly, logo_h, lines, slot.get("title_size", 190),
                                         PAPER, pal, gap=slot.get("lockup_gap", 44))
     d = ImageDraw.Draw(img)
@@ -176,6 +188,15 @@ def wad_page1(slot, slide_no, total, pal):
     qa.add_words(" ".join(lines))
     qa.box("logo", (M, ly, M + logo_h, ly + logo_h))
     qa.box("title", (tx, ty, tr, tb))
+    note = slot.get("lockup_note")
+    if note:
+        nf, ns = _fit_one_line(d, note, "italbold", slot.get("lockup_note_size", 64), 60, W - 2 * M)
+        ny = ly + logo_h + slot.get("lockup_note_gap", 44)
+        d.text((M, ny), note, font=nf, fill=PAPER)
+        na, nd = nf.getmetrics()
+        qa.size("lockup_note", ns)
+        qa.add_words(note)
+        qa.box("lockup_note", (M, ny, M + text_w(d, note, nf), ny + na + nd))
 
     # paragraph: why the place / producer matters
     y = ph + 60

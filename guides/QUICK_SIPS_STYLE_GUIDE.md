@@ -762,7 +762,14 @@ too small and too dim to read (and its dot sat on the wine-level line). The
 "?" is now bright gold, 7.2:1 on the disc against 3.1:1 for the series gold.
 The disc is what lets the logo work on any photo (the glass is see-through line
 art). The title sits **right beside the disc** as one lockup (`wad_lockup`),
-the text block centred on the disc by its ink box. The lockup **repeats on page
+the text block centred on the disc by its ink box. On page 1 the lockup sits in
+the **top-left corner** of the hero, with an optional **italic instruction
+line** beneath it (`lockup_note`: "(Try to guess, then see the answer on the
+next page)"). The scrim therefore sits at the top and fades down the photo, so
+the lower half of the hero stays untouched. Its strength was swept against the
+brightest 10% of the background behind the italic line (thin italic strokes are
+the hard case): height .78 / strength .78 gave 2.5:1; 1.0 / .90 gives 3.4:1 for
+a ~12% drop in the lower photo's brightness. Measure before settling. The lockup **repeats on page
 2** with "I'm / Drinking" -- the answer to page 1's question.
 
 **Page 1 is a guess-the-wine layout and names nothing.** No wine, producer,

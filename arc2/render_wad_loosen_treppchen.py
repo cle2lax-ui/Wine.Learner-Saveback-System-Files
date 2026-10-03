@@ -90,6 +90,7 @@ SLOT_1 = dict(
     photo="de_bremm_mosel_loop",
     photo_anchor=0.5,
     photo_h=1000,
+    lockup_note="(Try to guess, then see the answer on the next page)",
     photo_credit="tom analogicus / Pexels",
     paragraph_lead="So steep",
     # First draft (~60 words) overflowed the page by ~200px with the dashboard
