@@ -36,7 +36,7 @@ import core
 import modules
 from core import (cover_fit, load_photo, font, text_w, paragraph, run_in, scrim,
                   tracked_text)
-from tokens import W, H, M, PAPER, INK, LINE, FLOOR, CONTENT_BOTTOM, QUICKSIPS_GOLD
+from tokens import W, H, M, PAPER, INK, LINE, FLOOR, CONTENT_BOTTOM, QUICKSIPS_GOLD, SCRIM
 from quick_sips import qs_tasting_dashboard, _qs_glass
 
 GOLD = QUICKSIPS_GOLD
@@ -122,6 +122,34 @@ def _fit_one_line(d, text, family, size, floor, max_w):
     return f, size
 
 
+def band_scrim(img, y0, y1, strength, feather, x_hold=None, x_end=None, floor=0.0,
+               limit_y=None, color=None):
+    """A horizontal band of darkness across [y0, y1] with smoothstep-feathered
+    top and bottom edges (`feather` px each), optionally fading out horizontally
+    from x_hold to x_end down to `floor` of its strength. Applied only to rows
+    above limit_y (the photo band), so it never touches the paper below.
+    core.scrim() cannot do this: it is a one-sided gradient, zero at one edge."""
+    W_, H_ = img.size
+    H_ = min(H_, limit_y) if limit_y else H_
+    ys = np.arange(H_, dtype=float)[:, None]
+    up = np.clip((ys - (y0 - feather)) / float(feather), 0, 1)
+    dn = np.clip(((y1 + feather) - ys) / float(feather), 0, 1)
+    prof = np.minimum(up, dn)
+    prof = prof * prof * (3 - 2 * prof)
+    xs = np.arange(W_, dtype=float)[None, :]
+    if x_hold is None:
+        fx = np.ones((1, W_))
+    else:
+        t = np.clip((xs - x_hold) / float(max(x_end - x_hold, 1)), 0, 1)
+        t = t * t * (3 - 2 * t)
+        fx = 1 - (1 - floor) * t
+    alpha = (strength * prof * fx)[..., None]
+    reg = np.asarray(img.crop((0, 0, W_, H_))).astype(float)
+    col = np.array(color or SCRIM, dtype=float)
+    out = reg * (1 - alpha) + col * alpha
+    img.paste(Image.fromarray(out.clip(0, 255).astype("uint8")), (0, 0))
+
+
 def _check_hidden(slot):
     """Page 1 is a "guess the wine" layout: it must not name the wine, producer,
     vineyard or region. slot["hidden_terms"] lists words that must NOT appear
@@ -147,7 +175,9 @@ def wad_page1(slot, slide_no, total, pal):
     paragraph_lead, paragraph, structure[(label, frac, descriptor)],
     notes[(lead, text)], notes_source, dash_w(950), notes_heading('TASTING
     NOTES'), lockup_y(90), lockup_note (an italic line under the lockup),
-    scrim_h(1.0), scrim_strength(0.90), lockup_note_gap(44)."""
+    scrim_strength(0.40), scrim_feather(100), scrim_pad(25), scrim_x_hold(1500),
+    scrim_floor(0.30), lockup_note_gap(40). The lockup group (lockup + italic line)
+    is centred vertically on the photo unless lockup_y is given."""
     _check_hidden(slot)
     img, d, qa = modules._start("WAD-01 page1", slide_no, total, pal)
     qa.word_limit = WORD_LIMIT
@@ -163,26 +193,38 @@ def wad_page1(slot, slide_no, total, pal):
     # behind the title's first line fell to 2.8:1 (golden field patches), so the
     # scrim starts earlier and is a little stronger. No text shadow -- not used on
     # this series' photos.
-    # The lockup now sits in the TOP-LEFT corner (Steve), so the scrim moves to
-    # the top and fades out down the photo: the lower half of the hero stays
-    # untouched and colourful. Strength/height are measured against the
-    # brightest background behind the title and the italic line (see the deck's
-    # notes), not guessed.
-    # Swept on the Bremm hero (brightest-10% contrast behind the italic line):
-    # h .78 / s .78 -> 2.5:1;  .90 / .88 -> 3.0;  1.00 / .90 -> 3.4:1, for a ~12%
-    # drop in the lower photo's brightness. A shorter scrim left the thin italic
-    # strokes unreadable over the sunlit vineyard.
-    scrim(img, (0, 0, W, int(ph * slot.get("scrim_h", 1.0))), dark_at="top",
-          strength=slot.get("scrim_strength", 0.96))
-    d = ImageDraw.Draw(img)
-
-    # LOGO LOCKUP: the icon and the title side by side (title right next to the
-    # glass and question mark), top-left of the photo, with an optional italic
-    # instruction line beneath it. The title block is centred vertically on
-    # the disc using its real ink box, not its line box.
+    # LOGO LOCKUP, vertically CENTRED on the photo band (Steve): the icon and the
+    # title side by side, with the italic instruction line beneath, the whole
+    # group centred between the top and bottom of the photo. (The line is part of
+    # the group: centring the disc and title alone would leave the group low.)
     logo_h = slot.get("logo_h", 320)          # was 380; Steve: "a little" smaller
     lines = slot.get("title_lines", ["What am I", "Drinking?"])
-    ly = slot.get("lockup_y", 90)
+    note = slot.get("lockup_note")
+    note_gap = slot.get("lockup_note_gap", 40)
+    nf = ns = na = nd = None
+    group_h = logo_h
+    if note:
+        nf, ns = _fit_one_line(d, note, "italbold", slot.get("lockup_note_size", 64), 60, W - 2 * M)
+        na, nd = nf.getmetrics()
+        group_h = logo_h + note_gap + na + nd
+    ly = slot.get("lockup_y", int((ph - group_h) / 2))
+
+    # The dark band sits behind the group and feathers out, and fades to the
+    # right where the lockup ends so the rest of the hero keeps its colour. It
+    # replaces the top-edge scrim used when the lockup sat in the corner: a
+    # centred lockup needs protection in the middle, which the one-sided core
+    # scrim() cannot give. Strength is measured, not guessed. A first attempt at
+    # 0.80 / feather 260 / pad 70 met every target by a mile (gold line 10:1) but
+    # kept only 41% of the photo's brightness: the Mosel lost the colour it was
+    # chosen for. Swept down: 0.40 / 100 / 25 gives the gold line 3.6:1 and the
+    # title 4.6:1 at the 90th percentile of background brightness (>=3:1 for large
+    # type) while keeping 73% of the brightness and 95% of the saturation.
+    band_scrim(img, ly - slot.get("scrim_pad", 25), ly + group_h + slot.get("scrim_pad", 25),
+               strength=slot.get("scrim_strength", 0.40), feather=slot.get("scrim_feather", 100),
+               x_hold=slot.get("scrim_x_hold", 1500), x_end=W, floor=slot.get("scrim_floor", 0.30),
+               limit_y=ph)
+    d = ImageDraw.Draw(img)
+
     tx, ty, tr, tb, line_h = wad_lockup(img, M, ly, logo_h, lines, slot.get("title_size", 160),
                                         PAPER, pal, gap=slot.get("lockup_gap", 44))
     d = ImageDraw.Draw(img)
@@ -190,16 +232,14 @@ def wad_page1(slot, slide_no, total, pal):
     qa.add_words(" ".join(lines))
     qa.box("logo", (M, ly, M + logo_h, ly + logo_h))
     qa.box("title", (tx, ty, tr, tb))
-    note = slot.get("lockup_note")
     if note:
-        nf, ns = _fit_one_line(d, note, "italbold", slot.get("lockup_note_size", 64), 60, W - 2 * M)
-        ny = ly + logo_h + slot.get("lockup_note_gap", 40)
+        ny = ly + logo_h + note_gap
         # bright gold, the same as the logo's "?" (Steve): see the contrast notes
         d.text((M, ny), note, font=nf, fill=slot.get("lockup_note_fill", LOGO_MARK))
-        na, nd = nf.getmetrics()
         qa.size("lockup_note", ns)
         qa.add_words(note)
         qa.box("lockup_note", (M, ny, M + text_w(d, note, nf), ny + na + nd))
+    qa.notes.append(f"info lockup group {group_h}px centred at y={ly}..{ly + group_h} on a {ph}px band")
 
     # paragraph: why the place / producer matters
     y = ph + 60

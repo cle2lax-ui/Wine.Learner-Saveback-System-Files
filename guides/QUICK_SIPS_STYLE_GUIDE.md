@@ -762,22 +762,26 @@ too small and too dim to read (and its dot sat on the wine-level line). The
 "?" is now bright gold, 7.2:1 on the disc against 3.1:1 for the series gold.
 The disc is what lets the logo work on any photo (the glass is see-through line
 art). The title sits **right beside the disc** as one lockup (`wad_lockup`),
-the text block centred on the disc by its ink box. On page 1 the lockup sits in
-the **top-left corner** of the hero, with an optional **italic instruction
-line** beneath it (`lockup_note`: "(Try to guess, then see the answer on the
-next page)"). The scrim therefore sits at the top and fades down the photo, so
-the lower half of the hero stays untouched. Its strength was swept against the
-brightest 10% of the background behind the italic line (thin italic strokes are
-the hard case): height .78 / strength .78 gave 2.5:1; 1.0 / .90 gives 3.4:1 for
-a ~12% drop in the lower photo's brightness. Measure before settling.
+the text block centred on the disc by its ink box. On page 1 the lockup group (lockup + the
+italic **instruction line** beneath it, `lockup_note`: "(Try to guess, then see
+the answer on the next page)") is **centred vertically on the photo band**. A
+centred lockup needs protection in the middle of the photo, which core `scrim()`
+cannot give (it is a one-sided gradient), so `band_scrim()` lays a feathered dark
+band behind the group, fading out to the right where the lockup ends so the rest
+of the hero keeps its colour. **Sweep its strength; never guess it.** A first
+attempt at 0.80 met every contrast target by a mile (gold line 10:1) but kept
+only 41% of the photo's brightness, and the Mosel lost the colour it was chosen
+for. At 0.40 / feather 100 / pad 25 the title is 4.6:1 and the gold line 3.6:1
+at the 90th percentile of background brightness, keeping 73% of the brightness
+and 95% of the saturation. Measure the text where it actually sits: a stale
+measuring box once reported a nonsense 0.8:1 after the lockup moved.
 
 The italic line is **bright gold**, the same gold as the logo's "?"
 (`LOGO_MARK`, 255,222,128). Gold is *dimmer* than white (luminance 0.76 vs
 1.00), so it does not contrast better against a busy photo: the first gold
 (244,206,122) measured 2.8:1 at the 90th percentile of background brightness,
 below the 3:1 large-type minimum, and a stronger scrim barely moved it (3.1:1 at
-full strength). Brightening the gold to its current value gives 3.4:1; the
-title in white is 7.6:1. The lockup was reduced a little (disc 380 -> 320 px,
+full strength). Brightening the gold to its current value fixed it. The lockup was reduced a little (disc 380 -> 320 px,
 title 190 -> 160 pt) at Steve's request. The lockup **repeats on page
 2** with "I'm / Drinking" -- the answer to page 1's question.
 
