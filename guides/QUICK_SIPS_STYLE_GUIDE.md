@@ -769,7 +769,16 @@ next page)"). The scrim therefore sits at the top and fades down the photo, so
 the lower half of the hero stays untouched. Its strength was swept against the
 brightest 10% of the background behind the italic line (thin italic strokes are
 the hard case): height .78 / strength .78 gave 2.5:1; 1.0 / .90 gives 3.4:1 for
-a ~12% drop in the lower photo's brightness. Measure before settling. The lockup **repeats on page
+a ~12% drop in the lower photo's brightness. Measure before settling.
+
+The italic line is **bright gold**, the same gold as the logo's "?"
+(`LOGO_MARK`, 255,222,128). Gold is *dimmer* than white (luminance 0.76 vs
+1.00), so it does not contrast better against a busy photo: the first gold
+(244,206,122) measured 2.8:1 at the 90th percentile of background brightness,
+below the 3:1 large-type minimum, and a stronger scrim barely moved it (3.1:1 at
+full strength). Brightening the gold to its current value gives 3.4:1; the
+title in white is 7.6:1. The lockup was reduced a little (disc 380 -> 320 px,
+title 190 -> 160 pt) at Steve's request. The lockup **repeats on page
 2** with "I'm / Drinking" -- the answer to page 1's question.
 
 **Page 1 is a guess-the-wine layout and names nothing.** No wine, producer,

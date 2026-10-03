@@ -43,8 +43,10 @@ GOLD = QUICKSIPS_GOLD
 WORD_LIMIT = 130          # the Quick Sips series budget
 
 
-LOGO_MARK = (244, 206, 122)   # bright warm gold for the "?": a brighter sibling of the
-                              # series gold (168,130,60), which was too dim on the dark badge
+LOGO_MARK = (255, 222, 128)   # bright gold for the "?" and the italic line under the lockup.
+                              # A brighter sibling of the series gold (168,130,60), which was too
+                              # dim on the dark badge. Was (244,206,122); nudged brighter so the
+                              # italic line over the photo clears 3:1 (gold is dimmer than white).
 
 
 def wad_logo(img, x, y, h, tone="white", mark_color=None, badge=None):
@@ -171,28 +173,29 @@ def wad_page1(slot, slide_no, total, pal):
     # drop in the lower photo's brightness. A shorter scrim left the thin italic
     # strokes unreadable over the sunlit vineyard.
     scrim(img, (0, 0, W, int(ph * slot.get("scrim_h", 1.0))), dark_at="top",
-          strength=slot.get("scrim_strength", 0.90))
+          strength=slot.get("scrim_strength", 0.96))
     d = ImageDraw.Draw(img)
 
     # LOGO LOCKUP: the icon and the title side by side (title right next to the
     # glass and question mark), top-left of the photo, with an optional italic
     # instruction line beneath it. The title block is centred vertically on
     # the disc using its real ink box, not its line box.
-    logo_h = slot.get("logo_h", 380)
+    logo_h = slot.get("logo_h", 320)          # was 380; Steve: "a little" smaller
     lines = slot.get("title_lines", ["What am I", "Drinking?"])
     ly = slot.get("lockup_y", 90)
-    tx, ty, tr, tb, line_h = wad_lockup(img, M, ly, logo_h, lines, slot.get("title_size", 190),
+    tx, ty, tr, tb, line_h = wad_lockup(img, M, ly, logo_h, lines, slot.get("title_size", 160),
                                         PAPER, pal, gap=slot.get("lockup_gap", 44))
     d = ImageDraw.Draw(img)
-    qa.size("title", slot.get("title_size", 190), headline=True)
+    qa.size("title", slot.get("title_size", 160), headline=True)
     qa.add_words(" ".join(lines))
     qa.box("logo", (M, ly, M + logo_h, ly + logo_h))
     qa.box("title", (tx, ty, tr, tb))
     note = slot.get("lockup_note")
     if note:
         nf, ns = _fit_one_line(d, note, "italbold", slot.get("lockup_note_size", 64), 60, W - 2 * M)
-        ny = ly + logo_h + slot.get("lockup_note_gap", 44)
-        d.text((M, ny), note, font=nf, fill=PAPER)
+        ny = ly + logo_h + slot.get("lockup_note_gap", 40)
+        # bright gold, the same as the logo's "?" (Steve): see the contrast notes
+        d.text((M, ny), note, font=nf, fill=slot.get("lockup_note_fill", LOGO_MARK))
         na, nd = nf.getmetrics()
         qa.size("lockup_note", ns)
         qa.add_words(note)
