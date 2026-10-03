@@ -761,7 +761,18 @@ the series' wine glass. The first version put a small gold "?" inside the bowl:
 too small and too dim to read (and its dot sat on the wine-level line). The
 "?" is now bright gold, 7.2:1 on the disc against 3.1:1 for the series gold.
 The disc is what lets the logo work on any photo (the glass is see-through line
-art).
+art). The title sits **right beside the disc** as one lockup (`wad_lockup`),
+the text block centred on the disc by its ink box. The lockup **repeats on page
+2** with "I'm / Drinking" -- the answer to page 1's question.
+
+**Page 1 is a guess-the-wine layout and names nothing.** No wine, producer,
+vineyard or region may appear on it. `hidden_terms` in the slot lists the words
+that must not appear in page 1's text, and `wad_page1` raises if one does (the
+build fails, like any QA failure). The guard checks text only -- **check the
+photograph by eye for readable signs** (the first hero had the vineyard's name
+spelled in its vines). Producer and critic attributions use generic wording
+("the producer"). The hero is a region photo with no caption naming the place;
+if its location differs from the wine's, say so in the deck script.
 
 **Content rules specific to this format**
 - **Every fact and every dashboard value is sourced from published reviews and

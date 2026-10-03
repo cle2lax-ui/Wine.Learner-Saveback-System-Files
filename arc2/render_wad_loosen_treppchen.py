@@ -8,6 +8,12 @@ dashboard and tasting notes sourced from online reviews, a Read More bug;
 page 2 = bottle shot on the right 30%, producer / region / year / wine name
 in the title font, a few more words on the wine.
 
+Round 2 (Steve): the logo lockup is horizontal (the title right beside the
+glass-and-question-mark disc); page 1 is a "guess the wine" layout, so it
+names nothing (the build FAILS if page 1 contains the wine, producer, vineyard
+or region -- see hidden_terms); the hero is a more colourful Mosel photo; and
+page 2 repeats the lockup with "I'm Drinking", the answer to page 1's question.
+
 SOURCE TRACE -- nothing below is from memory:
   Producer's own site (drloosen.de/en/collections/erdener-treppchen):
     the site lies directly beside the Pralat; "so steep that stone steps
@@ -46,9 +52,14 @@ STRUCTURE DASHBOARD -- WSET Level 3 SAT terms only, per the Quick Sips guide.
   Intensity               aromas".
 
 PHOTOGRAPHS
-  Page 1: "DE-RP Erdener Treppchen.jpg", Wikimedia Commons, user 0000ff, CC
-    BY-SA 4.0: the vineyard itself, vines in the red slate, its name spelled
-    in the vines. 4689x3517.
+  Page 1: the Mosel loop at Bremm (de_bremm_mosel_loop.jpg), tom analogicus /
+    Pexels -- golden-green vineyard bend, blue river, no signs or text in
+    frame. Chosen over the first hero ("DE-RP Erdener Treppchen.jpg", whose vines
+    spell the vineyard's name -- fatal for a guess-the-wine page) for colour
+    and for being unmistakably Mosel. HONEST NOTE: Bremm is on the Lower Mosel;
+    Erden is on the Middle Mosel. The photo is uncaptioned and shows "the
+    Mosel", not Erden. Pexels carries no location data; the place is from the
+    photographer's own title ("aerial view of Moselle river bend near Bremm").
   Page 2: Steve's bottle shot (IMG_2568). 344x1200 px, pure white
     background. Enlarged ~2.2x to fill the panel, so it is SOFT. The label
     in the shot reads 9.0% vol, which does NOT match the 8% listed for the
@@ -71,18 +82,23 @@ PAL.update(SIGNATURE=(45, 58, 74), ACCENT=(196, 158, 84), LEAD=(140, 95, 58))
 PHOTOS = os.path.join(os.path.dirname(__file__), "..", "photos")
 
 SLOT_1 = dict(
-    photo="de_erdener_treppchen",
-    photo_anchor=0.15,  # sign in the clear band, but clear of the title below it
+    # Page 1 is a "guess the wine" layout (Steve): nothing on it may name the
+    # wine, producer, vineyard or region, so the guard below fails the build if
+    # it does. The first hero (the Treppchen photo) was dropped partly for this:
+    # the vineyard's name is spelled out in its vines.
+    hidden_terms=["Loosen", "Treppchen", "Erden", "Mosel", "Riesling", "Auslese"],
+    photo="de_bremm_mosel_loop",
+    photo_anchor=0.5,
     photo_h=1000,
-    photo_credit="0000ff / Wikimedia Commons (CC BY-SA 4.0)",
-    paragraph_lead="Erdener Treppchen",
+    photo_credit="tom analogicus / Pexels",
+    paragraph_lead="So steep",
     # First draft (~60 words) overflowed the page by ~200px with the dashboard
     # and notes below it: trimmed, and the photo shortened 1080 -> 1000.
-    paragraph="is so steep that stone steps were built centuries ago for the "
-              "workers. Dr. Loosen's Rieslings take spicy, almost peppery "
-              "minerality from its iron-rich red slate. One family has held "
-              "the estate for over 200 years. Since 1988, Ernst Loosen has "
-              "built it on old, ungrafted vines.",
+    paragraph="that stone steps were built into this vineyard centuries ago for "
+              "the workers. Its iron-rich red slate gives the wines a spicy, "
+              "almost peppery minerality. One family has held the estate for "
+              "over 200 years, and under one winemaker since 1988 it has been "
+              "built on old, ungrafted vines.",
     structure=[
         ("Sweetness", 0.78, "Sweet"),
         ("Acidity", 0.90, "High"),
@@ -95,7 +111,7 @@ SLOT_1 = dict(
         ("Palate", "Spice, firm slate, a saline mineral edge."),
         ("Finish", "Long, unctuous yet focused."),
     ],
-    notes_source="Wine Enthusiast, Dr. Loosen",
+    notes_source="Wine Enthusiast, the producer",
 )
 
 SLOT_2 = dict(

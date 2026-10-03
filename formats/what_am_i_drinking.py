@@ -1,13 +1,15 @@
 """WHAT AM I DRINKING? -- the redesigned Quick Sips two-pager.
 
-Page 1  hero photo of the wine's place, full bleed; a logo (the series' wine
-        glass with a question mark in the bowl) and a large title-case title
-        over a scrim; one paragraph on the place / producer and why it
+Page 1  hero photo of the wine's place, full bleed; a logo lockup -- the
+        series' wine glass with a question mark floating above it, with the
+        large title-case title right beside it -- over a scrim; one paragraph on the place / producer and why it
         matters; the TASTING & STRUCTURE dashboard (the series' own
         qs_tasting_dashboard, unchanged) beside tasting notes; the READ MORE
         footer.
-Page 2  the right 30% is a bottle shot; to its left, in the title font, the
-        producer, region, year and wine name; a few more words on the wine.
+Page 2  the right 30% is a bottle shot; at the top left the logo lockup
+        repeats with "I'm Drinking" (the answer to page 1's question); below
+        it, in the title font, the producer, region, year and wine name; a few
+        more words on the wine.
 
 Both pages run through the QA harness; the word budget is the series' 130.
 
@@ -87,6 +89,27 @@ def wad_logo(img, x, y, h, tone="white", mark_color=None, badge=None):
     return h
 
 
+def wad_lockup(img, x, y, h, lines, size, text_fill, pal, gap=44, badge_alpha=0.92):
+    """The logo lockup: the disc (question mark floating above the glass) with
+    the title set right beside it, the text block centred on the disc by its
+    real ink box (not its line box). Used on page 1 ("What am I / Drinking?")
+    and repeated on page 2 ("I'm / Drinking"), which answers the question.
+    Returns (text_left, text_top, text_right, text_bottom, line_h)."""
+    wad_logo(img, x, y, h, tone="white", badge=(pal["SIGNATURE"], badge_alpha))
+    d = ImageDraw.Draw(img)
+    tf = font("display_black", size)
+    asc, desc = tf.getmetrics()
+    line_h = int((asc + desc) * 0.90)
+    tx = x + h + gap
+    top = d.textbbox((tx, y), lines[0], font=tf)[1]
+    bot = d.textbbox((tx, y + line_h * (len(lines) - 1)), lines[-1], font=tf)[3]
+    ty = int(y + (y + h / 2.0) - (top + bot) / 2.0)
+    for i, ln in enumerate(lines):
+        d.text((tx, ty + i * line_h), ln, font=tf, fill=text_fill)
+    tw = max(text_w(d, l, tf) for l in lines)
+    return tx, ty, tx + tw, ty + line_h * len(lines), line_h
+
+
 def _fit_one_line(d, text, family, size, floor, max_w):
     f = font(family, size)
     while text_w(d, text, f) > max_w and size > floor:
@@ -97,12 +120,32 @@ def _fit_one_line(d, text, family, size, floor, max_w):
     return f, size
 
 
+def _check_hidden(slot):
+    """Page 1 is a "guess the wine" layout: it must not name the wine, producer,
+    vineyard or region. slot["hidden_terms"] lists words that must NOT appear
+    anywhere in page 1's text (case-insensitive); the build fails if one does.
+    The photograph is checked by eye -- no readable signs."""
+    terms = [t.lower() for t in slot.get("hidden_terms", [])]
+    if not terms:
+        return
+    texts = list(slot.get("title_lines", ["What am I", "Drinking?"]))
+    texts += [slot.get("paragraph_lead", ""), slot.get("paragraph", ""),
+              slot.get("notes_source", ""), slot.get("photo_credit", ""),
+              slot.get("notes_heading", "")]
+    texts += [t for pair in slot.get("notes", []) for t in pair]
+    texts += [str(x) for row in slot.get("structure", []) for x in (row[0], row[2])]
+    hits = sorted({t for t in terms for s_ in texts if t in s_.lower()})
+    if hits:
+        raise ValueError(f"page 1 names the answer -- hidden term(s) found: {hits}")
+
+
 def wad_page1(slot, slide_no, total, pal):
     """slots: photo, photo_anchor(0.5), photo_zoom(1.0), photo_h(1080),
     photo_credit, title_lines(['What am I', 'Drinking?']), title_size(200),
     paragraph_lead, paragraph, structure[(label, frac, descriptor)],
     notes[(lead, text)], notes_source, dash_w(950), notes_heading('TASTING
     NOTES')."""
+    _check_hidden(slot)
     img, d, qa = modules._start("WAD-01 page1", slide_no, total, pal)
     qa.word_limit = WORD_LIMIT
     ph = slot.get("photo_h", 1080)
@@ -113,25 +156,26 @@ def wad_page1(slot, slide_no, total, pal):
     # First pass used 0.80 / 0.55 over 0.42 / 0.30: the vineyard went muddy and
     # the scrim ghosted the vineyard sign. Lighter, and the sign now sits in the
     # clear band between the two.
-    scrim(img, (0, int(ph * 0.50), W, ph), dark_at="bottom", strength=0.68)
-    scrim(img, (0, 0, W, int(ph * 0.26)), dark_at="top", strength=0.42)
+    # Measured on the Bremm hero: at 0.68 from 0.50 the brightest 10% of the pixels
+    # behind the title's first line fell to 2.8:1 (golden field patches), so the
+    # scrim starts earlier and is a little stronger. No text shadow -- not used on
+    # this series' photos.
+    scrim(img, (0, int(ph * 0.38), W, ph), dark_at="bottom", strength=0.76)
     d = ImageDraw.Draw(img)
 
-    logo_h = slot.get("logo_h", 390)
-    wad_logo(img, M - 30, 20, logo_h, tone="white",
-             badge=(pal["SIGNATURE"], 0.92))   # an icon, not type: no qa.size
-
-    tf = font("display_black", slot.get("title_size", 200))
-    asc, desc = tf.getmetrics()
-    line_h = int((asc + desc) * 0.90)
+    # LOGO LOCKUP: the icon and the title side by side (title right next to the
+    # glass and question mark), bottom-left of the photo. The title block is
+    # centred vertically on the disc using its real ink box, not its line box.
+    logo_h = slot.get("logo_h", 380)
     lines = slot.get("title_lines", ["What am I", "Drinking?"])
-    ty = ph - 70 - line_h * len(lines)
-    for ln in lines:
-        d.text((M, ty), ln, font=tf, fill=PAPER)
-        ty += line_h
-    qa.size("title", slot.get("title_size", 200), headline=True)
+    ly = ph - 70 - logo_h
+    tx, ty, tr, tb, line_h = wad_lockup(img, M, ly, logo_h, lines, slot.get("title_size", 190),
+                                        PAPER, pal, gap=slot.get("lockup_gap", 44))
+    d = ImageDraw.Draw(img)
+    qa.size("title", slot.get("title_size", 190), headline=True)
     qa.add_words(" ".join(lines))
-    qa.box("title", (M, ph - 70 - line_h * len(lines), M + max(text_w(d, l, tf) for l in lines), ph - 70))
+    qa.box("logo", (M, ly, M + logo_h, ly + logo_h))
+    qa.box("title", (tx, ty, tr, tb))
 
     # paragraph: why the place / producer matters
     y = ph + 60
@@ -197,13 +241,29 @@ def _bottle_panel(img, path, panel_x, bottle_h, sharpen=True):
 
 def wad_page2(slot, slide_no, total, pal):
     """slots: bottle (path), panel_frac(0.30), bottle_h(2500), producer,
-    region_year, wine_lines[...], rule(True), lead, body."""
+    region_year, wine_lines[...], rule(True), lead, body, and the lockup that
+    repeats the page 1 logo: lockup_lines(["I\u2019m", "Drinking"]),
+    lockup_h(300), lockup_size(150), lockup_y(110), lockup_gap(40)."""
     img, d, qa = modules._start("WAD-02 page2", slide_no, total, pal)
     qa.word_limit = WORD_LIMIT
     panel_x = int(W * (1 - slot.get("panel_frac", 0.30)))
     info = _bottle_panel(img, slot["bottle"], panel_x, slot.get("bottle_h", 2500))
     d = ImageDraw.Draw(img)
     qa.notes.append(f"info bottle enlarged x{info['scale']:.2f} from {info['src_size']}")
+
+    # The lockup repeats here with the answer's lead-in: the same disc, "?" and
+    # glass, set beside "I'm / Drinking" instead of "What am I / Drinking?".
+    lock_h = slot.get("lockup_h", 300)
+    lock_y = slot.get("lockup_y", 110)
+    lock_lines = slot.get("lockup_lines", ["I\u2019m", "Drinking"])
+    lock_size = slot.get("lockup_size", 150)
+    lx, lty, lr, lb, _ = wad_lockup(img, M, lock_y, lock_h, lock_lines, lock_size,
+                                    pal["SIGNATURE"], pal, gap=slot.get("lockup_gap", 40),
+                                    badge_alpha=1.0)
+    d = ImageDraw.Draw(img)
+    qa.size("lockup_text", lock_size)
+    qa.add_words(" ".join(lock_lines))
+    qa.box("lockup", (M, lock_y, lr, max(lock_y + lock_h, lb)))
 
     tx = M
     tw_max = panel_x - M - 100
