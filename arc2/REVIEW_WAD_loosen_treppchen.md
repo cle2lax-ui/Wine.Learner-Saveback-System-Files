@@ -126,3 +126,7 @@ applied. **All Fix and Recommend items are in; so are the Optional ones I own.**
 
 **Later request, not from the review:** the lockup moved to the upper-left corner,
 title on one line at a smaller size (120 pt, with a build-failing no-wrap check).
+
+**Then:** the italic note was moved from under the disc to **directly under the title**
+and made part of the lockup (stacked with the title, centred on the disc as one unit). The
+scrim was re-swept for the new geometry: 0.52 -> 0.46 (title 4.0:1, gold note 4.9:1).

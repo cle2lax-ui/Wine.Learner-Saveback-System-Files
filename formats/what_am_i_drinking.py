@@ -92,12 +92,23 @@ def wad_logo(img, x, y, h, tone="white", mark_color=None, badge=None):
     return h
 
 
-def wad_lockup(img, x, y, h, lines, size, text_fill, pal, gap=44, badge_alpha=0.92):
+def wad_lockup(img, x, y, h, lines, size, text_fill, pal, gap=44, badge_alpha=0.92,
+               note=None, note_size=64, note_fill=None, note_gap=18):
     """The logo lockup: the disc (question mark floating above the glass) with
     the title set right beside it, the text block centred on the disc by its
-    real ink box (not its line box). Used on page 1 ("What am I / Drinking?")
-    and repeated on page 2 ("I'm / Drinking"), which answers the question.
-    Returns (text_left, text_top, text_right, text_bottom, line_h)."""
+    real ink box (not its line box). Used on page 1 ("What am I Drinking?") and
+    repeated on page 2 ("I'm / Drinking"), which answers the question.
+
+    If `note` is given it is set in italics directly UNDER the title, its ink
+    left-aligned with the title's ink, and the title + note stack is centred on
+    the disc as ONE unit: the note is part of the lockup, not a caption hanging
+    off it. (note_gap is the distance from the title's lowest ink, the "g"'s
+    descender, to the note's top ink.) Without a note the drawing is exactly what
+    it was before the note existed (page 2 depends on that).
+
+    Returns (text_left, text_top, text_right, text_bottom, line_h, extras);
+    text_right includes the note; text_bottom is the note's ink bottom when there
+    is one; extras = dict(note_box=(x0, y0, x1, y1) or None, note_size=int)."""
     wad_logo(img, x, y, h, tone="white", badge=(pal["SIGNATURE"], badge_alpha))
     d = ImageDraw.Draw(img)
     tf = font("display_black", size)
@@ -105,12 +116,30 @@ def wad_lockup(img, x, y, h, lines, size, text_fill, pal, gap=44, badge_alpha=0.
     line_h = int((asc + desc) * 0.90)
     tx = x + h + gap
     top = d.textbbox((tx, y), lines[0], font=tf)[1]
-    bot = d.textbbox((tx, y + line_h * (len(lines) - 1)), lines[-1], font=tf)[3]
+    title_bot = d.textbbox((tx, y + line_h * (len(lines) - 1)), lines[-1], font=tf)[3]
+    bot = title_bot
+    nf, nb0, note_dy = None, None, 0
+    if note:
+        nf, nsz = _fit_one_line(d, note, "italbold", note_size, 60, W - M - tx)
+        nb0 = d.textbbox((0, 0), note, font=nf)
+        note_dy = (title_bot + note_gap) - nb0[1]
+        bot = note_dy + nb0[3]
     ty = int(y + (y + h / 2.0) - (top + bot) / 2.0)
+    shift = ty - y
     for i, ln in enumerate(lines):
         d.text((tx, ty + i * line_h), ln, font=tf, fill=text_fill)
-    tw = max(text_w(d, l, tf) for l in lines)
-    return tx, ty, tx + tw, ty + line_h * len(lines), line_h
+    right = tx + max(text_w(d, l, tf) for l in lines)
+    extras = dict(note_box=None, note_size=None)
+    text_bottom = ty + line_h * len(lines)
+    if note:
+        tb0 = d.textbbox((0, 0), lines[0], font=tf)
+        nx = tx + tb0[0] - nb0[0]
+        ny = int(note_dy + shift)
+        d.text((nx, ny), note, font=nf, fill=note_fill or text_fill)
+        extras = dict(note_box=(nx + nb0[0], ny + nb0[1], nx + nb0[2], ny + nb0[3]), note_size=nsz)
+        right = max(right, nx + nb0[2])
+        text_bottom = ny + nb0[3]
+    return tx, ty, right, text_bottom, line_h, extras
 
 
 def _fit_one_line(d, text, family, size, floor, max_w):
@@ -175,9 +204,10 @@ def wad_page1(slot, slide_no, total, pal):
     photo_credit, title_lines(['What am I', 'Drinking?']), title_size(200),
     paragraph_lead, paragraph, structure[(label, frac, descriptor)],
     notes[(lead, text)], notes_source, dash_w(950), notes_heading('TASTING
-    NOTES'), lockup_y(90), lockup_note (an italic line under the lockup),
+    NOTES'), lockup_y(centred on the photo if omitted), lockup_note (an italic line set directly
+    UNDER THE TITLE, part of the lockup), lockup_note_gap(18: title ink to note ink),
     scrim_strength(0.40), scrim_feather(100), scrim_pad(25), scrim_x_hold(1500),
-    scrim_floor(0.30), lockup_note_gap(40), disc_alpha(0.92). The lockup group (lockup + italic line)
+    scrim_floor(0.30), disc_alpha(0.92). The lockup group (lockup + italic line)
     is centred vertically on the photo unless lockup_y is given."""
     _check_hidden(slot)
     img, d, qa = modules._start("WAD-01 page1", slide_no, total, pal)
@@ -194,58 +224,45 @@ def wad_page1(slot, slide_no, total, pal):
     # behind the title's first line fell to 2.8:1 (golden field patches), so the
     # scrim starts earlier and is a little stronger. No text shadow -- not used on
     # this series' photos.
-    # LOGO LOCKUP, vertically CENTRED on the photo band (Steve): the icon and the
-    # title side by side, with the italic instruction line beneath, the whole
-    # group centred between the top and bottom of the photo. (The line is part of
-    # the group: centring the disc and title alone would leave the group low.)
+    # LOGO LOCKUP: the disc, the title beside it, and the italic instruction line
+    # directly UNDER THE TITLE as part of the lockup (Steve). The title + note stack is
+    # centred on the disc, so the whole lockup is exactly one disc tall.
     logo_h = slot.get("logo_h", 320)          # was 380; Steve: "a little" smaller
     lines = slot.get("title_lines", ["What am I", "Drinking?"])
     note = slot.get("lockup_note")
-    note_gap = slot.get("lockup_note_gap", 40)
-    nf = ns = na = nd = None
-    group_h = logo_h
-    if note:
-        nf, ns = _fit_one_line(d, note, "italbold", slot.get("lockup_note_size", 64), 60, W - 2 * M)
-        na, nd = nf.getmetrics()
-        group_h = logo_h + note_gap + na + nd
-    ly = slot.get("lockup_y", int((ph - group_h) / 2))
+    ly = slot.get("lockup_y", int((ph - logo_h) / 2))
 
-    # The dark band sits behind the group and feathers out, and fades to the
-    # right where the lockup ends so the rest of the hero keeps its colour. It
-    # replaces the top-edge scrim used when the lockup sat in the corner: a
-    # centred lockup needs protection in the middle, which the one-sided core
-    # scrim() cannot give. Strength is measured, not guessed. A first attempt at
-    # 0.80 / feather 260 / pad 70 met every target by a mile (gold line 10:1) but
-    # kept only 41% of the photo's brightness: the Mosel lost the colour it was
-    # chosen for. Swept down: 0.40 / 100 / 25 gives the gold line 3.6:1 and the
-    # title 4.6:1 at the 90th percentile of background brightness (>=3:1 for large
-    # type) while keeping 73% of the brightness and 95% of the saturation.
-    band_scrim(img, ly - slot.get("scrim_pad", 25), ly + group_h + slot.get("scrim_pad", 25),
+    # The dark band sits behind the lockup and feathers out, fading to the right where
+    # the lockup ends so the rest of the hero keeps its colour. core.scrim() is a
+    # one-sided gradient and cannot protect a lockup that is not at the photo's edge.
+    # Strength is measured, not guessed (see the deck notes): a first attempt at
+    # 0.80 met every target by a mile but kept only 41% of the photo's brightness.
+    band_scrim(img, ly - slot.get("scrim_pad", 25), ly + logo_h + slot.get("scrim_pad", 25),
                strength=slot.get("scrim_strength", 0.40), feather=slot.get("scrim_feather", 100),
                x_hold=slot.get("scrim_x_hold", 1500), x_end=W, floor=slot.get("scrim_floor", 0.30),
                limit_y=ph)
     d = ImageDraw.Draw(img)
 
-    tx, ty, tr, tb, line_h = wad_lockup(img, M, ly, logo_h, lines, slot.get("title_size", 160),
-                                        PAPER, pal, gap=slot.get("lockup_gap", 44),
-                                        badge_alpha=slot.get("disc_alpha", 0.92))
+    # bright gold note, the same as the logo's "?" (Steve): see the contrast notes
+    tx, ty, tr, tb, line_h, ex = wad_lockup(
+        img, M, ly, logo_h, lines, slot.get("title_size", 160), PAPER, pal,
+        gap=slot.get("lockup_gap", 44), badge_alpha=slot.get("disc_alpha", 0.92),
+        note=note, note_size=slot.get("lockup_note_size", 64),
+        note_fill=slot.get("lockup_note_fill", LOGO_MARK), note_gap=slot.get("lockup_note_gap", 18))
     d = ImageDraw.Draw(img)
-    if len(lines) == 1 and tr > W - M:
-        # Steve: the title must not wrap. A one-line title that runs past the margin
-        # fails the build: shrink title_size or shorten the copy, never wrap it.
-        qa.notes.append(f"FAIL title-wrap: the one-line title ends at x={tr}, past the right margin {W - M}")
+    if tr > W - M:
+        # Steve: the title must not wrap, and nothing in the lockup may pass the margin.
+        # A line that runs past it fails the build: shrink the size or shorten the copy.
+        qa.notes.append(f"FAIL lockup-width: the lockup ends at x={tr}, past the right margin {W - M}")
     qa.size("title", slot.get("title_size", 160), headline=True)
     qa.add_words(" ".join(lines))
     qa.box("logo", (M, ly, M + logo_h, ly + logo_h))
-    qa.box("title", (tx, ty, tr, tb))
+    qa.box("title", (tx, ty, tr, ty + line_h * len(lines)))
     if note:
-        ny = ly + logo_h + note_gap
-        # bright gold, the same as the logo's "?" (Steve): see the contrast notes
-        d.text((M, ny), note, font=nf, fill=slot.get("lockup_note_fill", LOGO_MARK))
-        qa.size("lockup_note", ns)
+        qa.size("lockup_note", ex["note_size"])
         qa.add_words(note)
-        qa.box("lockup_note", (M, ny, M + text_w(d, note, nf), ny + na + nd))
-    qa.notes.append(f"info lockup group {group_h}px centred at y={ly}..{ly + group_h} on a {ph}px band")
+        qa.box("lockup_note", ex["note_box"])
+    qa.notes.append(f"info lockup: disc {logo_h}px at y={ly}; text stack ink y={ty}..{tb}")
 
     # paragraph: why the place / producer matters
     y = ph + 60
@@ -376,7 +393,7 @@ def wad_page2(slot, slide_no, total, pal):
                gap=slot.get("lockup_gap", 40), badge_alpha=1.0)
     ink_top = int(np.where((np.abs(np.asarray(sc).astype(int) - 255).sum(2) > 60).any(1))[0].min())
     lock_y = slot.get("lockup_y", info["top"] - (ink_top - 400))
-    lx, lty, lr, lb, _ = wad_lockup(img, M, lock_y, lock_h, lock_lines, lock_size,
+    lx, lty, lr, lb, _, _ = wad_lockup(img, M, lock_y, lock_h, lock_lines, lock_size,
                                     pal["SIGNATURE"], pal, gap=slot.get("lockup_gap", 40),
                                     badge_alpha=1.0)
     d = ImageDraw.Draw(img)

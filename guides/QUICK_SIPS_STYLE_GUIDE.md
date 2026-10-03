@@ -766,9 +766,14 @@ the text block centred on the disc by its ink box.
 
 **On page 1 the lockup sits in the upper-left corner** of the hero (`lockup_y`),
 with the title on **one line** (`title_lines=["What am I Drinking?"]`, 120 pt) and
-the italic **instruction line** beneath it (`lockup_note`: "(find out on the next
-page!)"). **The title must not wrap**: if a one-line title runs past the right
-margin the build fails (shrink `title_size` or shorten the copy). History: the
+the italic **instruction line** set **directly under the title** as part of the
+lockup (`lockup_note`: "(find out on the next page!)"). `wad_lockup` stacks the
+title and note, left-aligns their *inks* (not their origins, so the "(" sits under
+the "W"), and centres the stack on the disc as one unit; `lockup_note_gap` is the
+title's lowest ink (the "g" descender) to the note's top ink. **Nothing in the
+lockup may wrap or pass the right margin**: the build fails if it does (shrink the
+size or shorten the copy). The first version hung the note under the disc at the
+left margin, where it read as a caption rather than part of the logo. History: the
 lockup was first bottom-left, then vertically centred on the photo, then moved to
 the corner at Steve's request; each placement needed its own scrim and its own
 crop.
@@ -777,8 +782,12 @@ A lockup anywhere but the photo's edge needs protection that core `scrim()` cann
 give (it is a one-sided gradient), so `band_scrim()` lays a feathered dark band
 behind the group, fading out to the right where the lockup ends so the rest of the
 hero keeps its colour. **Sweep its strength; never guess it.** At the corner the
-swept value is 0.52 (title 4.3:1, gold line 5.1:1 at the 90th percentile of
-background brightness; photo luminance 0.160). Over-darkening is the real risk: a
+swept value is now 0.46 (title 4.0:1, gold note 4.9:1 at the 90th percentile of
+background brightness; photo luminance 0.185). It was 0.52 while the note hung below
+the disc: moving the note into the lockup made the band one disc tall, so **re-sweep
+whenever the lockup's geometry changes**. When sweeping, beware measuring boxes that
+chase the text mask: with too little scrim, sky-coloured pixels match a gold detector
+and give nonsense readings (0.8:1). Over-darkening is the real risk: a
 first attempt at 0.80 (centred lockup) met every contrast target by a mile but kept
 only 41% of the photo's brightness and the Mosel lost the colour it was chosen for.
 

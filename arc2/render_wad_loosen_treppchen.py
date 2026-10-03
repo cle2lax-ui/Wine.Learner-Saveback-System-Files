@@ -98,12 +98,13 @@ SLOT_1 = dict(
     # best crop: with the lockup in the corner, photo_anchor 1.0 (the review's pick for a
     # centred lockup) pushes the vineyard peninsula up under it. At 0.0 the lockup sits in
     # clear corner space over the sunset sky and hills, the whole vineyard bend stays
-    # visible below it, and the photo is the brightest of the three crops. Scrim swept at
-    # that crop: 0.40 left the title at 3.2:1 (barely over the 3:1 minimum); 0.52 gives
-    # title 4.3:1, gold line 5.1:1 at the 90th percentile, photo luminance 0.160 (the
-    # previous build was 0.154).
+    # visible below it, and the photo is the brightest of the three crops.
+    # The note is now part of the lockup (directly under the title, the stack centred on
+    # the disc), so the scrim band is one disc tall instead of disc-plus-note. Re-swept for
+    # that geometry: 0.52 was more than needed; 0.46 gives title 4.0:1, gold note 4.9:1 at
+    # the 90th percentile, photo luminance 0.185 (0.160 before the lockup change).
     photo_anchor=0.0,
-    scrim_strength=0.52,
+    scrim_strength=0.46,
     lockup_y=80,
     title_lines=["What am I Drinking?"],
     title_size=120,
