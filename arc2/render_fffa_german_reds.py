@@ -46,6 +46,14 @@ photo's warm tones are candle glow and ornaments, not wine. The scarlet is truer
 subject. The cover is a graded build (build_fffa_reds_cover.py): the glasses fill the width,
 and their stems and the table fade into near-black so the type has a dark zone.
 
+TEXT COLOURS NOW FOLLOW THE GERMAN FLAG (Steve), superseding the scarlet headline above: gold
+(255,206,0) for the cover subject, fact headlines and "Cheers"; red (221,0,0) for the cover kicker,
+the 01-05 numerals and the closing "!". Black stays the GROUND (invisible as text on the dark
+block, 1.33:1). Contrast: gold 10.60:1 on INK / 13.61:1 on the cover's black; red 3.07:1 on INK
+(floor 3.0) / 3.94:1 on black; the red kicker against the photo behind it is 3.46:1 at the 98th
+percentile (the faintest stem remnants, ~2% of that zone, dip to 2.1:1). Cobalt (grid mark,
+rules, chart bars) is unchanged: it is not a font, and it is the series identity.
+
 PHOTOGRAPHY, location-verified; FFFA fact pages carry credits only, never captions, so no
 location is asserted on a page. Cover: Steve's photograph of two glasses of red wine at a
 candlelit table, 612x408 px, no embedded credit or licence data, so NO credit is printed (and
@@ -76,8 +84,18 @@ OUT = "/home/claude/out_fffa_german_reds"
 os.makedirs(OUT, exist_ok=True)
 TOTAL = 6
 
-# Sampled from the ORIGINAL splash cover (kept after the cover changed): see the docstring.
-RED = (246, 31, 13)
+# TEXT COLOURS: THE GERMAN FLAG (Steve). Official black (0,0,0), red (221,0,0), gold (255,206,0).
+# Black cannot be a font colour here (1.33:1 on the fact pages' ink block) so it stays the GROUND;
+# the type takes the other two. Measured contrast: gold 10.60:1 on INK / 13.61:1 on the cover's
+# black; red 3.07:1 on INK (over the 3.0 large-type floor) / 3.94:1 on black.
+#   gold  -> the cover subject, every fact headline, the "Cheers" word  (the headline override)
+#   red   -> the cover kicker, the 01-05 numerals, the closing "!"     (accent_text_color / kicker_color)
+# Previously the headlines were a scarlet SAMPLED from the original splash cover (246,31,13,
+# 3.86:1) and the numerals the series cobalt (1.98:1 on INK): both are more legible now.
+# NOT changed, because they are not fonts: the cobalt grid mark, the short cobalt rules and the
+# chart bars (the series identity), and the paper/grey body, labels and footers (readability).
+FLAG_RED = (221, 0, 0)
+FLAG_GOLD = (255, 206, 0)
 
 CRED_TAHERI = "Saman Taheri / Unsplash"   # the splash cover's credit: unused since the cover changed
 CRED_WILHELM = "Sven Wilhelm / Unsplash"
@@ -166,7 +184,7 @@ def build():
         os.remove(stale)
 
     paths = []
-    img = fff_cover(COVER, total=TOTAL, headline_color=RED)
+    img = fff_cover(COVER, total=TOTAL, headline_color=FLAG_GOLD, kicker_color=FLAG_RED)
     p = f"{OUT}/01_cover.png"
     img.save(p)
     paths.append(p)
@@ -174,7 +192,8 @@ def build():
 
     for i, slot in enumerate(FACTS, start=2):
         img = fff_fact(slot, i, total=TOTAL, closing=(i == TOTAL),
-                       diagram=slot.get("diagram"), headline_color=RED)
+                       diagram=slot.get("diagram"), headline_color=FLAG_GOLD,
+                       accent_text_color=FLAG_RED)
         p = f"{OUT}/{i:02d}_fact{slot['number']}.png"
         img.save(p)
         paths.append(p)

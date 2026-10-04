@@ -255,6 +255,12 @@ row up to a small line under the top-right grid mark (`_finish()`'s
   does not catch it (the sign-off is QA-exempt): it ended 57 px from the page edge until the headline went to one line (217 px).
 - **Measure photo bands against each other.** One page's photo averaged 0.040 luminance against 0.19-0.30 on its
   five siblings; a gamma lift (0.6) fixed it. Keep the original; commit the graded copy and the script that makes it.
+- **Per-deck text-colour overrides, beyond the headline.** `headline_color` (cover subject, fact headlines, "Cheers")
+  has existed since v3. v4 adds `fff_cover(kicker_color=)` and `fff_fact(accent_text_color=)` (the 01-05 numerals and
+  the closing "!"); unset, output is pixel-identical to before. The cobalt grid mark, rules and chart bars are
+  **never** touched by these: they are the series identity, and are not fonts. Precedent: the German reds deck uses the
+  German flag (gold headlines, red numerals/kicker/"!"). **Black cannot be a font colour on the dark block (1.33:1);
+  it stays the ground.** Measure each pairing: gold was 10.6:1 on INK, red 3.07:1 (just over the 3.0 floor).
 - **A small supplied photo for the cover needs a recipe, and an honest word.** A 612 px-wide source cropped to ~330 px
   and filled to a 2160 px cover is a 6.5x enlargement. What worked (tested on the real output): denoise first (JPEG
   blocks show as stair-steps under plain Lanczos), two 2x Lanczos steps, a light unsharp, then fine monochrome grain

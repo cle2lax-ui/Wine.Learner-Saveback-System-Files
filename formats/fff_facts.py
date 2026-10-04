@@ -307,7 +307,7 @@ def _bottle_size_diagram(d, x0, x1, base_y, max_px=210):
 
 
 # ────────────────────────── FFFA COVER ──────────────────────────
-def fff_cover(slot, total=FFFA_SLIDE_COUNT, headline_color=None):
+def fff_cover(slot, total=FFFA_SLIDE_COUNT, headline_color=None, kicker_color=None):
     """slots: photo, subject (e.g. 'Champagne'), photo_anchor, photo_zoom,
     photo_credit.
 
@@ -319,6 +319,7 @@ def fff_cover(slot, total=FFFA_SLIDE_COUNT, headline_color=None):
     for white text to sit cleanly."""
     img, d, qa = _start("FFFA cover", 1, total)
     hcolor = headline_color or FFFA_YELLOW
+    kcolor = kicker_color or PAPER      # per-deck override (v4); default paper, as before
     anchor = slot.get("photo_anchor", 0.5)
     zoom = slot.get("photo_zoom", 1.0)
     photo = cover_fit(load_photo(slot["photo"]), W, H, y_anchor=anchor, zoom=zoom)
@@ -354,7 +355,7 @@ def fff_cover(slot, total=FFFA_SLIDE_COUNT, headline_color=None):
     ky = icon_y + (icon_size - k_total_h) // 2
     kyy = ky
     for ln in klines:
-        tracked_text(d, (kx, kyy), ln, kf, PAPER, tracking=4)
+        tracked_text(d, (kx, kyy), ln, kf, kcolor, tracking=4)
         kyy += klh
     qa.box("kicker", (kx, ky, W - M, kyy))
 
@@ -378,7 +379,8 @@ def fff_cover(slot, total=FFFA_SLIDE_COUNT, headline_color=None):
 
 
 # ────────────────────────── FFFA FACT ──────────────────────────
-def fff_fact(slot, slide_no, total=FFFA_SLIDE_COUNT, closing=False, diagram=None, headline_color=None):
+def fff_fact(slot, slide_no, total=FFFA_SLIDE_COUNT, closing=False, diagram=None, headline_color=None,
+             accent_text_color=None):
     """slots: photo, number(1-5), headline, body(15-20 words),
     photo_anchor, photo_zoom, photo_credit. closing=True on the last
     call folds "Cheers!" into this same page. diagram="bars" draws a general share
@@ -389,6 +391,7 @@ def fff_fact(slot, slide_no, total=FFFA_SLIDE_COUNT, closing=False, diagram=None
     still less intrusive than crowding the diagram against the footer."""
     img, d, qa = _start("FFFA fact", slide_no, total)
     hcolor = headline_color or FFFA_YELLOW
+    acc_text = accent_text_color or FFFA_ACCENT   # numerals and the closing "!" (v4 override); rules/marks/bars stay cobalt
     photo_h = 1200 if diagram else 1450
     anchor = slot.get("photo_anchor", 0.5)
     zoom = slot.get("photo_zoom", 1.0)
@@ -439,7 +442,7 @@ def fff_fact(slot, slide_no, total=FFFA_SLIDE_COUNT, closing=False, diagram=None
     qa.box("!numeral_icon", (M, icon_y, M + icon_size_small, icon_y + icon_size_small))
 
     num_x = M + icon_size_small + 28
-    d.text((num_x, ny), num_txt, font=nf, fill=FFFA_ACCENT)
+    d.text((num_x, ny), num_txt, font=nf, fill=acc_text)
     nb = d.textbbox((num_x, ny), num_txt, font=nf)
     qa.box("!numeral", (num_x, ny, nb[2], nb[3]))
 
@@ -517,7 +520,7 @@ def fff_fact(slot, slide_no, total=FFFA_SLIDE_COUNT, closing=False, diagram=None
         cy += 40
         d.text((M, cy), "Cheers", font=cf, fill=hcolor)
         word_b = d.textbbox((M, cy), "Cheers", font=cf)
-        d.text((word_b[2], cy), "!", font=cf, fill=FFFA_ACCENT)
+        d.text((word_b[2], cy), "!", font=cf, fill=acc_text)
         cb = d.textbbox((M, cy), "Cheers!", font=cf)
         qa.box("!cheers", (M, cy, cb[2], cb[3]))
         qa.add_words("Cheers!")

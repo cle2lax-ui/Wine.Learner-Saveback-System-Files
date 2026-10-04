@@ -68,8 +68,21 @@ closely on the glasses. It replaced the red-wine splash.
 - **No credit is printed**: the file has no photographer, agency or licence data, and none was supplied. **612 x 408 is
   typical of a stock site's preview image. If it is a comp, it needs a licence before this posts**; the full-size
   version would also fix the softness.
-- **Headline colour kept** (scarlet 246, 31, 13), although it was sampled from the old splash cover: re-running the
-  method on the new cover gives (244, 98, 40), a red-orange (candle glow and ornaments, not wine), 4.99:1. Say if you want it.
+- (The scarlet headline colour sampled from the old splash cover was **superseded by the flag colours**: see the next section.)
+
+## Text colours: the German flag (round 3)
+Steve asked for the font colour scheme to match the German flag (black, red 221/0/0, gold 255/206/0).
+- **Gold** is the cover subject, every fact headline and "Cheers": **10.60:1** on the ink block (the scarlet it
+  replaced was 3.86:1). **Red** is the cover kicker, the 01-05 numerals and the closing "!": **3.07:1** on ink
+  (floor 3.0), and the cobalt numerals it replaced were **1.98:1**, so they are more legible too.
+- **Black stays the ground**, not a font colour: black on the ink block is 1.33:1, invisible. The cover is already pure
+  black, so the cover reads black / red / gold from the ground up.
+- The cover's red kicker is 3.46:1 against the photo behind it at the 98th percentile; the very faintest stem
+  remnants (about 2% of that zone) dip to 2.1:1. It reads clearly.
+- **Not changed, and your call:** the cobalt grid mark (top right of every photo), the short cobalt rules, and the chart
+  bars. They are not fonts, and cobalt is what makes FFFA read as FFFA. Say if you want them in flag colours too.
+- Format: `fff_cover(kicker_color=)` and `fff_fact(accent_text_color=)` are new optional overrides (numerals and the "!");
+  with them unset, every existing deck renders exactly as before (verified pixel-identical).
 
 ## Open
 - **Caption**: not written. **Social Pass**: not run. **Not locked.**
