@@ -233,3 +233,28 @@ row up to a small line under the top-right grid mark (`_finish()`'s
   "white wine" palette) into named constants in `tokens.py` rather
   than re-deriving a color from a cover photo each time. Not urgent at
   two decks.
+
+
+---
+
+## v4 additions (Red Wines of Germany deck)
+
+- **`diagram="bars"`**: a general horizontal share chart, `slot["bars"] = [(label, value 0-100,
+  shown_text, highlight)]`, optional `slot["bars_title"]`. Cobalt bars on the dark block; the
+  highlighted bar is paper-white, so the eye goes to it without recolouring a diagram chip (the
+  headline override never touches those). Labels and values >= 35 px. This resolves the open item
+  about collapsing the scalar diagrams into one helper; use it before hard-coding a new data table.
+- **A longer subject works.** "Red Wines of Germany" (20 characters) fit on one line on the cover
+  at a good size; the "longer subjects untested" note above is now tested up to that length.
+- **Red-wine decks: the override colour is sampled from the cover, again.** Method unchanged
+  (the 80 brightest *saturated* reds); this deck's came out (246, 31, 13), 3.86:1 against INK.
+- **A graded cover build** (`arc2/build_fffa_reds_cover.py`) when the cover photo's subject runs into the
+  type zone: scale the photo down, place the subject high, and extend the photo's own near-black
+  below it with feathered edges. Same idea as the Viognier cover build.
+- **Check the closing page's bottom margin.** A two-line headline pushes "Cheers!" down, and QA
+  does not catch it (the sign-off is QA-exempt): it ended 57 px from the page edge until the headline went to one line (217 px).
+- **Measure photo bands against each other.** One page's photo averaged 0.040 luminance against 0.19-0.30 on its
+  five siblings; a gamma lift (0.6) fixed it. Keep the original; commit the graded copy and the script that makes it.
+- **Verify numbers against current official statistics, not only D3.** D3's Ahr red share (81%) and
+  Wurttemberg's grape ranking were slightly behind the official figures (79%; Spatburgunder now ahead of
+  Schwarzriesling). Word the copy to be true under both and record the difference in the deck's notes.

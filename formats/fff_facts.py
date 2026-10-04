@@ -169,6 +169,39 @@ def _sweetness_diagram(d, x0, x1, base_y, max_px=210):
     return top_y
 
 
+def _bars_diagram(d, x0, x1, top_y, bars, title=None, avail_h=420):
+    """General horizontal bar chart for a share-of-something comparison (v4, added for
+    the Red Wines of Germany deck). bars = [(label, value 0-100, shown_text, highlight)];
+    bars are cobalt (the series colour) on the dark block, and the HIGHLIGHTED bar is drawn
+    in paper so the eye goes to it without touching the deck's headline colour (the
+    override never recolours diagram chips). Labels and values are >= 35px (the series'
+    chart-label floor). Sizes itself to avail_h and returns the diagram's bottom y."""
+    lf = font("kicker_bold", 38)
+    vf = font("kicker_bold", 42)
+    tf = font("body", 35)
+    y = top_y
+    if title:
+        d.text((x0, y), title, font=tf, fill=(150, 148, 150))
+        tb = d.textbbox((x0, y), title, font=tf)
+        y = tb[3] + 22
+    label_w = max(text_w(d, b[0], lf) for b in bars) + 36
+    value_w = max(text_w(d, b[2], vf) for b in bars) + 28
+    track = (x1 - x0) - label_w - value_w
+    n = len(bars)
+    gap = 24
+    bar_h = int(max(min((avail_h - (y - top_y) - gap * (n - 1)) / n, 76), 44))
+    for label, val, shown, hi in bars:
+        lb = d.textbbox((0, 0), label, font=lf)
+        d.text((x0, y + (bar_h - (lb[3] - lb[1])) / 2 - lb[1]), label, font=lf, fill=PAPER)
+        bx0 = x0 + label_w
+        bx1 = bx0 + track * (val / 100.0)
+        d.rectangle([bx0, y, bx1, y + bar_h], fill=PAPER if hi else FFFA_ACCENT)
+        vb = d.textbbox((0, 0), shown, font=vf)
+        d.text((bx1 + 20, y + (bar_h - (vb[3] - vb[1])) / 2 - vb[1]), shown, font=vf, fill=PAPER)
+        y += bar_h + gap
+    return y - gap
+
+
 def _bottle_glyph(d, cx, base_y, height, color, label, sub, lf, slf):
     """One silhouette in the bottle-scale diagram: body + shoulder +
     neck, bottom-anchored at base_y, scaled to `height` px tall. Width
@@ -348,7 +381,8 @@ def fff_cover(slot, total=FFFA_SLIDE_COUNT, headline_color=None):
 def fff_fact(slot, slide_no, total=FFFA_SLIDE_COUNT, closing=False, diagram=None, headline_color=None):
     """slots: photo, number(1-5), headline, body(15-20 words),
     photo_anchor, photo_zoom, photo_credit. closing=True on the last
-    call folds "Cheers!" into this same page. diagram="bottle_sizes"
+    call folds "Cheers!" into this same page. diagram="bars" draws a general share
+    bar chart from slot["bars"] (+ optional slot["bars_title"]); diagram="bottle_sizes"
     adds the graduated bottle-format silhouette row instead of leaving
     the scale claim as text alone -- shrinks the photo band and the
     numeral to buy the extra vertical room the row needs, since that's
@@ -459,6 +493,12 @@ def fff_fact(slot, slide_no, total=FFFA_SLIDE_COUNT, closing=False, diagram=None
         diag_top = _sweetness_diagram(d, M, W - M, base_y, max_px=max_px)
         qa.box("!diagram", (M, diag_top, W - M, base_y + label_h))
         diagram_bottom = base_y + label_h
+    elif diagram == "bars":
+        avail_h = max(min(380, CONTENT_BOTTOM - tail_top - 10), 180)
+        diag_bottom = _bars_diagram(d, M, W - M, tail_top, slot["bars"],
+                                    title=slot.get("bars_title"), avail_h=avail_h)
+        qa.box("!diagram", (M, tail_top, W - M, diag_bottom))
+        diagram_bottom = diag_bottom
     elif diagram == "parentage":
         avail_h = max(min(300, CONTENT_BOTTOM - tail_top - 20), 200)
         diag_bottom = _parentage_diagram(
