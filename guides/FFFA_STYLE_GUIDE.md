@@ -255,6 +255,12 @@ row up to a small line under the top-right grid mark (`_finish()`'s
   does not catch it (the sign-off is QA-exempt): it ended 57 px from the page edge until the headline went to one line (217 px).
 - **Measure photo bands against each other.** One page's photo averaged 0.040 luminance against 0.19-0.30 on its
   five siblings; a gamma lift (0.6) fixed it. Keep the original; commit the graded copy and the script that makes it.
+- **A small supplied photo for the cover needs a recipe, and an honest word.** A 612 px-wide source cropped to ~330 px
+  and filled to a 2160 px cover is a 6.5x enlargement. What worked (tested on the real output): denoise first (JPEG
+  blocks show as stair-steps under plain Lanczos), two 2x Lanczos steps, a light unsharp, then fine monochrome grain
+  (sigma 5) so the softness reads as texture. Fade whatever runs into the type zone to the photo's own near-black. It is still soft:
+  say so, and ask for the full-size file. A bare small JPEG with no credit data is typical of a stock-site preview:
+  no credit is printed, and the licence should be checked before posting.
 - **Verify numbers against current official statistics, not only D3.** D3's Ahr red share (81%) and
   Wurttemberg's grape ranking were slightly behind the official figures (79%; Spatburgunder now ahead of
   Schwarzriesling). Word the copy to be true under both and record the difference in the deck's notes.

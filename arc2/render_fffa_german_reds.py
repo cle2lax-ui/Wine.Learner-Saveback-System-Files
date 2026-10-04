@@ -37,13 +37,20 @@ LEFT OUT, DELIBERATELY (true or plausible, not in D3, or single-sourced)
   - Dornfelder bred in 1955 (a secondary source, not D3); Fruhburgunder; Regent.
   - Any claim about Ahr or Wurttemberg prices.
 
-HEADLINE COLOUR. A red-wine subject takes the per-deck override (style guide v3): sampled
-from the cover's splash by the guide's method (the 80 brightest SATURATED reds, not the
-blown-out pinks): (246, 31, 13), contrast 3.86:1 against INK (floor 3.0). The cover itself is a
-graded build (build_fffa_reds_cover.py): the glass sits high so the type has black below it.
+HEADLINE COLOUR. A red-wine subject takes the per-deck override (style guide v3): sampled by
+the guide's method (the 80 brightest SATURATED reds, not the blown-out pinks) from the ORIGINAL
+cover, a red-wine splash: (246, 31, 13), contrast 3.86:1 against INK (floor 3.0). The cover was
+later replaced at Steve's request by a photograph of two glasses of red wine; the colour was KEPT:
+re-running the method on the new cover gives (244, 98, 40), 4.99:1, a red-ORANGE, because that
+photo's warm tones are candle glow and ornaments, not wine. The scarlet is truer to a red-wine
+subject. The cover is a graded build (build_fffa_reds_cover.py): the glasses fill the width,
+and their stems and the table fade into near-black so the type has a dark zone.
 
 PHOTOGRAPHY, location-verified; FFFA fact pages carry credits only, never captions, so no
-location is asserted on a page. Cover: red wine splash, Saman Taheri (Unsplash). 1: Rheinhessen
+location is asserted on a page. Cover: Steve's photograph of two glasses of red wine at a
+candlelit table, 612x408 px, no embedded credit or licence data, so NO credit is printed (and
+612x408 is typical of a stock site's preview image: licence it before posting if it is a comp).
+The earlier splash cover was Saman Taheri (Unsplash). 1: Rheinhessen
 (Jugenheim) vineyard at sunrise, Sven Wilhelm. 2: red grapes, Waltershofen (Baden), Sven Finger.
 3: dark grapes, Rheinland-Pfalz, Luca J. 4: autumn vines on steep slate terraces at
 Mayschoss (Ahr), Superbass (Commons, CC BY-SA 3.0): Mayschoss is the village D3 names for the
@@ -69,10 +76,10 @@ OUT = "/home/claude/out_fffa_german_reds"
 os.makedirs(OUT, exist_ok=True)
 TOTAL = 6
 
-# Sampled from the cover's splash: see the docstring and the style guide.
+# Sampled from the ORIGINAL splash cover (kept after the cover changed): see the docstring.
 RED = (246, 31, 13)
 
-CRED_TAHERI = "Saman Taheri / Unsplash"
+CRED_TAHERI = "Saman Taheri / Unsplash"   # the splash cover's credit: unused since the cover changed
 CRED_WILHELM = "Sven Wilhelm / Unsplash"
 CRED_FINGER = "Sven Finger / Unsplash"
 CRED_LUCA = "Luca J / Unsplash"
@@ -80,9 +87,14 @@ CRED_SUPERBASS = "Superbass / Wikimedia Commons (CC BY-SA 3.0)"
 CRED_HELIAO = "Heliao / Unsplash"
 
 COVER = dict(
-    photo="fff_reds_cover.jpg",          # the graded build, not the raw file
+    # Steve's photograph of two glasses of red wine, cropped tight (build_fffa_reds_cover.py).
+    # It replaced the red-wine splash cover. The source is 612x408 and the crop is enlarged
+    # 6.5x: soft, and recorded as such. NO CREDIT: the file carries no photographer, agency or
+    # licence data and none was supplied, so none is printed. 612x408 is typical of a stock
+    # site's preview image: if it is a comp, it needs a licence before this is posted.
+    photo="fff_reds_cover_glasses.jpg",  # the graded build, not the raw file
     subject="Red Wines of Germany",
-    photo_credit=CRED_TAHERI,
+    photo_credit=None,
 )
 
 SHARE = "BLACK GRAPES AS A SHARE OF ALL PLANTINGS"

@@ -15,6 +15,17 @@ into the black instead of ending in a visible rectangle. Output is exactly 2160x
 fff_cover() adds no further crop. The glass was first placed 110px up; the base then came
 within ~50px of the kicker icon, tight against the 120px rhythm elsewhere, so it is 150px.
 
+THE GLASSES COVER (current). Steve supplied a photograph of two glasses of red wine at a
+candlelit table (photos/de_reds_cover_glasses_612.jpg, 612x408 px, no embedded credit or licence
+data) and asked for a close crop on the glasses. That is a 334 px-wide crop filling a 2160 px
+cover: a 6.5x ENLARGEMENT, which no treatment can make sharp. What was done to make it as good as
+it can be (see build_glasses_cover): crop 334x339 around both glasses; denoise first (the JPEG's
+8x8 blocks show as stair-steps on the rims under plain Lanczos); two 2x Lanczos steps; a light
+unsharp mask; and fine monochrome film grain (sigma 5) so the remaining softness reads as
+photographic texture rather than blur. The stems and table fade into near-black below the wine so
+the type has a dark zone, as with the splash cover. The earlier splash cover is retained
+(`--splash`) but no longer used.
+
 THE TERRACES (closing page). The Stuttgart photograph is a dusk shot: its photo band measured
 0.040 mean luminance against 0.19-0.30 on the deck's other five pages. A gamma lift of 0.6
 (x ** 0.6) takes it to 0.095: the stone walls, huts and vine rows become legible and the dusk
@@ -41,6 +52,35 @@ def smooth(t):
     return t * t * (3 - 2 * t)
 
 
+def build_glasses_cover(sigma_grain=5.0):
+    import cv2
+    from PIL import ImageFilter
+    src = Image.open(f"{ROOT}/photos/de_reds_cover_glasses_612.jpg").convert("RGB")
+    X0, X1, Y0 = 17, 351, 69          # tight on both glasses; the rims land ~330px from the top
+    crop = src.crop((X0, Y0, X1, src.height))
+    s = W / crop.width
+    size = (W, int(round(crop.height * s)))
+    den = cv2.fastNlMeansDenoisingColored(np.asarray(crop)[:, :, ::-1].copy(), None, 4, 4, 5, 15)[:, :, ::-1]
+    x = Image.fromarray(den)
+    for _ in range(2):
+        x = x.resize((x.width * 2, x.height * 2), Image.LANCZOS)
+    x = x.resize(size, Image.LANCZOS).filter(ImageFilter.UnsharpMask(2.5, 90, 2))
+    arr = np.asarray(x).astype(float)
+    rng = np.random.default_rng(7)
+    arr = arr + rng.normal(0, sigma_grain, arr.shape[:2])[..., None]
+    bg = np.array([10.0, 6.0, 5.0])
+    canvas = np.zeros((H, W, 3)); canvas[:] = bg
+    # opaque down to 1620 (just under the wine), fully black by ~1880. First pass faded over
+    # 500px (to ~2150), which left the thin stems running behind the kicker icon (the type zone
+    # starts at ~1788); this clears them before it.
+    ys = np.arange(arr.shape[0], dtype=float)[:, None]
+    alpha = 1 - smooth((ys - 1620) / 260.0)
+    canvas[:arr.shape[0]] = canvas[:arr.shape[0]] * (1 - alpha[..., None]) + arr * alpha[..., None]
+    out = f"{ROOT}/photos/fff_reds_cover_glasses.jpg"
+    Image.fromarray(canvas.clip(0, 255).astype("uint8")).save(out, quality=95)
+    print(f"glasses cover built: {out}  (crop {crop.size}, enlarged x{s:.2f}, grain sigma {sigma_grain})")
+
+
 def grade_terraces(gamma=0.6):
     src = Image.open(f"{ROOT}/photos/de_reds_stuttgart_terraces.jpg").convert("RGB")
     a = np.asarray(src).astype(float) / 255.0
@@ -51,6 +91,12 @@ def grade_terraces(gamma=0.6):
 
 def main():
     grade_terraces()
+    build_glasses_cover()
+    if "--splash" in sys.argv:
+        build_splash_cover()
+
+
+def build_splash_cover():
     src = Image.open(SRC).convert("RGB")
     a = np.asarray(src).astype(float)
     edge = np.concatenate([a[:40].reshape(-1, 3), a[:, :40].reshape(-1, 3), a[:, -40:].reshape(-1, 3)])

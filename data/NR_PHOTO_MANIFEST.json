@@ -588,7 +588,7 @@
   "height": 7360,
   "author": "Saman Taheri",
   "license": "Unsplash License (free to use)",
-  "description": "Red wine splash in a clear glass against a black-to-grey gradient; checked at full resolution, no etching or logo. Source for fff_reds_cover.jpg, the graded 2160x2700 cover build (build_fffa_reds_cover.py).",
+  "description": "Red wine splash in a clear glass against a black-to-grey gradient; checked at full resolution, no etching or logo. Source for fff_reds_cover.jpg, the graded 2160x2700 cover build (build_fffa_reds_cover.py). SUPERSEDED as the deck cover by Steve's glasses photograph; builder retained (build_fffa_reds_cover.py --splash).",
   "slot": "de_reds_cover_splash",
   "credit": "Saman Taheri / Unsplash",
   "local_path": "/home/claude/repo/photos/de_reds_cover_splash.jpg"
@@ -640,5 +640,17 @@
   "slot": "de_reds_ahr_mayschoss",
   "credit": "Superbass / Wikimedia Commons (CC BY-SA 3.0)",
   "local_path": "/home/claude/repo/photos/de_reds_ahr_mayschoss.jpg"
+ },
+ {
+  "title": "two glasses of red wine at a candlelit table (cover)",
+  "url": "(supplied by Steve, Image.jpeg)",
+  "width": 612,
+  "height": 408,
+  "author": "unknown (no embedded credit)",
+  "license": "unknown: supplied for use; no licence data in the file",
+  "description": "612x408 px, 50 KB, no EXIF credit/copyright; typical of a stock-site preview. Cover of the FFFA German reds deck: a 334x339 crop around both glasses, enlarged 6.47x with denoise + 2-step Lanczos + unsharp + grain, stems/table faded to near-black (build_fffa_reds_cover.py -> fff_reds_cover_glasses.jpg). SOFT by necessity. No credit printed. Check the licence before posting; a full-size file is wanted.",
+  "slot": "de_reds_cover_glasses_612",
+  "credit": "",
+  "local_path": "/home/claude/repo/photos/de_reds_cover_glasses_612.jpg"
  }
 ]

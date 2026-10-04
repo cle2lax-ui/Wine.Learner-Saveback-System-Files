@@ -39,6 +39,7 @@ arc2/GTR_SAAR_SPEC.md
 arc2/QS_TROCKEN_SPEC.md
 arc2/REVIEW_WAD_loosen_treppchen.md
 arc2/__pycache__/prepare_map_data.cpython-312.pyc
+arc2/__pycache__/render_fffa_german_reds.cpython-312.pyc
 arc2/build_fffa_reds_cover.py
 arc2/prepare_map_data.py
 arc2/render_fffa_german_reds.py
@@ -139,6 +140,7 @@ fonts/Playfair-BoldItalic.ttf
 fonts/Playfair-MediumItalic.ttf
 fonts/Playfair-Regular.ttf
 fonts/Playfair-XBold.ttf
+formats/__pycache__/fff_facts.cpython-312.pyc
 formats/__pycache__/guess_the_region.cpython-312.pyc
 formats/__pycache__/quick_sips.cpython-312.pyc
 formats/__pycache__/what_am_i_drinking.cpython-312.pyc
@@ -197,6 +199,7 @@ photos/de_harvest_pickers_slope.jpg
 photos/de_hatzenport_mosel.jpg
 photos/de_piesport_goldtropfchen_sign.jpg
 photos/de_reds_ahr_mayschoss.jpg
+photos/de_reds_cover_glasses_612.jpg
 photos/de_reds_cover_splash.jpg
 photos/de_reds_rheinhessen_rows.jpg
 photos/de_reds_rlp_grapes.jpg
@@ -205,6 +208,7 @@ photos/de_reds_stuttgart_terraces_graded.jpg
 photos/de_steep_stairs_climber.jpg
 photos/fff_harvest_bin.jpg
 photos/fff_reds_cover.jpg
+photos/fff_reds_cover_glasses.jpg
 photos/fff_viognier_cluster.jpg
 photos/fff_viognier_cover.jpg
 photos/fff_viognier_vines.jpg

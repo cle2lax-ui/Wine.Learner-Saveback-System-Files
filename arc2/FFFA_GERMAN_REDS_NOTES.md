@@ -4,7 +4,7 @@
 ## The deck
 | # | Headline | Visual |
 |---|---|---|
-| 1 | Cover: **Red Wines of Germany** | spotlit red splash, graded build |
+| 1 | Cover: **Red Wines of Germany** | two glasses of red wine, cropped tight (Steve's photo), graded build |
 | 2 | Nearly a Third of German Vines Are Red | Rheinhessen vineyard at sunrise + **bar chart** (1980 vs 2021) |
 | 3 | Germany's Pinot Noir Almost Trebled | red grapes, Baden |
 | 4 | Dornfelder Went From Nothing to No. 2 Red | dark grapes, Rheinland-Pfalz |
@@ -55,12 +55,29 @@ scalar diagrams into a shared helper"). It takes `slot["bars"] = [(label, value,
 Labels and values are >= 35 px. It is the first FFFA diagram that isn't hard-coded to one deck.
 The cover is a graded build because the photo's glass ran into the type zone.
 
+## Cover change (round 2)
+Steve supplied a photograph of two glasses of red wine and asked for it as the cover, cropped
+closely on the glasses. It replaced the red-wine splash.
+- **The source is 612 x 408 px.** A close crop around both glasses is 334 px wide, so filling the 2160 px cover is a
+  **6.5x enlargement**, which no treatment can make sharp. I tested three on the real output: plain Lanczos showed blocky
+  JPEG stair-steps along the rims; denoising first, then two 2x steps and a light unsharp, was clean; adding fine
+  film grain made the remaining softness read as photographic texture. The grain version is in. It is still soft up close; at
+  the size it is seen on a phone it reads as a warm, candlelit close-up.
+- The stems and table **fade into near-black** under the wine so the type has a dark ground: measured behind the type
+  zone, mean luminance 0.0006, so the white kicker has 19:1 even against the brightest pixel there.
+- **No credit is printed**: the file has no photographer, agency or licence data, and none was supplied. **612 x 408 is
+  typical of a stock site's preview image. If it is a comp, it needs a licence before this posts**; the full-size
+  version would also fix the softness.
+- **Headline colour kept** (scarlet 246, 31, 13), although it was sampled from the old splash cover: re-running the
+  method on the new cover gives (244, 98, 40), a red-orange (candle glow and ornaments, not wine), 4.99:1. Say if you want it.
+
 ## Open
 - **Caption**: not written. **Social Pass**: not run. **Not locked.**
+- **Cover photo licence and a larger file**: see "Cover change" above.
 - "about 80%" on the chart: say if you'd rather show D3's 81% (or the official 79%).
 - The Ahr photo has people under a red tent in the lower right; it reads as a harvest or tasting stand, not a distraction, but it is a choice.
 
-**Photography** (location-verified): cover, Saman Taheri; fact 1 Jugenheim (Rheinhessen), Sven
+**Photography** (location-verified): cover, Steve's supplied photo (no credit data; the earlier splash cover was Saman Taheri); fact 1 Jugenheim (Rheinhessen), Sven
 Wilhelm; fact 2 Waltershofen (Baden), Sven Finger; fact 3 Rheinland-Pfalz, Luca J; fact 4
 Mayschoss (Ahr), Superbass (Wikimedia Commons, CC BY-SA 3.0; Mayschoss is the village D3 names for the
 world's oldest co-operative); fact 5 Stuttgart, Heliao. Grape varieties are not asserted for any photograph.
