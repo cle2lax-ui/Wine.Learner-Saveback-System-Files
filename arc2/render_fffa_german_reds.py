@@ -69,7 +69,7 @@ The earlier splash cover was Saman Taheri (Unsplash). 1: Rheinhessen
 (Jugenheim) vineyard at sunrise, Sven Wilhelm. 2: red grapes, Waltershofen (Baden), Sven Finger.
 3: dark grapes, Rheinland-Pfalz, Luca J. 4: autumn vines on steep slate terraces at
 Mayschoss (Ahr), Superbass (Commons, CC BY-SA 3.0): Mayschoss is the village D3 names for the
-oldest cooperative in the world. 5: terraced vineyards, Stuttgart, Heliao. Grape varieties
+oldest cooperative in the world. 5: a toast with red wine (Steve's pick), RDNE Stock project (Pexels); it replaced the Stuttgart terraces (Heliao). Grape varieties
 are NOT asserted for any photograph.
 
 Social gates on a 6-page facts post:
@@ -112,7 +112,8 @@ CRED_WILHELM = "Sven Wilhelm / Unsplash"
 CRED_FINGER = "Sven Finger / Unsplash"
 CRED_LUCA = "Luca J / Unsplash"
 CRED_SUPERBASS = "Superbass / Wikimedia Commons (CC BY-SA 3.0)"
-CRED_HELIAO = "Heliao / Unsplash"
+CRED_HELIAO = "Heliao / Unsplash"   # the Stuttgart terraces: unused since page 6 took the toast photo
+CRED_RDNE = "RDNE Stock project / Pexels"
 
 COVER = dict(
     # Steve's photograph of a vine row with clusters of dark grapes (Pexels, Sayed Masoumi: the
@@ -175,7 +176,13 @@ FACTS = [
     ),
     dict(
         number=5,
-        photo="de_reds_stuttgart_terraces_graded",   # gamma 0.6; see build_fffa_reds_cover.py
+        # Steve: "use this picture on one of the pages". Page 6 is the natural home: a toast with red
+        # wine is the payoff for the "Cheers!" sign-off. TRADE-OFF: it replaced the Stuttgart
+        # terraces, so the Wurttemberg fact no longer carries a Wurttemberg image. The toast photo
+        # claims no place (Pexels gives none), and none is asserted. Credit from the file name
+        # (pexels-rdne-...): "rdne" is the Pexels contributor "RDNE Stock project". It shows
+        # identifiable people; Pexels' license covers that use, but a model release is not visible.
+        photo="de_reds_toast_pexels_rdne",
         photo_anchor=0.5,
         # First draft: "Two-Thirds Red, but Not Led by Pinot Noir", on two lines, which pushed
         # "Cheers!" to 57px from the page edge (the margin is 120). One line brings it up; and
@@ -195,7 +202,7 @@ FACTS = [
         # One line holds ~49 characters. First try ("...lead, though both came from elsewhere.", 63) wrapped
         # to a second line and put "Cheers!" 56px from the page edge. "Imports" is factual: Tyrol, Slovenia.
         body="Trollinger and Lemberger lead; both are imports.",
-        photo_credit=CRED_HELIAO,
+        photo_credit=CRED_RDNE,
     ),
 ]
 
@@ -214,7 +221,8 @@ def build():
     for i, slot in enumerate(FACTS, start=2):
         img = fff_fact(slot, i, total=TOTAL, closing=(i == TOTAL),
                        diagram=slot.get("diagram"), headline_color=FLAG_GOLD,
-                       accent_text_color=FLAG_RED)
+                       accent_text_color=FLAG_RED,
+                       credit_chip=True)   # the toast photo's dark post crossed the dark credit
         p = f"{OUT}/{i:02d}_fact{slot['number']}.png"
         img.save(p)
         paths.append(p)

@@ -16,15 +16,22 @@ fff_cover() adds no further crop. The glass was first placed 110px up; the base 
 within ~50px of the kicker icon, tight against the 120px rhythm elsewhere, so it is 150px.
 
 THE VINEYARD COVER (current). Steve supplied a 3024x4032 photograph of a vine row with clusters of
-dark red-wine grapes (Pexels, Sayed Masoumi; the photographer's name is from the file name) and
-asked for it as the cover. The clusters sit at ~68-98% of the frame's height, which is exactly
-where the cover's type goes, so a plain crop would put the title across the grapes. Instead the
-photo is scaled to the page width (0.714x: a downscale, so it stays crisp), shifted up 1,180px so
-the clusters sit at roughly y=1100-1650, and faded into near-black from y=1420 to y=1700. The fade ENDS
-at the photo's own bottom edge (page y=1700): a fade that ran past it left a faint green step against the black.
-A first pass (shift 1,304, fade 1250-1580) left the photo filling only the top 58% of the page with the clusters small. The houses
-at the top of the original are cropped out, which keeps the cover about the grapes. Location is
-NOT asserted: Pexels carries none and the file has none.
+dark red-wine grapes and a village below the slope (Pexels, Sayed Masoumi; the photographer's name
+is from the file name). Location is NOT asserted: Pexels carries none and the file has none.
+The photo is scaled to the page width (0.714x: a downscale, so it stays crisp) and TOP-ALIGNED, so
+the village (roofs, garden walls, street, trees) is in view, then faded into near-black from
+y=1560 to y=1780, which is where the cover's type zone begins (~1788).
+
+THE TRADE-OFF, and the history. At full width the whole photo is 2,880px tall but only ~1,780px
+sit above the type zone, so the village and the grape clusters cannot both be shown: the
+clusters are at 68-98% of the original's height, the village at 0-27%. Round 1 framed the clusters
+and cropped the village out (shift 1,304, then 1,180); Steve asked to see the village, so round 2
+is top-aligned. Three framings were compared with the type on: top-aligned (shift 0), 150 and 330.
+Top-aligned shows the village best; the others only trade it for foliage without bringing the
+grapes back. Only the small clusters along the right edge of the row survive; the fade was made
+steeper (start 1560, was 1420) to keep as many of those visible as the type zone allows. The fade
+ends where the type zone begins; earlier it ended exactly at the photo's own bottom edge, which
+no longer applies because the photo now continues below the canvas.
 
 THE GLASSES COVER (previous; retained, build with --glasses). Steve supplied a photograph of two glasses of red wine at a
 candlelit table (photos/de_reds_cover_glasses_612.jpg, 612x408 px, no embedded credit or license
@@ -63,7 +70,7 @@ def smooth(t):
     return t * t * (3 - 2 * t)
 
 
-def build_vineyard_cover(shift_up=1180, fade_from=1420, fade_to=1700):
+def build_vineyard_cover(shift_up=0, fade_from=1560, fade_to=1780):
     src = Image.open(f"{ROOT}/photos/de_reds_cover_vineyard_pexels.jpg").convert("RGB")
     sh = int(round(src.height * W / src.width))
     arr = np.asarray(src.resize((W, sh), Image.LANCZOS)).astype(float)
@@ -118,8 +125,9 @@ def grade_terraces(gamma=0.6):
 
 
 def main():
-    grade_terraces()
     build_vineyard_cover()
+    if "--terraces" in sys.argv:        # the closing page no longer uses the Stuttgart terraces
+        grade_terraces()
     if "--glasses" in sys.argv:
         build_glasses_cover()
     if "--splash" in sys.argv:

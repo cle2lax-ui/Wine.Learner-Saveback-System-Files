@@ -38,7 +38,7 @@ v2 changes from v1, per Steve's first-round notes:
 Checklist icon is drawn programmatically, not sourced as an asset, so
 it never drifts off-brand and never needs an external SVG dependency.
 """
-from PIL import ImageDraw
+from PIL import Image, ImageDraw
 from tokens import *
 import core
 from core import (new_canvas, footer, font, text_w, tracked_text, wrap,
@@ -379,8 +379,18 @@ def fff_cover(slot, total=FFFA_SLIDE_COUNT, headline_color=None, kicker_color=No
 
 
 # ────────────────────────── FFFA FACT ──────────────────────────
+def _credit_chip(img, box, fill, alpha, radius=10):
+    """A soft rounded chip behind small print that sits on a busy photo (v4)."""
+    x0, y0, x1, y1 = [int(v) for v in box]
+    reg = img.crop((x0, y0, x1, y1))
+    blended = Image.blend(reg, Image.new("RGB", reg.size, fill), alpha)
+    mask = Image.new("L", reg.size, 0)
+    ImageDraw.Draw(mask).rounded_rectangle([0, 0, reg.width - 1, reg.height - 1], radius=radius, fill=255)
+    img.paste(blended, (x0, y0), mask)
+
+
 def fff_fact(slot, slide_no, total=FFFA_SLIDE_COUNT, closing=False, diagram=None, headline_color=None,
-             accent_text_color=None):
+             accent_text_color=None, credit_chip=False):
     """slots: photo, number(1-5), headline, body(15-20 words),
     photo_anchor, photo_zoom, photo_credit. closing=True on the last
     call folds "Cheers!" into this same page. diagram="bars" draws a general share
@@ -414,10 +424,15 @@ def fff_fact(slot, slide_no, total=FFFA_SLIDE_COUNT, closing=False, diagram=None
         # or drop to INK, the same adaptive approach the reveal caption
         # in guess_the_region already uses.
         cbox = (W - M - cw - 16, cy - 10, W - M + 8, cy + 46)
-        if region_luminance(img, cbox) > 150:
-            d.text((W - M - cw, cy), ctxt, font=crf, fill=INK)
-        else:
-            d.text((W - M - cw, cy), ctxt, font=crf, fill=PAPER)
+        bright = region_luminance(img, cbox) > 150
+        if credit_chip:
+            # v4, opt-in. The average hides a local failure: a dark post or branch crossing a
+            # dark credit (or a bright patch crossing a white one) costs a letter or two.
+            # A soft chip in the opposite tone guarantees the contrast whatever is behind it.
+            _credit_chip(img, (W - M - cw - 22, cy - 10, W - M + 14, cy + 48),
+                         PAPER if bright else INK, 0.82 if bright else 0.60)
+            d = ImageDraw.Draw(img)
+        d.text((W - M - cw, cy), ctxt, font=crf, fill=INK if bright else PAPER)
 
     block_top = photo_h
     d.rectangle([0, block_top, W, H], fill=INK)

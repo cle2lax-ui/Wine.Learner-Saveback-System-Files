@@ -9,7 +9,7 @@
 | 3 | Germany's Pinot Noir Almost Tripled | red grapes, Baden |
 | 4 | Dornfelder Went From Nothing to No. 2 Red | dark grapes, Rheinland-Pfalz |
 | 5 | Four in Five Ahr Vines Are Red | autumn slate terraces at Mayschoss + **bar chart** (Germany / Württemberg / Ahr) |
-| 6 | Württemberg Focuses Mostly on Regional Red Varieties, then **Cheers!** | terraced vineyards, Stuttgart |
+| 6 | Württemberg Focuses Mostly on Regional Red Varieties, then **Cheers!** | a toast with red wine (Steve's pick) |
 
 ## Sources, and where they disagree
 D3 Ch. 11 (Aug 2026 edition) is the primary source. Every figure was checked against the
@@ -38,7 +38,7 @@ Schwarzriesling *is* a Pinot (Meunier), so page 6 now says "not Pinot **Noir**" 
 **Chanel (editing).** Page 5's body ended on an orphaned "it possible."; recut to two lines.
 Page 6's two-line headline became one.
 **Ive (craft, measured).** (1) "Cheers!" ended **57 px** from the page edge (margin 120)
-because of the two-line headline; with it on one line, **217 px**. (2) Page 6's photo band
+because of the two-line headline; with it on one line, **217 px**. (2) *(superseded in round 6: page 6 now has the toast photo.)* Page 6's photo band
 averaged **0.040** luminance against 0.19-0.30 on the other pages; a gamma lift of 0.6
 (to 0.095) makes the terraces legible and keeps the dusk. The original is untouched; the
 graded copy is built by `build_fffa_reds_cover.py`. (3) The cover glass's base came within ~50 px of the
@@ -72,7 +72,29 @@ regional specialties**. The body says so: "Trollinger and Lemberger lead; both a
 - **Layout:** a two-line heading plus a two-line body pushed "Cheers!" to 56 px from the page edge, so the body is one line
   (about 49 characters fit) and "Cheers!" is 156 px up.
 
-## Cover change (round 5): the vineyard photo
+## Cover reframe (round 6): the village
+Steve asked to see the village below the vineyard, which the round 5 framing had cropped out. **The cover is now top-aligned**, so the
+roofs, garden walls, street and trees are in view above the vines. **The trade-off:** at full width the photo is 2,880 px tall but only
+about 1,780 px sit above the type zone, and the grape clusters are at 68-98% of the original's height while the village is at 0-27%,
+so both cannot show. I compared three framings with the type on (top-aligned, shifted 150 px, shifted 330 px); top-aligned shows the
+village best and the others only swap it for foliage without bringing the grapes back. Only the small clusters along the right edge of
+the row survive. The fade into black was made steeper (1560 to 1780) to keep as many as the type zone allows. If the grapes matter
+more than the village, the round 5 framing is one parameter away (`shift_up=1180`).
+
+## Page 6 photo (round 6): the toast
+Steve supplied a toast photograph ("use this picture on one of the pages"). **I put it on page 6**, where a toast with red wine pays off the
+"Cheers!" sign-off. **The trade-off:** it replaced the Stuttgart terraces, so the Württemberg fact no longer carries a Württemberg image
+(the page claims no location for the toast: Pexels gives none). Move it to another page if you prefer, and the terraces can return.
+- The photo is 5538 x 3692, a 3:2 frame that fits the fact-page photo band almost uncropped, and it is bright (mean luminance 0.34 against
+  0.19-0.30 on the other pages), so the dark-photo fix from round 1 no longer applies.
+- **Credit:** "RDNE Stock project / Pexels", taken from the file name (`pexels-rdne-...`; "rdne" is the Pexels contributor "RDNE Stock project").
+  Tell me if the name is wrong.
+- **A credit-legibility catch:** the format printed the credit in dark ink (correct for the bright corner), and an average-contrast check passed
+  (10.9:1). But at full size a dark tree trunk in the photo crossed one or two letters. The fix is a soft paper-toned chip behind the credit,
+  an **opt-in** format option (`credit_chip=True`); no earlier FFFA deck changes.
+- The photo shows identifiable people. Pexels' license covers that use, but a model release is not visible to me.
+
+## Cover change (round 5, framing superseded by round 6): the vineyard photo
 Steve supplied a photograph of a vine row with clusters of dark grapes and asked for it as the cover. It is 3024 x 4032 (crisp),
 credited "Sayed Masoumi / Pexels" (the name is from the file name; Pexels carries no location, so none is asserted). The clusters
 sit in the lower third, where the type goes, so the photo is scaled to the page width, shifted up so the clusters land just above

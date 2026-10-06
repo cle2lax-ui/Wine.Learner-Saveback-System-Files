@@ -261,6 +261,13 @@ row up to a small line under the top-right grid mark (`_finish()`'s
   **never** touched by these: they are the series identity, and are not fonts. Precedent: the German reds deck uses the
   German flag (gold headlines, red numerals/kicker/"!"). **Black cannot be a font colour on the dark block (1.33:1);
   it stays the ground.** Measure each pairing: gold was 10.6:1 on INK, red 3.07:1 (just over the 3.0 floor).
+- **Opt-in `fff_fact(credit_chip=True)` for a credit on a busy photo.** The closing page prints its credit top-right over the photo,
+  and the format picks dark or white text from the average brightness there. An average hides a local failure: a dark post crossing a
+  dark credit cost two letters on the toast photo (10.9:1 average, but unreadable at the post). The chip is a soft rounded label in the
+  opposite tone behind the text. Off by default, so earlier decks render exactly as before. **Check the credit at full size, not by average.**
+- **A tall portrait cover cannot show both its top and its bottom.** At full page width a 3:4 photo is 2,880 px tall but only ~1,780 px sit
+  above the cover's type zone. Choose what the cover is *about* (here: the village, or the grapes), compare framings with the type on, and
+  say what was given up.
 - **A small supplied photo for the cover needs a recipe, and an honest word.** A 612 px-wide source cropped to ~330 px
   and filled to a 2160 px cover is a 6.5x enlargement. What worked (tested on the real output): denoise first (JPEG
   blocks show as stair-steps under plain Lanczos), two 2x Lanczos steps, a light unsharp, then fine monochrome grain

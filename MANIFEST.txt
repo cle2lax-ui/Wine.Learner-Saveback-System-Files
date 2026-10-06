@@ -206,6 +206,7 @@ photos/de_reds_rheinhessen_rows.jpg
 photos/de_reds_rlp_grapes.jpg
 photos/de_reds_stuttgart_terraces.jpg
 photos/de_reds_stuttgart_terraces_graded.jpg
+photos/de_reds_toast_pexels_rdne.jpg
 photos/de_steep_stairs_climber.jpg
 photos/fff_harvest_bin.jpg
 photos/fff_reds_cover.jpg

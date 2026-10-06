@@ -624,7 +624,7 @@
   "height": 4000,
   "author": "Heliao",
   "license": "Unsplash License (free to use)",
-  "description": "Photographer-set Unsplash location: Stuttgart, Deutschland. FFFA fact 5. A dusk shot averaging 0.040 luminance; the deck uses de_reds_stuttgart_terraces_graded.jpg (gamma 0.6, 0.095) built by build_fffa_reds_cover.py. Original untouched.",
+  "description": "Photographer-set Unsplash location: Stuttgart, Deutschland. FFFA fact 5. A dusk shot averaging 0.040 luminance; the deck uses de_reds_stuttgart_terraces_graded.jpg (gamma 0.6, 0.095) built by build_fffa_reds_cover.py. Original untouched. NO LONGER USED in the FFFA German reds deck: page 6 now uses the toast photo.",
   "slot": "de_reds_stuttgart_terraces",
   "credit": "Heliao / Unsplash",
   "local_path": "/home/claude/repo/photos/de_reds_stuttgart_terraces.jpg"
@@ -660,9 +660,21 @@
   "height": 4032,
   "author": "Sayed Masoumi (from the file name)",
   "license": "Pexels License (free to use)",
-  "description": "Vine row with clusters of dark grapes at the base, houses above, dry grass at right. No location data (Pexels carries none; none asserted). Cover of the FFFA German reds deck: scaled to 2160 wide, shifted up 1,180 px so the clusters sit above the type zone, faded to near-black from y=1420 to 1700 (build_fffa_reds_cover.py -> fff_reds_cover_vineyard.jpg). Houses cropped out.",
+  "description": "Vine row with clusters of dark grapes at the base, houses above, dry grass at right. No location data (Pexels carries none; none asserted). Cover of the FFFA German reds deck: scaled to 2160 wide, shifted up 1,180 px so the clusters sit above the type zone, faded to near-black from y=1420 to 1700 (build_fffa_reds_cover.py -> fff_reds_cover_vineyard.jpg). Houses cropped out. ROUND 6: now TOP-ALIGNED (shift 0, fade 1560-1780) so the village below the slope is visible; the clusters at the bottom of the original are largely lost.",
   "slot": "de_reds_cover_vineyard_pexels",
   "credit": "Sayed Masoumi / Pexels",
   "local_path": "/home/claude/repo/photos/de_reds_cover_vineyard_pexels.jpg"
+ },
+ {
+  "title": "a toast with red wine, outdoors in autumn (page 6)",
+  "url": "(supplied by Steve; Pexels, file pexels-rdne-6116277.jpeg)",
+  "width": 5538,
+  "height": 3692,
+  "author": "RDNE Stock project (from the file name)",
+  "license": "Pexels License (free to use)",
+  "description": "Three people toasting with glasses of red wine against autumn leaves; 3:2, bright. No location data (none asserted). Shows identifiable people (Pexels license; no model release visible). FFFA German reds page 6, with credit_chip=True because a dark trunk crosses the credit.",
+  "slot": "de_reds_toast_pexels_rdne",
+  "credit": "RDNE Stock project / Pexels",
+  "local_path": "/home/claude/repo/photos/de_reds_toast_pexels_rdne.jpg"
  }
 ]
