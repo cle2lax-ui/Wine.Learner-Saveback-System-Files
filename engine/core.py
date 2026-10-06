@@ -10,6 +10,7 @@ import zipfile
 from PIL import Image, ImageDraw, ImageFont, ImageOps, ImageStat
 import numpy as np
 import cv2
+from spelling import scan as _spelling_scan, strict as _spelling_strict, enabled as _spelling_enabled
 from tokens import *
 
 _font_cache = {}
@@ -761,6 +762,7 @@ class QA:
         self.boxes = {}          # label -> (x0,y0,x1,y1)
         self.words = 0
         self.notes = []
+        self.spelling = []       # (british, american) hits from the American-English check
         self.word_limit = MAX_BODY_WORDS  # override via qa.word_limit = N for a
                                             # specific data-dense slide; default
                                             # unchanged for every other module
@@ -773,6 +775,11 @@ class QA:
 
     def add_words(self, txt):
         self.words += len(txt.split())
+        # House style for NEW work is American English (Steve). Opt-in: a new deck sets
+        # AMERICAN_ENGLISH=1; earlier decks never see this (they are not scanned). A WARNING,
+        # not a failure, unless AMERICAN_ENGLISH_STRICT=1. See spelling.py.
+        if _spelling_enabled():
+            self.spelling += _spelling_scan(txt)
 
     def check_contrast(self, fg, bg, large=False, label=""):
         need = CONTRAST_LARGE if large else CONTRAST_BODY
@@ -834,6 +841,8 @@ class QA:
         if self.words > self.word_limit:
             fails.append(f"word budget: {self.words} > {self.word_limit}")
         fails += [n for n in self.notes if n.startswith("FAIL")]
+        if self.spelling and _spelling_strict():
+            fails += [f"american-english: '{b}' -> '{a}'" for b, a in self.spelling]
         if img is not None:
             L = np.array(img.convert("L"))
             last = np.where((L[:CONTENT_BOTTOM, :] < 245).any(axis=1))[0]
@@ -841,7 +850,10 @@ class QA:
                 pass  # informational only; boxes are authoritative
         if fails:
             raise AssertionError(f"[{self.name}] QA FAILED:\n  " + "\n  ".join(fails))
-        return f"[{self.name}] QA pass  (words={self.words}, elements={len(self.boxes)})"
+        msg = f"[{self.name}] QA pass  (words={self.words}, elements={len(self.boxes)})"
+        if self.spelling:
+            msg += "\n  WARN american-english: " + "; ".join(f"'{b}' -> '{a}'" for b, a in self.spelling)
+        return msg
 
 
 # ─────────────────── PRODUCT PHOTO PIPELINE (locked SOP) ───────────────────

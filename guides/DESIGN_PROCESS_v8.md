@@ -442,3 +442,27 @@ document's lineage:
   consistent with §1's "cut copy, don't shrink type".
 - **Variety is a build rule** (`engine/variety.py`): ≥ 8 distinct layouts per
   12 slides, none twice in a row, ≥ 4 graphic-led slides.
+
+---
+
+## 11. House style: American English (new work)
+
+**Steve's direction: always use American English.** It applies to everything written from now on: slide copy,
+captions, guides, notes, and replies. Examples: *percent* (not "per cent"), *color*, *tripled* (not "trebled"),
+*aging*, *gray*, *center*, *liter* and *hectoliter*, *labeled*, *botrytized*, *sulfite*, *graywacke*, *cooperative*,
+*license*, *while* (not "whilst").
+
+- **Future work only.** Earlier decks, captions and guides are **not** rewritten and **not** scanned for British English
+  (Steve: "Don't scan earlier decks"). Do not "fix" them unprompted; a locked deck stays as locked.
+- **The main trap: D3 is a British-English source.** Copy adapted from it arrives as "per cent", "trebled", "colour",
+  "co-operative". Convert as you adapt. A *direct quotation* keeps its source's spelling (put it in quotation marks and
+  say whose wording it is).
+- **A tool for new copy:** `engine/spelling.py` knows the British forms that actually occur in wine writing, including
+  the wine-specific ones a general spell-checker accepts (botrytised, sulphite, greywacke, hectolitre, savoury).
+  `python3 engine/spelling.py PATH` lists hits with the American form. A new deck can switch on a build-time warning
+  with `os.environ.setdefault("AMERICAN_ENGLISH", "1")` at the top of its script; the QA line then shows
+  `WARN american-english: ...` (set `AMERICAN_ENGLISH_STRICT=1` to make it fail). **It is opt-in: an earlier deck that
+  is rebuilt never sees it.** It is a curated list, not a dictionary, so it will miss forms that are not on it
+  (add a rule to `RULES` when one turns up), and it flags proper nouns and quotations, which stay as written.
+- First deck built to this rule: the FFFA German reds (`arc2/render_fffa_german_reds.py`).
+

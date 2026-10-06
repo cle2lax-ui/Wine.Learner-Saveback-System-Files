@@ -15,8 +15,19 @@ into the black instead of ending in a visible rectangle. Output is exactly 2160x
 fff_cover() adds no further crop. The glass was first placed 110px up; the base then came
 within ~50px of the kicker icon, tight against the 120px rhythm elsewhere, so it is 150px.
 
-THE GLASSES COVER (current). Steve supplied a photograph of two glasses of red wine at a
-candlelit table (photos/de_reds_cover_glasses_612.jpg, 612x408 px, no embedded credit or licence
+THE VINEYARD COVER (current). Steve supplied a 3024x4032 photograph of a vine row with clusters of
+dark red-wine grapes (Pexels, Sayed Masoumi; the photographer's name is from the file name) and
+asked for it as the cover. The clusters sit at ~68-98% of the frame's height, which is exactly
+where the cover's type goes, so a plain crop would put the title across the grapes. Instead the
+photo is scaled to the page width (0.714x: a downscale, so it stays crisp), shifted up 1,180px so
+the clusters sit at roughly y=1100-1650, and faded into near-black from y=1420 to y=1700. The fade ENDS
+at the photo's own bottom edge (page y=1700): a fade that ran past it left a faint green step against the black.
+A first pass (shift 1,304, fade 1250-1580) left the photo filling only the top 58% of the page with the clusters small. The houses
+at the top of the original are cropped out, which keeps the cover about the grapes. Location is
+NOT asserted: Pexels carries none and the file has none.
+
+THE GLASSES COVER (previous; retained, build with --glasses). Steve supplied a photograph of two glasses of red wine at a
+candlelit table (photos/de_reds_cover_glasses_612.jpg, 612x408 px, no embedded credit or license
 data) and asked for a close crop on the glasses. That is a 334 px-wide crop filling a 2160 px
 cover: a 6.5x ENLARGEMENT, which no treatment can make sharp. What was done to make it as good as
 it can be (see build_glasses_cover): crop 334x339 around both glasses; denoise first (the JPEG's
@@ -50,6 +61,23 @@ FEATHER_SIDES, FEATHER_BOTTOM = 280, 220
 def smooth(t):
     t = np.clip(t, 0, 1)
     return t * t * (3 - 2 * t)
+
+
+def build_vineyard_cover(shift_up=1180, fade_from=1420, fade_to=1700):
+    src = Image.open(f"{ROOT}/photos/de_reds_cover_vineyard_pexels.jpg").convert("RGB")
+    sh = int(round(src.height * W / src.width))
+    arr = np.asarray(src.resize((W, sh), Image.LANCZOS)).astype(float)
+    bg = np.array([8.0, 7.0, 6.0])
+    canvas = np.zeros((H, W, 3)); canvas[:] = bg
+    top = -shift_up
+    ys = np.arange(sh, dtype=float)[:, None] + top            # page y of each photo row
+    alpha = 1 - smooth((ys - fade_from) / float(fade_to - fade_from))
+    y0, y1 = max(top, 0), min(top + sh, H)
+    sub = arr[y0 - top:y1 - top]; a = alpha[y0 - top:y1 - top][..., None]
+    canvas[y0:y1] = canvas[y0:y1] * (1 - a) + sub * a
+    out = f"{ROOT}/photos/fff_reds_cover_vineyard.jpg"
+    Image.fromarray(canvas.clip(0, 255).astype("uint8")).save(out, quality=95)
+    print(f"vineyard cover built: {out}  (photo scaled to {W}x{sh}, shifted up {shift_up}px, fade {fade_from}-{fade_to})")
 
 
 def build_glasses_cover(sigma_grain=5.0):
@@ -91,7 +119,9 @@ def grade_terraces(gamma=0.6):
 
 def main():
     grade_terraces()
-    build_glasses_cover()
+    build_vineyard_cover()
+    if "--glasses" in sys.argv:
+        build_glasses_cover()
     if "--splash" in sys.argv:
         build_splash_cover()
 

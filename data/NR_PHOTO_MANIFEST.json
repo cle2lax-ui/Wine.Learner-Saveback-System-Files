@@ -648,9 +648,21 @@
   "height": 408,
   "author": "unknown (no embedded credit)",
   "license": "unknown: supplied for use; no licence data in the file",
-  "description": "612x408 px, 50 KB, no EXIF credit/copyright; typical of a stock-site preview. Cover of the FFFA German reds deck: a 334x339 crop around both glasses, enlarged 6.47x with denoise + 2-step Lanczos + unsharp + grain, stems/table faded to near-black (build_fffa_reds_cover.py -> fff_reds_cover_glasses.jpg). SOFT by necessity. No credit printed. Check the licence before posting; a full-size file is wanted.",
+  "description": "612x408 px, 50 KB, no EXIF credit/copyright; typical of a stock-site preview. Cover of the FFFA German reds deck: a 334x339 crop around both glasses, enlarged 6.47x with denoise + 2-step Lanczos + unsharp + grain, stems/table faded to near-black (build_fffa_reds_cover.py -> fff_reds_cover_glasses.jpg). SOFT by necessity. No credit printed. Check the licence before posting; a full-size file is wanted. SUPERSEDED as the deck cover by the Pexels vineyard photograph (no longer used in the deck).",
   "slot": "de_reds_cover_glasses_612",
   "credit": "",
   "local_path": "/home/claude/repo/photos/de_reds_cover_glasses_612.jpg"
+ },
+ {
+  "title": "vine row with clusters of dark grapes (cover)",
+  "url": "(supplied by Steve; Pexels, file pexels-sayed-masoumi-143968372-33878849.jpeg)",
+  "width": 3024,
+  "height": 4032,
+  "author": "Sayed Masoumi (from the file name)",
+  "license": "Pexels License (free to use)",
+  "description": "Vine row with clusters of dark grapes at the base, houses above, dry grass at right. No location data (Pexels carries none; none asserted). Cover of the FFFA German reds deck: scaled to 2160 wide, shifted up 1,180 px so the clusters sit above the type zone, faded to near-black from y=1420 to 1700 (build_fffa_reds_cover.py -> fff_reds_cover_vineyard.jpg). Houses cropped out.",
+  "slot": "de_reds_cover_vineyard_pexels",
+  "credit": "Sayed Masoumi / Pexels",
+  "local_path": "/home/claude/repo/photos/de_reds_cover_vineyard_pexels.jpg"
  }
 ]

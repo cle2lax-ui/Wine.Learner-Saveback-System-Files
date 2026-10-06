@@ -111,6 +111,7 @@ data/nrhone_locator.json
 engine/__pycache__/core.cpython-312.pyc
 engine/__pycache__/map_atlas.cpython-312.pyc
 engine/__pycache__/modules.cpython-312.pyc
+engine/__pycache__/spelling.cpython-312.pyc
 engine/__pycache__/tokens.cpython-312.pyc
 engine/__pycache__/variety.cpython-312.pyc
 engine/build.py
@@ -122,6 +123,7 @@ engine/qa_orphans.py
 engine/qa_widows.py
 engine/regress.py
 engine/specimen.py
+engine/spelling.py
 engine/tokens.py
 engine/variety.py
 fonts/Archivo-Black.ttf
@@ -199,6 +201,7 @@ photos/de_piesport_goldtropfchen_sign.jpg
 photos/de_reds_ahr_mayschoss.jpg
 photos/de_reds_cover_glasses_612.jpg
 photos/de_reds_cover_splash.jpg
+photos/de_reds_cover_vineyard_pexels.jpg
 photos/de_reds_rheinhessen_rows.jpg
 photos/de_reds_rlp_grapes.jpg
 photos/de_reds_stuttgart_terraces.jpg
@@ -207,6 +210,7 @@ photos/de_steep_stairs_climber.jpg
 photos/fff_harvest_bin.jpg
 photos/fff_reds_cover.jpg
 photos/fff_reds_cover_glasses.jpg
+photos/fff_reds_cover_vineyard.jpg
 photos/fff_viognier_cluster.jpg
 photos/fff_viognier_cover.jpg
 photos/fff_viognier_vines.jpg
