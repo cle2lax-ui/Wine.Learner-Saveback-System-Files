@@ -18,20 +18,21 @@ within ~50px of the kicker icon, tight against the 120px rhythm elsewhere, so it
 THE VINEYARD COVER (current). Steve supplied a 3024x4032 photograph of a vine row with clusters of
 dark red-wine grapes and a village below the slope (Pexels, Sayed Masoumi; the photographer's name
 is from the file name). Location is NOT asserted: Pexels carries none and the file has none.
-The photo is scaled to the page width (0.714x: a downscale, so it stays crisp) and TOP-ALIGNED, so
-the village (roofs, garden walls, street, trees) is in view, then faded into near-black from
-y=1560 to y=1780, which is where the cover's type zone begins (~1788).
 
-THE TRADE-OFF, and the history. At full width the whole photo is 2,880px tall but only ~1,780px
-sit above the type zone, so the village and the grape clusters cannot both be shown: the
-clusters are at 68-98% of the original's height, the village at 0-27%. Round 1 framed the clusters
-and cropped the village out (shift 1,304, then 1,180); Steve asked to see the village, so round 2
-is top-aligned. Three framings were compared with the type on: top-aligned (shift 0), 150 and 330.
-Top-aligned shows the village best; the others only trade it for foliage without bringing the
-grapes back. Only the small clusters along the right edge of the row survive; the fade was made
-steeper (start 1560, was 1420) to keep as many of those visible as the type zone allows. The fade
-ends where the type zone begins; earlier it ended exactly at the photo's own bottom edge, which
-no longer applies because the photo now continues below the canvas.
+ROUND 3 (current): ZOOMED OUT to show the bunches. zoom=0.60 places the whole photograph, village at
+the top to bunches at the base, in the ~1,730px above the type zone. Nothing is cropped. The page is
+still full-bleed: the 40% of width the smaller photo leaves is filled with the photo's own edges
+mirrored outward and blurred, darkened gently toward the page edge, so the vegetation appears to
+continue past the frame. The first backdrop (a blurred, dimmed full-width copy) read as a gray
+pillarbox and was replaced. The fade into near-black ends at the photo's own bottom edge (y=1728).
+Measured on the dark, non-green mass below the village (bunches and dark vine bases; median at 82%
+of the photo's height): visible 15% at zoom 1.00, 40% at 0.76, 57% at 0.68, 85% at 0.60. A first
+measurement used a color mask and was wrong: it counted dark neutral roofs as grapes. The cost of
+zooming out is that the sharp photo is 60% of the page width; 0.68 or 0.76 are one parameter away.
+
+ROUND 2: top-aligned at full page width so the village shows (zoom 1.0); the bunches, which are at
+68-98% of the photo's height, mostly fell under the type zone. ROUND 1: bunches framed, village
+cropped out (shift_up 1,304 then 1,180).
 
 THE GLASSES COVER (previous; retained, build with --glasses). Steve supplied a photograph of two glasses of red wine at a
 candlelit table (photos/de_reds_cover_glasses_612.jpg, 612x408 px, no embedded credit or license
@@ -70,21 +71,57 @@ def smooth(t):
     return t * t * (3 - 2 * t)
 
 
-def build_vineyard_cover(shift_up=0, fade_from=1560, fade_to=1780):
+def build_vineyard_cover(zoom=0.60, shift_up=0, fade_from=1560, fade_to=1780, feather=110, blur=14, dim=0.5,
+                         backdrop="mirror", out=None):
+    """zoom=1.0 fills the page width (the village framing). zoom<1 ZOOMS OUT: the photo is placed at
+    zoom x the page width, so more of its height fits above the type zone (zoom 0.6 shows the whole
+    photo, village to bunches), and the bands at the sides are filled with a blurred, dimmed copy of
+    the photo itself, so the cover stays full-bleed. The sharp photo's left and right edges are
+    feathered into that backdrop. The fade into near-black ends by fade_to, or by the photo's own
+    bottom edge if that is higher (a fade that runs past the edge leaves a faint step)."""
+    from PIL import ImageFilter
     src = Image.open(f"{ROOT}/photos/de_reds_cover_vineyard_pexels.jpg").convert("RGB")
-    sh = int(round(src.height * W / src.width))
-    arr = np.asarray(src.resize((W, sh), Image.LANCZOS)).astype(float)
-    bg = np.array([8.0, 7.0, 6.0])
-    canvas = np.zeros((H, W, 3)); canvas[:] = bg
+    full_h = int(round(src.height * W / src.width))
+    full = src.resize((W, full_h), Image.LANCZOS)
+    ws = int(round(W * zoom)); hs = int(round(src.height * ws / src.width))
+    sharp = np.asarray(full if zoom >= 0.999 else src.resize((ws, hs), Image.LANCZOS)).astype(np.float32)
+    if zoom >= 0.999:
+        ws, hs = W, full_h
+    bg = np.array([8.0, 7.0, 6.0], np.float32)
+    canvas = np.zeros((H, W, 3), np.float32); canvas[:] = bg
     top = -shift_up
-    ys = np.arange(sh, dtype=float)[:, None] + top            # page y of each photo row
-    alpha = 1 - smooth((ys - fade_from) / float(fade_to - fade_from))
-    y0, y1 = max(top, 0), min(top + sh, H)
-    sub = arr[y0 - top:y1 - top]; a = alpha[y0 - top:y1 - top][..., None]
-    canvas[y0:y1] = canvas[y0:y1] * (1 - a) + sub * a
-    out = f"{ROOT}/photos/fff_reds_cover_vineyard.jpg"
+    ys = np.arange(H, dtype=np.float32)[:, None]
+    edge_y = fade_to if zoom >= 0.999 else min(fade_to, top + hs)
+    alpha_y = 1 - smooth((ys - fade_from) / float(max(edge_y - fade_from, 1)))
+    if zoom < 0.999 and backdrop == "mirror":
+        # backdrop v2: the photo's OWN edges mirrored outward and blurred, so the vegetation appears to
+        # continue past the frame, then darkened gently toward the page edges. The first version (below)
+        # blurred and dimmed a separate full-width copy: it read as a gray pillarbox with visible edges.
+        rows = min(hs, H)
+        padl = (W - ws) // 2; padr = W - ws - padl
+        ext = np.pad(sharp[:rows], ((0, 0), (padl, padr), (0, 0)), mode="reflect")
+        small = Image.fromarray(ext.clip(0, 255).astype("uint8")).resize((W // 4, rows // 4), Image.LANCZOS)
+        back = np.asarray(small.filter(ImageFilter.GaussianBlur(blur)).resize((W, rows), Image.BICUBIC)).astype(np.float32)
+        xs_full = np.arange(W, dtype=np.float32)[None, :]
+        dist = np.maximum(padl - xs_full, xs_full - (W - padr - 1)).clip(0, None) / float(max(padl, 1))
+        back *= (1 - 0.40 * np.clip(dist, 0, 1))[..., None]          # darker toward the page edge
+        canvas[:rows] = canvas[:rows] * (1 - alpha_y[:rows, None]) + back * alpha_y[:rows, None]
+    elif zoom < 0.999:
+        # backdrop v1 ("copy"): the full-width copy, top-aligned, blurred (on a small copy for speed) and dimmed
+        small = full.resize((W // 4, full_h // 4), Image.LANCZOS).filter(ImageFilter.GaussianBlur(blur))
+        back = np.asarray(small.resize((W, full_h), Image.BICUBIC)).astype(np.float32) * dim
+        rows = min(H, full_h)
+        canvas[:rows] = canvas[:rows] * (1 - alpha_y[:rows, None]) + back[:rows] * alpha_y[:rows, None]
+    x0 = (W - ws) // 2
+    xs = np.arange(ws, dtype=np.float32)[None, :]
+    alpha_x = smooth(np.minimum(xs, ws - 1 - xs) / float(feather)) if zoom < 0.999 else np.ones((1, ws), np.float32)
+    y0, y1 = max(top, 0), min(top + hs, H)
+    sub = sharp[y0 - top:y1 - top]
+    a = (alpha_y[y0:y1] * alpha_x)[..., None]
+    canvas[y0:y1, x0:x0 + ws] = canvas[y0:y1, x0:x0 + ws] * (1 - a) + sub * a
+    out = out or f"{ROOT}/photos/fff_reds_cover_vineyard.jpg"
     Image.fromarray(canvas.clip(0, 255).astype("uint8")).save(out, quality=95)
-    print(f"vineyard cover built: {out}  (photo scaled to {W}x{sh}, shifted up {shift_up}px, fade {fade_from}-{fade_to})")
+    print(f"vineyard cover built: {out}  (zoom {zoom}: photo {ws}x{hs}, shifted up {shift_up}px, fade {fade_from}-{edge_y})")
 
 
 def build_glasses_cover(sigma_grain=5.0):

@@ -28,6 +28,7 @@ arc1/render_qs_cornas.py
 arc1/render_qs_saintperay.py
 arc1/render_sd_wholebunch.py
 arc2/ARC2_GERMANY_PLAN.md
+arc2/CAPTION_FFFA_german_reds.md
 arc2/CAPTION_FG_mosel.md
 arc2/CAPTION_GTR_baden.md
 arc2/CAPTION_GTR_saar.md
@@ -38,6 +39,7 @@ arc2/GTR_BADEN_SPEC.md
 arc2/GTR_SAAR_SPEC.md
 arc2/QS_TROCKEN_SPEC.md
 arc2/REVIEW_WAD_loosen_treppchen.md
+arc2/SOCIAL_PASS_FFFA_german_reds.md
 arc2/__pycache__/prepare_map_data.cpython-312.pyc
 arc2/build_fffa_reds_cover.py
 arc2/prepare_map_data.py

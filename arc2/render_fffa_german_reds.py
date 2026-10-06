@@ -169,7 +169,14 @@ FACTS = [
         body="One of Germany's most northerly regions, where steep, sheltered, "
              "south-facing slopes of dark slate hold the heat.",
         bars_title=SHARE,
-        bars=[("Germany", 32, "32%", False), ("Württemberg", 66, "66%", False),
+        # SOCIAL PASS gate 2 (the save asset): three bars was thin; D3 supports five regional rows, so
+        # this is now a small reference a candidate would screenshot. Every value is D3's, labeled as
+        # exactly as D3 states it: Nahe "black varieties only make up just under a quarter of plantings"
+        # (plotted at 24, labeled "under 25%"); Germany 32% (2021); Baden 61% of plantings are white,
+        # so about 39% are not ("about 39%", derived); Wurttemberg 66%; Ahr 81% (the official 2025
+        # figure is 79%, so "about 80%"). Ascending, so the eye lands on the Ahr.
+        bars=[("Nahe", 24, "under 25%", False), ("Germany", 32, "32%", False),
+              ("Baden", 39, "about 39%", False), ("Württemberg", 66, "66%", False),
               ("Ahr", 80, "about 80%", True)],
         photo_credit=CRED_SUPERBASS,
         diagram="bars",

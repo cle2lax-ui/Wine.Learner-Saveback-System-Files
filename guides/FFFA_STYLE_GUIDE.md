@@ -265,6 +265,14 @@ row up to a small line under the top-right grid mark (`_finish()`'s
   and the format picks dark or white text from the average brightness there. An average hides a local failure: a dark post crossing a
   dark credit cost two letters on the toast photo (10.9:1 average, but unreadable at the post). The chip is a soft rounded label in the
   opposite tone behind the text. Off by default, so earlier decks render exactly as before. **Check the credit at full size, not by average.**
+- **Zooming a cover out leaves bands at the sides, and the backdrop matters.** `build_vineyard_cover(zoom=...)` places the whole photo at
+  a fraction of the page width. A blurred, dimmed copy of the photo behind it looked like a gray pillarbox; the photo's own edges **mirrored
+  outward and blurred** looks like the vegetation continuing. Measure what the zoom buys with a position-based mask, not a color one (a color
+  mask counted dark roofs as grapes).
+- **The Social Pass and the FFFA format.** Run on this format, gates 4 (a question on the final slide) and 6 (a cover hook) fail structurally: the
+  closing page is the "Cheers!" sign-off with no room for a question, and the cover names its subject. Settle both **by decision, not by
+  rebuilding**: carry the open question in the caption (gate 4) and open the loop with the caption's first line (gate 6), and record the
+  exemption. Gate 2 can be improved inside the format by giving the one chart slide more rows from the source.
 - **A tall portrait cover cannot show both its top and its bottom.** At full page width a 3:4 photo is 2,880 px tall but only ~1,780 px sit
   above the cover's type zone. Choose what the cover is *about* (here: the village, or the grapes), compare framings with the type on, and
   say what was given up.

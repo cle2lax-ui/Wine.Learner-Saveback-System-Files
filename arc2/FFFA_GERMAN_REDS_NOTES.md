@@ -4,11 +4,11 @@
 ## The deck
 | # | Headline | Visual |
 |---|---|---|
-| 1 | Cover: **Red Wines of Germany** | a vine row with clusters of dark grapes (Steve's photo, Pexels), graded build |
+| 1 | Cover: **Red Wines of Germany** | the whole vineyard photo, zoomed out so the bunches show (Steve's photo, Pexels), graded build |
 | 2 | Nearly a Third of German Vines Are Red | Rheinhessen vineyard at sunrise + **bar chart** (1980 vs 2021) |
 | 3 | Germany's Pinot Noir Almost Tripled | red grapes, Baden |
 | 4 | Dornfelder Went From Nothing to No. 2 Red | dark grapes, Rheinland-Pfalz |
-| 5 | Four in Five Ahr Vines Are Red | autumn slate terraces at Mayschoss + **bar chart** (Germany / Württemberg / Ahr) |
+| 5 | Four in Five Ahr Vines Are Red | autumn slate terraces at Mayschoss + **bar chart** (five regional rows: Nahe, Germany, Baden, Württemberg, Ahr) |
 | 6 | Württemberg Focuses Mostly on Regional Red Varieties, then **Cheers!** | a toast with red wine (Steve's pick) |
 
 ## Sources, and where they disagree
@@ -72,7 +72,21 @@ regional specialties**. The body says so: "Trollinger and Lemberger lead; both a
 - **Layout:** a two-line heading plus a two-line body pushed "Cheers!" to 56 px from the page edge, so the body is one line
   (about 49 characters fit) and "Cheers!" is 156 px up.
 
-## Cover reframe (round 6): the village
+## Cover zoom-out (round 7): the bunches
+Steve asked to zoom the cover out to see more of the grape bunches. **The whole photograph is now visible**, village at the top and bunches at the
+base, nothing cropped (zoom 0.60). A photo smaller than the page width leaves bands at the sides, so the page stays full-bleed with the photo's own
+edges mirrored outward and blurred. I measured the effect on the dark, non-green mass below the village (bunches and dark vine bases): **15% visible
+before, 40% at zoom 0.76, 57% at 0.68, 85% at 0.60.** A first measurement used a color mask and was wrong (it counted dark roofs as grapes); position
+fixed it. **Two things to know:** the first backdrop (a blurred, dimmed copy) looked like a gray pillarbox and was replaced; and even the mirrored version
+makes the sharp photo only 60% of the page width, so the sides read as an out-of-focus continuation. `zoom=0.68` or `0.76` are one parameter away if
+you want a wider photo with fewer bunches.
+
+## Social Pass (round 7)
+Run: see `SOCIAL_PASS_FFFA_german_reds.md`. Five gates pass, two fail for structural reasons (4: the final slide has no question; 6: the cover names
+a topic) and need your decision, and gate 2 was strengthened: **page 5's chart now has five rows from D3** (Nahe under 25%, Germany 32%, Baden about 39%,
+Württemberg 66%, Ahr about 80%) instead of three. A caption is drafted: `CAPTION_FFFA_german_reds.md`.
+
+## Cover reframe (round 6, superseded by round 7): the village
 Steve asked to see the village below the vineyard, which the round 5 framing had cropped out. **The cover is now top-aligned**, so the
 roofs, garden walls, street and trees are in view above the vines. **The trade-off:** at full width the photo is 2,880 px tall but only
 about 1,780 px sit above the type zone, and the grape clusters are at 68-98% of the original's height while the village is at 0-27%,
