@@ -40,7 +40,6 @@ arc2/GTR_SAAR_SPEC.md
 arc2/QS_TROCKEN_SPEC.md
 arc2/REVIEW_WAD_loosen_treppchen.md
 arc2/SOCIAL_PASS_FFFA_german_reds.md
-arc2/__pycache__/prepare_map_data.cpython-312.pyc
 arc2/build_fffa_reds_cover.py
 arc2/prepare_map_data.py
 arc2/render_fffa_german_reds.py
@@ -110,12 +109,6 @@ data/geo/rhineland_palatinate.geojson
 data/geo/source_WeinbaugebieteDeutschland.svg
 data/nrhone_geo.json
 data/nrhone_locator.json
-engine/__pycache__/core.cpython-312.pyc
-engine/__pycache__/map_atlas.cpython-312.pyc
-engine/__pycache__/modules.cpython-312.pyc
-engine/__pycache__/spelling.cpython-312.pyc
-engine/__pycache__/tokens.cpython-312.pyc
-engine/__pycache__/variety.cpython-312.pyc
 engine/build.py
 engine/core.py
 engine/map_atlas.py
@@ -143,9 +136,6 @@ fonts/Playfair-BoldItalic.ttf
 fonts/Playfair-MediumItalic.ttf
 fonts/Playfair-Regular.ttf
 fonts/Playfair-XBold.ttf
-formats/__pycache__/guess_the_region.cpython-312.pyc
-formats/__pycache__/quick_sips.cpython-312.pyc
-formats/__pycache__/what_am_i_drinking.cpython-312.pyc
 formats/fff_facts.py
 formats/guess_the_region.py
 formats/quick_sips.py
@@ -259,6 +249,10 @@ photos/qs_bottle_placeholder.png
 photos/qs_cornas_church.jpg
 photos/wad_loosen_treppchen_bottle.png
 photos/wad_loosen_treppchen_bottle2.jpg
+reels/README.md
+reels/germany_audio.py
+reels/germany_reel.py
+reels/reel_lib.py
 reference/PIXEL_HASHES.json
 renders/render_fff_cabfranc.py
 renders/render_fff_champagne.py
