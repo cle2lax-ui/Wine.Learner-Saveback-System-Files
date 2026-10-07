@@ -1,4 +1,4 @@
-"""Instagram Reel: GERMANY IN 20 SECONDS. 1080x1920, 30 fps, 600 frames.
+"""Instagram Reel: GERMANY IN 30 SECONDS. 1080x1920, 30 fps, 900 frames.
 
 Summarizes the four Germany posts: the Mosel Field Guide, Guess the Region: Baden, What Am I
 Drinking? (Dr. Loosen Erdener Treppchen Auslese 2020) and the FFFA on German reds. Every fact on
@@ -6,7 +6,22 @@ screen comes from those posts, which were sourced and reviewed there (D3 Ch. 11 
 noted in each deck). One addition: the translation of Treppchen ("little staircase", the
 diminutive of Treppe, stairs).
 
-TIMELINE (120 BPM; one bar = 2 s)
+TIMELINE v2: 30 s (Steve: "it goes by too fast; stretch it to 30 seconds and hold longer on some
+slides"). Every scene is a whole number of 2-second bars, so every cut lands on a downbeat. Each
+scene's reveals run at STRETCH x their original speed, so lines are read before the next one
+arrives, then the scene HOLDS while its camera keeps drifting (static backgrounds get a slow
+push-in), so a hold never freezes. SCENE_TABLE below is the single source of truth; the audio
+module reads its event times from it.
+  scene      v1 (20 s)   v2 (30 s)   reveals
+  hook       0.0-2.0     0.0-2.0     x1.00
+  mosel      2.0-5.0     2.0-6.0     x1.10
+  ladder     5.0-8.0     6.0-10.0    x1.10
+  treppchen  8.0-11.0    10.0-16.0   x1.45
+  baden      11.0-14.0   16.0-20.0   x1.10
+  reds       14.0-17.5   20.0-26.0   x1.35
+  outro      17.5-20.0   26.0-30.0   x1.20
+
+v1 TIMELINE (120 BPM; one bar = 2 s), kept for reference (the scene content is unchanged)
   0.0-2.0   HOOK       flag bands sweep; GERMANY drops in letter by letter; "in 20 seconds"
   2.0-5.0   MOSEL      the real Mosel draws itself (Natural Earth, public domain); camera dives
                        into a bend and dissolves to the loop photo; "SLOPES UP TO 70%" counts up
@@ -36,7 +51,7 @@ from reel_lib import (W, H, FPS, ROOT, Photo, arc, blit_center, chip, clamp, dar
                       out_expo, prog, round_rect, sheen, stroke_path, text, text_width, transform, vgrad)
 import cv2  # noqa: E402
 
-DUR = 20.0
+DUR = 30.0
 N = int(DUR * FPS)
 BLACK = (9, 9, 11); CHAR = (34, 34, 40); RED = (221, 0, 0); GOLD = (255, 206, 0)
 PAPER = (250, 246, 238); INK = (28, 24, 26); WHITE = (255, 255, 255); DGOLD = (165, 112, 0)
@@ -89,7 +104,7 @@ def whip(frame, p_out, p_in):
 # ----------------------------------------------------------------------------- S0 HOOK
 # Fit GERMANY inside 60px side margins (first pass at 232px ran off the right edge).
 GSIZE = next(sz for sz in range(232, 120, -2) if text_width("GERMANY", "cond", sz, 8) <= W - 2 * 75)
-def s0(t):
+def s0(t, ur=0.0, D=1.0, S=1.0):
     f = bg(BLACK)
     # flag mini-bars
     q = out_back(prog(t, 0.35, 0.62))
@@ -120,7 +135,7 @@ def s0(t):
         s = 1.12 + 0.022 * i
         p = prog(t, s, s + 0.3)
         return dict(alpha=out_cubic(p), dy=26 * (1 - out_cubic(p)))
-    letters(f, "in 20 seconds", "serif_it", 98, GOLD, W / 2, 1090, rise)
+    letters(f, "in 30 seconds", "serif_it", 98, GOLD, W / 2, 1090, rise)
     bands(f, prog(t, 0.0, 0.42))                       # the opening sweep across black
     return f
 
@@ -201,7 +216,7 @@ def mosel_map(u):
     return f
 
 
-def s1(u):
+def s1(u, ur=0.0, D=1.0, S=1.0):
     f = mosel_map(u) if u < 1.6 else None
     if u >= 1.15 and f is not None:
         z = 1 + 4.0 * in_cubic(prog(u, 1.15, 1.6))
@@ -213,7 +228,7 @@ def s1(u):
         f = cv2.warpAffine(f, M, (W, H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
     if u >= 1.35:
         ph = photo("de_bremm_mosel_loop.jpg")
-        g = ph.view(zoom=1.22 - 0.10 * out_cubic(prog(u, 1.35, 3.0)), fx=0.5, fy=0.55)
+        g = ph.view(zoom=1.22 - 0.12 * out_cubic(prog(ur, 1.35 * S, D)), fx=0.5, fy=0.55)
         darken(g, np.float32(0.30))
         darken(g, vgrad(700, 1500, 0.0, 0.55))
         darken(g, vgrad(0, 560, 0.55, 0.0))
@@ -252,7 +267,7 @@ SLATE = _slate()
 RUNGS = ["Kabinett", "Spätlese", "Auslese", "Beerenauslese", "TBA"]
 
 
-def s2(u):
+def s2(u, ur=0.0, D=1.0, S=1.0):
     f = SLATE.copy()
     chip(f, "FIELD GUIDE: THE MOSEL", W / 2, 250, 1.0 if u > 0.05 else 0.0)
     rail = out_cubic(prog(u, 0.0, 0.32))
@@ -319,7 +334,7 @@ def _bottle():
 BOTTLE = _bottle()
 
 
-def s3(u):
+def s3(u, ur=0.0, D=1.0, S=1.0):
     f = PAPER_BG.copy()        # static: a rolling drift would leave a seam in the stair pattern
     # shadow, then the bottle multiplied in (its white backdrop disappears into the paper)
     p = out_expo(prog(u, 0.0, 0.55))
@@ -368,9 +383,9 @@ def s3(u):
 
 
 # ----------------------------------------------------------------------------- S4 BADEN
-def s4(u):
+def s4(u, ur=0.0, D=1.0, S=1.0):
     ph = photo("de_baden_kaiserstuhl_terraces.jpg")
-    f = ph.view(zoom=1.16 - 0.08 * prog(u, 0, 3), fx=0.40 + 0.2 * prog(u, 0, 3), fy=0.5)
+    f = ph.view(zoom=1.16 - 0.08 * prog(ur, 0, D), fx=0.40 + 0.2 * prog(ur, 0, D), fy=0.5)
     darken(f, np.float32(0.42))
     darken(f, vgrad(0, 600, 0.45, 0.0))
     darken(f, vgrad(1100, 1700, 0.0, 0.55))
@@ -403,9 +418,9 @@ def s4(u):
 
 
 # ----------------------------------------------------------------------------- S5 REDS
-def s5(u):
+def s5(u, ur=0.0, D=1.0, S=1.0):
     ph = photo("de_baden_red_grapes.jpg")
-    f = ph.view(zoom=1.1 + 0.1 * prog(u, 0, 3.5), fx=0.5, fy=0.5)
+    f = ph.view(zoom=1.1 + 0.12 * prog(ur, 0, D), fx=0.5, fy=0.5)
     darken(f, np.float32(0.6))
     darken(f, vgrad(0, H, 0.0, 0.25), (60, 0, 10))
 
@@ -445,9 +460,9 @@ def s5(u):
 
 
 # ----------------------------------------------------------------------------- S6 OUTRO
-def s6(u):
+def s6(u, ur=0.0, D=1.0, S=1.0):
     ph = photo("de_reds_toast_pexels_rdne.jpg")
-    f = ph.view(zoom=1.05 + 0.08 * prog(u, 0, 2.5), fx=0.52, fy=0.45)
+    f = ph.view(zoom=1.05 + 0.10 * prog(ur, 0, D), fx=0.52, fy=0.45)
     f *= np.array((1.04, 0.99, 0.92), np.float32)
     darken(f, np.float32(0.45))
     darken(f, vgrad(500, 1400, 0.15, 0.5))
@@ -476,17 +491,32 @@ def s6(u):
 
 
 # ----------------------------------------------------------------------------- timeline
-SCENES = [(0.0, 2.0, s0), (2.0, 5.0, s1), (5.0, 8.0, s2), (8.0, 11.0, s3), (11.0, 14.0, s4),
-          (14.0, 17.5, s5), (17.5, 20.0, s6)]
-CUTS_BANDS = (2.0, 11.0, 17.5)
-CUTS_WHIP = (5.0, 14.0)
-CUT_PAPER = 8.0
+# (start, duration, scene, stretch, push-in for static backgrounds)
+SCENE_TABLE = [(0.0, 2.0, s0, 1.00, 0.0), (2.0, 4.0, s1, 1.10, 0.0), (6.0, 4.0, s2, 1.10, 0.035),
+               (10.0, 6.0, s3, 1.45, 0.035), (16.0, 4.0, s4, 1.10, 0.0), (20.0, 6.0, s5, 1.35, 0.0),
+               (26.0, 4.0, s6, 1.20, 0.0)]
+CUTS_BANDS = (2.0, 16.0, 26.0)
+CUTS_WHIP = (6.0, 20.0)
+CUT_PAPER = 10.0
+
+
+def T(scene, u):
+    """Real time of an event at animation time u inside a scene (used by the audio)."""
+    for start, dur, fn, st, _ in SCENE_TABLE:
+        if fn.__name__ == scene:
+            return start + u * st
+    raise KeyError(scene)
 
 
 def frame_at(t):
-    for a, b, fn in SCENES:
-        if a <= t < b or (fn is s6 and t >= a):
-            f = fn(t - a)
+    for start, dur, fn, st, push in SCENE_TABLE:
+        if start <= t < start + dur or (fn is s6 and t >= start):
+            ur = t - start
+            f = fn(ur / st, ur=ur, D=dur, S=st)
+            if push:                                   # keep a static-background hold alive
+                z = 1 + push * in_out_cubic(prog(ur, 0, dur))
+                M = cv2.getRotationMatrix2D((W / 2, H / 2), 0, z)
+                f = cv2.warpAffine(f, M, (W, H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
             break
     for c in CUTS_WHIP:
         if c - 0.13 <= t < c + 0.13:

@@ -1,4 +1,7 @@
-"""Original score and sound design for the Germany Reel (20.0 s, 48 kHz stereo).
+"""Original score and sound design for the Germany Reel (30.0 s, 48 kHz stereo).
+
+v2 (30 s): every picture-event time is read from germany_reel.SCENE_TABLE via T(scene, u), so a sound
+cannot drift off its event when the picture is retimed. The groove runs 2.0-26.0 s (cuts on downbeats).
 
 Everything is synthesized here (no samples, no library music), so the Reel has no music-licensing
 question. 120 BPM, A minor, Am-F-C-G, one chord per 2-second bar, matching the picture's bars.
@@ -17,9 +20,13 @@ library at posting time is always an option; the picture does not depend on this
 import numpy as np
 from scipy.io import wavfile
 from scipy.signal import butter, fftconvolve, sosfilt
+import os, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from germany_reel import T, CUTS_BANDS, CUTS_WHIP, CUT_PAPER  # noqa: E402
 
 SR = 48000
-DUR = 20.0
+DUR = 30.0
+GROOVE_END = 26.0
 N = int(SR * DUR)
 BEAT = 0.5
 rng = np.random.default_rng(3)
@@ -142,7 +149,7 @@ def riser(dur=0.6):
 # ------------------------------------------------------------------ score
 CHORDS = {"Am": (110.0, (220.0, 261.63, 329.63)), "F": (87.31, (174.61, 220.0, 261.63)),
           "C": (130.81, (261.63, 329.63, 392.0)), "G": (98.0, (196.0, 246.94, 293.66))}
-BARS = ["Am", "Am", "F", "C", "G", "Am", "F", "C", "G"]      # bars 0..8 (0-18 s); 17.5 s resolves to Am
+BARS = ["Am"] + ["Am", "F", "C", "G"] * 3                 # bars 0..12 (0-26 s); 26 s resolves to Am
 
 
 def build():
@@ -153,14 +160,14 @@ def build():
 
     # --- drums 2.0 -> 17.5
     k = kick()
-    for b in np.arange(2.0, 17.5, BEAT):
+    for b in np.arange(2.0, GROOVE_END, BEAT):
         place(drums, k, b, 1.0)
         i = int(b * SR); m = min(N, i + int(0.3 * SR))
         kick_env[i:m] = np.maximum(kick_env[i:m], np.exp(-tvec(m - i) / 0.12))
     c = clap()
-    for b in np.arange(2.5, 17.5, 2 * BEAT):
+    for b in np.arange(2.5, GROOVE_END, 2 * BEAT):
         place(drums, c, b, 0.9)
-    for j, b in enumerate(np.arange(2.0, 17.5, BEAT / 4)):
+    for j, b in enumerate(np.arange(2.0, GROOVE_END, BEAT / 4)):
         acc = 1.0 if j % 4 == 2 else 0.55
         place(drums, hat(open_=(j % 8 == 6)), b, 0.5 * acc)
 
@@ -170,10 +177,10 @@ def build():
     for bi, name in enumerate(BARS):
         t0 = bi * 2.0
         root, chord = CHORDS[name]
-        if t0 >= 17.5:
+        if t0 >= GROOVE_END:
             continue
         # pad
-        n = int(min(2.0, 17.5 - t0 + 0.05) * SR)
+        n = int(min(2.0, GROOVE_END - t0 + 0.05) * SR)
         env = np.minimum(1, tvec(n) / 0.25) * np.minimum(1, (n / SR - tvec(n)) / 0.2 + 0.0001)
         for fq in chord:
             for side, dt in ((music_L, -6), (music_R, +6)):
@@ -183,7 +190,7 @@ def build():
             # bass: 8th notes, root with an octave pop on the last 8th
             for e in range(4 * 2):
                 tb = t0 + e * BEAT / 2
-                if tb >= 17.5:
+                if tb >= GROOVE_END:
                     break
                 fq = root * (2 if e == 7 else 1)
                 nb = int(0.22 * SR)
@@ -193,7 +200,7 @@ def build():
             pat = [0, 1, 2, 1, 0, 2, 1, 2]
             for s16 in range(16):
                 ta = t0 + s16 * BEAT / 4
-                if ta >= 17.5:
+                if ta >= GROOVE_END:
                     break
                 fq = chord[pat[s16 % 8]] * 2
                 sig = pluck(fq, 0.2, 1.2) * 0.16
@@ -208,14 +215,14 @@ def build():
         place(music_R, pluck(fq, 0.5, 2) * 0.18, 1.14 + 0.12 * i)
         place(verb_send, pluck(fq, 0.5, 2) * 0.3, 1.12 + 0.12 * i)
 
-    # --- ending: final Am(add9) chord rings from 17.5
-    n = int(2.5 * SR)
-    env = np.minimum(1, tvec(n) / 0.02) * np.exp(-tvec(n) / 1.4)
+    # --- ending: final Am(add9) chord rings through the 4-second outro
+    n = int(4.0 * SR)
+    env = np.minimum(1, tvec(n) / 0.02) * np.exp(-tvec(n) / 2.0)
     for fq in (110.0, 220.0, 261.63, 329.63, 493.88):
         sig = lp(saw(fq, n, 10), 2200) * env * 0.09
-        place(music_L, sig, 17.5); place(music_R, sig, 17.5); place(verb_send, sig * 1.2, 17.5)
+        place(music_L, sig, GROOVE_END); place(music_R, sig, GROOVE_END); place(verb_send, sig * 1.2, GROOVE_END)
     for i, fq in enumerate((880.0, 659.25, 523.25)):          # a falling sparkle under PROST.
-        place(verb_send, pluck(fq, 0.6, 2) * 0.35, 17.62 + 0.12 * i)
+        place(verb_send, pluck(fq, 0.6, 2) * 0.35, T("s6", 0.12 + 0.12 * i))
 
     # --- sound design, locked to picture events
     place(sfx, whoosh(0.42, 250, 6000, 0.7), 0.0, 0.5)         # opening flag sweep
@@ -223,21 +230,23 @@ def build():
     for i in range(7):
         place(sfx, knock(), 0.62 + 0.05 * i, 0.35)               # letter by letter
     place(sfx, riser(0.55), 1.45, 0.45)
-    for c_ in (2.0, 11.0, 17.5):                                 # flag-band cuts
+    for c_ in CUTS_BANDS:                                        # flag-band cuts
         place(sfx, whoosh(0.4, 300, 6500, 0.55), c_ - 0.2, 0.6)
-        place(sfx, impact(1.0 if c_ != 11.0 else 0.7), c_, 0.65 if c_ != 17.5 else 0.9)
-    for c_ in (5.0, 14.0):                                       # whip cuts
+        place(sfx, impact(0.7 if c_ == CUTS_BANDS[1] else 1.0), c_, 0.9 if c_ == CUTS_BANDS[-1] else 0.65)
+    for c_ in CUTS_WHIP:                                         # whip cuts
         place(sfx, whoosh(0.26, 600, 9000, 0.85), c_ - 0.13, 0.7)
         place(sfx, impact(0.6), c_, 0.5)
-    place(sfx, whoosh(0.3, 200, 2500, 0.8), 7.78, 0.45)          # the paper sheet slides up
+    place(sfx, whoosh(0.3, 200, 2500, 0.8), CUT_PAPER - 0.22, 0.45)   # the paper sheet slides up
     for kk in range(5):
-        place(sfx, knock(), 5.18 + 0.14 * kk + 0.08, 0.7)        # ladder rungs land
-    for t_, n_ in ((3.65, 22), (11.75, 20), (14.55, 10), (14.67, 10)):   # counters
+        place(sfx, knock(), T("s2", 0.18 + 0.14 * kk + 0.08), 0.7)    # ladder rungs land
+    for t_, n_, st in ((T("s1", 1.65), 22, 1.10), (T("s4", 0.75), 20, 1.10),
+                       (T("s5", 0.55), 10, 1.35), (T("s5", 0.67), 10, 1.35)):   # counters
         for j in range(n_):
-            place(sfx, tick(), t_ + j * 0.03 * (1 + j / n_), 0.12)
-    for t_ in (2.1, 5.06, 8.12, 11.08, 14.02, 9.9, 10.05, 18.65):        # chips and pops
+            place(sfx, tick(), t_ + j * 0.03 * (1 + j / n_) * st, 0.12)
+    for t_ in (T("s1", 0.1), T("s2", 0.06), T("s3", 0.12), T("s4", 0.08), T("s5", 0.02),
+               T("s3", 1.9), T("s3", 2.05), T("s6", 1.15)):           # chips and pops
         place(sfx, pop(), t_, 0.25)
-    for t_ in (6.0, 6.32, 12.6, 14.1):                                   # headline slams
+    for t_ in (T("s2", 1.0), T("s2", 1.32), T("s4", 1.6), T("s5", 0.1)):   # headline slams
         place(sfx, impact(0.35), t_, 0.35)
 
     # --- reverb (synthetic decaying-noise IR, stereo) and mix
