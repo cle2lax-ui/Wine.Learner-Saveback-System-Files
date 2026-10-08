@@ -581,8 +581,9 @@ the cover page; it does nothing there anymore.
   Include stats/figures an Advanced Sommelier or CSW exam would expect
   (DOCa/DO status and dates, ABV range, key distances — not filler
   numbers).
-- Facts sourced from the CSW Study Guide / WSET L3 references in
-  project knowledge, same as Field Guide. Producer and bottle names are
+- Facts sourced with WSET as the default (the Diploma textbooks in project
+  knowledge) and any other authoritative source where WSET is silent:
+  `DESIGN_PROCESS_v8.md` §12. Producer and bottle names are
   common industry knowledge, same convention as Field Guide's Famous
   Names.
 

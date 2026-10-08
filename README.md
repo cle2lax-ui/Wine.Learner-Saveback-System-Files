@@ -13,6 +13,7 @@ WSET / CSW audiences, plus the D1 Mastery Guide system.
 | Understand a past bug before repeating it | `guides/LESSONS_LEARNED_v5.md` (v10 section: the Mosel build) |
 | Check the engine hasn't drifted | `python3 engine/regress.py` |
 | Write anything new | **American English** (`guides/DESIGN_PROCESS_v8.md` §11); earlier decks are not rewritten |
+| Source any fact | **WSET first**, any authoritative source where WSET is silent; override WSET only when it is wrong or out of date, and say so (§12) |
 
 ## Layout
 

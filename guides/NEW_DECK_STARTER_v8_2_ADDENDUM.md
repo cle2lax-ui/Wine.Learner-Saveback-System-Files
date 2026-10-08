@@ -25,10 +25,12 @@ specimen.py.
 
 ### Before writing any code
 
-1. Pull 5 facts from the CSW Study Guide (primary) plus the approved
-   secondary sources (Wine with Seth's WineWiki, Wine Folly, Wine Wit
-   & Wisdom) — own words, no direct quotes beyond what copyright
-   compliance allows.
+1. Pull 5 facts with **WSET as the default source** (the Diploma textbooks
+   in project knowledge), adding any other authoritative source where WSET is
+   silent: see `DESIGN_PROCESS_v8.md` §12 (this replaced "the CSW Study Guide
+   (primary)"). The secondary sources (Wine with Seth's WineWiki, Wine Folly,
+   Wine Wit & Wisdom) corroborate; they are never the only source of a figure.
+   Own words, no direct quotes beyond what copyright compliance allows.
 2. For each fact, ask: **is this claim fundamentally comparative or
    scalar?** If yes, plan a diagram (see FFFA_STYLE_GUIDE.md's
    "Diagrams" section) instead of relying on a stock photo to carry it

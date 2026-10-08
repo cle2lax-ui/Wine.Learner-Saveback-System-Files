@@ -466,3 +466,24 @@ captions, guides, notes, and replies. Examples: *percent* (not "per cent"), *col
   (add a rule to `RULES` when one turns up), and it flags proper nouns and quotations, which stay as written.
 - First deck built to this rule: the FFFA German reds (`arc2/render_fffa_german_reds.py`).
 
+---
+
+## 12. Sources: WSET is the default
+
+**Steve's direction (October 2026):** WSET is the default source; any authoritative source is acceptable. Steve passed the
+CSW and is working toward the WSET Diploma, and readers may be CSW, CMS or WSET students, or enthusiasts. This replaces the
+earlier rule that named the CSW Study Guide as the primary source (it is now one authoritative source among several).
+
+- **WSET first.** The Diploma textbooks in project knowledge (D3 for regions, plus D1, D2 and D5 where relevant) set the facts,
+  the figures and the terminology: WSET's structure and quality terms, its systematic-tasting vocabulary, and its spelling of
+  place and grape names.
+- **Other authoritative sources add what WSET does not cover:** the CSW Study Guide, the TTB (AVAs), official regional bodies
+  (the German Wine Institute, Mendocino Winegrowers), the Oxford Companion, GuildSomm. The secondary sources named in the deck
+  starter (Wine with Seth's WineWiki, Wine Folly, Wine Wit & Wisdom) are fine for corroboration, never as the only source of a figure.
+- **WSET is overridden only when it is demonstrably wrong or out of date, never merely different.** Then the deck uses the current
+  authoritative figure and the deck's notes record what WSET says. Examples: D3's Ahr red share (81%) against the 2025 official
+  figure (79%), handled with wording true under both; D3's Cole Ranch ("a couple of hundred hectares", when the whole AVA is about
+  150-189 acres) and its count of 12 Mendocino AVAs (Comptche was added in 2024), both simply out of date or wrong.
+- **Anything that changes** (counts, shares, rankings, ownership) is checked against a current authoritative source before it ships.
+- **The reader is broad:** copy is exam-accurate for any of the three syllabuses and readable without one.
+
