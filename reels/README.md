@@ -51,3 +51,9 @@ checked by measurement, not by ear** (I can't listen to audio). Instagram's audi
   deliberate stone-steps illustration that builds with the copy replaced it.
 - **Name the post on screen.** The same red chip (FIELD GUIDE, WHAT AM I DRINKING?, GUESS THE REGION, FIVE FASCINATING FACTS)
   tells a new viewer this is four posts, which is what the closing call to action asks them to go and find.
+
+## Toolkit: any canvas size (October 2026)
+`reel_lib.py` now clips every drawing operation to the canvas it is given, `Photo(size=...)` and `vgrad(height=...)` take a size,
+and the grain and vignette are built per canvas size, so the same primitives draw a 2160x2700 deck page. For the Reel's own
+1080x1920 the computations are unchanged: seven reference frames of the finished Germany Reel hash identically before and after.
+Themes for decks in this language are in `engine/themes.py` (USA, Germany, burgundy, forest green), each contrast-checked.

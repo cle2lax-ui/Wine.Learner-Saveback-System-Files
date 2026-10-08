@@ -133,12 +133,14 @@ def transform(layer, scale=1.0, rot=0.0, blur=0.0, mblur=0, mangle=90.0):
 
 
 def blit(dst, layer, x, y, alpha=1.0):
-    """Composite a premultiplied layer with its top-left at (x, y)."""
+    """Composite a premultiplied layer with its top-left at (x, y). Clips to dst's own size
+    (any canvas: the Reel's 1080x1920 or a deck page's 2160x2700)."""
     if alpha <= 0.002:
         return
+    DH, DW = dst.shape[:2]
     h, w = layer.shape[:2]
     xi, yi = int(round(x)), int(round(y))
-    x0, y0, x1, y1 = max(xi, 0), max(yi, 0), min(xi + w, W), min(yi + h, H)
+    x0, y0, x1, y1 = max(xi, 0), max(yi, 0), min(xi + w, DW), min(yi + h, DH)
     if x0 >= x1 or y0 >= y1:
         return
     L = layer[y0 - yi:y1 - yi, x0 - xi:x1 - xi]
@@ -198,15 +200,16 @@ def letters(dst, txt, fname, size, color, x, y, anim, align="center", tracking=0
 
 
 # --------------------------------------------------------------------------- shapes
-def _mask_box(pts, pad=4):
+def _mask_box(pts, pad=4, dims=None):
+    DW, DH = dims or (W, H)
     pts = np.asarray(pts, np.float64)
-    x0 = int(max(math.floor(pts[:, 0].min()) - pad, 0)); x1 = int(min(math.ceil(pts[:, 0].max()) + pad, W))
-    y0 = int(max(math.floor(pts[:, 1].min()) - pad, 0)); y1 = int(min(math.ceil(pts[:, 1].max()) + pad, H))
+    x0 = int(max(math.floor(pts[:, 0].min()) - pad, 0)); x1 = int(min(math.ceil(pts[:, 0].max()) + pad, DW))
+    y0 = int(max(math.floor(pts[:, 1].min()) - pad, 0)); y1 = int(min(math.ceil(pts[:, 1].max()) + pad, DH))
     return x0, y0, x1, y1
 
 
 def fill_poly(dst, pts, color, alpha=1.0):
-    x0, y0, x1, y1 = _mask_box(pts)
+    x0, y0, x1, y1 = _mask_box(pts, dims=(dst.shape[1], dst.shape[0]))
     if x0 >= x1 or y0 >= y1 or alpha <= 0:
         return
     m = np.zeros((y1 - y0, x1 - x0), np.uint8)
@@ -221,7 +224,8 @@ def fill_rect(dst, x0, y0, x1, y1, color, alpha=1.0):
 
 
 def round_rect(dst, x0, y0, x1, y1, r, color, alpha=1.0):
-    bx0, by0, bx1, by1 = int(max(x0 - 2, 0)), int(max(y0 - 2, 0)), int(min(x1 + 2, W)), int(min(y1 + 2, H))
+    DH, DW = dst.shape[:2]
+    bx0, by0, bx1, by1 = int(max(x0 - 2, 0)), int(max(y0 - 2, 0)), int(min(x1 + 2, DW)), int(min(y1 + 2, DH))
     if bx0 >= bx1 or by0 >= by1:
         return
     m = Image.new("L", ((bx1 - bx0) * 2, (by1 - by0) * 2), 0)
@@ -236,7 +240,7 @@ def stroke_path(dst, pts, color, width, alpha=1.0, glow=0.0, glow_color=None):
     if len(pts) < 2:
         return
     pad = int(width + glow * 3 + 6)
-    x0, y0, x1, y1 = _mask_box(pts, pad)
+    x0, y0, x1, y1 = _mask_box(pts, pad, dims=(dst.shape[1], dst.shape[0]))
     if x0 >= x1 or y0 >= y1:
         return
     m = np.zeros((y1 - y0, x1 - x0), np.uint8)
@@ -260,9 +264,10 @@ def arc(dst, cx, cy, r, thick, a0, a1, color, alpha=1.0):
     cv2.ellipse(m, (int((cx - x0) * 16), int((cy - y0) * 16)), (int(r * 16), int(r * 16)), -90, a0, a1,
                 255, int(thick), lineType=cv2.LINE_AA, shift=4)
     a = m.astype(np.float32)[..., None] / 255.0 * alpha
+    DH, DW = dst.shape[:2]
     sx0, sy0 = max(x0, 0), max(y0, 0)
-    sub = a[sy0 - y0:sy0 - y0 + (min(y1, H) - sy0), sx0 - x0:sx0 - x0 + (min(x1, W) - sx0)]
-    dst[sy0:min(y1, H), sx0:min(x1, W)] = dst[sy0:min(y1, H), sx0:min(x1, W)] * (1 - sub) + np.array(color, np.float32) * sub
+    sub = a[sy0 - y0:sy0 - y0 + (min(y1, DH) - sy0), sx0 - x0:sx0 - x0 + (min(x1, DW) - sx0)]
+    dst[sy0:min(y1, DH), sx0:min(x1, DW)] = dst[sy0:min(y1, DH), sx0:min(x1, DW)] * (1 - sub) + np.array(color, np.float32) * sub
 
 
 # --------------------------------------------------------------------------- photos & camera
@@ -270,26 +275,27 @@ class Photo:
     """A photo prepared once at `cover` x the frame's cover size, so camera moves up to that zoom
     never upsample. view(zoom, fx, fy) frames it with zoom 1 = exactly fills the frame."""
 
-    def __init__(self, name, cover=1.35):
+    def __init__(self, name, cover=1.35, size=None):
+        self.W, self.H = size or (W, H)
         im = Image.open(f"{PHOTO_DIR}/{name}").convert("RGB")
-        s = max(W * cover / im.width, H * cover / im.height)
+        s = max(self.W * cover / im.width, self.H * cover / im.height)
         im = im.resize((int(im.width * s), int(im.height * s)), Image.LANCZOS)
         self.img = np.asarray(im, np.float32)
         self.sh, self.sw = self.img.shape[:2]
-        self.base = max(W / self.sw, H / self.sh)
+        self.base = max(self.W / self.sw, self.H / self.sh)
 
     def view(self, zoom=1.0, fx=0.5, fy=0.5):
         s = self.base * zoom
-        hw, hh = W / 2 / s, H / 2 / s
+        hw, hh = self.W / 2 / s, self.H / 2 / s
         cx = clamp(fx * self.sw, hw, self.sw - hw)
         cy = clamp(fy * self.sh, hh, self.sh - hh)
-        M = np.float32([[s, 0, W / 2 - s * cx], [0, s, H / 2 - s * cy]])
-        return cv2.warpAffine(self.img, M, (W, H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
+        M = np.float32([[s, 0, self.W / 2 - s * cx], [0, s, self.H / 2 - s * cy]])
+        return cv2.warpAffine(self.img, M, (self.W, self.H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
 
 
-def vgrad(y0, y1, a0, a1):
-    """Column vector (H x 1 x 1) of alpha ramping a0 -> a1 between rows y0 and y1."""
-    ys = np.arange(H, dtype=np.float32)
+def vgrad(y0, y1, a0, a1, height=None):
+    """Column vector (height x 1 x 1) of alpha ramping a0 -> a1 between rows y0 and y1."""
+    ys = np.arange(height or H, dtype=np.float32)
     t = np.clip((ys - y0) / max(y1 - y0, 1), 0, 1)
     return (a0 + (a1 - a0) * (t * t * (3 - 2 * t)))[:, None, None]
 
@@ -308,9 +314,30 @@ VIGNETTE = (1 - 0.32 * np.clip(_r - 0.35, 0, 1) ** 1.5 / 0.65 ** 1.5)[..., None]
 del _yy, _xx, _r
 
 
-def finish(frame, fi, grain=4.0):
-    frame *= VIGNETTE
-    frame += GRAIN[fi % len(GRAIN)] * grain
+_FINISH = {}
+
+
+def _finish_maps(h, w):
+    """Grain and vignette for any canvas size, built once per size. The Reel's own size reuses the
+    module-level GRAIN and VIGNETTE, so its output is unchanged."""
+    if (h, w) == (H, W):
+        return GRAIN, VIGNETTE
+    if (h, w) not in _FINISH:
+        rg = np.random.default_rng(11)
+        gr = [cv2.resize(rg.normal(0, 1, (h // 2, w // 2)).astype(np.float32), (w, h),
+                         interpolation=cv2.INTER_LINEAR)[..., None] for _ in range(6)]
+        yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+        r = np.sqrt(((xx - w / 2) / (w / 2)) ** 2 + ((yy - h / 2) / (h / 2)) ** 2) / math.sqrt(2)
+        vg = (1 - 0.32 * np.clip(r - 0.35, 0, 1) ** 1.5 / 0.65 ** 1.5)[..., None].astype(np.float32)
+        _FINISH[(h, w)] = (gr, vg)
+    return _FINISH[(h, w)]
+
+
+def finish(frame, fi, grain=4.0, vignette=True):
+    gr, vg = _finish_maps(*frame.shape[:2])
+    if vignette:
+        frame *= vg
+    frame += gr[fi % len(gr)] * grain
     return np.clip(frame, 0, 255).astype(np.uint8)
 
 

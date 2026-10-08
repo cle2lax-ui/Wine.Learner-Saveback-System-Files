@@ -128,6 +128,7 @@ engine/qa_widows.py
 engine/regress.py
 engine/specimen.py
 engine/spelling.py
+engine/themes.py
 engine/tokens.py
 engine/variety.py
 fonts/Archivo-Black.ttf
@@ -276,7 +277,6 @@ renders/render_gtr_entre_deux_mers.py
 renders/render_gtr_marlborough.py
 renders/render_gtr_mclarenvale_EXAMPLE.py
 renders/render_wine_faults.py
-sourcing/__pycache__/fetch_unsplash.cpython-312.pyc
 sourcing/fetch_pexels.py
 sourcing/fetch_unsplash.py
 sourcing/wc_commons.py
