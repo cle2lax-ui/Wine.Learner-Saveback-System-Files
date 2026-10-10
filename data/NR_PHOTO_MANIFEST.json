@@ -676,5 +676,65 @@
   "slot": "de_reds_toast_pexels_rdne",
   "credit": "RDNE Stock project / Pexels",
   "local_path": "/home/claude/repo/photos/de_reds_toast_pexels_rdne.jpg"
+ },
+ {
+  "title": "File:Hillside Vineyards in Anderson Valley.jpg",
+  "url": "https://commons.wikimedia.org/wiki/File:Hillside_Vineyards_in_Anderson_Valley.jpg",
+  "width": 2848,
+  "height": 4272,
+  "author": "Naotake Murayama",
+  "license": "CC BY 2.0",
+  "description": "Wikimedia Commons; location from the uploader's title. Arc 3 (Mendocino): The Field Guide deck and Reel.",
+  "slot": "us_mendo_av_hillside_murayama",
+  "credit": "Naotake Murayama / Wikimedia Commons (CC BY 2.0)",
+  "local_path": "/home/claude/repo/photos/us_mendo_av_hillside_murayama.jpg"
+ },
+ {
+  "title": "File:Vineyard in Anderson Valley.jpg",
+  "url": "https://commons.wikimedia.org/wiki/File:Vineyard_in_Anderson_Valley.jpg",
+  "width": 4272,
+  "height": 2848,
+  "author": "Naotake Murayama",
+  "license": "CC BY 2.0",
+  "description": "Wikimedia Commons; location from the uploader's title. Arc 3 (Mendocino): The Field Guide deck and Reel.",
+  "slot": "us_mendo_av_vineyard_murayama",
+  "credit": "Naotake Murayama / Wikimedia Commons (CC BY 2.0)",
+  "local_path": "/home/claude/repo/photos/us_mendo_av_vineyard_murayama.jpg"
+ },
+ {
+  "title": "File:Garzini vineyard mendocino ca.jpg",
+  "url": "https://commons.wikimedia.org/wiki/File:Garzini_vineyard_mendocino_ca.jpg",
+  "width": 4160,
+  "height": 3120,
+  "author": "No-till-vineyard",
+  "license": "CC0",
+  "description": "Wikimedia Commons; location from the uploader's title. Arc 3 (Mendocino): The Field Guide deck and Reel.",
+  "slot": "us_mendo_garzini_cc0",
+  "credit": "No-till-vineyard / Wikimedia Commons (CC0)",
+  "local_path": "/home/claude/repo/photos/us_mendo_garzini_cc0.jpg"
+ },
+ {
+  "title": "File:Husch vineyards philo ca.jpg",
+  "url": "https://commons.wikimedia.org/wiki/File:Husch_vineyards_philo_ca.jpg",
+  "width": 2856,
+  "height": 2142,
+  "author": "No-till-vineyard",
+  "license": "CC0",
+  "description": "Wikimedia Commons; location from the uploader's title. Arc 3 (Mendocino): The Field Guide deck and Reel.",
+  "slot": "us_mendo_husch_philo_cc0",
+  "credit": "No-till-vineyard / Wikimedia Commons (CC0)",
+  "local_path": "/home/claude/repo/photos/us_mendo_husch_philo_cc0.jpg"
+ },
+ {
+  "title": "File:Roederer Estate - August 2024 - Sarah Stierch 01.jpg",
+  "url": "https://commons.wikimedia.org/wiki/File:Roederer_Estate_-_August_2024_-_Sarah_Stierch_01.jpg",
+  "width": 4702,
+  "height": 3526,
+  "author": "Missvain",
+  "license": "CC0",
+  "description": "Wikimedia Commons; location from the uploader's title. Arc 3 (Mendocino): The Field Guide deck and Reel.",
+  "slot": "us_mendo_roederer_flute_cc0",
+  "credit": "Missvain / Wikimedia Commons (CC0)",
+  "local_path": "/home/claude/repo/photos/us_mendo_roederer_flute_cc0.jpg"
  }
 ]

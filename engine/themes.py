@@ -15,6 +15,9 @@ ROLES
   chip       fill of the series chip (FIELD GUIDE, ...); chip_ink is its text
   bands      the three flag-band colors, in flag order, for dividers and graphic motifs
   map_fill   a highlighted region on a map; map_line the other boundaries
+  map_panel  a slightly lighter field behind a whole map section, so the map lifts off the dark page
+             (Steve: "lighten up the entire area of the map a little for contrast against the black page")
+  map_land   the featured county/region's land, a step lighter again (page < panel < land)
   paper/ink  the light "paper" scene (bottles, products) and its type
 
 SOURCES of the base colors. USA: Old Glory red (178, 34, 52) and Old Glory blue (60, 59, 110), the
@@ -52,7 +55,9 @@ THEMES = {
         bands=((178, 34, 52), (240, 240, 242), (60, 59, 110)),
         # Old Glory blue is near-invisible as a line on a dark ground; maps use a lifted blue.
         map_fill=(178, 34, 52), map_line=(138, 146, 206),
+        map_panel=(30, 37, 69), map_land=(49, 58, 108),
         paper=PAPER, ink=INK,
+        motif="stars_stripes",       # red-white-blue bars read as the Dutch flag (Steve): stars on blue, on top
     ),
     "germany": dict(
         name="Germany (flag)",
@@ -62,6 +67,7 @@ THEMES = {
         chip=(221, 0, 0), chip_ink=(255, 255, 255),
         bands=((34, 34, 40), (221, 0, 0), (255, 206, 0)),     # black lifted to charcoal to show on black
         map_fill=(221, 0, 0), map_line=(150, 150, 158),
+        map_panel=(37, 37, 43), map_land=(61, 61, 71),
         paper=PAPER, ink=INK,
     ),
     "burgundy": dict(
@@ -72,7 +78,8 @@ THEMES = {
         # raw burgundy is a fill on paper and a band; as a chip on the dark ground it needs lifting
         chip=(150, 36, 56), chip_ink=(255, 255, 255),
         bands=((104, 26, 38), (196, 158, 84), (240, 232, 214)),
-        map_fill=(150, 36, 56), map_line=(170, 150, 120),
+        map_fill=(165, 40, 62), map_line=(170, 150, 120),
+        map_panel=(58, 29, 37), map_land=(89, 46, 58),
         paper=PAPER, ink=INK,
     ),
     "forest": dict(
@@ -83,9 +90,17 @@ THEMES = {
         chip=(36, 110, 70), chip_ink=(255, 255, 255),
         bands=((21, 63, 40), (196, 158, 84), (240, 232, 214)),
         map_fill=(36, 110, 70), map_line=(150, 170, 140),
+        map_panel=(24, 43, 34), map_land=(38, 70, 53),
         paper=PAPER, ink=INK,
     ),
 }
+
+
+# Grape-color chips, shared by every theme (decks and Reels). Steve: red grapes MORE BURGUNDY, distinct from
+# the red series chip; white grapes MORE LEMON. Burgundy (120, 22, 62): 16 degrees toward purple from the
+# USA chip red and 1.6:1 darker, still 1.84:1 against the dark ground, white type 10.6:1. Lemon
+# (246, 232, 98): ink type 13.9:1.
+GRAPE = {"red": ((120, 22, 62), (255, 255, 255)), "white": ((246, 232, 98), INK)}
 
 
 def theme(name):
@@ -105,6 +120,12 @@ def check_theme(name, verbose=True):
         ("map line on ground (shape, 3.0)", contrast(t["map_line"], t["ground"]), 3.0),
         ("map fill against ground (shape, 1.5)", contrast(t["map_fill"], t["ground"]), 1.5),
         ("ink on paper (body, 4.5)", contrast(t["ink"], t["paper"]), 4.5),
+        ("map panel lifts off ground (1.3)", contrast(t["map_panel"], t["ground"]), 1.3),
+        ("map land lifts off panel (1.3)", contrast(t["map_land"], t["map_panel"]), 1.3),
+        ("text on map panel (body, 4.5)", contrast(t["text"], t["map_panel"]), 4.5),
+        ("hero on map panel (display, 3.0)", contrast(t["hero"], t["map_panel"]), 3.0),
+        ("map line on map land (shape, 3.0)", contrast(t["map_line"], t["map_land"]), 3.0),
+        ("map fill against map land (1.5)", contrast(t["map_fill"], t["map_land"]), 1.5),
     ]
     fails = [c for c in checks if c[1] < c[2]]
     if verbose:

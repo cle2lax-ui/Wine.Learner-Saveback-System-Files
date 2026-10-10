@@ -57,3 +57,34 @@ checked by measurement, not by ear** (I can't listen to audio). Instagram's audi
 and the grain and vignette are built per canvas size, so the same primitives draw a 2160x2700 deck page. For the Reel's own
 1080x1920 the computations are unchanged: seven reference frames of the finished Germany Reel hash identically before and after.
 Themes for decks in this language are in `engine/themes.py` (USA, Germany, burgundy, forest green), each contrast-checked.
+
+## The Field Guide: Mendocino (Arc 3; all entries are Reels) -- LOCKED, tag `fg-mendocino-reel-final`
+`mendo_fg_reel.py` + `mendo_fg_audio.py` (theme `usa`); shared instruments in `reel_audio.py`; the bumper in `tfg_bumper.py`.
+74 s: bumper, hook, the place (the AVAs appear in creation order, 1982-2024), two climates (one-row chips that wrap inside
+themselves, `fit_chips`; a white "Altitude flips it" card), the fog machine (fog flows from the real coastline into the real
+Anderson Valley AVA; the Navarro is named, not drawn), Islands in the Sky (CSW; ridges illustrative), by the numbers, the Pinot
+Noir, sparkling and Alsace's grapes 9 degrees further south (a latitude ruler), the business, end card, outro bug. Caption with
+the required CC BY 2.0 credit: `CAPTION_FG_mendocino.md`; voiceover script: `VO_mendo_fg.md`.
+**Regression guard for Reels:** `check_reels.py` compares 13 reference frames (`REEL_HASHES.json`). Run it after any change to
+`reel_lib.py`, `reel_audio.py`, `tfg_bumper.py` or a Reel module.
+
+### The Field Guide bumper (`tfg_bumper.py`) -- opens and closes every Field Guide Reel
+A white line-art book opens (a page turns, text writes itself) beside a white line-art glass that fills with burgundy wine
+(86, 14, 40, measured); a small white-on-red THE FIELD GUIDE chip in the arc's chip color. **Identical on every Reel**; the arc
+shows only in the ribbon bookmark and the chip color. `bumper_outro()` mirrors it: the wine drains, the lines erase, the book
+swings closed. Sonic logo: swish, cover thup, page flutter, glass ting, pour, bells A-E-A (descending in the outro).
+One renderer (`_frame`) driven by two timelines (`_intro_state`, `_outro_state`).
+
+### Restored after a container reset (October 2026)
+The local repository was lost before these commits were pushed. Everything was rebuilt by replaying every change from the
+conversation record, in order, onto the last pushed state (`4f1ae0c`), and verified against the locked deliverable already in
+Steve's hands: 17 frames re-rendered from the rebuilt code vs the same frames decoded from the locked MP4 -- PSNR 35.9-43.0 dB,
+worst 32px block 8.8 levels of 255 (compression noise; a missing element would be 40+); the rebuilt soundtrack correlates
+0.998 with the locked file's audio. **Lesson: push as soon as a token is available; unpushed work lives only in a container
+that can reset.**
+**Environment setup after a reset** (not in the repo, so it must be recreated): `pip install shapely --break-system-packages`;
+`mkdir -p /home/claude/styleguide && ln -s /home/claude/repo/photos /home/claude/styleguide/photos && ln -s
+/home/claude/repo/fonts /home/claude/styleguide/fonts` (tokens.py reads both paths). Then `python3 engine/regress.py` (42 decks)
+and `python3 reels/check_reels.py` (13 Reel frames) must both pass. Note: 20 Arc 1 (Northern Rhone) photos listed in the photo
+manifest are not in the repo; their Commons URLs are in the manifest if those decks are ever re-rendered.
+

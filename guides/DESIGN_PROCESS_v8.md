@@ -487,3 +487,17 @@ earlier rule that named the CSW Study Guide as the primary source (it is now one
 - **Anything that changes** (counts, shares, rankings, ownership) is checked against a current authoritative source before it ships.
 - **The reader is broad:** copy is exam-accurate for any of the three syllabuses and readable without one.
 
+---
+
+## 13. Series names and flag motifs (Steve, October 2026)
+
+- **Always "The Field Guide"**, with "The": on chips (THE FIELD GUIDE), in captions and in copy. Earlier decks are not rewritten.
+- **A flag motif must read as that flag.** Three stacked bars work for flags that are three bars (Germany: black, red, gold). They do
+  NOT work for the United States: red-white-blue bars read as the Dutch flag. The USA motif is a blue band with white stars on top,
+  over red and white stripes (`themes.py` `motif="stars_stripes"`, drawn by `fg_v2.flag_bars`). Check any new country's motif the same way.
+- **Grape callouts are color-coded:** ruby chips for red (black) grapes, straw chips for white grapes, with a legend on the page
+  (`fg_v2.GRAPE`). Style categories take the color of their grapes ("aromatic whites" is straw).
+- **Map leader lines never cross, and stay short** (`fg_v2.ava_map`): labels split into two columns at the map's center line, then
+  assigned to slots by minimum total leader length, which cannot produce crossings; crossings and over-long leaders are hard QA
+  failures. First layout: 7 crossings, mean 410px, max 550px. Now: 0 crossings, mean 308px, max 420px.
+
