@@ -736,5 +736,17 @@
   "slot": "us_mendo_roederer_flute_cc0",
   "credit": "Missvain / Wikimedia Commons (CC0)",
   "local_path": "/home/claude/repo/photos/us_mendo_roederer_flute_cc0.jpg"
+ },
+ {
+  "title": "Mystical view of towering redwood trees shrouded in fog in Mendocino, California.",
+  "url": "https://www.pexels.com/photo/a-view-of-tall-trees-during-a-foggy-day-5201716/",
+  "width": 5760,
+  "height": 3840,
+  "author": "Mick Haupt",
+  "license": "Pexels License",
+  "description": "Pexels; the photographer's caption says Mendocino, but Pexels carries no location data, so NO location is claimed on screen. Guess the Region: Anderson Valley, clue C.",
+  "slot": "us_mendo_fog_redwoods_pexels",
+  "credit": "Mick Haupt / Pexels",
+  "local_path": "/home/claude/repo/photos/us_mendo_fog_redwoods_pexels.jpg"
  }
 ]

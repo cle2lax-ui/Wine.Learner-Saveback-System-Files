@@ -88,3 +88,11 @@ that can reset.**
 and `python3 reels/check_reels.py` (13 Reel frames) must both pass. Note: 20 Arc 1 (Northern Rhone) photos listed in the photo
 manifest are not in the repo; their Commons URLs are in the manifest if those decks are ever re-rendered.
 
+## Guess the Region: Anderson Valley (Arc 3, entry 2) -- built, awaiting review
+`mendo_gtr_reel.py` + `mendo_gtr_audio.py`; reuses the Field Guide Reel's toolkit by import (theme colors, the stripes wipe,
+whip, map data and cameras, chips, type helpers), so `check_reels.py` must keep passing. **The Guess the Region ident**
+(`gtr_ident.py`, `ident(t, accent=)`, `ident_audio()`): same family as The Field Guide bumper (white line art, warm dark
+ground, the arc's chip color), its own emblem (compass and map pin) and sonic logo (a rising fifth: a question). The points
+meter is an OVERLAY drawn after the transitions, so it stays fixed while the clues push past underneath. Lessons: take the
+LATEST meter mark, not the largest value (the first version never dropped); fit long reveal titles to the width.
+

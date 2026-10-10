@@ -65,3 +65,11 @@ What made the Reel work, and what each format would adopt:
 6. **Photos darkened under type with gradients**, and **cream paper** for product and bottle pages.
 Locked decks stay as they are unless Steve asks. The first step is a set of mockups (one page per format, US theme) for approval
 before any format is converted.
+
+## Entry 2 BUILT (awaiting Steve's review): Guess the Region: Anderson Valley (Reel, 45 s)
+`reels/mendo_gtr_reel.py` + `reels/mendo_gtr_audio.py`; the new Guess the Region ident in `reels/gtr_ident.py` (compass,
+spinning needle, map pin with a "?"; sonic logo ends on a rising fifth, the sound of a question). Four escalating clues with
+a points meter (4 -> 1) drawn above the transitions; 3-2-1 pause and guess; the reveal on the real map, then the valley;
+"How many points did you score?". Score: B minor while you think, D major for the answer. 45.000 s, 1,350 frames,
+-14.6 LUFS, -1.6 dBTP. Caption draft: `reels/CAPTION_GTR_anderson_valley.md` (no spoilers in hashtags or credits).
+
