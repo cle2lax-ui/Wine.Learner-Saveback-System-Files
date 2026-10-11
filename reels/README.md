@@ -95,4 +95,11 @@ whip, map data and cameras, chips, type helpers), so `check_reels.py` must keep 
 ground, the arc's chip color), its own emblem (compass and map pin) and sonic logo (a rising fifth: a question). The points
 meter is an OVERLAY drawn after the transitions, so it stays fixed while the clues push past underneath. Lessons: take the
 LATEST meter mark, not the largest value (the first version never dropped); fit long reveal titles to the width.
+**v2 (Steve):** the ident now animates the series' own logo, the FOLDED MAP AND PIN (geometry recomputed from
+`guess_the_region._folded_map_icon`'s parameters, so it ends on the exact mark): the open map draws itself while swiveling
+in from about -38 degrees, the dashed route draws, the pin drops in and bounces (filled, so the map's edge doesn't show
+through it at Reel size), its inner ring pops, a ripple, the chip. Clue B is now real geography: the coastline from the
+US Census county polygons filled as land WITHOUT county lines (they would hint at the county), the actual Anderson Valley
+AVA polygon (UC Davis, CC0) unlabeled, its NW-SE axis from the polygon's minimum rotated rectangle through its area
+centroid, and the distance to open ocean MEASURED (about 4 miles), confirming the clue's "a few miles".
 

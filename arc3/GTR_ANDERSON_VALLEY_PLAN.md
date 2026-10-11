@@ -39,3 +39,9 @@ illustrated valley between hills, running NW-SE, no labels; C, the Mendocino red
 claimed) with fog drifting up a valley; D, a mini latitude ruler and rising bubbles (The Field Guide's own visuals,
 deliberately). Reveal: the real map (UC Davis CC0), then the Anderson Valley hillside (Murayama, CC BY 2.0: credit in
 the caption).
+
+## v2 changes (Steve)
+- Ident: the series' folded-map-and-pin logo, animated (the map starts open, spins a little, the pin drops in).
+- Clue B: drawn from the AVA and county data, not stylized: the real coastline, the real valley polygon (unlabeled, no
+  county lines), its true NW-SE axis, and the measured distance to the Pacific (about 4 miles).
+

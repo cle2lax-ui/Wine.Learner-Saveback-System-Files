@@ -139,50 +139,132 @@ def s_clue_a(u, ur=0.0, D=6.0, S=1.0):
     return f
 
 
+_CB = {}
+
+
+def _clue_b_geo():
+    """Clue B on the REAL geography (Steve: the first version was a stylized drawing). Coastline from the US Census
+    county polygons (filled as land, NO county lines, which would hint at the county); the valley is the Anderson Valley
+    AVA polygon (UC Davis, CC0), unlabeled; its NW -> SE axis is the polygon's principal axis; 'a few miles from the
+    Pacific' is MEASURED: the shortest distance from the AVA polygon to open ocean. Coordinates are (lon * cos(lat),
+    -lat), so one unit is one degree of latitude, about 69 miles, in both directions."""
+    if _CB:
+        return _CB
+    from shapely.geometry import Polygon, box
+    from shapely.ops import nearest_points, unary_union
+    av_ring = max(next(a for a in fg._AVA if a["name"] == "Anderson Valley")["rings"], key=len)
+    avp = Polygon(av_ring).buffer(0)
+    land = unary_union([Polygon(r).buffer(0) for rings in fg._CTY.values() for r in rings])
+    x0, y0, x1, y1 = avp.bounds
+    frame = box(x0 - 0.20, y0 - 0.07, x1 + 0.07, y1 + 0.07)
+    ocean = frame.difference(land)
+    pa, po = nearest_points(avp, ocean)
+    miles = pa.distance(po) * 69.0
+    # the axis runs through the polygon's AREA centroid, along its minimum rotated rectangle's long side (the first
+    # version averaged the VERTICES: the jagged southern boundary has far more of them, so the axis sat on that edge)
+    pts = np.asarray(av_ring)
+    c = np.array(avp.centroid.coords[0])
+    rect = np.asarray(avp.minimum_rotated_rectangle.exterior.coords)[:4]
+    e_a, e_b = rect[1] - rect[0], rect[2] - rect[1]
+    ax = e_a if np.hypot(*e_a) >= np.hypot(*e_b) else e_b
+    ax = ax / np.hypot(*ax)
+    proj = (pts - c) @ ax
+    e1, e2 = c + ax * proj.min(), c + ax * proj.max()
+    nw, se = (e1, e2) if (e1[0] + e1[1]) < (e2[0] + e2[1]) else (e2, e1)
+    bx0, by0, bx1, by1 = PANEL[0] + 20, PANEL[1] + 20, PANEL[2] - 20, PANEL[3] - 20
+    fx0, fy0, fx1, fy1 = frame.bounds
+    sc = min((bx1 - bx0) / (fx1 - fx0), (by1 - by0) / (fy1 - fy0))
+    ox, oy = (bx0 + bx1) / 2 - sc * (fx0 + fx1) / 2, (by0 + by1) / 2 - sc * (fy0 + fy1) / 2
+    P = lambda r: np.column_stack([np.asarray(r)[:, 0] * sc + ox, np.asarray(r)[:, 1] * sc + oy])   # noqa: E731
+    land_rings = [P(np.asarray(g.exterior.coords)) for g in (land.geoms if land.geom_type == "MultiPolygon" else [land])]
+    # where to write PACIFIC: the ocean point farthest from land inside the frame
+    from shapely.geometry import Point
+    best, bd = None, -1
+    for gx in np.linspace(fx0, fx1, 30):
+        for gy in np.linspace(fy0, fy1, 30):
+            q = Point(gx, gy)
+            if ocean.contains(q):
+                dd = q.distance(land)
+                if dd > bd:
+                    best, bd = (gx, gy), dd
+    _CB.update(av=P(av_ring), land=land_rings, nw=P([nw])[0], se=P([se])[0], pa=P([(pa.x, pa.y)])[0], po=P([(po.x, po.y)])[0],
+               miles=miles, pacific=P([best])[0])
+    return _CB
+
+
+def _round_clip(f, keep, box_, r=30):
+    """Restore everything outside a rounded rectangle from keep."""
+    x0, y0, x1, y1 = box_
+    m = np.zeros((H, W), np.uint8)
+    cv2.rectangle(m, (x0 + r, y0), (x1 - r, y1), 255, -1)
+    cv2.rectangle(m, (x0, y0 + r), (x1, y1 - r), 255, -1)
+    for cxy in ((x0 + r, y0 + r), (x1 - r, y0 + r), (x0 + r, y1 - r), (x1 - r, y1 - r)):
+        cv2.circle(m, cxy, r, 255, -1, lineType=cv2.LINE_AA)
+    a = (m.astype(np.float32) / 255)[..., None]
+    f[:] = f * a + keep * (1 - a)
+
+
+OCEAN, LAND = (20, 36, 80), (78, 88, 124)      # land clearly lifted off the ocean (the first pass was 1.1:1, unreadable)
+
+
 def s_clue_b(u, ur=0.0, D=6.0, S=1.0):
     f = bg(GROUND)
     clue_header(f, "B", u)
     clue_text(f, CLUES[1][2], u)
-    q = panel(f, u)
-    if q > 0:
-        x0, y0, x1, y1 = PANEL
-        keep = f.copy()
-        oq = out_cubic(prog(u, 0.6, 1.1))                     # the Pacific, top left
-        fill_poly(f, [(x0, y0), (x0 + 330, y0), (x0, y0 + 300)], (52, 82, 150), oq)
-        for k in range(3):
-            yy = y0 + 70 + k * 50
-            stroke_path(f, [(x0 + 30 + 20 * j, yy + 8 * math.sin(j + ur * 3)) for j in range(0, 8)], (150, 186, 240), 3, alpha=0.6 * oq)
-        hq = out_cubic(prog(u, 0.8, 1.5))                     # hills either side of a NW -> SE valley
-        if hq > 0:
-            off = (1 - hq) * 80
-            fill_poly(f, [(x0 + 330, y0), (x1, y0), (x1, y1 - 260), (x0 + 560 + off, y0 + 420), (x0 + 200 + off, y0 + 130)],
-                      (38, 74, 54), hq)
-            fill_poly(f, [(x0, y0 + 300), (x0 + 120 - off, y0 + 260), (x0 + 480 - off, y0 + 560), (x1 - 200, y1), (x0, y1)],
-                      (30, 62, 46), hq)
-            fill_poly(f, [(x0 + 200, y0 + 130), (x0 + 560, y0 + 420), (x1, y1 - 260), (x1, y1), (x1 - 200, y1),
-                          (x0 + 480, y0 + 560), (x0 + 120, y0 + 260)], (70, 104, 70), hq * 0.9)
-        aq = in_out_cubic(prog(u, 1.6, 2.6))                  # the valley's axis, NW -> SE, dashed
-        if aq > 0:
-            p0, p1 = np.array((x0 + 170, y0 + 200)), np.array((x1 - 90, y1 - 120))
-            pe = p0 + (p1 - p0) * aq
-            n = int(np.hypot(*(pe - p0)) // 34)
-            for j in range(n):
-                a_ = p0 + (p1 - p0) * (j * 34 / np.hypot(*(p1 - p0)))
-                b_ = p0 + (p1 - p0) * ((j * 34 + 20) / np.hypot(*(p1 - p0)))
-                stroke_path(f, [tuple(a_), tuple(b_)], TXT, 5)
-            if aq >= 1:
-                d = (p1 - p0) / np.hypot(*(p1 - p0))
-                nrm = np.array([-d[1], d[0]])
-                fill_poly(f, [tuple(p1 + d * 20), tuple(p1 - d * 26 + nrm * 20), tuple(p1 - d * 26 - nrm * 20)], TXT)
-        f[:y0] = keep[:y0]; f[y1:] = keep[y1:]; f[:, :x0] = keep[:, :x0]; f[:, x1:] = keep[:, x1:]
-        rise_text(f, "PACIFIC", "black", 28, (200, 220, 250), x0 + 30, y0 + 46, u, 0.9, tracking=5)
-        nq = out_cubic(prog(u, 1.0, 1.3))
-        if nq > 0:
-            ax_, ay_ = x1 - 70, y0 + 80
-            fill_poly(f, [(ax_, ay_ - 34), (ax_ - 14, ay_ + 6), (ax_ + 14, ay_ + 6)], TXT, nq)
-            text(f, "N", "black", 30, TXT, ax_, ay_ + 46, align="center", alpha=nq)
-        rise_text(f, "NW", "black", 30, LEMON, x0 + 130, y0 + 190, u, 1.6, tracking=3)
-        rise_text(f, "SE", "black", 30, LEMON, x1 - 150, y1 - 60, u, 2.6, tracking=3)
+    q = out_cubic(prog(u, 0.15, 0.45))
+    if q <= 0:
+        return f
+    G = _clue_b_geo()
+    keep = f.copy()
+    x0, y0, x1, y1 = PANEL
+    f[y0:y1, x0:x1] = f[y0:y1, x0:x1] * (1 - q) + np.array(OCEAN, np.float32) * q          # the ocean
+    lq = out_cubic(prog(u, 0.5, 0.9))                                                       # the land, no borders
+    for r in G["land"]:
+        fill_poly(f, r, LAND, lq)
+        stroke_path(f, np.vstack([r, r[:1]]), (150, 186, 240), 2, alpha=0.35 * lq)          # the coastline only
+    dq = in_out_cubic(prog(u, 1.0, 1.6))                                                    # the valley
+    if dq > 0:
+        if dq >= 1:
+            fill_poly(f, G["av"], LEMON, 0.88 * out_cubic(prog(u, 1.55, 1.85)))
+        stroke_path(f, fg._perim_part(np.vstack([G["av"], G["av"][:1]]), dq), (255, 255, 255), 3)
+    aq = in_out_cubic(prog(u, 1.9, 2.7))                                                    # its NW -> SE axis, dashed
+    if aq > 0:
+        p0, p1 = np.array(G["nw"]), np.array(G["se"])
+        d = (p1 - p0) / np.hypot(*(p1 - p0))
+        p0, p1 = p0 - d * 60, p1 + d * 60
+        L = np.hypot(*(p1 - p0)) * aq
+        s_ = 0.0
+        while s_ < L:
+            stroke_path(f, [tuple(p0 + d * s_), tuple(p0 + d * min(s_ + 22, L))], (255, 255, 255), 5)
+            s_ += 36
+        if aq >= 1:
+            nrm = np.array([-d[1], d[0]])
+            fill_poly(f, [tuple(p1 + d * 22), tuple(p1 - d * 24 + nrm * 18), tuple(p1 - d * 24 - nrm * 18)], (255, 255, 255))
+    mq = out_cubic(prog(u, 2.8, 3.2))                                                       # the measured distance
+    if mq > 0:
+        pa, po = np.array(G["pa"]), np.array(G["po"])
+        pe = pa + (po - pa) * mq
+        stroke_path(f, [tuple(pa), tuple(pe)], HERO, 5)
+        for pt in (pa, pe):
+            fill_poly(f, [(pt[0] + 8 * math.cos(a_), pt[1] + 8 * math.sin(a_)) for a_ in np.linspace(0, 2 * math.pi, 14)], HERO)
+    _round_clip(f, keep, PANEL)
+    tw_p = text_width("PACIFIC", "black", 30, 6)
+    px_ = min(max(G["pacific"][0], x0 + 30 + tw_p / 2), x1 - 30 - tw_p / 2)                   # inside the panel
+    rise_text(f, "PACIFIC", "black", 30, (200, 220, 250), px_, G["pacific"][1] + 10, u, 0.7, align="center", tracking=6)
+    nq = out_cubic(prog(u, 0.9, 1.2))
+    if nq > 0:
+        ax_, ay_ = x1 - 70, y0 + 80
+        fill_poly(f, [(ax_, ay_ - 34), (ax_ - 14, ay_ + 6), (ax_ + 14, ay_ + 6)], TXT, nq)
+        text(f, "N", "black", 30, TXT, ax_, ay_ + 46, align="center", alpha=nq)
+    dvec = (np.array(G["se"]) - np.array(G["nw"])) / np.hypot(*(np.array(G["se"]) - np.array(G["nw"])))
+    nwp, sep = np.array(G["nw"]) - dvec * 110, np.array(G["se"]) + dvec * 110        # clear of the arrow's ends
+    rise_text(f, "NW", "black", 30, TXT, nwp[0], nwp[1] - 14, u, 2.0, align="center", tracking=3)
+    rise_text(f, "SE", "black", 30, TXT, sep[0], sep[1] + 14, u, 2.6, align="center", tracking=3)
+    lab = f"\u2248 {G['miles']:.0f} MILES"
+    lx, ly = (G["pa"][0] + G["po"][0]) / 2, max(G["pa"][1], G["po"][1]) + 70         # BELOW the line (it covered NW)
+    if mq > 0.9:
+        tw = text_width(lab, "black", 30, 2) + 40
+        chip(f, lab, lx - tw / 2, ly, out_back(prog(u, 3.1, 3.4), 1.8), fill=HERO, ink=(255, 255, 255), size=30, align="left")
     return f
 
 

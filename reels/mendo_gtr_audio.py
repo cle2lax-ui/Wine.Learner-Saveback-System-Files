@@ -130,9 +130,14 @@ def build():
     m = int(1.2 * SR); tt = tvec(m)                            # the glasses clink
     clink = sum(a * np.sin(2 * np.pi * fq * tt) * np.exp(-tt / d) for fq, a, d in ((2637, 1.0, 0.6), (3951, 0.5, 0.35), (5274, 0.25, 0.2)))
     place(sfx, clink * 0.1, T("s_clue_a", 2.95))
-    place(sfx, whoosh(0.5, 200, 2500, 0.8), T("s_clue_b", 0.8), 0.3)    # hills
-    arrow = np.sin(2 * np.pi * np.cumsum(500 + 900 * tvec(int(1.0 * SR))) / SR) * np.sin(np.pi * tvec(int(1.0 * SR)) / 1.0) ** 2
-    place(sfx, arrow * 0.05, T("s_clue_b", 1.6))                       # the axis draws
+    place(sfx, whoosh(0.5, 200, 2500, 0.8), T("s_clue_b", 0.5), 0.25)   # the coastline fades in
+    penb = hp(rng.normal(0, 1, int(0.6 * SR)), 3000) * 0.05
+    place(sfx, penb * np.sin(np.pi * tvec(len(penb)) / 0.6), T("s_clue_b", 1.0))   # the valley outlines itself
+    place(sfx, pop(), T("s_clue_b", 1.6), 0.3)                         # ...and fills
+    arrow = np.sin(2 * np.pi * np.cumsum(500 + 900 * tvec(int(0.8 * SR))) / SR) * np.sin(np.pi * tvec(int(0.8 * SR)) / 0.8) ** 2
+    place(sfx, arrow * 0.05, T("s_clue_b", 1.9))                       # the NW -> SE axis draws
+    place(sfx, tick(), T("s_clue_b", 2.8), 0.14)                       # the distance measures
+    place(sfx, pop(), T("s_clue_b", 3.12), 0.28)                       # ~4 MILES
     air = lp(rng.normal(0, 1, int(3.0 * SR)), 700) * 0.06
     place(sfx, air * np.sin(np.pi * tvec(len(air)) / 3.0), T("s_clue_c", 0.8))   # fog
     for u0 in (2.0, 2.4):
