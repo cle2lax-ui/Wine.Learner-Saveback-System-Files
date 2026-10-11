@@ -125,11 +125,22 @@ def build():
         place(sfx, pop(), T(sc, 0.08), 0.22)                   # CLUE chip
         for k_ in range(3):
             place(sfx, tick(), T(sc, 0.35 + 0.12 * k_), 0.08)  # the clue's lines rise
-    place(sfx, pop(), T("s_clue_a", 1.25), 0.35)               # the bubble
-    place(sfx, pop(), T("s_clue_a", 2.15), 0.25)               # = GOOD DRINKING
-    m = int(1.2 * SR); tt = tvec(m)                            # the glasses clink
-    clink = sum(a * np.sin(2 * np.pi * fq * tt) * np.exp(-tt / d) for fq, a, d in ((2637, 1.0, 0.6), (3951, 0.5, 0.35), (5274, 0.25, 0.2)))
-    place(sfx, clink * 0.1, T("s_clue_a", 2.95))
+    place(sfx, pop(), T("s_clue_a", 0.95), 0.3)                # clue A (v3): the gauge appears
+    for j in range(22):                                        # rain patter
+        m_ = int(0.02 * SR)
+        drp = bp(rng.normal(0, 1, m_), 2500, 7000) * np.exp(-tvec(m_) / 0.004)
+        place(sfx, drp * (0.10 + 0.05 * rng.random()), T("s_clue_a", 1.0 + 2.2 * j / 22 + 0.03 * rng.random()))
+    nf = int(1.2 * SR); tf = tvec(nf)                          # the water rises: a soft rising tone
+    rise_t = np.sin(2 * np.pi * np.cumsum(260 + 320 * tf / 1.2) / SR) * np.sin(np.pi * tf / 1.2) ** 2
+    place(sfx, lp(rise_t, 1800) * 0.05, T("s_clue_a", 1.3))
+    place(sfx, tick(), T("s_clue_a", 2.5), 0.14)               # the range, bracketed
+    place(sfx, whoosh(0.5, 200, 2500, 0.8), T("s_clue_a", 1.4), 0.25)   # the hillside rises
+    place(sfx, whoosh(0.8, 150, 1500, 0.4), T("s_clue_a", 2.2), 0.3)    # cold air drains into the hollow
+    m = int(1.0 * SR); tt = tvec(m)                            # frost settles: a high, glassy chime
+    frost = sum(a * np.sin(2 * np.pi * fq * tt) * np.exp(-tt / d) for fq, a, d in ((3136, 1.0, 0.5), (4699, 0.5, 0.3), (6272, 0.25, 0.2)))
+    place(sfx, frost * 0.07, T("s_clue_a", 2.95))
+    for u0 in (2.6, 3.0):
+        place(sfx, pop(), T("s_clue_a", u0), 0.2)              # the two labels
     place(sfx, whoosh(0.5, 200, 2500, 0.8), T("s_clue_b", 0.5), 0.25)   # the coastline fades in
     penb = hp(rng.normal(0, 1, int(0.6 * SR)), 3000) * 0.05
     place(sfx, penb * np.sin(np.pi * tvec(len(penb)) / 0.6), T("s_clue_b", 1.0))   # the valley outlines itself
@@ -149,7 +160,7 @@ def build():
     for j in range(9):
         place(sfx, tick(), T("s_clue_d", 2.7 + 0.9 * j / 9), 0.1)     # one tick per degree
     place(sfx, pop(), T("s_clue_d", 3.6), 0.3)                         # "? 39"
-    for u0 in (0.0, 0.3):                                      # PAUSE AND GUESS (the first slam on the cut itself)
+    for u0 in (0.0, 0.3, 0.42):                                # MAKE YOUR GUESS / THE ANSWER IS / COMING IN (first on the cut)
         place(sfx, impact(0.4), T("s_pause", u0), 0.35)
     for j, t_ in enumerate(np.arange(29.5, 33.0, 0.5)):        # the clock
         place(sfx, knock(), t_, 0.18 if j % 2 else 0.25)

@@ -102,4 +102,9 @@ through it at Reel size), its inner ring pops, a ripple, the chip. Clue B is now
 US Census county polygons filled as land WITHOUT county lines (they would hint at the county), the actual Anderson Valley
 AVA polygon (UC Davis, CC0) unlabeled, its NW-SE axis from the polygon's minimum rotated rectangle through its area
 centroid, and the distance to open ocean MEASURED (about 4 miles), confirming the clue's "a few miles".
+**v3 (Steve):** clue A is viticulture (rain in inches, spring frost in the low spots), not the dialect; the countdown reads
+MAKE YOUR GUESS, THE ANSWER IS COMING IN. Lessons: `out_back(0)` returns 2.2e-16, not 0 -- guard any stroke whose length
+scales with an easing (the snowflake drew a dot, as the bumper's text lines once did); when replacing a function, cut by the
+NEXT TOP-LEVEL definition and diff the module's top-level names afterwards (a nested `def` and a plain module-level
+assignment were both caught that way).
 

@@ -16,7 +16,7 @@ Next up: What Am I Drinking?
 **Credits (required: one photo is CC BY 2.0; the photo's title is left out because it names the answer):**
 Photos: Naotake Murayama (CC BY 2.0) via Wikimedia Commons; Mick Haupt via Pexels.
 Map: AVA boundaries from the UC Davis AVA Project (CC0); county lines from US Census boundaries. Music: original.
-Sources: WSET D3 (Ch. 23.1); clue A from the valley's own history (Anderson Valley Winegrowers, Atlas Obscura).
+Sources: WSET D3 (Ch. 23.1).
 
 ## Notes
 - THE CAPTION MUST NOT GIVE AWAY THE ANSWER: no #AndersonValley, #MendocinoWine or #Boonville, and no photo title in the

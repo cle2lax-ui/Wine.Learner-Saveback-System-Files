@@ -45,3 +45,13 @@ the caption).
 - Clue B: drawn from the AVA and county data, not stylized: the real coastline, the real valley polygon (unlabeled, no
   county lines), its true NW-SE axis, and the measured distance to the Pacific (about 4 miles).
 
+## v3 changes (Steve)
+- Clue A is now about viticulture, not the local dialect (Boontling is dropped entirely): "Its vineyards see about 35 to 79
+  inches of rain a year, and spring frost threatens the low-lying spots." D3 Ch. 23.1 gives 900-2,000 mm; shown in inches
+  at 25.4 mm to the inch (35.4 and 78.7, rounded). Still the hardest clue: many cool coastal regions are wet and have frost
+  pockets. Illustrated with a rain gauge filling past 35 toward 79 inches, and a hillside cross-section where cold air
+  drains into the hollow and frost settles there. Not used: the origin of the valley's name (said to be an early settler
+  family), since neither D3 nor the CSW guide covers it.
+- The countdown reads "MAKE YOUR GUESS, / THE ANSWER IS COMING IN" (the series' all-caps headline style), with a larger
+  countdown below.
+

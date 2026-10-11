@@ -13,8 +13,8 @@ TIMELINE (120 BPM, 2-second bars; every cut on a bar line; T(scene, u) gives the
   33-41  reveal    flag-stripes wipe; California -> Mendocino County -> Anderson Valley on the real map; ANDERSON
                    VALLEY; then the valley itself (the hillside photo) and the blurb
   41-45  cta       HOW MANY POINTS DID YOU SCORE?; next up: What Am I Drinking?; ends on black
-CLUES (sources in the plan): A Boontling's "bahl hornin'" = good drinking (Anderson Valley Winegrowers, Atlas Obscura,
-Time, Wikipedia; the word "Boontling" deliberately never shown: it contains "Boont", short for Boonville); B and C,
+CLUES (sources in the plan): A (v3, Steve: viticulture, not the local dialect) the rainfall, 900-2,000 mm a year shown as
+about 35 to 79 inches (at 25.4 mm to the inch), and spring frost in the low-lying spots (D3 Ch. 23.1); B and C,
 D3 Ch. 23.1; D, D3 plus geography (The Field Guide's latitude scene). Reveal blurb: D3. Deliberately not used: the
 Navarro River, Boonville, Philo, Roederer Estate (entry 3).
 PHOTOS: the fog (Pexels, Mick Haupt; NO location claimed); the reveal, 'Hillside Vineyards in Anderson Valley'
@@ -40,7 +40,7 @@ from gtr_ident import ident, IDENT_DUR  # noqa: E402
 LEMON = GRAPE["white"][0]
 PANEL = (40, 820, W - 40, 1460)
 CLUES = [
-    ("A", 4, "Its locals once invented their own lingo. In it, \u201cbahl hornin\u2019\u201d means good drinking."),
+    ("A", 4, "Its vineyards see about 35 to 79 inches of rain a year, and spring frost threatens the low-lying spots."),
     ("B", 3, "A narrow valley a few miles from the Pacific, running north-west to south-east."),
     ("C", 2, "Cold air and fog funnel up a river into it, and most of its vineyards climb the slopes."),
     ("D", 1, "Pinot Noir and Chardonnay, sparkling and still, and Alsace\u2019s grapes, nine degrees south of Alsace."),
@@ -90,53 +90,85 @@ def s_rules(u, ur=0.0, D=2.0, S=1.0):
     return f
 
 
-def _glass(f, cx, base, tilt, q, col):
-    """A small line-art wine glass, tilted (for the clink in clue A)."""
-    def rot(x, y):
-        a = math.radians(tilt)
-        return (cx + (x - cx) * math.cos(a) - (y - base) * math.sin(a), base + (x - cx) * math.sin(a) + (y - base) * math.cos(a))
-    bowl = [rot(cx + 46 * math.sin(t_) * q, base - 120 * q - 70 * q * (1 - math.cos(t_))) for t_ in np.linspace(-math.pi / 2, math.pi / 2, 30)]
-    stroke_path(f, bowl, col, 5)
-    stroke_path(f, [rot(cx - 46 * q, base - 190 * q), rot(cx + 46 * q, base - 190 * q)], col, 5)
-    stroke_path(f, [rot(cx, base - 120 * q), rot(cx, base)], col, 5)
-    stroke_path(f, [rot(cx - 34 * q, base), rot(cx + 34 * q, base)], col, 5)
 
 
 def s_clue_a(u, ur=0.0, D=6.0, S=1.0):
+    """Clue A (v3): viticulture. Left, a rain gauge fills past 35 inches toward 79; right, a hillside cross-section where
+    cold air pools in the hollow and frost settles there -- 'the low-lying spots', shown rather than told."""
     f = bg(GROUND)
     clue_header(f, "A", u)
     clue_text(f, CLUES[0][2], u)
-    if panel(f, u) > 0:
-        bq = out_back(prog(u, 1.2, 1.6), 1.6)                 # a speech bubble pops
-        if bq > 0:
-            bx0, by0, bx1, by1 = 160, 900, 920, 1150
-            cx, cy = (bx0 + bx1) / 2, (by0 + by1) / 2
-            hw, hh = (bx1 - bx0) / 2 * bq, (by1 - by0) / 2 * bq
-            round_rect(f, cx - hw, cy - hh, cx + hw, cy + hh, 40, (255, 255, 255), 0.06)
-            outline = []
-            for (ax_, ay_, a0) in ((cx + hw - 40, cy - hh + 40, -90), (cx + hw - 40, cy + hh - 40, 0), (cx - hw + 40, cy + hh - 40, 90), (cx - hw + 40, cy - hh + 40, 180)):
-                outline += [(ax_ + 40 * math.cos(math.radians(a0 + d)), ay_ + 40 * math.sin(math.radians(a0 + d))) for d in np.linspace(0, 90, 8)]
-            stroke_path(f, outline + [outline[0]], TXT, 6)
-            fill_poly(f, [(cx - 140 * bq, cy + hh - 2), (cx - 60 * bq, cy + hh - 2), (cx - 170 * bq, cy + hh + 70 * bq)], (40, 46, 84))
-            stroke_path(f, [(cx - 140 * bq, cy + hh), (cx - 170 * bq, cy + hh + 70 * bq), (cx - 60 * bq, cy + hh)], TXT, 6)
-            tq = out_cubic(prog(u, 1.55, 1.9))
-            text(f, "bahl hornin\u2019", "serif_it", 104, LEMON, cx, cy + 34, align="center", alpha=tq, scale=0.9 + 0.1 * tq)
-        cq = out_back(prog(u, 2.1, 2.4), 2.0)                 # the translation, as a chip
-        if cq > 0:
-            tw = text_width("= GOOD DRINKING", "black", 40, 2) + 56
-            chip(f, "= GOOD DRINKING", W - 120 - tw, 1290, cq, fill=LEMON, ink=(28, 24, 26), size=40, align="left")
-        gq = out_cubic(prog(u, 2.5, 2.9))                     # two glasses clink
+    q = panel(f, u)
+    if q > 0:
+        x0, y0, x1, y1 = PANEL
+        keep = f.copy()
+        # ---- the rain gauge (left)
+        gx0, gx1, gt, gb = x0 + 120, x0 + 250, y0 + 110, y1 - 150
+        gq = out_cubic(prog(u, 0.9, 1.3))
         if gq > 0:
-            sw = 18 * (1 - out_back(prog(u, 2.5, 3.0), 2.0))
-            _glass(f, 230 - sw, 1400, -14, gq, TXT)
-            _glass(f, 330 + sw, 1400, 14, gq, TXT)
-            if prog(u, 2.9, 3.3) > 0 and prog(u, 2.9, 3.3) < 1:
-                sp = prog(u, 2.9, 3.3)
-                for a_ in range(0, 360, 45):
-                    r0, r1 = 12 + 30 * sp, 22 + 40 * sp
-                    stroke_path(f, [(280 + r0 * math.cos(math.radians(a_)), 1222 + r0 * math.sin(math.radians(a_))),
-                                    (280 + r1 * math.cos(math.radians(a_)), 1222 + r1 * math.sin(math.radians(a_)))], LEMON, 4, alpha=1 - sp)
+            stroke_path(f, [(gx0, gt), (gx0, gb), (gx1, gb), (gx1, gt)], TXT, 6, alpha=gq)
+            inch_y = lambda v: gb - (gb - gt) * v / 90.0                       # a 0-90 inch scale
+            for v in range(0, 91, 10):
+                y = inch_y(v)
+                fill_rect(f, gx1, y - 2, gx1 + (22 if v % 20 == 0 else 12), y + 2, TXT, 0.8 * gq)
+                if v % 20 == 0:
+                    text(f, str(v), "condb", 28, MUTED, gx1 + 30, y + 10, alpha=gq)
+            lo, hi = 35, 79
+            wq = in_out_cubic(prog(u, 1.3, 2.5))                               # the water rises to 35, then on to 79
+            lvl = lo * min(wq / 0.45, 1.0) + (hi - lo) * max(0.0, (wq - 0.45) / 0.55)
+            if lvl > 0:
+                fill_rect(f, gx0 + 6, inch_y(lvl), gx1 - 6, gb - 3, (90, 140, 235), 0.85)
+            if wq > 0.45:                                                       # the range, bracketed
+                bq = out_cubic(prog(u, 2.5, 2.8))
+                fill_rect(f, gx0 - 30, inch_y(hi), gx0 - 24, inch_y(lo), LEMON, bq)
+                for v in (lo, hi):
+                    fill_rect(f, gx0 - 44, inch_y(v) - 3, gx0 - 24, inch_y(v) + 3, LEMON, bq)
+            for i, (po, xo) in enumerate(((0.0, 0.2), (0.53, 0.75), (0.21, 0.45), (0.77, 0.1), (0.38, 0.9), (0.92, 0.6))):
+                ph = (ur * 1.6 + po) % 1.0                                      # irregular, like rain (evenly spaced
+                if prog(u, 1.0, 1.2) > 0 and u < 3.2:                           # timings drew a tidy staircase)
+                    yy = y0 + 20 + (gt - y0 - 10) * ph
+                    xx = gx0 + 18 + xo * (gx1 - gx0 - 36)
+                    fg._drop(f, xx, yy, 9, (130, 170, 245), 0.9 * (1 - ph * 0.3))
+            rise_text(f, "35\u201379 IN", "cond", 64, LEMON, x0 + 60, y1 - 64, u, 2.6)
+            rise_text(f, "OF RAIN A YEAR", "black", 26, TXT, x0 + 62, y1 - 26, u, 2.7, tracking=3)
+        # ---- the frost pocket (right): a hillside cross-section; cold air drains down and pools in the hollow
+        hx0, hx1, hb = x0 + 470, x1 - 40, y1 - 150
+        hq = out_cubic(prog(u, 1.4, 1.9))
+        if hq > 0:
+            xs = np.linspace(hx0, hx1, 60)
+            mid_ = (hx0 + hx1) / 2
+            ys = hb - 300 * (np.abs(xs - mid_) / ((hx1 - hx0) / 2)) ** 1.6 * hq
+            fill_poly(f, [(hx0, hb + 10)] + list(zip(xs, ys)) + [(hx1, hb + 10)], (52, 96, 64), 1.0)
+            for j in range(9):                                                  # vines on the slopes
+                xv = hx0 + 30 + j * (hx1 - hx0 - 60) / 8
+                yv = float(np.interp(xv, xs, ys))
+                if abs(xv - mid_) > 60:
+                    stroke_path(f, [(xv, yv - 4), (xv, yv - 34 * hq)], (140, 196, 120), 4)
+            pq = out_cubic(prog(u, 2.2, 3.0))                                   # the cold pool
+            if pq > 0:
+                lvl_y = hb - 110 * pq
+                pts = [(x_, max(y_, lvl_y)) for x_, y_ in zip(xs, ys)]
+                fill_poly(f, [(hx0, hb + 10)] + pts + [(hx1, hb + 10)], (200, 226, 255), 0.55 * pq)
+                for sx_ in (-1, 1):                                             # cold air draining down
+                    ax_ = mid_ + sx_ * (hx1 - hx0) * 0.36
+                    ay_ = float(np.interp(ax_, xs, ys)) - 40
+                    tip = (mid_ + sx_ * 70, hb - 150)
+                    stroke_path(f, [(ax_, ay_), tip], (200, 226, 255), 4, alpha=0.8 * pq)
+                    d = np.array(tip) - np.array((ax_, ay_)); d = d / np.hypot(*d); n_ = np.array([-d[1], d[0]])
+                    fill_poly(f, [tuple(np.array(tip) + d * 14), tuple(np.array(tip) - d * 12 + n_ * 10),
+                                  tuple(np.array(tip) - d * 12 - n_ * 10)], (200, 226, 255), 0.8 * pq)
+            sq = out_back(prog(u, 2.9, 3.3), 1.8)                               # frost settles in the hollow
+            if sq > 0.02:            # out_back(0) is not exactly 0: zero-length arms drew a dot (as in the bumper)
+                fx_, fy_ = mid_, hb - 60
+                for arm in range(6):
+                    ang = math.radians(arm * 60 - 90)
+                    L = 40 * sq
+                    stroke_path(f, [(fx_, fy_), (fx_ + L * math.cos(ang), fy_ + L * math.sin(ang))], (255, 255, 255), 5)
+            rise_text(f, "SPRING FROST", "cond", 60, TXT, hx0, y1 - 64, u, 3.0)
+            rise_text(f, "IN THE LOW-LYING SPOTS", "black", 26, (200, 226, 255), hx0 + 2, y1 - 26, u, 3.1, tracking=2)
+        f[:y0] = keep[:y0]; f[y1:] = keep[y1:]; f[:, :x0] = keep[:, :x0]; f[:, x1:] = keep[:, x1:]
     return f
+
 
 
 _CB = {}
@@ -349,23 +381,28 @@ def s_clue_d(u, ur=0.0, D=6.0, S=1.0):
     return f
 
 
+GUESS_SIZE = next(sz for sz in range(128, 60, -2) if text_width("MAKE YOUR GUESS,", "cond", sz) <= W - 120)
+
+
 def s_pause(u, ur=0.0, D=4.0, S=1.0):
+    """Steve: 'Make Your Guess, the Answer is Coming in' with a large countdown below."""
     f = bg(GROUND)
-    slam_text(f, "PAUSE", 210, TXT, W / 2, 520, u, 0.05, align="center")
-    slam_text(f, "AND GUESS", 120, LEMON, W / 2, 660, u, 0.3, align="center")
-    cx, cy, r = W / 2, 1040, 210
+    slam_text(f, "MAKE YOUR GUESS,", GUESS_SIZE, TXT, W / 2, 470, u, 0.05, align="center")   # fitted (128px ran 1,080px wide)
+    slam_text(f, "THE ANSWER IS", 100, LEMON, W / 2, 600, u, 0.3, align="center")
+    slam_text(f, "COMING IN", 100, LEMON, W / 2, 712, u, 0.42, align="center")
+    cx, cy, r = W / 2, 1110, 280                     # a larger ring and number
     rq = out_cubic(prog(u, 0.4, 0.6))
     if rq > 0:
-        stroke_path(f, [(cx + r * math.cos(a_), cy + r * math.sin(a_)) for a_ in np.linspace(0, 2 * math.pi, 120)], (255, 255, 255), 18, alpha=0.12 * rq)
+        stroke_path(f, [(cx + r * math.cos(a_), cy + r * math.sin(a_)) for a_ in np.linspace(0, 2 * math.pi, 140)], (255, 255, 255), 22, alpha=0.12 * rq)
     for k, (num, t0) in enumerate((("3", 0.6), ("2", 1.6), ("1", 2.6))):
         p = prog(u, t0, t0 + 1.0)
         if 0 < p < 1 or (k == 2 and p >= 1 and u < 3.6):
             pp = min(p, 1.0)
             a1 = -math.pi / 2 + 2 * math.pi * pp
-            stroke_path(f, [(cx + r * math.cos(a_), cy + r * math.sin(a_)) for a_ in np.linspace(-math.pi / 2, a1, max(int(120 * pp), 2))], LEMON, 18)
+            stroke_path(f, [(cx + r * math.cos(a_), cy + r * math.sin(a_)) for a_ in np.linspace(-math.pi / 2, a1, max(int(140 * pp), 2))], LEMON, 22)
             sc = 1.25 - 0.25 * out_back(prog(u, t0, t0 + 0.25), 2.0)
-            text(f, num, "cond", 300, TXT, cx, cy + 105, align="center", scale=sc, alpha=out_cubic(prog(u, t0, t0 + 0.12)))
-    rise_text(f, "4 points at A \u00b7 3 at B \u00b7 2 at C \u00b7 1 at D", "med", 38, MUTED, W / 2, 1360, u, 0.8, align="center")
+            text(f, num, "cond", 420, TXT, cx, cy + 148, align="center", scale=sc, alpha=out_cubic(prog(u, t0, t0 + 0.12)))
+    rise_text(f, "4 points at A \u00b7 3 at B \u00b7 2 at C \u00b7 1 at D", "med", 38, MUTED, W / 2, 1500, u, 0.8, align="center")
     return f
 
 
