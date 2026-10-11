@@ -1,17 +1,17 @@
-"""GUESS THE REGION: ANDERSON VALLEY -- a Reel (Arc 3, entry 2). 1080x1920, 30 fps, 44 s. Theme: usa.
+"""GUESS THE REGION: ANDERSON VALLEY -- a Reel (Arc 3, entry 2). 1080x1920, 30 fps, 43 s. Theme: usa.
 
 Plan: arc3/GTR_ANDERSON_VALLEY_PLAN.md. The series' GTR DNA (four clues, the answer never named before the reveal, one
 "release valve" clue) with what a Reel adds: the clues ESCALATE (hardest first, CLUE #1 .. CLUE #4); a 3-2-1 "make your
 guess" countdown; the reveal on the real map; a closing question, how many clues you needed. No points (v4, Steve). It
 tests The Field Guide (posted 2-3 days earlier): clue #4 is its callback.
 
-TIMELINE (120 BPM, 2-second bars; T(scene, u) gives the score its event times). v4 (Steve): no rules page, no points.
-  0-3    ident     the Guess the Region ident (gtr_ident.py): the folded map unfolds and spins; the pin drops
-  3-27   clues     CLUE #1 .. CLUE #4 (6 s each); the stripes wipe opens #1, each later clue pushes in from the right
-  27-31  pause     MAKE YOUR GUESS, THE ANSWER IS COMING IN: a 3-2-1 countdown ring
-  31-40  reveal    flag-stripes wipe; California -> Mendocino County -> Anderson Valley on the real map; ANDERSON
-                   VALLEY; then the valley itself (the hillside photo) and the blurb; 9 s (one second longer)
-  40-44  cta       HOW MANY CLUES DID YOU NEED?; next up: What Am I Drinking?; ends on black
+TIMELINE (120 BPM, 2-second bars from the end of the ident; built from the scene lengths, so it follows the ident).
+v5 (Steve): the ident is 2 s (1.5x faster), with a much larger wordmark.
+  0-2    ident     the folded map unfolds and spins; the pin drops; GUESS THE / REGION
+  2-26   clues     CLUE #1 .. CLUE #4 (6 s each); the stripes wipe opens #1, each later clue pushes in from the right
+  26-30  pause     MAKE YOUR GUESS, THE ANSWER IS COMING IN: a 3-2-1 countdown ring
+  30-39  reveal    flag-stripes wipe; California -> Mendocino County -> Anderson Valley on the real map; the valley; the blurb
+  39-43  cta       HOW MANY CLUES DID YOU NEED?; next up: What Am I Drinking?; ends on black
 CLUES (sources in the plan): A (v3, Steve: viticulture, not the local dialect) the rainfall, 900-2,000 mm a year shown as
 about 35 to 79 inches (at 25.4 mm to the inch), and spring frost in the low-lying spots (D3 Ch. 23.1); B and C,
 D3 Ch. 23.1; D, D3 plus geography (The Field Guide's latitude scene). Reveal blurb: D3. Deliberately not used: the
@@ -493,14 +493,19 @@ def s_cta(u, ur=0.0, D=4.0, S=1.0):
 # ============================================================================= timeline
 # v4 (Steve): no rules page -- straight to the first clue; the reveal holds 1 s longer (9 s), so the cut into the close
 # lands on a beat (beat 3 of its bar) rather than a downbeat
-SCENE_TABLE = [(0.0, IDENT_DUR, s_ident, 1.0), (3.0, 6.0, s_clue_a, 1.0), (9.0, 6.0, s_clue_b, 1.0),
-               (15.0, 6.0, s_clue_c, 1.0), (21.0, 6.0, s_clue_d, 1.0), (27.0, 4.0, s_pause, 1.0), (31.0, 9.0, s_reveal, 1.0),
-               (40.0, 4.0, s_cta, 1.0)]
-DUR = 44.0
+# v5 (Steve: a faster ident): built from the ident's own length, so the timeline follows it (2 s now; 43 s in all)
+_LEN = [(s_ident, IDENT_DUR), (s_clue_a, 6.0), (s_clue_b, 6.0), (s_clue_c, 6.0), (s_clue_d, 6.0), (s_pause, 4.0),
+        (s_reveal, 9.0), (s_cta, 4.0)]
+SCENE_TABLE, _t = [], 0.0
+for _fn, _d in _LEN:
+    SCENE_TABLE.append((_t, _d, _fn, 1.0))
+    _t += _d
+DUR = _t
 N = int(DUR * FPS)
-CUTS_STRIPES = (3.0, 31.0)
-CUTS_PUSH = (9.0, 15.0, 21.0)                # each clue pushes the last one off to the left
-CUTS_WHIP = (27.0, 40.0)
+_START = {fn.__name__: st for st, _d, fn, _s in SCENE_TABLE}
+CUTS_STRIPES = (_START["s_clue_a"], _START["s_reveal"])
+CUTS_PUSH = (_START["s_clue_b"], _START["s_clue_c"], _START["s_clue_d"])   # each clue pushes the last one off
+CUTS_WHIP = (_START["s_pause"], _START["s_cta"])
 
 
 def T(scene, u):

@@ -5,7 +5,8 @@ GTR_STYLE_GUIDE s4). The map starts open, spins a little, then the pin drops in.
 recomputed from the same parameters (not traced), so the ident IS the logo, animated. Same family as The Field Guide
 bumper: white line art on the same warm dark ground, the chip in the arc's color.
 
-STORYBOARD
+STORYBOARD (times below are the ORIGINAL 3-second timeline; on screen each is divided by SPEED = 1.5, so it all happens
+in 2 s: the unfold at 0.23-0.7 s, the pin at 0.87-1.17 s, the wordmark at 1.27 s)
   0.05-0.3   v3 (Steve: unfold, spin, then the pin): the map pops in FOLDED, its four panels stacked accordion-style
   0.35-1.05  it unfolds panel by panel (the second and fourth panels swing out from behind) while it
   0.1-1.25   spins a little: swings in from -38 degrees with a swivel (squashed, as if turning toward you),
@@ -25,9 +26,12 @@ import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from reel_lib import (W, H, chip, fill_poly, in_out_cubic, out_back, out_cubic, prog, stroke_path, text)  # noqa: E402
+from reel_lib import (W, H, chip, fill_poly, in_out_cubic, out_back, out_cubic, prog, round_rect, stroke_path, text,  # noqa: E402
+                      text_width)
 
-IDENT_DUR = 3.0
+IDENT_DUR = 2.0           # v4 (Steve: faster): the animation runs 1.5x faster, so the ident is 2 s, not 3
+SPEED = 1.5               # every internal time below is in the original 3-second timeline, divided by SPEED on screen
+_BASE = IDENT_DUR * SPEED
 GROUND = (16, 12, 14)                     # the same warm dark as The Field Guide bumper
 LINE = (246, 242, 234)
 LEMON = (246, 232, 98)
@@ -116,8 +120,25 @@ def _partial_path(pts, frac):
     return [tuple(p) for p in P[:k]] + [tuple(e)]
 
 
+def _wordmark(f, q, accent):
+    """v4 (Steve: much larger): GUESS THE / REGION as a two-line chip, sized to the largest that fits the width (a one-line
+    chip could only grow about 1.5x before reaching the screen edges)."""
+    lines = ("GUESS THE", "REGION")
+    sz = next(z for z in range(160, 54, -2) if max(text_width(l, "black", z, 2) for l in lines) + 1.2 * z <= W - 120)
+    lh = 1.06 * sz
+    hw = (max(text_width(l, "black", sz, 2) for l in lines) + 1.2 * sz) / 2
+    hh = lh + 0.42 * sz
+    cx, cy = W / 2, 1300
+    round_rect(f, cx - hw * q, cy - hh * q, cx + hw * q, cy + hh * q, int(0.32 * sz * q) + 1, accent)
+    for k, ln in enumerate(lines):
+        yc = cy + (k - 0.5) * lh * q
+        text(f, ln, "black", sz, (255, 255, 255), cx, yc + 0.36 * sz * q, align="center", tracking=2,
+             alpha=min(1.0, q * 1.2), scale=q)
+
+
 def ident(t, accent=(178, 34, 52)):
     import cv2
+    t = t * SPEED                                     # run the original timeline 1.5x faster
     f = np.empty((H, W, 3), np.float32)
     f[:] = GROUND
     gq = out_cubic(prog(t, 0.9, 1.8))                 # warm glow behind the map
@@ -156,8 +177,8 @@ def ident(t, accent=(178, 34, 52)):
         a38 = math.radians(38)
         body = [(pc[0] + pr * math.cos(a_), pc[1] + pr * math.sin(a_)) for a_ in np.linspace(math.radians(90 + 38), math.radians(90 + 360 - 38), 40)]
         outline = [(x, y + dy) for x, y in body + [ptip]]
-        fill_poly(f, _xf(outline, ang, sx), GROUND)   # filled, so the map's lines don't show through it
-        stroke_path(f, _xf(outline + [outline[0]], ang, sx), LINE, LW_ - 2)
+        fill_poly(f, _xf(outline, ang, sx), accent)   # v5 (Steve): a RED pin, matching the wordmark chip (filled, so the
+        stroke_path(f, _xf(outline + [outline[0]], ang, sx), accent, LW_ - 2)   # map's lines don't show through it)
         iq = out_back(prog(t, 1.75, 1.9), 2.4)
         if iq > 0:
             ir = pr * 0.42 * iq
@@ -170,8 +191,8 @@ def ident(t, accent=(178, 34, 52)):
                         LINE, 4, alpha=0.7 * (1 - rp))
     cq = out_back(prog(t, 1.9, 2.25), 1.7)
     if cq > 0:
-        chip(f, "GUESS THE REGION", W / 2, 1250, cq, fill=accent, ink=(255, 255, 255), size=54, align="center", tracking=2)
-    z = 1 + 0.035 * in_out_cubic(prog(t, 0, IDENT_DUR))
+        _wordmark(f, cq, accent)
+    z = 1 + 0.035 * in_out_cubic(prog(t, 0, _BASE))
     M = cv2.getRotationMatrix2D((W / 2, H * 0.45), 0, z)
     return cv2.warpAffine(f, M, (W, H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
 
@@ -181,26 +202,28 @@ def clamp_(v):
 
 
 def ident_audio():
+    """The sonic logo at the faster speed: every event time is divided by SPEED; the buffer runs 1.5 s past the ident so
+    the bells ring out into the first clue instead of being cut off."""
     from reel_audio import SR, tvec, lp, hp, bp, place, rng
-    n = int(IDENT_DUR * SR)
+    S_ = SPEED
+    n = int((IDENT_DUR + 1.5) * SR)
     L = np.zeros(n); R_ = np.zeros(n)
-    k0 = int(0.7 * SR); tk0 = tvec(k0)                # the map unfolds: a paper rustle (v3: follows the unfold)
-    rus = bp(rng.normal(0, 1, k0), 1500, 7000) * (0.5 + 0.5 * np.abs(np.sin(2 * np.pi * 17 * tk0))) * np.sin(np.pi * tk0 / 0.7) ** 1.5
-    place(L, rus * 0.07, 0.35); place(R_, rus * 0.06, 0.38)
+    k0 = int(0.7 / S_ * SR); tk0 = tvec(k0)          # the map unfolds: a paper rustle
+    rus = bp(rng.normal(0, 1, k0), 1500, 7000) * (0.5 + 0.5 * np.abs(np.sin(2 * np.pi * 17 * S_ * tk0))) * np.sin(np.pi * tk0 / (0.7 / S_)) ** 1.5
+    place(L, rus * 0.07, 0.35 / S_); place(R_, rus * 0.06, 0.38 / S_)
     sn = bp(rng.normal(0, 1, int(0.08 * SR)), 800, 6000) * np.exp(-tvec(int(0.08 * SR)) / 0.012)
-    place(L, sn * 0.22, 1.03); place(R_, sn * 0.22, 1.03)  # ...and snaps flat
-    k1 = int(0.9 * SR); tk1 = tvec(k1)                # it spins: a soft whoosh
-    fsw = 300 + 2200 * np.sin(np.pi * tk1 / 0.9)
-    wsh = bp(rng.normal(0, 1, k1), 400, 3500) * np.sin(np.pi * tk1 / 0.9) ** 2
-    place(L, wsh * 0.05, 0.15); place(R_, wsh * 0.045, 0.18)
+    place(L, sn * 0.22, 1.03 / S_); place(R_, sn * 0.22, 1.03 / S_)    # ...and snaps flat
+    k1 = int(0.9 / S_ * SR); tk1 = tvec(k1)           # it spins: a soft whoosh
+    wsh = bp(rng.normal(0, 1, k1), 400, 3500) * np.sin(np.pi * tk1 / (0.9 / S_)) ** 2
+    place(L, wsh * 0.05, 0.15 / S_); place(R_, wsh * 0.045, 0.18 / S_)
     th = (np.sin(2 * np.pi * 90 * tvec(int(0.2 * SR))) * np.exp(-tvec(int(0.2 * SR)) / 0.05)
           + bp(rng.normal(0, 1, int(0.2 * SR)), 250, 1400) * np.exp(-tvec(int(0.2 * SR)) / 0.02) * 0.5)
-    place(L, th * 0.5, 1.56); place(R_, th * 0.5, 1.56)  # the pin lands (first contact of its bounce)
+    place(L, th * 0.5, 1.56 / S_); place(R_, th * 0.5, 1.56 / S_)      # the pin lands
     for i, fq in enumerate((659.25, 987.77)):         # a rising fifth: the sound of a question
         q = int(1.4 * SR); tq = tvec(q)
         bell = sum(a * np.sin(2 * np.pi * fq * h * tq) * np.exp(-tq / d) for h, a, d in ((1, 1.0, 0.9), (2, 0.4, 0.5), (3, 0.2, 0.3)))
-        place(L, bell * 0.14, 1.82 + 0.2 * i); place(R_, bell * 0.14, 1.83 + 0.2 * i)
+        place(L, bell * 0.14, (1.82 + 0.2 * i) / S_); place(R_, bell * 0.14, (1.83 + 0.2 * i) / S_)
     s = int(1.4 * SR); ts = tvec(s)                   # warm swell
     swl = sum(np.sin(2 * np.pi * fq * ts) for fq in (246.94, 329.63, 493.88)) * np.minimum(1, ts / 0.5) * np.exp(-np.maximum(ts - 0.8, 0) / 0.5)
-    place(L, lp(swl, 1600) * 0.03, 1.6); place(R_, lp(swl, 1600) * 0.03, 1.6)
+    place(L, lp(swl, 1600) * 0.03, 1.6 / S_); place(R_, lp(swl, 1600) * 0.03, 1.6 / S_)
     return np.stack([hp(L, 30), hp(R_, 30)], 1)

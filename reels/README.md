@@ -112,4 +112,9 @@ unfolds from folded while it spins. The score's sections are now READ FROM THE P
 timeline changes cannot strand the music. Lesson (true peak): with the clues starting at 3.0 s, a full kick landed on each
 stripes wipe's big impact; the AAC encoder overshot to +0.6 dBTP on the stacked low end, and a pre-encode limiter could not
 catch it. Fix at the source: the wipe's impact REPLACES the kick on its beat. Result -14.7 LUFS, -1.6 dBTP.
+**v5 (Steve):** the ident is 1.5x faster (2 s; `SPEED` scales its original 3-second timeline, and the sonic logo with it);
+GUESS THE / REGION is a two-line chip sized to the width; the pin is red (the arc's accent) with a white inner ring. The
+Reel's SCENE_TABLE and cut lists are now built from the scene lengths, so a change to one scene moves everything after it.
+Render note: keep render calls to two or three 150-frame chunks; four ran past the 300-second tool limit and left two
+chunks half-written (caught by counting each chunk's frames before joining).
 

@@ -63,3 +63,11 @@ the caption).
   the route draws and the pin drops.
 - Running time 44 s.
 
+## v5 changes (Steve)
+- The ident runs 1.5x faster: 2 s instead of 3 (the timeline is now built from the scene lengths, so it followed). The
+  sonic logo is rescaled to match; its bells ring on into clue #1 rather than being cut off.
+- GUESS THE / REGION is a two-line wordmark chip, sized to the largest that fits the width (a one-line chip could only grow
+  about 1.5x).
+- The map pin is red, matching the wordmark chip, with a white inner ring.
+- Running time 43 s.
+
