@@ -6,8 +6,9 @@ recomputed from the same parameters (not traced), so the ident IS the logo, anim
 bumper: white line art on the same warm dark ground, the chip in the arc's color.
 
 STORYBOARD
-  0.05-0.5   the map draws itself, already open: outline, then the creases, then the dashed route
-  0.1-1.25   it spins a little: swings in from -38 degrees with a swivel (squashed, as if turning toward you),
+  0.05-0.3   v3 (Steve: unfold, spin, then the pin): the map pops in FOLDED, its four panels stacked accordion-style
+  0.35-1.05  it unfolds panel by panel (the second and fourth panels swing out from behind) while it
+  0.1-1.25   spins a little: swings in from -38 degrees with a swivel (squashed, as if turning toward you),
              overshoots slightly and settles square
   1.3-1.75   the pin drops in to its logo position over the dip, bounces; a shadow, then a landing ripple
   1.75-1.9   the pin's inner ring pops in
@@ -36,14 +37,19 @@ MW = 600                                  # the map's width (the logo's w)
 LW_ = 22                                  # line weight: the decks draw the logo at about w/17
 
 
-def _logo_geometry(w=MW):
-    """The locked logo (guess_the_region._folded_map_icon), in coordinates centered on the map."""
+def _logo_geometry(w=MW, k=1.0):
+    """The locked logo (guess_the_region._folded_map_icon), in coordinates centered on the map. k unfolds it: at k = 0
+    the four panels are stacked accordion-style (each even panel folded back over the one before), at k = 1 it is the
+    logo exactly. The folded-back panels' horizontal run goes from -a to +a, so the folds open continuously."""
     th = w * 0.59
     peak, dip, tip = 0.0, w * (0.644 - 0.57), w * 0.644
-    fx = [0.0, 0.25 * w, 0.5 * w, 0.75 * w, w]
+    a = 0.25 * w
+    fx = [0.0]
+    for dx in (a, a * (2 * k - 1), a, a * (2 * k - 1)):
+        fx.append(fx[-1] + dx)
     top = [(x, y) for x, y in zip(fx, [tip, peak, dip, peak, tip])]
     bot = [(x, y) for x, y in zip(fx, [tip, peak + th, dip + th, peak + th, tip])]
-    cx, cy = w / 2, (peak + max(tip, dip + th)) / 2
+    cx, cy = (min(fx) + max(fx)) / 2, (peak + max(tip, dip + th)) / 2     # stays centered as it unfolds
     route = []
     mids = [(t[1] + b[1]) / 2 for t, b in zip(top, bot)]
     for i in range(161):
@@ -122,18 +128,17 @@ def ident(t, accent=(178, 34, 52)):
         f[:] = f * (1 - glow) + np.array(GOLD, np.float32) * glow
     ang, sx = _spin(t)
     G = GEO_
-    dq = in_out_cubic(prog(t, 0.05, 0.42))            # the outline draws, from the left tip both ways
-    if dq > 0:
+    aq = out_back(prog(t, 0.05, 0.3), 1.6)            # the folded map pops in...
+    if aq > 0.02:
+        k = in_out_cubic(prog(t, 0.35, 1.05))         # ...and unfolds while it spins
+        Gk = _logo_geometry(MW, k) if k < 1 else G
         for edge in ("top", "bot"):
-            stroke_path(f, _xf(_partial_path(G[edge], dq), ang, sx), LINE, LW_)
-        for end in (G["top"][0], G["top"][-1]):
-            if dq >= 1:
-                fill_poly(f, _xf([(end[0] + LW_ / 2 * math.cos(a_), end[1] + LW_ / 2 * math.sin(a_)) for a_ in np.linspace(0, 2 * math.pi, 14)], ang, sx), LINE)
-    for i, cr in enumerate(G["creases"]):             # the creases
-        q = out_cubic(prog(t, 0.3 + 0.05 * i, 0.5 + 0.05 * i))
-        if q > 0:
-            stroke_path(f, _xf(_partial_path(cr, q), ang, sx), LINE, LW_ - 6)
-    rq = prog(t, 0.45, 0.85)                          # the dashed route
+            stroke_path(f, _xf(Gk[edge], ang, sx, aq), LINE, LW_)
+        for end in (Gk["top"][0], Gk["top"][-1]):
+            fill_poly(f, _xf([(end[0] + LW_ / 2 * math.cos(a_), end[1] + LW_ / 2 * math.sin(a_)) for a_ in np.linspace(0, 2 * math.pi, 14)], ang, sx, aq), LINE)
+        for cr in Gk["creases"]:                       # the creases (the folds themselves)
+            stroke_path(f, _xf(cr, ang, sx, aq), LINE, LW_ - 6)
+    rq = prog(t, 1.05, 1.35)                          # the dashed route, once it is flat
     if rq > 0:
         for seg in _dashes(G["route"], rq, MW * 0.042, MW * 0.034):
             stroke_path(f, _xf(seg, ang, sx), LINE, LW_ - 9)
@@ -179,9 +184,11 @@ def ident_audio():
     from reel_audio import SR, tvec, lp, hp, bp, place, rng
     n = int(IDENT_DUR * SR)
     L = np.zeros(n); R_ = np.zeros(n)
-    k0 = int(0.5 * SR); tk0 = tvec(k0)                # the map opens: a paper rustle
-    rus = bp(rng.normal(0, 1, k0), 1500, 7000) * (0.5 + 0.5 * np.abs(np.sin(2 * np.pi * 17 * tk0))) * np.sin(np.pi * tk0 / 0.5) ** 1.5
-    place(L, rus * 0.07, 0.05); place(R_, rus * 0.06, 0.08)
+    k0 = int(0.7 * SR); tk0 = tvec(k0)                # the map unfolds: a paper rustle (v3: follows the unfold)
+    rus = bp(rng.normal(0, 1, k0), 1500, 7000) * (0.5 + 0.5 * np.abs(np.sin(2 * np.pi * 17 * tk0))) * np.sin(np.pi * tk0 / 0.7) ** 1.5
+    place(L, rus * 0.07, 0.35); place(R_, rus * 0.06, 0.38)
+    sn = bp(rng.normal(0, 1, int(0.08 * SR)), 800, 6000) * np.exp(-tvec(int(0.08 * SR)) / 0.012)
+    place(L, sn * 0.22, 1.03); place(R_, sn * 0.22, 1.03)  # ...and snaps flat
     k1 = int(0.9 * SR); tk1 = tvec(k1)                # it spins: a soft whoosh
     fsw = 300 + 2200 * np.sin(np.pi * tk1 / 0.9)
     wsh = bp(rng.normal(0, 1, k1), 400, 3500) * np.sin(np.pi * tk1 / 0.9) ** 2

@@ -1,13 +1,12 @@
-# Caption: Guess the Region: Anderson Valley (Reel, 45 s) -- DRAFT, for Steve's review
+# Caption: Guess the Region: Anderson Valley (Reel, 44 s) -- DRAFT, for Steve's review
 
 **Hook (first line, under 125 characters):**
-Four clues. Fewer clues, more points. Can you name this California valley before the reveal?
+Four clues, one California valley. Can you name it before the reveal?
 
 **Body:**
-Pause the moment you know it. Clue A is worth 4 points, clue D just 1. Watched The Field Guide earlier this week?
-One of these clues should feel familiar.
+Pause the moment you know it. Watched The Field Guide earlier this week? One of these clues should feel familiar.
 
-How many points did you score? Tell us below (no spoilers for the people still guessing).
+How many clues did you need? Tell us below (no spoilers for the people still guessing).
 
 Next up: What Am I Drinking?
 
@@ -22,5 +21,6 @@ Sources: WSET D3 (Ch. 23.1).
 - THE CAPTION MUST NOT GIVE AWAY THE ANSWER: no #AndersonValley, #MendocinoWine or #Boonville, and no photo title in the
   credits ('Hillside Vineyards in Anderson Valley' names it). "California valley" narrows it to the state only; clue B
   already says Pacific.
-- "No spoilers" asks commenters to share a score, not the answer, so the comments don't ruin it for later viewers.
+- "No spoilers" asks commenters to share how many clues they needed, not the answer, so the comments don't ruin it.
+- v4: no points anywhere (Reel or caption).
 - Social Pass not yet run.

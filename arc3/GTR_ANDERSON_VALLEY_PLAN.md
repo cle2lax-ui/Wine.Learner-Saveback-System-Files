@@ -55,3 +55,11 @@ the caption).
 - The countdown reads "MAKE YOUR GUESS, / THE ANSWER IS COMING IN" (the series' all-caps headline style), with a larger
   countdown below.
 
+## v4 changes (Steve)
+- No rules page: the ident goes straight to CLUE #1. No points anywhere: the meter and the difficulty labels are gone, the
+  clues are CLUE #1 .. CLUE #4, and the close asks HOW MANY CLUES DID YOU NEED? (tiles #1-#4).
+- The reveal holds one second longer (9 s); the cut into the close lands on a beat rather than a downbeat.
+- The ident: the folded map unfolds (its four panels stacked accordion-style, opening continuously) while it spins; then
+  the route draws and the pin drops.
+- Running time 44 s.
+

@@ -107,4 +107,9 @@ MAKE YOUR GUESS, THE ANSWER IS COMING IN. Lessons: `out_back(0)` returns 2.2e-16
 scales with an easing (the snowflake drew a dot, as the bumper's text lines once did); when replacing a function, cut by the
 NEXT TOP-LEVEL definition and diff the module's top-level names afterwards (a nested `def` and a plain module-level
 assignment were both caught that way).
+**v4 (Steve):** no rules page, no points (CLUE #1 .. #4; HOW MANY CLUES DID YOU NEED?); the reveal holds 9 s; the ident's map
+unfolds from folded while it spins. The score's sections are now READ FROM THE PICTURE (QUIZ/PAUSE/ANSWER from T()), so
+timeline changes cannot strand the music. Lesson (true peak): with the clues starting at 3.0 s, a full kick landed on each
+stripes wipe's big impact; the AAC encoder overshot to +0.6 dBTP on the stacked low end, and a pre-encode limiter could not
+catch it. Fix at the source: the wipe's impact REPLACES the kick on its beat. Result -14.7 LUFS, -1.6 dBTP.
 

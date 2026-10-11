@@ -24,9 +24,10 @@ from mendo_gtr_reel import T, DUR, CUTS_STRIPES, CUTS_PUSH, CUTS_WHIP  # noqa: E
 from gtr_ident import ident_audio, IDENT_DUR  # noqa: E402
 
 N = int(SR * DUR)
-QUIZ = (IDENT_DUR, 29.0)
-PAUSE = (29.0, 33.0)
-ANSWER = (33.0, 41.0)
+# v4: every section boundary is read from the picture's timeline (the rules page went and the reveal grew 1 s)
+QUIZ = (IDENT_DUR, T("s_pause", 0.0))
+PAUSE = (T("s_pause", 0.0), T("s_reveal", 0.0))
+ANSWER = (T("s_reveal", 0.0), T("s_cta", 0.0))
 MINOR = {"Bm": (61.74, (246.94, 293.66, 369.99)), "G": (98.0, (196.0, 246.94, 293.66)),
          "D": (73.42, (293.66, 369.99, 440.0)), "A": (110.0, (220.0, 277.18, 329.63))}
 PROG_Q = ["Bm", "G", "D", "A"]
@@ -43,25 +44,23 @@ def beep(fq, dur=0.13):
     return np.sin(2 * np.pi * fq * t) * np.minimum(1, t / 0.004) * np.exp(-t / 0.08)
 
 
-def boop():
-    """The meter drops a point: a short descending tone."""
-    n = int(0.26 * SR); t = tvec(n)
-    f = 880 * (0.5 ** (t / 0.26))
-    return np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / 0.12)
-
-
 def build():
     drums = np.zeros(N); kenv = np.zeros(N)
     mL = np.zeros(N); mR = np.zeros(N); verb = np.zeros(N); sfx = np.zeros(N)
     k = kick()
     # quiz: kick on 1 and 3 from the first clue; hats from the rules
-    for b in np.arange(5.0, QUIZ[1], 2 * BEAT):
+    on_wipe = lambda b: any(abs(b - c) < 1e-3 for c in CUTS_STRIPES)   # noqa: E731
+    for b in np.arange(QUIZ[0], QUIZ[1], 2 * BEAT):            # kick from the first clue
+        if on_wipe(b):
+            continue        # the wipe's impact replaces the kick on that beat (stacked, they overshot after AAC encoding)
         place(drums, k, b, 0.85)
         i = int(b * SR); m = min(N, i + int(0.3 * SR)); kenv[i:m] = np.maximum(kenv[i:m], np.exp(-tvec(m - i) / 0.12))
-    for j, b in enumerate(np.arange(3.0, QUIZ[1], BEAT / 2)):
+    for j, b in enumerate(np.arange(QUIZ[0], QUIZ[1], BEAT / 2)):
         place(drums, hat(open_=(j % 8 == 7)), b, 0.32 * (1.0 if j % 2 else 0.6))
     # answer: four on the floor, clap, sixteenth hats
     for b in np.arange(ANSWER[0], ANSWER[1], BEAT):
+        if on_wipe(b):
+            continue
         place(drums, k, b, 1.0)
         i = int(b * SR); m = min(N, i + int(0.3 * SR)); kenv[i:m] = np.maximum(kenv[i:m], np.exp(-tvec(m - i) / 0.12))
     for b in np.arange(ANSWER[0] + BEAT, ANSWER[1], 2 * BEAT):
@@ -76,7 +75,7 @@ def build():
         bi = int(round((t0 - (ANSWER[0] if ans else IDENT_DUR)) / 2.0))
         name = "D" if t0 >= ANSWER[1] else (PROG_A if ans else PROG_Q)[bi % 4]
         root, chord = MINOR[name]
-        n = int(min(2.0, DUR - t0) * SR)
+        n = int(min(2.0, DUR - t0, (ANSWER[1] - t0) if ANSWER[0] <= t0 < ANSWER[1] else 99) * SR)   # stop at the close
         env = np.minimum(1, tvec(n) / 0.3) * np.minimum(1, (n / SR - tvec(n)) / 0.2 + 1e-4)
         for fq in chord:
             for side, dt in ((mL, -7), (mR, +7)):
@@ -92,7 +91,7 @@ def build():
             place(mL if s % 2 == 0 else mR, sig, ta)
             place(mR if s % 2 == 0 else mL, sig * 0.4, ta + 0.1875)
             place(verb, sig * 0.5, ta)
-        if t0 >= 5.0:
+        if t0 >= QUIZ[0]:
             for e in range(8 if ans else 4):
                 tb = t0 + e * (BEAT / 2 if ans else BEAT)
                 nb = int(0.22 * SR)
@@ -116,11 +115,6 @@ def build():
     for c in CUTS_WHIP:
         place(sfx, whoosh(0.26, 600, 9000, 0.85), c - 0.13, 0.7)
         place(sfx, impact(0.6), c, 0.5)
-    for u0 in (0.1, 0.45, 0.6):                                # the rules
-        place(sfx, impact(0.35), T("s_rules", u0), 0.3)
-    place(sfx, pop(), 3.75, 0.3)                               # the meter arrives
-    for t_ in (11.0, 17.0, 23.0):                              # ...and drops a point at each clue
-        place(sfx, boop(), t_ + 0.02, 0.32)
     for sc in ("s_clue_a", "s_clue_b", "s_clue_c", "s_clue_d"):
         place(sfx, pop(), T(sc, 0.08), 0.22)                   # CLUE chip
         for k_ in range(3):
@@ -162,11 +156,11 @@ def build():
     place(sfx, pop(), T("s_clue_d", 3.6), 0.3)                         # "? 39"
     for u0 in (0.0, 0.3, 0.42):                                # MAKE YOUR GUESS / THE ANSWER IS / COMING IN (first on the cut)
         place(sfx, impact(0.4), T("s_pause", u0), 0.35)
-    for j, t_ in enumerate(np.arange(29.5, 33.0, 0.5)):        # the clock
+    for j, t_ in enumerate(np.arange(PAUSE[0] + 0.5, PAUSE[1], 0.5)):   # the clock
         place(sfx, knock(), t_, 0.18 if j % 2 else 0.25)
     for u0, fq in ((0.6, 880.0), (1.6, 880.0), (2.6, 880.0), (3.6, 1320.0)):
         place(sfx, beep(fq), T("s_pause", u0), 0.3)
-    place(sfx, riser(0.55), 32.45, 0.5)
+    place(sfx, riser(0.55), PAUSE[1] - 0.55, 0.5)
     pen = hp(rng.normal(0, 1, int(0.8 * SR)), 3000) * 0.05      # the reveal
     place(sfx, pen * np.sin(np.pi * tvec(len(pen)) / 0.8), T("s_reveal", 0.05))
     place(sfx, pop(), T("s_reveal", 0.45), 0.3)
@@ -179,7 +173,7 @@ def build():
     place(sfx, whoosh(0.6, 200, 2500, 0.8), T("s_reveal", 4.4), 0.3)
     for k_ in range(3):
         place(sfx, tick(), T("s_reveal", 5.1 + 0.4 * k_), 0.12)
-    for u0 in (0.05, 0.35):                                    # the close
+    for u0 in (0.0, 0.35):                                     # the close (the first slam on the cut, as in the countdown)
         place(sfx, impact(0.4), T("s_cta", u0), 0.35)
     for k_ in range(4):
         place(sfx, pop(), T("s_cta", 0.8 + 0.12 * k_), 0.22)

@@ -1,18 +1,17 @@
-"""GUESS THE REGION: ANDERSON VALLEY -- a Reel (Arc 3, entry 2). 1080x1920, 30 fps, 45 s. Theme: usa.
+"""GUESS THE REGION: ANDERSON VALLEY -- a Reel (Arc 3, entry 2). 1080x1920, 30 fps, 44 s. Theme: usa.
 
 Plan: arc3/GTR_ANDERSON_VALLEY_PLAN.md. The series' GTR DNA (four clues, the answer never named before the reveal, one
-"release valve" clue) with what a Reel adds: the clues ESCALATE (hardest first) and a POINTS METER drops 4 -> 1 as
-each clue arrives, so viewers commit early; a 3-2-1 "pause and guess"; the reveal on the real map; a closing question
-whose answer is the viewer's own score. It tests The Field Guide (posted 2-3 days earlier): clue D is its callback.
+"release valve" clue) with what a Reel adds: the clues ESCALATE (hardest first, CLUE #1 .. CLUE #4); a 3-2-1 "make your
+guess" countdown; the reveal on the real map; a closing question, how many clues you needed. No points (v4, Steve). It
+tests The Field Guide (posted 2-3 days earlier): clue #4 is its callback.
 
-TIMELINE (120 BPM, 2-second bars; every cut on a bar line; T(scene, u) gives the score its event times)
-  0-3    ident     the Guess the Region ident (gtr_ident.py)
-  3-5    rules     FOUR CLUES. FEWER CLUES, MORE POINTS. -- the meter arrives at 4
-  5-29   clues     A, B, C, D (6 s each), each pushed in from the right; the meter flips 4 -> 3 -> 2 -> 1
-  29-33  pause     PAUSE AND GUESS: a 3-2-1 countdown ring
-  33-41  reveal    flag-stripes wipe; California -> Mendocino County -> Anderson Valley on the real map; ANDERSON
-                   VALLEY; then the valley itself (the hillside photo) and the blurb
-  41-45  cta       HOW MANY POINTS DID YOU SCORE?; next up: What Am I Drinking?; ends on black
+TIMELINE (120 BPM, 2-second bars; T(scene, u) gives the score its event times). v4 (Steve): no rules page, no points.
+  0-3    ident     the Guess the Region ident (gtr_ident.py): the folded map unfolds and spins; the pin drops
+  3-27   clues     CLUE #1 .. CLUE #4 (6 s each); the stripes wipe opens #1, each later clue pushes in from the right
+  27-31  pause     MAKE YOUR GUESS, THE ANSWER IS COMING IN: a 3-2-1 countdown ring
+  31-40  reveal    flag-stripes wipe; California -> Mendocino County -> Anderson Valley on the real map; ANDERSON
+                   VALLEY; then the valley itself (the hillside photo) and the blurb; 9 s (one second longer)
+  40-44  cta       HOW MANY CLUES DID YOU NEED?; next up: What Am I Drinking?; ends on black
 CLUES (sources in the plan): A (v3, Steve: viticulture, not the local dialect) the rainfall, 900-2,000 mm a year shown as
 about 35 to 79 inches (at 25.4 mm to the inch), and spring frost in the low-lying spots (D3 Ch. 23.1); B and C,
 D3 Ch. 23.1; D, D3 plus geography (The Field Guide's latitude scene). Reveal blurb: D3. Deliberately not used: the
@@ -71,25 +70,14 @@ def clue_text(f, txt, u):
 
 
 def clue_header(f, letter, u):
-    chip(f, f"CLUE {letter}", 60, 250, out_back(prog(u, 0.05, 0.35), 1.7), fill=RED, ink=(255, 255, 255), size=34, align="left")
-    rise_text(f, {"A": "HARDEST", "B": "HARD", "C": "EASIER", "D": "EASIEST"}[letter], "black", 26, MUTED, 62, 340, u, 0.2,
-              tracking=6)
+    """v4 (Steve): no points anywhere -- just CLUE #1 .. CLUE #4 (the difficulty labels went with the scoring)."""
+    n = "ABCD".index(letter) + 1
+    chip(f, f"CLUE #{n}", 60, 250, out_back(prog(u, 0.05, 0.35), 1.7), fill=RED, ink=(255, 255, 255), size=34, align="left")
 
 
 # ============================================================================= scenes
 def s_ident(u, ur=0.0, D=3.0, S=1.0):
     return ident(u, accent=RED)
-
-
-def s_rules(u, ur=0.0, D=2.0, S=1.0):
-    f = bg(GROUND)
-    slam_text(f, "FOUR CLUES.", 150, TXT, 58, 760, u, 0.1)
-    slam_text(f, "FEWER CLUES,", 112, LEMON, 58, 900, u, 0.45)
-    slam_text(f, "MORE POINTS.", 112, LEMON, 58, 1020, u, 0.6)
-    rise_text(f, "Pause the moment you know it.", "serif_it", 50, MUTED, 60, 1120, u, 0.95)
-    return f
-
-
 
 
 def s_clue_a(u, ur=0.0, D=6.0, S=1.0):
@@ -402,7 +390,6 @@ def s_pause(u, ur=0.0, D=4.0, S=1.0):
             stroke_path(f, [(cx + r * math.cos(a_), cy + r * math.sin(a_)) for a_ in np.linspace(-math.pi / 2, a1, max(int(140 * pp), 2))], LEMON, 22)
             sc = 1.25 - 0.25 * out_back(prog(u, t0, t0 + 0.25), 2.0)
             text(f, num, "cond", 420, TXT, cx, cy + 148, align="center", scale=sc, alpha=out_cubic(prog(u, t0, t0 + 0.12)))
-    rise_text(f, "4 points at A \u00b7 3 at B \u00b7 2 at C \u00b7 1 at D", "med", 38, MUTED, W / 2, 1500, u, 0.8, align="center")
     return f
 
 
@@ -424,7 +411,7 @@ def _cam_between(v0, v1, t):
 REVEAL_SIZE = next(sz for sz in range(128, 60, -2) if text_width("ANDERSON VALLEY", "cond", sz) <= W - 120)
 
 
-def s_reveal(u, ur=0.0, D=8.0, S=1.0):
+def s_reveal(u, ur=0.0, D=9.0, S=1.0):
     f = bg(GROUND)
     z1 = in_out_cubic(prog(u, 0.9, 1.7))
     z2 = in_out_cubic(prog(u, 1.8, 2.6))
@@ -476,7 +463,7 @@ def s_reveal(u, ur=0.0, D=8.0, S=1.0):
         round_rect(f, 40, 1250, W - 40, 1560, 28, GROUND, 0.82 * cq)
     blurb = (("Just under 1,000 ha of vines.", "bold", 46, TXT),
              ("Its Pinot Noir: fresh red fruit, medium (+) acidity.", "med", 40, (214, 218, 232)),
-             ("Watched The Field Guide? Clue D was your way in.", "serif_it", 46, LEMON))
+             ("Watched The Field Guide? Clue #4 was your way in.", "serif_it", 46, LEMON))
     for k, (ln, fn, sz, col) in enumerate(blurb):
         sz = next(z for z in range(sz, 24, -1) if text_width(ln, fn, z) <= W - 160)
         rise_text(f, ln, fn, sz, col, 80, 1330 + k * 82, u, 5.1 + 0.4 * k)
@@ -485,16 +472,15 @@ def s_reveal(u, ur=0.0, D=8.0, S=1.0):
 
 def s_cta(u, ur=0.0, D=4.0, S=1.0):
     f = bg(GROUND)
-    slam_text(f, "HOW MANY POINTS", 120, TXT, W / 2, 560, u, 0.05, align="center")
-    slam_text(f, "DID YOU SCORE?", 120, LEMON, W / 2, 690, u, 0.35, align="center")
-    x = 90
-    for k, (letter, pts) in enumerate((("A", 4), ("B", 3), ("C", 2), ("D", 1))):
+    slam_text(f, "HOW MANY CLUES", 120, TXT, W / 2, 560, u, 0.05, align="center")      # v4: no points, just clues
+    slam_text(f, "DID YOU NEED?", 120, LEMON, W / 2, 690, u, 0.35, align="center")
+    for k in range(4):
         q = out_back(prog(u, 0.8 + 0.12 * k, 1.1 + 0.12 * k), 2.0)
         if q > 0:
             cx = 150 + k * 260
             round_rect(f, cx - 100 * q, 860 - 90 * q, cx + 100 * q, 860 + 90 * q, 26, TH["ground_alt"])
-            text(f, str(pts), "cond", 120, LEMON if k == 0 else TXT, cx, 885, align="center", scale=q)
-            text(f, f"AT {letter}", "black", 26, MUTED, cx, 932, align="center", tracking=3, alpha=min(q, 1))
+            text(f, f"#{k + 1}", "cond", 110, LEMON if k == 0 else TXT, cx, 885, align="center", scale=q)
+            text(f, "CLUE", "black", 26, MUTED, cx, 932, align="center", tracking=3, alpha=min(q, 1))
     rise_text(f, "Tell us below.", "serif_it", 56, TXT, W / 2, 1100, u, 1.4, align="center")
     rise_text(f, "NEXT UP", "black", 32, MUTED, W / 2, 1260, u, 1.8, align="center", tracking=8)
     cq = out_back(prog(u, 1.95, 2.3), 1.7)
@@ -504,39 +490,17 @@ def s_cta(u, ur=0.0, D=4.0, S=1.0):
     return f
 
 
-# ============================================================================= the points meter (an overlay)
-def meter(f, t):
-    """Fixed top right from the rules to the pause, drawn ABOVE the transitions so it stays put while the clues slide
-    underneath. The number flips down as each clue arrives: 4 -> 3 -> 2 -> 1."""
-    if not (3.6 <= t < 29.0):
-        return
-    q = out_back(prog(t, 3.6, 4.0), 1.8) * (1 - prog(t, 28.6, 29.0))
-    cx, cy, r = W - 140, 300, 78
-    stroke_path(f, [(cx + r * math.cos(a_), cy + r * math.sin(a_)) for a_ in np.linspace(0, 2 * math.pi, 90)], LEMON, 7, alpha=q)
-    text(f, "POINTS", "black", 24, MUTED, cx, cy - r - 18, align="center", tracking=5, alpha=q)
-    # the LATEST mark reached, not the largest value (the first version took max() of the values, so the meter never
-    # dropped and flashed a 5 at the first flip)
-    marks = [(4.0, 4), (11.0, 3), (17.0, 2), (23.0, 1)]
-    idx = max(i for i, (tt, _) in enumerate(marks) if t >= tt) if t >= 4.0 else 0
-    t0, cur = marks[idx]
-    prev = marks[idx - 1][1] if idx > 0 else cur
-    p = prog(t, t0, t0 + 0.4)
-    if t0 > 4.0 and p < 1:                                      # the old number falls away, the new one drops in
-        text(f, str(prev), "cond", 110, TXT, cx, cy + 40 + 90 * out_cubic(p), align="center", alpha=q * (1 - p))
-        text(f, str(cur), "cond", 110, LEMON, cx, cy + 40 - 90 * (1 - out_back(p, 1.6)), align="center", alpha=q * p)
-    else:
-        text(f, str(cur), "cond", 110, TXT, cx, cy + 40, align="center", alpha=q)
-
-
 # ============================================================================= timeline
-SCENE_TABLE = [(0.0, IDENT_DUR, s_ident, 1.0), (3.0, 2.0, s_rules, 1.0), (5.0, 6.0, s_clue_a, 1.0), (11.0, 6.0, s_clue_b, 1.0),
-               (17.0, 6.0, s_clue_c, 1.0), (23.0, 6.0, s_clue_d, 1.0), (29.0, 4.0, s_pause, 1.0), (33.0, 8.0, s_reveal, 1.0),
-               (41.0, 4.0, s_cta, 1.0)]
-DUR = 45.0
+# v4 (Steve): no rules page -- straight to the first clue; the reveal holds 1 s longer (9 s), so the cut into the close
+# lands on a beat (beat 3 of its bar) rather than a downbeat
+SCENE_TABLE = [(0.0, IDENT_DUR, s_ident, 1.0), (3.0, 6.0, s_clue_a, 1.0), (9.0, 6.0, s_clue_b, 1.0),
+               (15.0, 6.0, s_clue_c, 1.0), (21.0, 6.0, s_clue_d, 1.0), (27.0, 4.0, s_pause, 1.0), (31.0, 9.0, s_reveal, 1.0),
+               (40.0, 4.0, s_cta, 1.0)]
+DUR = 44.0
 N = int(DUR * FPS)
-CUTS_STRIPES = (3.0, 33.0)
-CUTS_PUSH = (5.0, 11.0, 17.0, 23.0)          # each clue pushes the last one off to the left
-CUTS_WHIP = (29.0, 41.0)
+CUTS_STRIPES = (3.0, 31.0)
+CUTS_PUSH = (9.0, 15.0, 21.0)                # each clue pushes the last one off to the left
+CUTS_WHIP = (27.0, 40.0)
 
 
 def T(scene, u):
@@ -568,7 +532,6 @@ def frame_at(t):
             f = whip(f, in_cubic(prog(t, c - 0.13, c)), 1 - out_cubic(prog(t, c, c + 0.13)) if t >= c else 0)
     for c in CUTS_STRIPES:
         stripes_wipe(f, prog(t, c - 0.22, c + 0.22))
-    meter(f, t)
     if t >= DUR - 0.4:
         f *= 1 - prog(t, DUR - 0.4, DUR)
     return f
