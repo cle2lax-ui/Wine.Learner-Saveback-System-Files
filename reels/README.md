@@ -88,7 +88,7 @@ that can reset.**
 and `python3 reels/check_reels.py` (13 Reel frames) must both pass. Note: 20 Arc 1 (Northern Rhone) photos listed in the photo
 manifest are not in the repo; their Commons URLs are in the manifest if those decks are ever re-rendered.
 
-## Guess the Region: Anderson Valley (Arc 3, entry 2) -- built, awaiting review
+## Guess the Region: Anderson Valley (Arc 3, entry 2) -- LOCKED, tag `gtr-anderson-valley-final`
 `mendo_gtr_reel.py` + `mendo_gtr_audio.py`; reuses the Field Guide Reel's toolkit by import (theme colors, the stripes wipe,
 whip, map data and cameras, chips, type helpers), so `check_reels.py` must keep passing. **The Guess the Region ident**
 (`gtr_ident.py`, `ident(t, accent=)`, `ident_audio()`): same family as The Field Guide bumper (white line art, warm dark
@@ -117,4 +117,5 @@ GUESS THE / REGION is a two-line chip sized to the width; the pin is red (the ar
 Reel's SCENE_TABLE and cut lists are now built from the scene lengths, so a change to one scene moves everything after it.
 Render note: keep render calls to two or three 150-frame chunks; four ran past the 300-second tool limit and left two
 chunks half-written (caught by counting each chunk's frames before joining).
+**v6 and LOCKED:** larger CLUE chips (60px). `check_reels.py` now guards both locked Reels (13 + 12 reference frames).
 

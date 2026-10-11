@@ -73,3 +73,9 @@ a points meter (4 -> 1) drawn above the transitions; 3-2-1 pause and guess; the 
 "How many points did you score?". Score: B minor while you think, D major for the answer. 45.000 s, 1,350 frames,
 -14.6 LUFS, -1.6 dBTP. Caption draft: `reels/CAPTION_GTR_anderson_valley.md` (no spoilers in hashtags or credits).
 
+## Entry 2 LOCKED: Guess the Region: Anderson Valley (Reel, 43 s)
+Tag `gtr-anderson-valley-final`. The Guess the Region ident (the folded map unfolds and spins, a red pin drops, GUESS THE /
+REGION), four escalating clues (viticulture; the real valley polygon and its measured 4 miles to the Pacific; fog and
+slopes; the Field Guide callback), the countdown, the reveal on the real map, and "How many clues did you need?".
+Caption: `reels/CAPTION_GTR_anderson_valley.md`. Next: entry 3, What Am I Drinking? (Roederer Estate Brut).
+

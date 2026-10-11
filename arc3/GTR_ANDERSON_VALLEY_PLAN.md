@@ -71,3 +71,8 @@ the caption).
 - The map pin is red, matching the wordmark chip, with a white inner ring.
 - Running time 43 s.
 
+## v6 and LOCKED: Guess the Region: Anderson Valley (Reel, 43 s)
+The CLUE #1-#4 chips are larger (34 -> 60px). Locked: tag `gtr-anderson-valley-final`. Reference frames across every scene in
+`reels/REEL_HASHES.json` (checked by `reels/check_reels.py`, alongside The Field Guide Reel). Caption:
+`reels/CAPTION_GTR_anderson_valley.md` (no spoilers; the CC BY 2.0 credit required). Social Pass not yet run.
+

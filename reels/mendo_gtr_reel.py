@@ -72,7 +72,8 @@ def clue_text(f, txt, u):
 def clue_header(f, letter, u):
     """v4 (Steve): no points anywhere -- just CLUE #1 .. CLUE #4 (the difficulty labels went with the scoring)."""
     n = "ABCD".index(letter) + 1
-    chip(f, f"CLUE #{n}", 60, 250, out_back(prog(u, 0.05, 0.35), 1.7), fill=RED, ink=(255, 255, 255), size=34, align="left")
+    # v6 (Steve): a larger clue chip (34 -> 60px); centered at 270 so its bottom clears the clue text's first line
+    chip(f, f"CLUE #{n}", 60, 270, out_back(prog(u, 0.05, 0.35), 1.7), fill=RED, ink=(255, 255, 255), size=60, align="left")
 
 
 # ============================================================================= scenes
