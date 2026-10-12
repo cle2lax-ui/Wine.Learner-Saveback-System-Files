@@ -1,4 +1,4 @@
-"""GUESS THE REGION: ANDERSON VALLEY -- a Reel (Arc 3, entry 2). 1080x1920, 30 fps, 43 s. Theme: usa.
+"""GUESS THE REGION: ANDERSON VALLEY -- a Reel (Arc 3, entry 2). 1080x1920, 30 fps, 43.5 s. Theme: usa.
 
 Plan: arc3/GTR_ANDERSON_VALLEY_PLAN.md. The series' GTR DNA (four clues, the answer never named before the reveal, one
 "release valve" clue) with what a Reel adds: the clues ESCALATE (hardest first, CLUE #1 .. CLUE #4); a 3-2-1 "make your
@@ -72,8 +72,8 @@ def clue_text(f, txt, u):
 def clue_header(f, letter, u):
     """v4 (Steve): no points anywhere -- just CLUE #1 .. CLUE #4 (the difficulty labels went with the scoring)."""
     n = "ABCD".index(letter) + 1
-    # v6 (Steve): a larger clue chip (34 -> 60px); centered at 270 so its bottom clears the clue text's first line
-    chip(f, f"CLUE #{n}", 60, 270, out_back(prog(u, 0.05, 0.35), 1.7), fill=RED, ink=(255, 255, 255), size=60, align="left")
+    # v7 (Steve): considerably larger clue chips (34 -> 60 -> 96px), centered at 285 so they clear the clue text below
+    chip(f, f"CLUE #{n}", 60, 285, out_back(prog(u, 0.05, 0.35), 1.7), fill=RED, ink=(255, 255, 255), size=96, align="left")
 
 
 # ============================================================================= scenes

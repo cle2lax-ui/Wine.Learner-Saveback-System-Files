@@ -76,3 +76,10 @@ The CLUE #1-#4 chips are larger (34 -> 60px). Locked: tag `gtr-anderson-valley-f
 `reels/REEL_HASHES.json` (checked by `reels/check_reels.py`, alongside The Field Guide Reel). Caption:
 `reels/CAPTION_GTR_anderson_valley.md` (no spoilers; the CC BY 2.0 credit required). Social Pass not yet run.
 
+## v7 (Steve, after the first lock) -- RE-LOCKED
+- GUESS THE REGION holds 0.5 s longer: the ident is 2.5 s (the animation keeps its speed; only the final hold grew). The
+  timeline and the score followed automatically; 43.5 s in all.
+- The CLUE #1-#4 chips are considerably larger: 96px (from 60; originally 34), 53px clear of the clue text.
+- True peak: the reveal's four-on-the-floor kick overshot after AAC encoding once the timing moved; it now plays at 0.85.
+- The tag `gtr-anderson-valley-final` was moved to this version; reference frames re-recorded.
+

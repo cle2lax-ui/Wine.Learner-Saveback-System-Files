@@ -29,9 +29,9 @@ sys.path.insert(0, HERE)
 from reel_lib import (W, H, chip, fill_poly, in_out_cubic, out_back, out_cubic, prog, round_rect, stroke_path, text,  # noqa: E402
                       text_width)
 
-IDENT_DUR = 2.0           # v4 (Steve: faster): the animation runs 1.5x faster, so the ident is 2 s, not 3
-SPEED = 1.5               # every internal time below is in the original 3-second timeline, divided by SPEED on screen
-_BASE = IDENT_DUR * SPEED
+IDENT_DUR = 2.5           # v4: the animation runs 1.5x faster (done by about 1.3 s); v6 (Steve): hold the finished
+SPEED = 1.5               # GUESS THE REGION 0.5 s longer, so the ident is 2.5 s. Internal times are in the original
+_BASE = IDENT_DUR * SPEED # 3-second timeline, divided by SPEED on screen; the slow push-in spans the whole ident
 GROUND = (16, 12, 14)                     # the same warm dark as The Field Guide bumper
 LINE = (246, 242, 234)
 LEMON = (246, 232, 98)

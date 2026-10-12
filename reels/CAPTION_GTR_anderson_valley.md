@@ -1,4 +1,4 @@
-# Caption: Guess the Region: Anderson Valley (Reel, 43 s) -- LOCKED
+# Caption: Guess the Region: Anderson Valley (Reel, 43.5 s) -- LOCKED
 
 **Hook (first line, under 125 characters):**
 Four clues, one California valley. Can you name it before the reveal?

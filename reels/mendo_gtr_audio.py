@@ -61,7 +61,7 @@ def build():
     for b in np.arange(ANSWER[0], ANSWER[1], BEAT):
         if on_wipe(b):
             continue
-        place(drums, k, b, 1.0)
+        place(drums, k, b, 0.85)   # v7: the answer's kick at 0.85 (at 1.0 its hits overshot -1 dBTP after AAC encoding)
         i = int(b * SR); m = min(N, i + int(0.3 * SR)); kenv[i:m] = np.maximum(kenv[i:m], np.exp(-tvec(m - i) / 0.12))
     for b in np.arange(ANSWER[0] + BEAT, ANSWER[1], 2 * BEAT):
         place(drums, clap(), b, 0.85)
