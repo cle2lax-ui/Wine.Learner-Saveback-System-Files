@@ -121,9 +121,9 @@ def _partial_path(pts, frac):
 
 
 def _wordmark(f, q, accent):
-    """v4 (Steve: much larger): GUESS THE / REGION as a two-line chip, sized to the largest that fits the width (a one-line
+    """v4 (Steve: much larger): GUESS THE / WINE REGION as a two-line chip, sized to the largest that fits the width (a one-line
     chip could only grow about 1.5x before reaching the screen edges)."""
-    lines = ("GUESS THE", "REGION")
+    lines = ("GUESS THE", "WINE REGION")              # v8 (Steve): the series is titled Guess the Wine Region
     sz = next(z for z in range(160, 54, -2) if max(text_width(l, "black", z, 2) for l in lines) + 1.2 * z <= W - 120)
     lh = 1.06 * sz
     hw = (max(text_width(l, "black", sz, 2) for l in lines) + 1.2 * sz) / 2

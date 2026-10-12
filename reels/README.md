@@ -120,4 +120,6 @@ chunks half-written (caught by counting each chunk's frames before joining).
 **v6 and LOCKED:** larger CLUE chips (60px). `check_reels.py` now guards both locked Reels (13 + 12 reference frames).
 **v7, re-locked:** the ident holds 0.5 s longer (2.5 s); CLUE chips 96px; the reveal's kick at 0.85 to keep true peak
 under -1 dBTP after encoding (check true peak again whenever timing moves: AAC overshoot depends on where transients fall).
+**v8, re-locked:** the series title is GUESS THE WINE REGION; vines are drawn as trunk + lobed leaf + grape bunch (`_vine`).
+Lesson for small icons: a vine must show its FRUIT to read as a vine; canopy shapes alone read as trees.
 

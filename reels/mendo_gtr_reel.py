@@ -81,6 +81,33 @@ def s_ident(u, ur=0.0, D=3.0, S=1.0):
     return ident(u, accent=RED)
 
 
+def _vine(f, x, y, q):
+    """One grapevine, drawn as the icon every wine graphic uses: a short gnarled trunk, a LOBED GRAPE LEAF, and a
+    prominent hanging GRAPE BUNCH (a downward triangle of berries) -- the one shape that says 'vine' at this size. Steve: the
+    first version's green sticks did not read as vines; a rounded canopy (tried next) read as a tree, and a narrow upright
+    hedge as a cypress. Upright whatever the slope. q scales it in as the hillside rises."""
+    if q <= 0.05:
+        return
+    s_ = q
+    brown, leaf, leaf_lt, berry, berry_lt = (118, 82, 52), (74, 150, 66), (104, 182, 90), (96, 32, 92), (150, 84, 150)
+    stroke_path(f, [(x, y), (x - 2 * s_, y - 9 * s_), (x + 1 * s_, y - 18 * s_)], brown, 5)     # the gnarled trunk
+    stroke_path(f, [(x + 1 * s_, y - 18 * s_), (x + 14 * s_, y - 22 * s_)], brown, 3)          # the arm to the fruit
+    lx, ly = x - 6 * s_, y - 30 * s_                                                         # the leaf: three lobes,
+    for dx, dy, r in ((-9, 2, 8.5), (9, 2, 8.5), (0, -8, 9.5)):                              # a point at the stem
+        fg._circle(f, lx + dx * s_, ly + dy * s_, r * s_, leaf)
+    fill_poly(f, [(lx - 12 * s_, ly + 6 * s_), (lx + 12 * s_, ly + 6 * s_), (lx, ly + 16 * s_)], leaf)
+    fg._circle(f, lx - 3 * s_, ly - 9 * s_, 3.5 * s_, leaf_lt)                              # a highlight (veins, tried
+                                                                                             # first, read as a down arrow)
+    stroke_path(f, [(x + 14 * s_, y - 22 * s_), (x + 14 * s_, y - 17 * s_)], brown, 2)        # the bunch's stem
+    bx, by = x + 14 * s_, y - 15 * s_                                                        # the bunch: rows of
+    for row, n in enumerate((4, 3, 2, 1)):                                                   # 4, 3, 2, 1 berries
+        for i in range(n):
+            cx_ = bx + (i - (n - 1) / 2) * 6.2 * s_
+            cy_ = by + row * 5.4 * s_
+            fg._circle(f, cx_, cy_, 3.4 * s_, berry)
+            fg._circle(f, cx_ - 1 * s_, cy_ - 1.1 * s_, 1.1 * s_, berry_lt)                   # a highlight per berry
+
+
 def s_clue_a(u, ur=0.0, D=6.0, S=1.0):
     """Clue A (v3): viticulture. Left, a rain gauge fills past 35 inches toward 79; right, a hillside cross-section where
     cold air pools in the hollow and frost settles there -- 'the low-lying spots', shown rather than told."""
@@ -128,11 +155,11 @@ def s_clue_a(u, ur=0.0, D=6.0, S=1.0):
             mid_ = (hx0 + hx1) / 2
             ys = hb - 300 * (np.abs(xs - mid_) / ((hx1 - hx0) / 2)) ** 1.6 * hq
             fill_poly(f, [(hx0, hb + 10)] + list(zip(xs, ys)) + [(hx1, hb + 10)], (52, 96, 64), 1.0)
-            for j in range(9):                                                  # vines on the slopes
-                xv = hx0 + 30 + j * (hx1 - hx0 - 60) / 8
+            for j in range(9):                                                  # vines on the slopes (v8: drawn
+                xv = hx0 + 30 + j * (hx1 - hx0 - 60) / 8                        # as vines, not sticks)
                 yv = float(np.interp(xv, xs, ys))
                 if abs(xv - mid_) > 60:
-                    stroke_path(f, [(xv, yv - 4), (xv, yv - 34 * hq)], (140, 196, 120), 4)
+                    _vine(f, xv, yv + 2, hq)
             pq = out_cubic(prog(u, 2.2, 3.0))                                   # the cold pool
             if pq > 0:
                 lvl_y = hb - 110 * pq

@@ -1,4 +1,4 @@
-# Caption: Guess the Region: Anderson Valley (Reel, 43.5 s) -- LOCKED
+# Caption: Guess the Wine Region: Anderson Valley (Reel, 43.5 s) -- LOCKED
 
 **Hook (first line, under 125 characters):**
 Four clues, one California valley. Can you name it before the reveal?
@@ -10,7 +10,7 @@ How many clues did you need? Tell us below (no spoilers for the people still gue
 
 Next up: What Am I Drinking?
 
-**Hashtags (5; none names the answer):** #GuessTheRegion #WineQuiz #CaliforniaWine #WSETDiploma #WineEducation
+**Hashtags (5; none names the answer):** #GuessTheWineRegion #WineQuiz #CaliforniaWine #WSETDiploma #WineEducation
 
 **Credits (required: one photo is CC BY 2.0; the photo's title is left out because it names the answer):**
 Photos: Naotake Murayama (CC BY 2.0) via Wikimedia Commons; Mick Haupt via Pexels.

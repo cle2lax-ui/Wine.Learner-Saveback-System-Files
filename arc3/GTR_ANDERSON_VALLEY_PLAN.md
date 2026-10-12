@@ -83,3 +83,11 @@ The CLUE #1-#4 chips are larger (34 -> 60px). Locked: tag `gtr-anderson-valley-f
 - True peak: the reveal's four-on-the-floor kick overshot after AAC encoding once the timing moved; it now plays at 0.85.
 - The tag `gtr-anderson-valley-final` was moved to this version; reference frames re-recorded.
 
+## v8 (Steve) -- RE-LOCKED
+- The title is now GUESS THE WINE REGION (the ident's wordmark: GUESS THE / WINE REGION; the caption hashtag
+  #GuessTheWineRegion). NOT changed: the locked Field Guide Reel's end card, which says NEXT UP: GUESS THE REGION.
+- Clue #1's hillside vines are drawn as grapevines: a short trunk, a lobed grape leaf and a hanging grape bunch. (Plain
+  sticks did not read as vines; a rounded canopy read as a tree; a narrow hedge as a cypress; leaf veins as a down arrow.
+  The grape bunch is the one shape that says vine at this size.)
+- The tag `gtr-anderson-valley-final` moved to this version.
+
