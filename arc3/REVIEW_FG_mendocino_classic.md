@@ -29,7 +29,7 @@ layouts, no repeats, 5 graphic-led slides (2, 4, 5, 6, 8). Every slide passes QA
 
 ## 4. Massimo Vignelli (grid)
 - Slide 4: circles re-fit under a four-line standfirst; containment and non-overlap asserted in code.
-- Slide 2: the map grew into the empty space (map_h 1680); Potter Valley labelled above its own shape (its column leader
+- Slide 2: the map grew into the empty space (map_h 1680); Potter Valley labeled above its own shape (its column leader
   crossed two other AVAs).
 - Pace: photo, map, photo, diagram, map, data, photo, chart, photo, tiles, cards + photo, closing photo.
 
