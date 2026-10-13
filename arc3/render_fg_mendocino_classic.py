@@ -21,8 +21,10 @@ SOURCES (WSET first, DESIGN_PROCESS s12)
   CSW Study Guide (2018): about 17,000 acres; mostly mountainous and forested, vineyards confined largely to river
     valleys; 25% certified organic, the largest share in the US (dated "in 2018" on the slide); Anderson Valley one of
     the coolest areas of California; Mendocino Ridge only at 1,200 ft or higher, "Islands in the Sky", just over 250 of
-    250,000 acres planted; Cole Ranch the smallest AVA in the US (its single-owner detail is NOT used: the AVA was put
-    up for sale in 2019).
+    250,000 acres planted. Cole Ranch: the 2018 guide's "smallest AVA in the US" is OUT OF DATE -- Ulupalakua AVA (Maui,
+    June 2021, about 70 acres) is now the smallest; the 2023 CSW guide calls Cole Ranch the smallest AVA in California
+    (Society of Wine Educators' CSW author, bubblyprofessor.com, Nov 2022), about 150 acres in all. Its single-owner
+    detail is NOT used: the AVA was put up for sale in 2019.
   TTB / UC Davis AVA data: creation dates; Covelo and Dos Rios lie outside the North Coast AVA (geometry), and Comptche
     (2024) was excluded from it by the TTB (T.D. TTB-192).
   Measured from the data: about 4 miles from the Anderson Valley AVA to open ocean; Boonville and Philo verified inside
@@ -79,14 +81,14 @@ assert 3.5 < COAST_MI < 5.0, COAST_MI          # "about 4 miles" stays true to t
 def _euler():
     """North Coast AVA > Mendocino AVA > D3's six. Long names are paired with short ones in each row so sibling labels
     cannot collide; the containment and non-overlap rules the module demands are asserted, not assumed."""
-    root = ("North Coast AVA", 1080, 1640, 840, None, "above")
-    mid = ("Mendocino AVA", 1080, 1715, 610, "North Coast AVA", "above")
-    r = 175
+    root = ("North Coast AVA", 1080, 1695, 750, None, "above")      # clear of a four-line standfirst above
+    mid = ("Mendocino AVA", 1080, 1760, 560, "North Coast AVA", "above")
+    r = 165
     rows = [("Yorkville Highlands", "Cole Ranch"), ("Anderson Valley", "Potter Valley"), ("McDowell Valley", "Redwood Valley")]
     kids = []
     for j, (a, b) in enumerate(rows):
-        cy = mid[2] - 360 + 360 * j
-        kids += [(a, mid[1] - 205, cy, r, "Mendocino AVA", "in"), (b, mid[1] + 205, cy, r, "Mendocino AVA", "in")]
+        cy = mid[2] - 335 + 335 * j
+        kids += [(a, mid[1] - 200, cy, r, "Mendocino AVA", "in"), (b, mid[1] + 200, cy, r, "Mendocino AVA", "in")]
     for parent, child in [(root, mid)] + [(mid, k) for k in kids]:
         dist = math.hypot(child[1] - parent[1], child[2] - parent[2])
         assert dist + child[3] <= parent[3], (child[0], dist + child[3], parent[3])
@@ -98,9 +100,9 @@ def _euler():
 
 ATLAS_LABELS = {   # name shown, label position (normalized), side, which target -- placed against a render
     "Mendocino": ("Mendocino AVA", (0.985, 0.48), "left", (0.92, 0.56)),
-    "Anderson Valley": ("Anderson Valley", (0.44, 0.10), "right", (0.58, 0.30)),
-    "Mendocino Ridge": ("Mendocino Ridge", (0.315, 0.93), "left", None),
-    "Yorkville Highlands": ("Yorkville Highlands", (0.70, 0.985), "left", (0.90, 0.92)),
+    "Anderson Valley": ("Anderson Valley", (0.63, 0.06), "left", (0.64, 0.34)),   # left: the inset covered it
+    "Mendocino Ridge": ("Mendocino Ridge", (0.345, 0.155), "right", None),
+    "Yorkville Highlands": ("Yorkville Highlands", (0.985, 0.86), "left", (0.92, 0.95)),
 }
 
 
@@ -112,6 +114,10 @@ def _atlas_regions():
              "Mendocino Ridge": (214, 222, 236), "Anderson Valley": REDWOOD}
     px = 12 / (W - 2 * M)                                   # atlas starts a right-side leader 12px left of the label
     out = []
+    sea_fill = (212, 228, 246)                              # pale, so its label (a dark tone of this fill) reads
+    for ring in ZOOM["sea"]:
+        c = (ZOOM["sea_label"][0] - 0.13, ZOOM["sea_label"][1])
+        out.append(dict(name="Pacific Ocean", pts=ring, fill=sea_fill, label=(c[0] + px, c[1]), target=c, side="right"))
     for raw in ("Mendocino", "Yorkville Highlands", "Mendocino Ridge", "Anderson Valley"):
         rings = ZOOM["avas"][raw]
         name, lab, side, tgt = ATLAS_LABELS[raw]
@@ -126,7 +132,7 @@ def _atlas_regions():
             else:
                 out.append(dict(name="", pts=ring, fill=fills[raw], label=(c[0] + px, c[1]), target=c, side="right"))
     # draw order: the parent first, then the neighbors, then the valley on top
-    order = {"Mendocino AVA": 0, "Yorkville Highlands": 1, "Mendocino Ridge": 2, "Anderson Valley": 3}
+    order = {"Pacific Ocean": -1, "Mendocino AVA": 0, "Yorkville Highlands": 1, "Mendocino Ridge": 2, "Anderson Valley": 3}
     return sorted(out, key=lambda r: order.get(r["name"], 2 if r["fill"] == fills["Mendocino Ridge"] else
                                               0 if r["fill"] == fills["Mendocino"] else 1))
 
@@ -146,14 +152,14 @@ SLIDES = [
     # 2 -- THE PLACE: every AVA in the county as its real shape (UC Davis), Anderson Valley picked out. D3 + CSW.
     ("region_map", dict(
         map=AVA_MAP, highlight="Anderson Valley",
-        kicker="THE PLACE", headline="Twelve AVAs, One Famous Valley", map_h=1480,
+        kicker="THE PLACE", headline="Twelve AVAs, One Famous Valley", map_h=1680,
         summary_lead="Mostly forest",
         summary="Of about one million hectares, 7,000 are vines (about 17,000 acres), confined largely to river "
                 "valleys. Pine Mountain\u2013Cloverdale Peak is shared with Sonoma.",
-        left_labels=["Covelo", "Dos Rios", "Eagle Peak", "Potter Valley", "Redwood Valley", "Comptche",
+        left_labels=["Covelo", "Dos Rios", "Eagle Peak", "Redwood Valley", "Comptche",
                      "Mendocino Ridge", "McDowell Valley", "Cole Ranch", "Anderson Valley", "Yorkville Highlands",
                      "Pine Mtn\u2013Cloverdale Pk"],
-        direct_labels={},
+        direct_labels={"Potter Valley": (-330, -135)},  # above its own shape: its column leader crossed two AVAs
         credit="AVA boundaries: UC Davis AVA Project (CC0) \u00b7 county: US Census \u00b7 the Mendocino AVA is not drawn",
     )),
 
@@ -174,8 +180,8 @@ SLIDES = [
     # 4 -- THE APPELLATIONS: containment, from D3 (the six) and the AVA data/TTB (what sits outside).
     ("euler_nesting", dict(
         kicker="THE APPELLATIONS", headline="Six AVAs Inside One",
-        standfirst="The Mendocino AVA starts at the Russian River headwaters and covers six AVAs, so a blend across them "
-                   "can still say Mendocino. Covelo, Dos Rios and Comptche sit outside even the North Coast AVA.",
+        standfirst="The Mendocino AVA covers six AVAs, so a blend across them can say Mendocino. Covelo, Dos Rios "
+                   "and Comptche sit outside even the North Coast.",
         circles=_euler(),
     )),
 
@@ -184,8 +190,8 @@ SLIDES = [
         kicker="ANDERSON VALLEY", headline="The Fog Funnel", map_h=MAP_H_ATLAS,
         outline=ZOOM["land"][0], outlines=ZOOM["land"][1:],
         regions=_atlas_regions(),
-        cities=[(*ZOOM["towns"]["Boonville"], "Boonville"), (*ZOOM["towns"]["Philo"], "Philo", "left")],
-        context=[(ZOOM["sea_label"][0] - 0.08, ZOOM["sea_label"][1], "Pacific Ocean")],
+        markers=[dict(name="Philo", target=ZOOM["towns"]["Philo"], label=(0.50, 0.66), side="left"),
+                 dict(name="Boonville", target=ZOOM["towns"]["Boonville"], label=(0.60, 0.80), side="left")],
         inset=dict(outline=INSET["outline"], marker=INSET["marker"], label="CALIFORNIA"),
         legend=[("Northwest end", "About 4 miles from the Pacific. Cold air and fog funnel in along the Navarro River."),
                 ("Southeast end", "Narrower and warmer, with less breeze and fog."),
@@ -196,7 +202,7 @@ SLIDES = [
     ("stat_wall", dict(
         kicker="BY THE NUMBERS", headline="Anderson Valley in Six Figures",
         standfirst="A small valley, and a wet one.",
-        stats=[("1,000", "HECTARES\nPLANTED", "Just under: about 2,500 acres."),
+        stats=[("<1,000", "HECTARES\nPLANTED", "Just under: about 2,500 acres."),     # D3: "just under 1,000 ha"
                ("35\u201379", "INCHES OF RAIN\nA YEAR", "900\u20132,000 mm, mostly winter and spring."),
                ("30", "WINERIES", "Many with cellar doors for coast visitors."),
                ("4", "MILES TO\nTHE PACIFIC", "At the valley's northwest end."),
@@ -219,12 +225,13 @@ SLIDES = [
     ("chart_stack", dict(
         chart=CHART,
         kicker="THE LATITUDE", headline="Old World Grapes, Further South",
-        standfirst="Pinot Noir, Chardonnay and the Alsace whites ripen here eight to ten degrees nearer the equator "
-                   "than at home. The cold Pacific makes up the difference.",
+        standfirst="Alsace's and Burgundy's grapes, nine degrees nearer the equator, in far more rain.",
+        band_chart=dict(title="RAIN A YEAR, INCHES", axis_max=80, ticks=[0, 20, 40, 60, 80],
+                        rows=[("Alsace", "cool", 0, 24, 24), ("C\u00f4te d'Or", "cool", 0, 28, 28),   # D3's figure is the Cote d'Or's
+                              ("Anderson Valley", "focus", 0, 35, 79)],
+                        legend=("valley-wide", "up to 79 in the wet northwest")),
         bar_chart=dict(title="LATITUDE, DEGREES NORTH",
-                       bars=[("Champagne", 49, "about 49\u00b0", "cool", False),
-                             ("Alsace", 48, "about 48\u00b0", "cool", False),
-                             ("Burgundy", 47, "about 47\u00b0", "cool", False),
+                       bars=[("Alsace, Burgundy", 48, "about 47\u201348\u00b0", "cool", False),
                              ("Anderson Valley", 39, "about 39\u00b0", "focus", True)]),
     )),
 
@@ -249,7 +256,7 @@ SLIDES = [
         tiles=[("Redwood Valley", "Inland warmth", "Ripens Zinfandel, Syrah, Petite Sirah and Cabernet Sauvignon."),
                ("Potter Valley", "Altitude flips it", "High enough for Sauvignon Blanc and Riesling."),
                ("Mendocino Ridge", "Islands in the sky", "Only land at 1,200 ft or higher counts."),
-               ("Cole Ranch", "Smallest of all", "The smallest AVA in the United States.")],
+               ("Cole Ranch", "Smallest in the state", "California's smallest AVA, under 150 acres in all.")],
     )),
 
     # 11 -- THE BUSINESS: D3, plus CSW's organic share (dated). Stripe: a Mendocino County vineyard.

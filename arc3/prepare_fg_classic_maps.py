@@ -139,7 +139,8 @@ def build_av_zoom(box_w, box_h, pad=0.12):
     seg = (N(a.x, a.y), N(b.x, b.y))
     towns = {n: N(*ll) for n, ll in TOWNS.items()}
     sea_pt = sea.representative_point()
-    return dict(land=land_rings, avas=ava_rings, targets=targets, towns=towns, coast_seg=seg,
+    sea_rings = [[N(x, y) for x, y in p.simplify(0.001).exterior.coords] for p in _polys(sea) if p.area > 1e-5]
+    return dict(land=land_rings, sea=sea_rings, avas=ava_rings, targets=targets, towns=towns, coast_seg=seg,
                 sea_label=N(sea_pt.x, sea_pt.y), window=(gx0, gy0, gx1, gy1), N=N)
 
 

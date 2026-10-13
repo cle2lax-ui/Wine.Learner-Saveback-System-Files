@@ -2985,7 +2985,11 @@ def chart_stack(slot, slide_no, total, pal):
 
     capf = font("kicker_bold", FLOOR); lf = font("display_bold", 76); tick = font("body_bold", FLOOR)
     qa.size("chart_label", FLOOR)
-    x_label_w = 520
+    # The label column fits the longest row label (never narrower than the original 520px, so every existing deck
+    # renders identically). A fixed 520px truncated "Anderson Valley" under its own bar (Mendocino Field Guide).
+    _labels = [r[0] for r in (slot.get("band_chart") or {}).get("rows", [])] + \
+              [b[0] for b in (slot.get("bar_chart") or {}).get("bars", [])]
+    x_label_w = max([520] + [text_w(d, t, lf) + 44 for t in _labels])
     ax0, ax1 = M + x_label_w, W - M
 
     bc = slot.get("band_chart")
