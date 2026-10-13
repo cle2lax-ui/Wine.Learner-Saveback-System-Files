@@ -748,5 +748,41 @@
   "slot": "us_mendo_fog_redwoods_pexels",
   "credit": "Mick Haupt / Pexels",
   "local_path": "/home/claude/repo/photos/us_mendo_fog_redwoods_pexels.jpg"
+ },
+ {
+  "title": "File:Vineyard in Anderson Valley, CA.jpg",
+  "url": "https://commons.wikimedia.org/wiki/File:Vineyard_in_Anderson_Valley,_CA.jpg",
+  "width": 3072,
+  "height": 2304,
+  "author": "Ethan Prater",
+  "license": "CC BY 2.0",
+  "description": "Wikimedia Commons; location from the file's own title. Arc 3 (Mendocino): the classic Field Guide deck.",
+  "slot": "us_mendo_av_slope_prater",
+  "credit": "Ethan Prater / Wikimedia Commons (CC BY 2.0)",
+  "local_path": "/home/claude/repo/photos/us_mendo_av_slope_prater.jpg"
+ },
+ {
+  "title": "File:View from Esterlina Tasting Room, Anderson Valley, CA.jpg",
+  "url": "https://commons.wikimedia.org/wiki/File:View_from_Esterlina_Tasting_Room,_Anderson_Valley,_CA.jpg",
+  "width": 3072,
+  "height": 2304,
+  "author": "Ethan Prater",
+  "license": "CC BY 2.0",
+  "description": "Wikimedia Commons; location from the file's own title. Arc 3 (Mendocino): the classic Field Guide deck.",
+  "slot": "us_mendo_av_esterlina_view_prater",
+  "credit": "Ethan Prater / Wikimedia Commons (CC BY 2.0)",
+  "local_path": "/home/claude/repo/photos/us_mendo_av_esterlina_view_prater.jpg"
+ },
+ {
+  "title": "File:Vineyard in Ukiah - January 2024 - Sarah Stierch.jpg",
+  "url": "https://commons.wikimedia.org/wiki/File:Vineyard_in_Ukiah_-_January_2024_-_Sarah_Stierch.jpg",
+  "width": 3840,
+  "height": 2880,
+  "author": "Missvain",
+  "license": "CC BY 4.0",
+  "description": "Wikimedia Commons; location from the file's own title. Arc 3 (Mendocino): the classic Field Guide deck.",
+  "slot": "us_mendo_ukiah_vineyard_missvain",
+  "credit": "Missvain / Wikimedia Commons (CC BY 4.0)",
+  "local_path": "/home/claude/repo/photos/us_mendo_ukiah_vineyard_missvain.jpg"
  }
 ]
