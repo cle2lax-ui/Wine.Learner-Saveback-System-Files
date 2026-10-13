@@ -44,3 +44,40 @@ layouts, no repeats, 5 graphic-led slides (2, 4, 5, 6, 8). Every slide passes QA
 | Open question | Caption: how Anderson Valley Pinot compares with Burgundy, for those who have tasted both |
 | Callback | Slide 8: Alsace's grapes, nine degrees south (the Field Guide Reel's latitude scene) |
 | Search surface | Caption and slides: Mendocino, Anderson Valley, Pinot Noir, AVA, Gewurztraminer |
+
+---
+
+# Round 2: the four-designer review and the brevity pass (Steve: run both before presenting; make the critical changes)
+
+## Brevity pass
+Counted EVERY visible word per slide (QA counts only what each module registers, so it can understate a table or a
+tile). Before: 594 words, two slides over the 70-word budget (slide 6: 75, slide 10: 71). After: 561, none over
+(largest: slide 10 at 68, slide 6 at 65). The Mosel benchmark, counted the same way: 725.
+
+## Anna Wintour (claims)
+- Slide 11's standfirst said "much of Mendocino's fruit leaves the county": D3 supports often blended and bought by
+  wineries elsewhere, not "much". Now: "Good value, and wanted well beyond the county."
+- Slide 6's 39 N stat duplicated slide 8's entire point: replaced with 1983, the AVA's establishment year, "one of the
+  county's first three" (UC Davis/TTB: McDowell Valley Jan 1982, Cole Ranch May 1983, Anderson Valley Sept 1983).
+
+## Coco Chanel (editing): every figure now appears once
+- "About 4 miles" was on slides 5 and 6: kept on 6. "Thirty wineries" was on 6 and 9: kept on 6. Redwood Valley and
+  Potter Valley with their grapes were on 3 and 10: slide 3 now says only cool vs warm and "at altitude"; the named
+  AVAs live on slide 10. Slide 3 lost its "Climate" and "Example" rows (the headline and column heads say both).
+- Trims: "Just under:" (the < says it), "early ripening", "for coast visitors", "Ripens"; Cole Ranch said "smallest"
+  twice.
+
+## Jony Ive (craft): every text-on-color pair measured, three failed
+- Slide 12, gold subtitle on the signature block: 2.68:1 (needs 3:1). The signature deepened from the redwood green to
+  the cover's canopy-shade green (52, 79, 16): 3.68:1. One color, one meaning: the valley's highlight on both maps and
+  its bars on slide 8 moved with it; tile 3 (which used that shade) became the redwood green (paper on it 6.40:1).
+- Slide 3, the "Further inland" column head in the house gold on paper: 2.39:1. Now sienna, 5.23:1.
+- Slide 11, the card sub-lines (small text) in the house gold: 2.39:1 against the 4.5:1 small text needs. Now sienna.
+- Engine: card_grid gained an optional `sub_color`, duel an optional `col_head_colors`; both default to the old colors,
+  so every earlier deck renders identically (regress 42/42).
+- SYSTEM FLAG for Steve: the house gold on paper is 2.39:1, so it fails as a text color wherever modules use it for text
+  (e.g. the Mosel deck's card sub-lines). Not changed in locked decks; a system decision.
+
+## Massimo Vignelli (grid)
+- Slide 7: the facts ended two-thirds down, leaving a quarter of the page empty: the hero photo grew (1,340 -> 1,600px).
+- Noted, not changed: slide 3's table is now two rows and leaves open paper below it (duel has no photo-size setting).

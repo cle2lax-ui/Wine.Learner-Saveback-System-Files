@@ -56,10 +56,13 @@ os.makedirs(OUT, exist_ok=True)
 # ---- palette: sampled from the cover (arc3/sample_fg_classic_palette.py); house gold locked across every arc
 REDWOOD, SKY, VINE, SHADE = (66, 101, 34), (112, 172, 246), (100, 133, 29), (52, 79, 16)
 TAN, TAN_PALE = (178, 148, 119), (198, 180, 163)
-PAL = dict(SIGNATURE=REDWOOD, ACCENT=(196, 158, 84), LEAD=(140, 95, 58), MARK=REDWOOD)
+# Signature = the canopy-shade green, not the redwood: the closing slide's gold subtitle sits on the signature block and
+# measured 2.68:1 on the redwood (fails 3:1), 3.68:1 on the shade. Headlines in it: 8.8:1 on paper.
+PAL = dict(SIGNATURE=SHADE, ACCENT=(196, 158, 84), LEAD=(140, 95, 58), MARK=SHADE)
+SIENNA = (140, 95, 58)      # 5.23:1 on paper: replaces the house gold wherever it carried text (2.39:1)
 CHART = dict(
     ripe=[SHADE, VINE, (196, 158, 84), TAN, (140, 95, 58)],
-    focus=REDWOOD,          # one color, one meaning: the redwood green is "Anderson Valley" on every slide
+    focus=SHADE,            # one color, one meaning: the signature green is "Anderson Valley" on every slide
     cool=SKY, warm=TAN, vine=VINE, shade=SHADE,
     amber=TAN, gold=(196, 158, 84), grape=VINE, stone=(98, 91, 74), track=TAN_PALE,
     ice=SHADE, ice_fill=(225, 238, 250), ice_text=SHADE,
@@ -111,7 +114,7 @@ def _atlas_regions():
     28 in this window) gets a zero-length leader that disappears inside its own fill (atlas draws a leader for every
     region)."""
     fills = {"Mendocino": (236, 232, 218), "Yorkville Highlands": (226, 220, 206),
-             "Mendocino Ridge": (214, 222, 236), "Anderson Valley": REDWOOD}
+             "Mendocino Ridge": (214, 222, 236), "Anderson Valley": SHADE}
     px = 12 / (W - 2 * M)                                   # atlas starts a right-side leader 12px left of the label
     out = []
     sea_fill = (212, 228, 246)                              # pale, so its label (a dark tone of this fill) reads
@@ -170,10 +173,9 @@ SLIDES = [
         kicker="TWO CLIMATES", headline="Cool Coast, Warm Inland",
         standfirst="Distance from the Pacific decides what ripens, and altitude can flip it.",
         mode="table", col_heads=("Near the Pacific", "Further inland"),
-        rows=[("Climate", "Cooler", "Warmer"),
-              ("Example", "Anderson Valley", "Redwood Valley"),
-              ("Reds", "Pinot Noir", "Zinfandel, Syrah, Petite Sirah, Cabernet Sauvignon"),
-              ("Whites", "Chardonnay, Alsace-style aromatics", "Sauvignon Blanc and Riesling, at altitude (Potter Valley)")],
+        rows=[("Reds", "Pinot Noir", "Zinfandel, Syrah, Petite Sirah, Cabernet Sauvignon"),
+              ("Whites", "Chardonnay, Alsace-style aromatics", "At altitude: Sauvignon Blanc, Riesling")],
+        col_head_colors=(SHADE, SIENNA),
         photo_credit=f"{CRED_PRATER}; Missvain / Wikimedia Commons (CC BY 4.0)",
     )),
 
@@ -193,7 +195,7 @@ SLIDES = [
         markers=[dict(name="Philo", target=ZOOM["towns"]["Philo"], label=(0.50, 0.66), side="left"),
                  dict(name="Boonville", target=ZOOM["towns"]["Boonville"], label=(0.60, 0.80), side="left")],
         inset=dict(outline=INSET["outline"], marker=INSET["marker"], label="CALIFORNIA"),
-        legend=[("Northwest end", "About 4 miles from the Pacific. Cold air and fog funnel in along the Navarro River."),
+        legend=[("Northwest end", "Cold air and fog funnel in from the Pacific along the Navarro River."),
                 ("Southeast end", "Narrower and warmer, with less breeze and fog."),
                 ("Day and night", "Warm days; cold evenings and mornings.")],
     )),
@@ -202,17 +204,17 @@ SLIDES = [
     ("stat_wall", dict(
         kicker="BY THE NUMBERS", headline="Anderson Valley in Six Figures",
         standfirst="A small valley, and a wet one.",
-        stats=[("<1,000", "HECTARES\nPLANTED", "Just under: about 2,500 acres."),     # D3: "just under 1,000 ha"
+        stats=[("<1,000", "HECTARES\nPLANTED", "About 2,500 acres."),     # D3: "just under 1,000 ha"
                ("35\u201379", "INCHES OF RAIN\nA YEAR", "900\u20132,000 mm, mostly winter and spring."),
-               ("30", "WINERIES", "Many with cellar doors for coast visitors."),
+               ("30", "WINERIES", "Many with cellar doors."),
                ("4", "MILES TO\nTHE PACIFIC", "At the valley's northwest end."),
-               ("2", "LEADING\nGRAPES", "Pinot Noir and Chardonnay, early ripening."),
-               ("39\u00b0N", "LATITUDE", "About nine degrees south of Alsace.")],
+               ("2", "LEADING\nGRAPES", "Pinot Noir and Chardonnay."),
+               ("1983", "AVA\nESTABLISHED", "One of the county's first three.")],
     )),
 
     # 7 -- THE PINOT NOIR: D3. Photo: young vines on an Anderson Valley slope (Prater).
     ("hero_facts", dict(
-        photo="us_mendo_av_slope_prater", anchor=0.55, hero_h=1340,
+        photo="us_mendo_av_slope_prater", anchor=0.55, hero_h=1600,
         photo_caption="Vines on an Anderson Valley slope", photo_credit=CRED_PRATER,
         kicker="THE GRAPE THAT MADE THE NAME", headline="The Pinot Noir",
         facts=[("Fresh red fruit", "Raspberry, cherry and plum."),
@@ -244,25 +246,26 @@ SLIDES = [
         kicker="IN THE VALLEY", headline="Bubbles, Aromatics, Cellar Doors",
         items=[("Sparkling", "Pinot Noir and Chardonnay go into sparkling as well as still wine."),
                ("Alsace-style whites", "Gewurztraminer, Riesling, Pinot Gris and Pinot Blanc."),
-               ("Cellar doors", "Thirty wineries, many open to visitors bound for the coast.")],
+               ("Cellar doors", "Many wineries open to visitors bound for the coast.")],
         photo_credit="Missvain, No-till-vineyard / Wikimedia Commons (CC0); Mick Haupt / Pexels",
     )),
 
     # 10 -- BEYOND THE VALLEY: D3 (Redwood Valley, Potter Valley); CSW (Mendocino Ridge, Cole Ranch).
     ("tile_grid", dict(
         kicker="BEYOND THE VALLEY", headline="Four More Names to Know",
-        standfirst="Inland, the county runs warmer, and in places much higher.",
-        tile_colors=[(TAN, SHADE), (SKY, SHADE), (SHADE, SKY), (VINE, PAPER)],
-        tiles=[("Redwood Valley", "Inland warmth", "Ripens Zinfandel, Syrah, Petite Sirah and Cabernet Sauvignon."),
+        standfirst="Inland, it runs warmer, and in places much higher.",
+        tile_colors=[(TAN, SHADE), (SKY, SHADE), (REDWOOD, PAPER), (VINE, PAPER)],   # shade now means the valley
+        tiles=[("Redwood Valley", "Inland warmth", "Zinfandel, Syrah, Petite Sirah and Cabernet Sauvignon."),
                ("Potter Valley", "Altitude flips it", "High enough for Sauvignon Blanc and Riesling."),
                ("Mendocino Ridge", "Islands in the sky", "Only land at 1,200 ft or higher counts."),
-               ("Cole Ranch", "Smallest in the state", "California's smallest AVA, under 150 acres in all.")],
+               ("Cole Ranch", "Smallest in the state", "California's smallest AVA: under 150 acres in all.")],
     )),
 
     # 11 -- THE BUSINESS: D3, plus CSW's organic share (dated). Stripe: a Mendocino County vineyard.
     ("card_grid", dict(
         kicker="THE BUSINESS", headline="The Quiet Supplier",
-        standfirst="Much of Mendocino's fruit leaves the county, one way or another.",
+        standfirst="Good value, and wanted well beyond the county.",
+        sub_color=SIENNA,
         row_layout=[2, 2],
         cards=[(None, "Priced below", "Napa and Sonoma", "Mendocino grapes generally sell for less."),
                (None, "Blended away", "Multi-regional", "Often blended with fruit from other regions."),

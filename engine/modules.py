@@ -981,8 +981,9 @@ def duel(slot, slide_no, total, pal):
         col_w = (W - 2 * M - label_w - gutter) // 2
         xl, xc, xr = M, M + label_w, M + label_w + col_w + gutter
         chf = font("display_bold", 78); qa.size("col_head", 78)
-        d.text((xc, y), slot["col_heads"][0], font=chf, fill=pal["SIGNATURE"])
-        d.text((xr, y), slot["col_heads"][1], font=chf, fill=pal["ACCENT"])
+        _chc = slot.get("col_head_colors", (pal["SIGNATURE"], pal["ACCENT"]))   # optional; gold on paper is 2.4:1
+        d.text((xc, y), slot["col_heads"][0], font=chf, fill=_chc[0])
+        d.text((xr, y), slot["col_heads"][1], font=chf, fill=_chc[1])
         cha, chd = chf.getmetrics()
         qa.box("col_heads", (xc, y, W - M, y + int((cha + chd) * 0.9)))
         ry = y + int((cha + chd) * 0.9) + 60
@@ -1261,7 +1262,7 @@ def card_grid(slot, slide_no, total, pal):
                 sub_line_h = int((pa + pd) * 0.94)
                 sy = ty0 + 76
                 for ln in sub_lines:
-                    d.text((cx, sy), ln, font=pf, fill=pal["ACCENT"])
+                    d.text((cx, sy), ln, font=pf, fill=slot.get("sub_color", pal["ACCENT"]))
                     sy += sub_line_h
                 divider_y = sy + 14
                 d.line([(cx, divider_y), (cx + col_w, divider_y)], fill=LINE, width=2)
@@ -1282,7 +1283,7 @@ def card_grid(slot, slide_no, total, pal):
             sub_line_h = int((pa + pd) * 0.94)
             sy = cy + 80
             for ln in sub_lines:
-                d.text((tx, sy), ln, font=pf, fill=pal["ACCENT"])
+                d.text((tx, sy), ln, font=pf, fill=slot.get("sub_color", pal["ACCENT"]))
                 sy += sub_line_h
             divider_y = sy + (150 - 80 - sub_line_h)
             d.line([(cx, divider_y), (cx + col_w, divider_y)], fill=LINE, width=2)
