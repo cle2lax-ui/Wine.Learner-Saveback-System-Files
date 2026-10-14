@@ -81,3 +81,27 @@ tile). Before: 594 words, two slides over the 70-word budget (slide 6: 75, slide
 ## Massimo Vignelli (grid)
 - Slide 7: the facts ended two-thirds down, leaving a quarter of the page empty: the hero photo grew (1,340 -> 1,600px).
 - Noted, not changed: slide 3's table is now two rows and leaves open paper below it (duel has no photo-size setting).
+
+---
+
+# Round 3 (Steve): five hashtags; the gold font readable in every instance; 13 slides stays; lock
+
+- **Hashtags: five.** The Series System guide (s7) said ~15, the Social Pass guide (gate 7) said 5: now both say five.
+  The caption carries five.
+- **Length: 13 slides is fine.** 12 is not a hard cap for a Field Guide deck.
+- **Gold, fixed in the engine, not per deck.** `core.legible` darkens (light backgrounds) or lightens (dark ones) the gold
+  until it clears 4.5:1 against what is really behind it; marks, rules and fills keep the palette gold. Every place the
+  engine draws the accent as text uses it. On paper the gold is (137, 111, 59), 4.54:1; on the signature green block
+  (208, 177, 118), 4.50:1. The Mendocino deck's own sienna overrides were removed: it now uses the system's gold.
+- **Measured, not assumed.** `engine/text_audit.py` hooks the text drawing and measures every piece of text against the
+  pixels behind it. Baseline: 5 gold text groups below threshold across the Mendocino deck, locked Mosel, Cornas GTR,
+  What Am I Drinking? and the specimen suite (Mosel's card sub-lines at 2.39:1, the GTR kicker at 2.39:1, and three in the
+  specimen). After: zero.
+- **It also caught four pale gray map labels on slide 5** (Yorkville Highlands 3.18:1, Pacific Ocean 3.23:1, Mendocino AVA
+  4.01:1, Mendocino Ridge 4.32:1), which the earlier craft review missed: the atlas now darkens a label until it reads.
+- **Blast radius:** exactly nine of the 42 regression renders changed (6 specimen, Mosel slides 1 and 10, Cornas reveal),
+  each one containing gold text; the other 33 and all 26 locked Reel frames are identical. The reference was re-baselined.
+  The delivered Mosel and Cornas PNGs are not altered; a re-render picks up the fix. Tags `fg-mosel-final` and the others
+  still point at the earlier code.
+- **Final audit of this deck:** every text group at or above threshold.
+- Open dot on slide 13 (top right of the photo): the series' own closing mark, placed there by Steve's earlier direction.

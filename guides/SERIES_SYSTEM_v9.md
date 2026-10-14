@@ -160,9 +160,10 @@ Three parts, every post, every format.
    Split Decision and GTR ask something genuinely open. Field Guide and
    FFFA can close on an assertion instead; a save does not need a prompt.
 
-**Hashtags:** roughly 5 broad / 8 niche / 2 owned, rotated per arc.
-Never ship the same block twice in a row — a fixed block is a
-fingerprint.
+**Hashtags:** five per post (Steve's decision, Oct 2026 -- this replaces
+the earlier "roughly 15" and agrees with SOCIAL_PASS_STYLE_GUIDE gate 7).
+Rotate them per arc; never ship the same block twice in a row -- a fixed
+block is a fingerprint.
 
 ---
 

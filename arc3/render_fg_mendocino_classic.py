@@ -59,7 +59,7 @@ TAN, TAN_PALE = (178, 148, 119), (198, 180, 163)
 # Signature = the canopy-shade green, not the redwood: the closing slide's gold subtitle sits on the signature block and
 # measured 2.68:1 on the redwood (fails 3:1), 3.68:1 on the shade. Headlines in it: 8.8:1 on paper.
 PAL = dict(SIGNATURE=SHADE, ACCENT=(196, 158, 84), LEAD=(140, 95, 58), MARK=SHADE)
-SIENNA = (140, 95, 58)      # 5.23:1 on paper: replaces the house gold wherever it carried text (2.39:1)
+SIENNA = (140, 95, 58)      # the lead-in color (LEAD); the house gold is now made readable by the engine itself (core.legible)
 CHART = dict(
     ripe=[SHADE, VINE, (196, 158, 84), TAN, (140, 95, 58)],
     focus=SHADE,            # one color, one meaning: the signature green is "Anderson Valley" on every slide
@@ -175,7 +175,7 @@ SLIDES = [
         mode="table", col_heads=("Near the Pacific", "Further inland"),
         rows=[("Reds", "Pinot Noir", "Zinfandel, Syrah, Petite Sirah, Cabernet Sauvignon"),
               ("Whites", "Chardonnay, Alsace-style aromatics", "At altitude: Sauvignon Blanc, Riesling")],
-        col_head_colors=(SHADE, SIENNA),
+
         photo_credit=f"{CRED_PRATER}; Missvain / Wikimedia Commons (CC BY 4.0)",   # Saracina, Hopland
     )),
 
@@ -258,7 +258,6 @@ SLIDES = [
     # Alsace-style aromatic of slides 8 and 9. BOTTLES: Steve's photos, cut out by arc3/prepare_bottle_cutouts.py.
     ("showcase_shelf", dict(
         kicker="PRODUCERS TO KNOW", headline="Three Bottles, One Perfect Score",
-        name_color=SIENNA,                       # the house gold on paper is 2.39:1
         zone_h=1200,                             # one row now: the bottles take the second row's height
         products=[("bottle_mendo_roederer_lermitage_2019", "Roederer Estate", "L'Ermitage 2019", "Sparkling",
                    "Anderson Valley", "100 pts, Wine Enthusiast."),     # the first 100 for a US sparkling wine
@@ -283,7 +282,7 @@ SLIDES = [
     ("card_grid", dict(
         kicker="THE BUSINESS", headline="The Quiet Supplier",
         standfirst="Good value, and wanted well beyond the county.",
-        sub_color=SIENNA,
+
         row_layout=[2, 2],
         cards=[(None, "Priced below", "Napa and Sonoma", "Mendocino grapes generally sell for less."),
                (None, "Blended away", "Multi-regional", "Often blended with fruit from other regions."),

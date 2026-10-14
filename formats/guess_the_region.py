@@ -14,7 +14,7 @@ import math
 import os
 from PIL import Image, ImageDraw, ImageStat
 from tokens import *
-from core import (font, text_w, tracked_text, wrap, load_photo, cover_fit,
+from core import (legible, font, text_w, tracked_text, wrap, load_photo, cover_fit,
                    scrim, chip, footer as core_footer, QA, region_luminance)
 from modules import _start, _finish
 
@@ -431,7 +431,7 @@ def gtr_reveal(slot, slide_no, total, pal):
     kicker_txt = "THE WINE REGION IS…"
     kw = text_w(d, kicker_txt, kf) + 5 * len(kicker_txt)
     ky = panel_top + 26
-    tracked_text(d, ((W - kw) // 2, ky), kicker_txt, kf, pal.get("ACCENT", SERIES_GOLD), tracking=5)
+    tracked_text(d, ((W - kw) // 2, ky), kicker_txt, kf, legible(pal.get("ACCENT", SERIES_GOLD), PAPER), tracking=5)
     qa.size("kicker", 60)
     ka, kd = kf.getmetrics()
 

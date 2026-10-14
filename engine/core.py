@@ -559,7 +559,7 @@ def famous_names(d, xy, names, max_w, pal, size=None, label="FAMOUS NAMES"):
     floor). Returns the y coordinate just below the block."""
     x, y = xy
     size = size or TYPE["caption"]
-    tracked_text(d, (x, y), label, font("kicker_bold", TYPE["caption"]), pal["ACCENT"], 5)
+    tracked_text(d, (x, y), label, font("kicker_bold", TYPE["caption"]), legible(pal["ACCENT"], PAPER), 5)
     d.line([(x, y + 76), (x + max_w, y + 76)], fill=pal["ACCENT"], width=3)
     nf = font("body_bold", size)
     text = "  \u00b7  ".join(names)
@@ -753,6 +753,58 @@ def _lum(c):
 def contrast(c1, c2):
     l1, l2 = sorted((_lum(c1), _lum(c2)), reverse=True)
     return (l1 + 0.05) / (l2 + 0.05)
+
+def legible(color, bg, ratio=4.5):
+    """The same color, adjusted until it reads on `bg` (one color or a list of colors it may sit on).
+
+    Keeps the hue: a color that fails is darkened toward black on a light background and lightened toward white on a
+    dark one, in 1% steps, until it clears `ratio` (WCAG AA, 4.5:1) against EVERY background given; a color that
+    already passes is returned unchanged. This is how the house gold -- 2.39:1 on paper, 4.35:1 on slate -- stays
+    gold and stays readable as text. Use it wherever a palette color is drawn as TEXT; marks, rules and fills keep
+    the palette color.
+    """
+    bgs = [bg] if isinstance(bg, tuple) else list(bg)
+    color = tuple(int(v) for v in color[:3])
+    if all(contrast(color, b) >= ratio for b in bgs):
+        return color
+    # darken or lighten: whichever direction gives the backgrounds more room
+    toward = (0, 0, 0) if sum(contrast((0, 0, 0), b) for b in bgs) >= sum(contrast((255, 255, 255), b) for b in bgs) \
+        else (255, 255, 255)
+    for i in range(1, 101):
+        t = i / 100
+        c = tuple(int(round(v + (g - v) * t)) for v, g in zip(color, toward))
+        if all(contrast(c, b) >= ratio for b in bgs):
+            return c
+    return toward
+
+
+def legible_over(img, box, color, ratio=4.5):
+    """`legible` for text over a PHOTOGRAPH: samples the pixels inside `box` (x0, y0, x1, y1) of `img` and requires the
+    ratio against their median, and 3:1 against the pixels closest in brightness to the text (the worst of the
+    texture). If no shade of the color can do both, the best it can reach is returned -- put a chip behind that text."""
+    import numpy as np
+    x0, y0, x1, y1 = [int(v) for v in box]
+    reg = np.asarray(img.convert("RGB").crop((max(0, x0), max(0, y0), min(img.width, x1), min(img.height, y1)))).reshape(-1, 3)
+    if len(reg) == 0:
+        return tuple(color[:3])
+    med = tuple(int(v) for v in np.median(reg, axis=0))
+    lums = np.array([_lum(tuple(px)) for px in reg[:: max(1, len(reg) // 4000)]])
+    color = tuple(int(v) for v in color[:3])
+    toward = (0, 0, 0) if contrast((0, 0, 0), med) >= contrast((255, 255, 255), med) else (255, 255, 255)
+    worst_l = float(np.percentile(lums, 5 if toward[0] == 0 else 95))
+
+    def ok(c):
+        cl = _lum(c)
+        return contrast(c, med) >= ratio and (max(cl, worst_l) + 0.05) / (min(cl, worst_l) + 0.05) >= 3.0
+    if ok(color):
+        return color
+    for i in range(1, 101):
+        t = i / 100
+        c = tuple(int(round(v + (g - v) * t)) for v, g in zip(color, toward))
+        if ok(c):
+            return c
+    return toward
+
 
 class QA:
     """Collected per-slide. Modules register sizes/boxes/words; report() raises on FAIL."""

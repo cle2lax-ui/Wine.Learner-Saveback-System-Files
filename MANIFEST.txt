@@ -143,6 +143,7 @@ engine/qa_widows.py
 engine/regress.py
 engine/specimen.py
 engine/spelling.py
+engine/text_audit.py
 engine/themes.py
 engine/tokens.py
 engine/variety.py

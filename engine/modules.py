@@ -38,7 +38,7 @@ import core
 from core import (new_canvas, footer, kicker_block, headline, font, text_w,
                   tracked_text, wrap, paragraph, standfirst, run_in, famous_names,
                   load_photo, load_photo_rgba, cover_fit, scrim, chip, photo_band, photo_stripe, photo_credit, QA,
-                  contrast, region_luminance, blend_rgb, best_text_color,
+                  contrast, region_luminance, blend_rgb, best_text_color, legible, legible_over,
                   one_line_headline, hatch_fill, donut)
 
 
@@ -226,7 +226,7 @@ def statement(slot, slide_no, total, pal):
             d = ImageDraw.Draw(img)
 
             sy = sub_top
-            sub_fill = slot.get("subtitle_color", pal["ACCENT"])
+            sub_fill = slot.get("subtitle_color") or legible(pal["ACCENT"], blend_rgb(INK, (255, 255, 255), 0.26))   # INK chip at 74% over any photo
             for ln in sub_lines:
                 d.text((M, sy), ln, font=sf, fill=sub_fill)
                 sy += sub_lh
@@ -279,7 +279,7 @@ def statement(slot, slide_no, total, pal):
 
             sy = sub_top
             for ln in sub_lines:
-                d.text((M, sy), ln, font=sf, fill=slot.get("subtitle_color", pal["ACCENT"]))
+                d.text((M, sy), ln, font=sf, fill=slot.get("subtitle_color") or legible(pal["ACCENT"], blend_rgb(INK, (255, 255, 255), 0.14)))
                 sy += sub_lh
             qa.box("!subtitle", (M, sub_top, W - M, sy))
             qa.add_words(slot["title"] + " " + slot.get("subtitle", ""))
@@ -321,7 +321,7 @@ def statement(slot, slide_no, total, pal):
             lh = int((sa + sd) * 1.05)
             sy = ty + 30
             for ln in lines:
-                d.text((M, sy), ln, font=sf, fill=pal["ACCENT"])
+                d.text((M, sy), ln, font=sf, fill=legible(pal["ACCENT"], pal["SIGNATURE"]))
                 sy += lh
             qa.box("!subtitle", (M, ty + 30, W - M, sy))
             qa.add_words(slot["title"] + " " + slot.get("subtitle", ""))
@@ -337,7 +337,7 @@ def statement(slot, slide_no, total, pal):
         d.line([(M, y + 40), (M + 240, y + 40)], fill=pal["ACCENT"], width=6)
         af = font("caption_italic", TYPE["caption"] + 10)
         qa.size("attr", TYPE["caption"] + 10)
-        d.text((M, y + 90), "\u2014 " + slot.get("attribution", ""), font=af, fill=pal["ACCENT"])
+        d.text((M, y + 90), "\u2014 " + slot.get("attribution", ""), font=af, fill=legible(pal["ACCENT"], blend_rgb(INK, (255, 255, 255), 0.10)))
         qa.add_words(slot["quote"])
     else:  # closing -- same block/dot/kicker system as the cover, for a real bookend
         block_frac = slot.get("block_frac", 0.34)
@@ -358,7 +358,7 @@ def statement(slot, slide_no, total, pal):
         tf = font("display_black", title_size)
         qa.size("title", title_size, headline=True)
         ty = ky_end + 30
-        d.text((M, ty), slot["title"], font=tf, fill=pal["ACCENT"])
+        d.text((M, ty), slot["title"], font=tf, fill=legible(pal["ACCENT"], INK))
         tb = d.textbbox((M, ty), slot["title"], font=tf)
         qa.box("title", (M, ty, W - M, tb[3]))
         qa.add_words(slot["title"])
@@ -549,7 +549,7 @@ def editorial_lead(slot, slide_no, total, pal):
         for gi, (gtitle, rows) in enumerate(groups):
             gx = M + gi * (col_w + gutter)
             gy = y
-            tracked_text(d, (gx, gy), gtitle, tf, pal["ACCENT"], 4)
+            tracked_text(d, (gx, gy), gtitle, tf, legible(pal["ACCENT"], PAPER), 4)
             gy += 60
             d.line([(gx, gy), (gx + col_w, gy)], fill=pal["ACCENT"], width=3)
             gy += 20
@@ -557,7 +557,7 @@ def editorial_lead(slot, slide_no, total, pal):
                 d.text((gx, gy), name, font=nf, fill=INK)
                 if metric:
                     mw = text_w(d, metric, metricf)
-                    d.text((gx + col_w - mw, gy - 4), metric, font=metricf, fill=pal["ACCENT"])
+                    d.text((gx + col_w - mw, gy - 4), metric, font=metricf, fill=legible(pal["ACCENT"], PAPER))
                 gy += int(name_px * 1.1)
                 gy = paragraph(d, (gx, gy), note, mf, MUTED, col_w, 1.08) + 8
                 d.line([(gx, gy), (gx + col_w, gy)], fill=LINE, width=2)
@@ -634,7 +634,7 @@ def editorial_lead(slot, slide_no, total, pal):
         hy = y
         col_x = [M + label_w + gutter + i * (data_w + gutter) for i in range(n_cols)]
         for i, head in enumerate(col_heads):
-            tracked_text(d, (col_x[i], hy), head.upper(), hf, pal["ACCENT"], 3)
+            tracked_text(d, (col_x[i], hy), head.upper(), hf, legible(pal["ACCENT"], PAPER), 3)
         hy += 56
         d.line([(M, hy), (W - M, hy)], fill=pal["ACCENT"], width=3)
         y = hy + 40
@@ -826,7 +826,7 @@ def side_rail(slot, slide_no, total, pal):
         for li, (ltitle, groups) in enumerate(lists):
             lx = tx + li * (lw + gutter)
             ly = y
-            tracked_text(d, (lx, ly), ltitle, tf2, pal["ACCENT"], 4)
+            tracked_text(d, (lx, ly), ltitle, tf2, legible(pal["ACCENT"], PAPER), 4)
             d.line([(lx, ly + 72), (lx + lw, ly + 72)], fill=pal["ACCENT"], width=3)
             ly += 104
             for gi, (subhead, items) in enumerate(groups):
@@ -981,7 +981,7 @@ def duel(slot, slide_no, total, pal):
         col_w = (W - 2 * M - label_w - gutter) // 2
         xl, xc, xr = M, M + label_w, M + label_w + col_w + gutter
         chf = font("display_bold", 78); qa.size("col_head", 78)
-        _chc = slot.get("col_head_colors", (pal["SIGNATURE"], pal["ACCENT"]))   # optional; gold on paper is 2.4:1
+        _chc = slot.get("col_head_colors", (pal["SIGNATURE"], legible(pal["ACCENT"], PAPER)))
         d.text((xc, y), slot["col_heads"][0], font=chf, fill=_chc[0])
         d.text((xr, y), slot["col_heads"][1], font=chf, fill=_chc[1])
         cha, chd = chf.getmetrics()
@@ -1044,7 +1044,7 @@ def duel(slot, slide_no, total, pal):
         max_head_lines = max(len(lines) for lines in wrapped_heads)
         for i, (head, body) in enumerate(slot["cols"]):
             x = M + i * (col_w + col_gap)
-            accent = pal["SIGNATURE"] if i == 0 else pal["ACCENT"]
+            accent = pal["SIGNATURE"] if i == 0 else legible(pal["ACCENT"], PAPER)
             lines = wrapped_heads[i]
             hy = y + (max_head_lines - len(lines)) * head_lh
             for ln in lines:
@@ -1262,7 +1262,7 @@ def card_grid(slot, slide_no, total, pal):
                 sub_line_h = int((pa + pd) * 0.94)
                 sy = ty0 + 76
                 for ln in sub_lines:
-                    d.text((cx, sy), ln, font=pf, fill=slot.get("sub_color", pal["ACCENT"]))
+                    d.text((cx, sy), ln, font=pf, fill=slot.get("sub_color") or legible(pal["ACCENT"], PAPER))
                     sy += sub_line_h
                 divider_y = sy + 14
                 d.line([(cx, divider_y), (cx + col_w, divider_y)], fill=LINE, width=2)
@@ -1283,7 +1283,7 @@ def card_grid(slot, slide_no, total, pal):
             sub_line_h = int((pa + pd) * 0.94)
             sy = cy + 80
             for ln in sub_lines:
-                d.text((tx, sy), ln, font=pf, fill=slot.get("sub_color", pal["ACCENT"]))
+                d.text((tx, sy), ln, font=pf, fill=slot.get("sub_color") or legible(pal["ACCENT"], PAPER))
                 sy += sub_line_h
             divider_y = sy + (150 - 80 - sub_line_h)
             d.line([(cx, divider_y), (cx + col_w, divider_y)], fill=LINE, width=2)
@@ -1421,7 +1421,7 @@ def showcase_shelf(slot, slide_no, total, pal):
     org_f = font("body", FLOOR); note_f = font("body", note_size)
     qa.size("origin", FLOOR)
     producer_color = slot.get("producer_color", pal["SIGNATURE"])
-    name_color = slot.get("name_color", pal["ACCENT"])
+    name_color = slot.get("name_color") or legible(pal["ACCENT"], PAPER)
     style_color = slot.get("style_color", INK)
     origin_color = slot.get("origin_color", MUTED)
     note_color = slot.get("note_color", INK)
@@ -1715,7 +1715,7 @@ def atlas(slot, slide_no, total, pal):
         name = r["name"]
         tb = d.textbbox((0, 0), name, font=lbf)
         twd = tb[2] - tb[0]
-        col = _darken(r["fill"], 0.55)
+        col = legible(_darken(r["fill"], 0.55), [r["fill"], (255, 255, 255)])
         if r.get("side", "right") == "left":
             d.text((lx - twd, ly - 34), name, font=lbf, fill=col)
             start = (lx + 12, ly)
@@ -1972,7 +1972,7 @@ def lexicon_cloud(slot, slide_no, total, pal):
     img, d, qa = _start("M12 lexicon_cloud", slide_no, total, pal)
     y = kicker_block(d, slot["kicker"], pal, y=150); qa.size("kicker", 70)
     y = headline(d, slot["headline"], y, fill=pal["SIGNATURE"], show_underline=False); qa.size("headline", TYPE["display_lg"] if False else TYPE["display_md"], headline=True)
-    palette = [pal["ACCENT"], pal["SIGNATURE"], pal["LEAD"], INK]
+    palette = [legible(pal["ACCENT"], PAPER), pal["SIGNATURE"], pal["LEAD"], INK]
     gloss_f = font("body", FLOOR); qa.size("gloss", FLOOR)
     cloud_top, cloud_bottom = int(y) + 40, CONTENT_BOTTOM - 30
     avail_w = W - 2 * M
@@ -2489,7 +2489,7 @@ def euler_nesting(slot, slide_no, total, pal):
     if slot.get("exceptions_label_pos") and slot.get("exceptions_label"):
         ex_x, ex_y = slot["exceptions_label_pos"]
         ef = font("kicker_bold", TYPE["caption"])
-        tracked_text(d, (ex_x, ex_y), slot["exceptions_label"], ef, pal["ACCENT"], 4)
+        tracked_text(d, (ex_x, ex_y), slot["exceptions_label"], ef, legible(pal["ACCENT"], PAPER), 4)
         qa.size("exceptions_label", TYPE["caption"])
 
     if slot.get("footnote"):
@@ -2752,6 +2752,10 @@ def cover_bleed(slot, slide_no, total, pal):
         dot_cy = ky + int(kicker_size * 0.42)
         text_fill = tuple(chip.get("text", text_fill))
     d.ellipse([kx, dot_cy - dot_r, kx + 2 * dot_r, dot_cy + dot_r], fill=pal["ACCENT"])
+    # Measure the real pixels under the kicker (the photo, or the chip as already composited over it) and make the
+    # text readable on them. A color that already reads, such as ink on a cream chip, comes back unchanged.
+    _kw = int(d.textlength(slot["kicker"], font=kf))
+    text_fill = legible_over(img, (kx + 2 * dot_r + 20, ky, kx + 2 * dot_r + 20 + _kw, ky + kicker_size), text_fill)
     d.text((kx + 2 * dot_r + 20, ky), slot["kicker"], font=kf, fill=text_fill)
 
     tf = font("display_black", 300)

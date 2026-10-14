@@ -645,3 +645,25 @@ Each cost real time.
 10. **The specimen suite had never run in this repo** — its placeholder photos
     belonged to another deck, so 12 of 18 modules failed on a missing file
     and went untested. It now substitutes a stand-in and says so.
+
+---
+
+## Gold is a mark, not a text color -- unless it goes through `core.legible` (Oct 2026, Steve)
+
+The house gold (196, 158, 84) measures 2.39:1 on paper, 3.68:1 on the signature green and 4.35:1 on dark slate: below the
+4.5:1 that text needs. Steve's rule: **the gold font must be readable in every instance.**
+
+- The engine now guarantees it. `core.legible(color, bg)` keeps the hue and darkens (on light backgrounds) or lightens (on
+  dark ones) until the color clears 4.5:1 against the real background; a color that already reads is returned unchanged.
+  `core.legible_over(img, box, color)` does the same over a photograph by sampling the pixels under the text.
+  On paper the gold becomes (137, 111, 59); on the signature green, (208, 177, 118).
+- Every place the engine draws the accent as TEXT goes through it (kickers, subtitles, column heads, card sub-lines,
+  shelf names, the cover kicker, the lexicon cloud, the atlas region labels). Marks, rules, dots and fills keep the
+  palette gold. **Any new module that draws a palette color as text must use `legible`.**
+- Do not paper over it per deck with a different color (the Mendocino deck briefly used sienna overrides): fix it once.
+- `engine/text_audit.py` is the instrument: it hooks `ImageDraw.text`, samples what is really behind each piece of text,
+  and reports every group below 4.5:1 (3:1 for text 100px and larger). Run it on a deck before locking it:
+  `python3 engine/text_audit.py <deck script> <out.json>` then `--report <out.json> [--gold]`. A palette check misses the
+  real failures; this did not -- it also caught four pale gray map labels on the Mendocino atlas slide.
+- Known and left: the specimen suite's gray page chrome over a dark photo, and ink on the orange tiles at 4.48:1 (a hair
+  under 4.5; locked Mosel slides 4 and 6).
