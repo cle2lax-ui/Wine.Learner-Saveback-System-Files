@@ -3,16 +3,18 @@
 Slide 10 of The Field Guide: Mendocino ("Three Bottles, One Perfect Score"). Steve's call: three bottles -- Roederer
 Estate, Domaine Anderson, and a still white. Every score names its critic and date.
 
-## On the slide (bottle photos needed: transparent PNG cut-outs are best; drop each in photos/ under this file name)
-| # | Wine | Score | Source | File name |
+## On the slide -- Steve's photos, cut out by arc3/prepare_bottle_cutouts.py (background removed only where it
+touches the image edge, so near-white labels survive)
+| # | Wine (as on the bottle) | Score | Source | File name |
 |---|---|---|---|---|
 | 1 | Roederer Estate L'Ermitage Brut 2019 (sparkling) | 100 | Wine Enthusiast -- the first 100-point score for a US sparkling wine; also 94 Wine Spectator (June 2025) | bottle_mendo_roederer_lermitage_2019.png |
-| 2 | Domaine Anderson Pinot Noir Anderson Valley 2023 | 93 | Wine Spectator, Sept 30, 2026 (James Molesworth) | bottle_mendo_domaine_anderson_pn_2023.png |
-| 3 | Navarro Vineyards Dry Gewurztraminer, Anderson Valley, 2020 (still white) | 94 | Wine Review Online, Michael Franz (Feb 2022) | bottle_mendo_navarro_dry_gewurz_2020.png |
+| 2 | Domaine Anderson Estate Pinot Noir 2023 | 93 | Wine Spectator, Sept 30, 2026 (James Molesworth) | bottle_mendo_domaine_anderson_pn_2023.png |
+| 3 | Navarro Vineyards Gewurztraminer, Deep End Blend (still white; vintage not visible on the photo) | 94 for the 2019 | Wine Review Online, Rich Cook (Feb 2021) -- dated on the slide | bottle_mendo_navarro_gewurz_deep_end.png |
 
-**Vintages matter.** The slide names the vintage each score belongs to. If you photograph a different vintage (likely
-for Navarro: 2020 is not the current release), tell me which and I will change the slide to that vintage and its score,
-or drop the score if none is published.
+**The Navarro bottle** is the Deep End Blend, not the Dry Gewurztraminer 2020 first proposed; the slide now matches the
+bottle, and its score is dated to the vintage it belongs to (2019). If you know the photographed vintage, tell me.
+**The Navarro image is Vivino's** (its watermark shows at the base) and is small (238 x 943 px, enlarged on the slide):
+a producer or press image would clear the rights question and sharpen the bottle.
 
 ## Why the Navarro
 A still, dry, Alsace-style aromatic white from a family winery in the valley -- the wine slides 8 and 9 describe

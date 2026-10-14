@@ -54,6 +54,7 @@ arc3/GTR_ANDERSON_VALLEY_PLAN.md
 arc3/PHOTO_CANDIDATES.md
 arc3/PRODUCERS_TO_KNOW_mendocino.md
 arc3/REVIEW_FG_mendocino_classic.md
+arc3/prepare_bottle_cutouts.py
 arc3/prepare_fg_classic_maps.py
 arc3/prepare_mendocino_geo.py
 arc3/render_fg_mendocino.py
@@ -207,7 +208,7 @@ logo/mark_reversed_512.png
 photos/QS_glass_icon.png
 photos/QS_glass_icon_ink.png
 photos/bottle_mendo_domaine_anderson_pn_2023.png
-photos/bottle_mendo_navarro_dry_gewurz_2020.png
+photos/bottle_mendo_navarro_gewurz_deep_end.png
 photos/bottle_mendo_roederer_lermitage_2019.png
 photos/de_baden_kaiserstuhl_terraces.jpg
 photos/de_baden_red_grapes.jpg

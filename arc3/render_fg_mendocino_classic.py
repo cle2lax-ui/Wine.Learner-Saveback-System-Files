@@ -253,19 +253,19 @@ SLIDES = [
     # 10 -- PRODUCERS TO KNOW (Steve: three bottles -- Roederer Estate, Domaine Anderson, and a still white). Every score
     # names its critic and date: Roederer Estate L'Ermitage 2019, 100 Wine Enthusiast (the first 100 for a US sparkling
     # wine); Domaine Anderson Pinot Noir Anderson Valley 2023, 93 Wine Spectator, Sept 30 2026 (James Molesworth);
-    # Navarro Dry Gewurztraminer 2020, 94 Wine Review Online (Michael Franz, Feb 2022) -- the still white, and the
-    # Alsace-style aromatic of slides 8 and 9. BOTTLES: placeholders until Steve's photos arrive (same file names).
-    # If Steve photographs a different vintage, the name and score here must change with it.
+    # Navarro Gewurztraminer "Deep End" -- Steve's bottle is the Deep End Blend, vintage not visible; the score is the
+    # 2019 Deep End's, 94 Wine Review Online (Rich Cook, Feb 2021), dated on the slide -- the still white, and the
+    # Alsace-style aromatic of slides 8 and 9. BOTTLES: Steve's photos, cut out by arc3/prepare_bottle_cutouts.py.
     ("showcase_shelf", dict(
         kicker="PRODUCERS TO KNOW", headline="Three Bottles, One Perfect Score",
         name_color=SIENNA,                       # the house gold on paper is 2.39:1
         zone_h=1200,                             # one row now: the bottles take the second row's height
         products=[("bottle_mendo_roederer_lermitage_2019", "Roederer Estate", "L'Ermitage 2019", "Sparkling",
                    "Anderson Valley", "100 pts, Wine Enthusiast."),     # the first 100 for a US sparkling wine
-                  ("bottle_mendo_domaine_anderson_pn_2023", "Domaine Anderson", "Pinot Noir 2023", "Pinot Noir",
+                  ("bottle_mendo_domaine_anderson_pn_2023", "Domaine Anderson", "Estate Pinot Noir 2023", "Pinot Noir",
                    "Anderson Valley", "93 pts, Wine Spectator (2026)."),
-                  ("bottle_mendo_navarro_dry_gewurz_2020", "Navarro Vineyards", "Dry Gewurztraminer 2020",
-                   "Still white", "Anderson Valley", "94 pts, Wine Review Online (2022).")],
+                  ("bottle_mendo_navarro_gewurz_deep_end", "Navarro Vineyards", "Gewurztraminer Deep End",
+                   "Still white", "Anderson Valley", "94 pts for the 2019, Wine Review Online.")],
     )),
 
     # 11 -- BEYOND THE VALLEY: D3 (Redwood Valley, Potter Valley); CSW (Mendocino Ridge, Cole Ranch).
