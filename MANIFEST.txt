@@ -52,6 +52,7 @@ arc3/ARC3_MENDOCINO_PLAN.md
 arc3/CAPTION_FG_mendocino_classic.md
 arc3/GTR_ANDERSON_VALLEY_PLAN.md
 arc3/PHOTO_CANDIDATES.md
+arc3/PRODUCERS_TO_KNOW_mendocino.md
 arc3/REVIEW_FG_mendocino_classic.md
 arc3/prepare_fg_classic_maps.py
 arc3/prepare_mendocino_geo.py
@@ -205,6 +206,12 @@ logo/mark_reversed_256.png
 logo/mark_reversed_512.png
 photos/QS_glass_icon.png
 photos/QS_glass_icon_ink.png
+photos/bottle_mendo_black_kite_ferrington_2023.png
+photos/bottle_mendo_cobb_wendling_2023.png
+photos/bottle_mendo_domaine_anderson_pn_2023.png
+photos/bottle_mendo_littorai_savoy_2021.png
+photos/bottle_mendo_roederer_lermitage_2019.png
+photos/bottle_mendo_williams_selyem_ferrington_2023.png
 photos/de_baden_kaiserstuhl_terraces.jpg
 photos/de_baden_red_grapes.jpg
 photos/de_bernkastel_aerial.jpg
@@ -282,6 +289,7 @@ photos/us_mendo_fog_redwoods_pexels.jpg
 photos/us_mendo_garzini_cc0.jpg
 photos/us_mendo_husch_philo_cc0.jpg
 photos/us_mendo_roederer_flute_cc0.jpg
+photos/us_mendo_saracina_hopland_missvain.jpg
 photos/us_mendo_ukiah_vineyard_missvain.jpg
 photos/wad_loosen_treppchen_bottle.png
 photos/wad_loosen_treppchen_bottle2.jpg

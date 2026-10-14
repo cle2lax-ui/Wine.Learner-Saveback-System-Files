@@ -168,15 +168,15 @@ SLIDES = [
 
     # 3 -- TWO CLIMATES: D3 (and the Potter Valley twist). Photos: Anderson Valley under cloud; an inland vineyard at Ukiah.
     ("duel", dict(
-        photos=("us_mendo_av_esterlina_view_prater", "us_mendo_ukiah_vineyard_missvain"),
-        labels=("Anderson Valley", "Ukiah, inland"),
+        photos=("us_mendo_av_esterlina_view_prater", "us_mendo_saracina_hopland_missvain"),
+        labels=("Anderson Valley", "Hopland, inland"),
         kicker="TWO CLIMATES", headline="Cool Coast, Warm Inland",
         standfirst="Distance from the Pacific decides what ripens, and altitude can flip it.",
         mode="table", col_heads=("Near the Pacific", "Further inland"),
         rows=[("Reds", "Pinot Noir", "Zinfandel, Syrah, Petite Sirah, Cabernet Sauvignon"),
               ("Whites", "Chardonnay, Alsace-style aromatics", "At altitude: Sauvignon Blanc, Riesling")],
         col_head_colors=(SHADE, SIENNA),
-        photo_credit=f"{CRED_PRATER}; Missvain / Wikimedia Commons (CC BY 4.0)",
+        photo_credit=f"{CRED_PRATER}; Missvain / Wikimedia Commons (CC BY 4.0)",   # Saracina, Hopland
     )),
 
     # 4 -- THE APPELLATIONS: containment, from D3 (the six) and the AVA data/TTB (what sits outside).
@@ -250,7 +250,33 @@ SLIDES = [
         photo_credit="Missvain, No-till-vineyard / Wikimedia Commons (CC0); Mick Haupt / Pexels",
     )),
 
-    # 10 -- BEYOND THE VALLEY: D3 (Redwood Valley, Potter Valley); CSW (Mendocino Ridge, Cole Ranch).
+    # 10 -- PRODUCERS TO KNOW: six wines, every score with its critic and date. Two are valley-based (Roederer Estate,
+    # Philo, founded 1982 by Champagne Louis Roederer -- Wine Spectator; Domaine Anderson); D3 names Littorai and
+    # Williams Selyem as significant producers (both based in Sonoma County, buying Anderson Valley fruit -- D3's own
+    # point that wineries elsewhere buy it). Scores: L'Ermitage 2019, 100 Wine Enthusiast (the first 100 for a US
+    # sparkling wine); Williams Selyem Ferrington 2023, 96 James Suckling (Sep 2025); Littorai Savoy 2021, 95 Jeb
+    # Dunnuck (Jul 2023); Domaine Anderson Pinot Noir 2023, Black Kite Ferrington 2023 and Cobb Wendling 2023, Wine
+    # Spectator Sep 30, 2026 (James Molesworth): 93, 94, 94. BOTTLES: placeholders until Steve's photos arrive (same
+    # file names, photos/bottle_mendo_*.png).
+    ("showcase_shelf", dict(
+        kicker="PRODUCERS TO KNOW", headline="Six Bottles, One Perfect Score",
+        name_color=SIENNA,                       # the house gold on paper is 2.39:1
+        zone_h=450,                              # as large as fits: each unit costs ~2px of page (both rows grow)
+        products=[("bottle_mendo_roederer_lermitage_2019", "Roederer Estate", "L'Ermitage 2019", "Sparkling",
+                   "Anderson Valley", "100 pts, Wine Enthusiast."),     # the first 100 for a US sparkling wine
+                  ("bottle_mendo_domaine_anderson_pn_2023", "Domaine Anderson", "Pinot Noir 2023", "Pinot Noir",
+                   "Anderson Valley", "93 pts, Wine Spectator (2026)."),
+                  ("bottle_mendo_williams_selyem_ferrington_2023", "Williams Selyem", "Ferrington 2023", "Pinot Noir",
+                   "Anderson Valley", "96 pts, James Suckling (2025)."),
+                  ("bottle_mendo_littorai_savoy_2021", "Littorai", "Savoy Vineyard 2021", "Pinot Noir",
+                   "Anderson Valley", "95 pts, Jeb Dunnuck (2023)."),
+                  ("bottle_mendo_black_kite_ferrington_2023", "Black Kite", "Ferrington 2023", "Pinot Noir",
+                   "Anderson Valley", "94 pts, Wine Spectator (2026)."),
+                  ("bottle_mendo_cobb_wendling_2023", "Cobb", "Wendling 2023", "Pinot Noir",
+                   "Anderson Valley", "94 pts, Wine Spectator (2026).")],
+    )),
+
+    # 11 -- BEYOND THE VALLEY: D3 (Redwood Valley, Potter Valley); CSW (Mendocino Ridge, Cole Ranch).
     ("tile_grid", dict(
         kicker="BEYOND THE VALLEY", headline="Four More Names to Know",
         standfirst="Inland, it runs warmer, and in places much higher.",
@@ -261,7 +287,7 @@ SLIDES = [
                ("Cole Ranch", "Smallest in the state", "California's smallest AVA: under 150 acres in all.")],
     )),
 
-    # 11 -- THE BUSINESS: D3, plus CSW's organic share (dated). Stripe: a Mendocino County vineyard.
+    # 12 -- THE BUSINESS: D3, plus CSW's organic share (dated). Stripe: a Mendocino County vineyard.
     ("card_grid", dict(
         kicker="THE BUSINESS", headline="The Quiet Supplier",
         standfirst="Good value, and wanted well beyond the county.",
@@ -276,7 +302,7 @@ SLIDES = [
         photo_credit="No-till-vineyard / Wikimedia Commons (CC0)",
     )),
 
-    # 12 -- CLOSE: CSW ("one of the coolest winegrowing areas of California"); D3 for the wines.
+    # 13 -- CLOSE: CSW ("one of the coolest winegrowing areas of California"); D3 for the wines.
     ("statement", dict(
         variant="cover", photo="us_mendo_av_vineyard_murayama", photo_anchor=0.45,
         title="One of California's\nCoolest Corners",

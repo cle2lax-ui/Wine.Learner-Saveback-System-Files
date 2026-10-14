@@ -784,5 +784,17 @@
   "slot": "us_mendo_ukiah_vineyard_missvain",
   "credit": "Missvain / Wikimedia Commons (CC BY 4.0)",
   "local_path": "/home/claude/repo/photos/us_mendo_ukiah_vineyard_missvain.jpg"
+ },
+ {
+  "title": "File:Saracina Vineyards - January 2024 - Sarah Stierch 03.jpg",
+  "url": "https://commons.wikimedia.org/wiki/File:Saracina_Vineyards_-_January_2024_-_Sarah_Stierch_03.jpg",
+  "width": 3840,
+  "height": 5120,
+  "author": "Missvain",
+  "license": "CC BY 4.0",
+  "description": "Wikimedia Commons; Saracina Vineyards, 11684 S Hwy 101, Hopland (the address sign appears in the same set, photo 01). Inland Mendocino. The classic Field Guide, slide 3.",
+  "slot": "us_mendo_saracina_hopland_missvain",
+  "credit": "Missvain / Wikimedia Commons (CC BY 4.0)",
+  "local_path": "/home/claude/repo/photos/us_mendo_saracina_hopland_missvain.jpg"
  }
 ]
