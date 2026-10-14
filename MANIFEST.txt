@@ -206,12 +206,9 @@ logo/mark_reversed_256.png
 logo/mark_reversed_512.png
 photos/QS_glass_icon.png
 photos/QS_glass_icon_ink.png
-photos/bottle_mendo_black_kite_ferrington_2023.png
-photos/bottle_mendo_cobb_wendling_2023.png
 photos/bottle_mendo_domaine_anderson_pn_2023.png
-photos/bottle_mendo_littorai_savoy_2021.png
+photos/bottle_mendo_navarro_dry_gewurz_2020.png
 photos/bottle_mendo_roederer_lermitage_2019.png
-photos/bottle_mendo_williams_selyem_ferrington_2023.png
 photos/de_baden_kaiserstuhl_terraces.jpg
 photos/de_baden_red_grapes.jpg
 photos/de_bernkastel_aerial.jpg

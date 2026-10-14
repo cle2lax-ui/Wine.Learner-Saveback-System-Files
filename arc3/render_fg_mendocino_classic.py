@@ -250,30 +250,22 @@ SLIDES = [
         photo_credit="Missvain, No-till-vineyard / Wikimedia Commons (CC0); Mick Haupt / Pexels",
     )),
 
-    # 10 -- PRODUCERS TO KNOW: six wines, every score with its critic and date. Two are valley-based (Roederer Estate,
-    # Philo, founded 1982 by Champagne Louis Roederer -- Wine Spectator; Domaine Anderson); D3 names Littorai and
-    # Williams Selyem as significant producers (both based in Sonoma County, buying Anderson Valley fruit -- D3's own
-    # point that wineries elsewhere buy it). Scores: L'Ermitage 2019, 100 Wine Enthusiast (the first 100 for a US
-    # sparkling wine); Williams Selyem Ferrington 2023, 96 James Suckling (Sep 2025); Littorai Savoy 2021, 95 Jeb
-    # Dunnuck (Jul 2023); Domaine Anderson Pinot Noir 2023, Black Kite Ferrington 2023 and Cobb Wendling 2023, Wine
-    # Spectator Sep 30, 2026 (James Molesworth): 93, 94, 94. BOTTLES: placeholders until Steve's photos arrive (same
-    # file names, photos/bottle_mendo_*.png).
+    # 10 -- PRODUCERS TO KNOW (Steve: three bottles -- Roederer Estate, Domaine Anderson, and a still white). Every score
+    # names its critic and date: Roederer Estate L'Ermitage 2019, 100 Wine Enthusiast (the first 100 for a US sparkling
+    # wine); Domaine Anderson Pinot Noir Anderson Valley 2023, 93 Wine Spectator, Sept 30 2026 (James Molesworth);
+    # Navarro Dry Gewurztraminer 2020, 94 Wine Review Online (Michael Franz, Feb 2022) -- the still white, and the
+    # Alsace-style aromatic of slides 8 and 9. BOTTLES: placeholders until Steve's photos arrive (same file names).
+    # If Steve photographs a different vintage, the name and score here must change with it.
     ("showcase_shelf", dict(
-        kicker="PRODUCERS TO KNOW", headline="Six Bottles, One Perfect Score",
+        kicker="PRODUCERS TO KNOW", headline="Three Bottles, One Perfect Score",
         name_color=SIENNA,                       # the house gold on paper is 2.39:1
-        zone_h=450,                              # as large as fits: each unit costs ~2px of page (both rows grow)
+        zone_h=1200,                             # one row now: the bottles take the second row's height
         products=[("bottle_mendo_roederer_lermitage_2019", "Roederer Estate", "L'Ermitage 2019", "Sparkling",
                    "Anderson Valley", "100 pts, Wine Enthusiast."),     # the first 100 for a US sparkling wine
                   ("bottle_mendo_domaine_anderson_pn_2023", "Domaine Anderson", "Pinot Noir 2023", "Pinot Noir",
                    "Anderson Valley", "93 pts, Wine Spectator (2026)."),
-                  ("bottle_mendo_williams_selyem_ferrington_2023", "Williams Selyem", "Ferrington 2023", "Pinot Noir",
-                   "Anderson Valley", "96 pts, James Suckling (2025)."),
-                  ("bottle_mendo_littorai_savoy_2021", "Littorai", "Savoy Vineyard 2021", "Pinot Noir",
-                   "Anderson Valley", "95 pts, Jeb Dunnuck (2023)."),
-                  ("bottle_mendo_black_kite_ferrington_2023", "Black Kite", "Ferrington 2023", "Pinot Noir",
-                   "Anderson Valley", "94 pts, Wine Spectator (2026)."),
-                  ("bottle_mendo_cobb_wendling_2023", "Cobb", "Wendling 2023", "Pinot Noir",
-                   "Anderson Valley", "94 pts, Wine Spectator (2026).")],
+                  ("bottle_mendo_navarro_dry_gewurz_2020", "Navarro Vineyards", "Dry Gewurztraminer 2020",
+                   "Still white", "Anderson Valley", "94 pts, Wine Review Online (2022).")],
     )),
 
     # 11 -- BEYOND THE VALLEY: D3 (Redwood Valley, Potter Valley); CSW (Mendocino Ridge, Cole Ranch).
