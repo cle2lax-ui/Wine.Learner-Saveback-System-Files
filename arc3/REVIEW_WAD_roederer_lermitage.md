@@ -22,18 +22,43 @@ major wine publication"). Steve's direction (round 2): "use the lees aging time 
 - Page 2 had to be cut to fit (the layout check failed at ~78 words): the reviewer-sourced "lowest dosage the wine has ever
   had" (Vinous) went, not the producer-sheet facts.
 - Left out: any Jeb Dunnuck score (retailers show both 95 and 96).
-- **D4 (the WSET sparkling-wine unit) is NOT in the project files** and could not be checked for Anderson Valley facts; the
-  only Anderson Valley sparkling content available is D3's line (Pinot Noir and Chardonnay are used in both sparkling and
-  still wines). OPEN until Steve adds D4.
+- **D4 (the WSET sparkling-wine unit, the correct source for sparkling) was added to the project in round 3 and checked.**
+  See the D4 section below.
 Three dashboard rows are INFERRED and labeled so in the script: Acidity (Medium (+): the producer calls 2019 a lower-acidity
 vintage, "less classic, taut", while reviewers say "bright", "vibrant"), Body, and Aroma Intensity.
 
+## D4 check (round 3: Steve added the textbook; "check for important facts about Anderson Valley")
+Read the whole United States chapter (s17) and the sweetness, lees and post-disgorgement passages in s1. What it says, and
+what was done with it:
+- **s17.1 Anderson Valley:** the north-western part is close to the Pacific Ocean; cool ocean breezes and fog are drawn inland
+  along the Navarro river valley, lowering temperatures and reducing sunshine hours up the valley; wide diurnal ranges;
+  these factors "enable growers to maintain high levels of acidity in grapes". USED on page 1 (with Steve's request that
+  the Pacific Ocean be named): "a fog-cooled valley a few miles from the Pacific Ocean. Cool ocean air keeps acidity high."
+- **Style norm** (US traditional method, Chardonnay and Pinot Noir): medium-intensity aromas of ripe apple and lemon with
+  brioche and/or biscuit autolytic notes, medium (+) acidity, typically Brut, good to outstanding. USED: the Acidity and
+  Sweetness rows are now WSET-backed rather than inferred. Aroma Intensity (Medium (+)) is deliberately one notch ABOVE
+  D4's medium norm, on critics' words ("beguiling", "powerful and dense"); it stays labeled as inferred in the script.
+- **s1 p. 11, sweetness bands:** extra brut 0-6 g/L, brut 0-12 g/L, with a +/- 3 g/L tolerance ("Brut can be up to 15
+  g/L"). USED in the pinned comment (the hidden layer), now on WSET footing and with the tolerance.
+- **s1, post-disgorgement:** dosage sugar reacts with autolysis compounds (Maillard), building toasty aromas; wines are held
+  a few months on the cork before release. This is the reason for the sheet's seven months. USED in an optional second comment.
+- **s17.3:** Roederer Estate is D4's example of a specialist sparkling company founded by a Champagne house. USED in the
+  pinned comment.
+- **Not used:** "many wineries from outside the region buy Anderson Valley grapes for their sparkling wines" (L'Ermitage is
+  all estate-grown, so it would confuse); lees baselines ("up to three years" as the US norm; "four to five years in some
+  cases") because D4 says nothing about THIS wine's lees time, which the producer's sheet also omits.
+- **Nothing in D4 contradicts the deck.**
+
 ## Coco Chanel (editing)
 - "estate-grown" appeared on both pages: cut from page 2 (page 1 says "one estate's own grapes").
-- The page-1 note source ("Wine Spectator, Wine Enthusiast, the producer") ran off the page; now "Critics and the producer",
-  which the guide allows for page 1 and which is accurate: the notes draw on several critics and the producer's sheet.
+- The page-1 note source ("Wine Spectator, Wine Enthusiast, the producer") ran off the page, so it became "Critics and the
+  producer". **Round 3: Steve had the attribution removed from page 1 altogether.** The notes' sources (the producer's sheet,
+  Wine Spectator, Wine Enthusiast) are traced in the script's docstring and this record, not on the slide.
 - "lingering" came from a critic not credited: replaced with the producer's own "pear skin".
 - Page 2's "its first for an American sparkling wine" was ambiguous (whose first?): now "the first it has given".
+- Page 1 (round 3): the Pacific Ocean named, with D4's reason it matters. The paragraph ran to five lines with a three-word
+  last line; "own" dropped, "acidity high" tightened and the producer's own "just the cuvée pressing" used (no repeated
+  "Only"), which sets it in four lines and gives 283px above the footer (180px before).
 
 ## Jony Ive (craft)
 - **The gold:** the Quick Sips series gold measured 3.37:1 on paper and was drawn as small text (dashboard descriptors,
@@ -55,7 +80,7 @@ Measured on rendered pixels: text top y=100 / bottle top y=101; last body line y
 clearance 177px. Identical to the Loosen deck's grid.
 
 ## Brevity
-Page 1: 74 words. Page 2: 62. Budget 130. Page 2 was cut once to fit the layout check (see the Wintour section).
+Page 1: 79 words. Page 2: 62. Budget 130. Page 2 was cut once to fit the layout check (see the Wintour section).
 
 ## Social Pass
 All eight gates are answered in `arc3/CAPTION_WAD_roederer_lermitage.md`. The decode layer is the dosage (6 g/L, page 2)

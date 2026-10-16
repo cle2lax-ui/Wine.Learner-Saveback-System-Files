@@ -871,3 +871,7 @@ falls early in a line, and look at the render.
 - **Sparkling wine on the dashboard:** the five SAT rows still work (Dry from a published dosage; the other rows from
   reviews, with the inferred ones labeled in the script). Mousse goes in the tasting notes, not the dashboard. Do not print
   lees time or alcohol when the sources disagree; say so in the script instead.
+- **For any sparkling-wine deck the textbook source is D4** (WSET Sparkling Wines), in the project files since Oct 2026. Its
+  United States chapter (s17) has Anderson Valley and Roederer Estate; s1 has the sweetness bands (with the +/- 3 g/L
+  tolerance), lees aging and the post-disgorgement Maillard reaction. Check it before writing sparkling copy; D3 has only
+  one line on sparkling.

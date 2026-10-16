@@ -29,6 +29,18 @@ SOURCE TRACE -- nothing below is from memory:
     retailers: 95 and 96 -- they disagree, so no Dunnuck number is used.)
   D3 Ch. 23.1 (Anderson Valley): a narrow valley a few miles from the Pacific; cold air and fog along the river
     (measured 4.2 miles from the AVA to open ocean: arc3/prepare_fg_classic_maps.py).
+  D4 (WSET Sparkling Wines, Aug 2025 edition; added to the project Oct 2026), the correct sparkling source:
+    s17.1 Anderson Valley: the north-western part is close to the Pacific Ocean; cool breezes and fog drawn inland along
+    the Navarro river valley lower temperatures and reduce sunshine hours up the valley; wide diurnal ranges; these
+    factors let growers keep high acidity in the grapes. Many outside wineries buy Anderson Valley grapes for sparkling;
+    the region is home to Roederer Estate, "founded by Roederer Champagne house".
+    s17 style norm, US traditional method from Chardonnay and Pinot Noir: medium-intensity aromas of ripe apple and lemon
+    with brioche and/or biscuit autolytic notes, medium (+) acidity, typically Brut, good to outstanding, mid-price to
+    super-premium. s17.2: lees aging "for example up to three years" is the US norm.
+    s1 (p. 11): EU sweetness bands (extra brut 0-6 g/L, brut 0-12 g/L) with a +/-3 g/L tolerance ("Brut can be up to 15
+    g/L"); after disgorgement the dosage sugar reacts with autolysis compounds (Maillard), building toasty aromas, which
+    is why cork-sealed wines are held a few months before release (the sheet: seven months on the cork).
+    s17.3: Roederer Estate is D4's example of a specialist sparkling company founded by a Champagne house.
 
 STEVE'S DIRECTION (Oct 2026): "Use the lees aging time and alcohol from the producer's tech sheet."
   Alcohol: 12.9%, from the sheet, printed on page 2. (The importer and Wine.com list 13.2%; the sheet is the source.)
@@ -43,13 +55,15 @@ DELIBERATELY NOT USED
 
 STRUCTURE DASHBOARD -- WSET Level 3 terms only; values on the Loosen deck's scale (Low .20, Medium .50, Medium(+) .72,
   High .90).
-  Sweetness   Dry          MEASURED: dosage 6 g/L, producer. (WSET: Brut, up to 12 g/L, reads Dry.)
-  Acidity     Medium (+)   INFERRED: TA 6.5 g/L, and the producer calls the 2019 vintage lower in acidity and "less
-                           classic, taut"; reviewers say "bright", "vibrant", "mouthwatering", "fresh natural acidity".
+  Sweetness   Dry          MEASURED: dosage 6 g/L, producer; D4: US traditional-method wines are typically Brut.
+  Acidity     Medium (+)   D4's norm for this style is medium (+); this wine agrees: TA 6.5 g/L, and the producer calls
+                           the 2019 vintage lower in acidity and "less classic, taut", while reviewers say "bright",
+                           "vibrant", "mouthwatering", "fresh natural acidity". Not merely inferred any more.
   Alcohol     Medium       12.9% (producer) / 13.2% (importer): both Medium.
   Body        Medium (+)   reviewers span "medium-bodied" (Dunnuck), "medium- to full-bodied" (Suckling) and
                            "full-bodied" (Wine Enthusiast).
-  Aroma       Medium (+)   INFERRED: "beguiling" (Vinous), "layered" (producer) but "delicate" (Suckling).
+  Aroma       Medium (+)   INFERRED, and one notch ABOVE D4's norm (medium) for the style: "beguiling" (Vinous),
+                           "layered" (producer), "powerful and dense" (Wine Enthusiast), against "delicate" (Suckling).
   Intensity
 
 PHOTOGRAPHS
@@ -91,8 +105,12 @@ SLOT_1 = dict(
     lockup_note_size=60,
     photo_credit="Naotake Murayama / Wikimedia Commons (CC BY 2.0)",
     paragraph_lead="Only in the best years",
-    paragraph="is this wine made, from one estate's own grapes, grown in a fog-cooled valley a few miles from the "
-              "ocean. Only the first, cuvée pressing goes in, and about 5% is fermented in oak.",
+    # Steve: say the region is near the PACIFIC OCEAN, specifically. D3: "only a few kilometers/miles from the Pacific";
+    # D4 s17.1: the north-western part is close to the Pacific, cool breezes and fog come inland along the river valley,
+    # and these factors "enable growers to maintain high levels of acidity in grapes". Measured: 4.2 miles to open ocean.
+    paragraph="is this wine made, from one estate's grapes, grown in a fog-cooled valley a few miles from the "
+              "Pacific Ocean. Cool ocean air keeps acidity high. Just the cuvée pressing is used, and about 5% is "
+              "fermented in oak.",
     structure=[
         ("Sweetness", 0.12, "Dry"),
         ("Acidity", 0.72, "Medium (+)"),
@@ -105,7 +123,7 @@ SLOT_1 = dict(
         ("Palate", "Asian pear, baked apple, clove; a creamy mousse."),
         ("Finish", "Mouthwatering, pear skin, creamy."),
     ],
-    notes_source="Critics and the producer",
+    # No on-slide attribution under the notes (Steve, Oct 2026). The sources are traced in this docstring instead.
 )
 
 SLOT_2 = dict(
