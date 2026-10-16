@@ -50,15 +50,18 @@ arc2/render_wad_loosen_treppchen.py
 arc2/sample_cover_palette.py
 arc3/ARC3_MENDOCINO_PLAN.md
 arc3/CAPTION_FG_mendocino_classic.md
+arc3/CAPTION_WAD_roederer_lermitage.md
 arc3/GTR_ANDERSON_VALLEY_PLAN.md
 arc3/PHOTO_CANDIDATES.md
 arc3/PRODUCERS_TO_KNOW_mendocino.md
 arc3/REVIEW_FG_mendocino_classic.md
+arc3/REVIEW_WAD_roederer_lermitage.md
 arc3/prepare_bottle_cutouts.py
 arc3/prepare_fg_classic_maps.py
 arc3/prepare_mendocino_geo.py
 arc3/render_fg_mendocino.py
 arc3/render_fg_mendocino_classic.py
+arc3/render_wad_roederer_lermitage.py
 arc3/sample_fg_classic_palette.py
 archive/CHANGELOG_fffa_v4.md
 archive/CHANGELOG_quicksips_rrv.md
@@ -292,6 +295,7 @@ photos/us_mendo_saracina_hopland_missvain.jpg
 photos/us_mendo_ukiah_vineyard_missvain.jpg
 photos/wad_loosen_treppchen_bottle.png
 photos/wad_loosen_treppchen_bottle2.jpg
+photos/wad_roederer_lermitage_bottle.jpg
 reels/CAPTION_FG_mendocino.md
 reels/CAPTION_GTR_anderson_valley.md
 reels/README.md

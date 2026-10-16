@@ -35,7 +35,7 @@ from PIL import Image, ImageDraw, ImageFilter
 
 import core
 import modules
-from core import (cover_fit, load_photo, font, text_w, paragraph, run_in, scrim,
+from core import (legible, cover_fit, load_photo, font, text_w, paragraph, run_in, scrim,
                   tracked_text)
 from tokens import W, H, M, PAPER, INK, LINE, FLOOR, CONTENT_BOTTOM, QUICKSIPS_GOLD, SCRIM
 from quick_sips import qs_tasting_dashboard, _qs_glass
@@ -293,7 +293,7 @@ def wad_page1(slot, slide_no, total, pal):
         qa.add_words(txt)
     if slot.get("notes_source"):
         sf = font("italbold", 60)
-        d.text((nx, ny + 4), slot["notes_source"], font=sf, fill=GOLD)
+        d.text((nx, ny + 4), slot["notes_source"], font=sf, fill=legible(GOLD, PAPER))
         sa, sd = sf.getmetrics()
         qa.box("notes_source", (nx, ny + 4, nx + text_w(d, slot["notes_source"], sf), ny + 4 + sa + sd))
         ny += sa + sd + 4
@@ -411,7 +411,7 @@ def wad_page2(slot, slide_no, total, pal):
     qa.size("producer", ps, headline=True)
 
     rf, rs = _fit_one_line(d, slot["region_year"], "display_bold", 110, 80, tw_max)
-    d.text((tx, y), slot["region_year"], font=rf, fill=GOLD)
+    d.text((tx, y), slot["region_year"], font=rf, fill=legible(GOLD, PAPER))
     a, dsc = rf.getmetrics(); y += int((a + dsc) * 1.15) + 40
     qa.size("region_year", rs)
 

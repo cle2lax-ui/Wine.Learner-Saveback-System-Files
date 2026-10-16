@@ -57,7 +57,7 @@ def _hook(self, xy, text, fill=None, font=None, *a, **k):
                     bg_l = float(_lum(med))
                     # worst case: the background pixels closest in luminance to the text
                     worst = float(np.percentile(lums, 95 if fl > bg_l else 5))
-                    key = (CONTEXT["label"], tuple(int(c) for c in fill[:3]), tuple(int(c // 24) for c in med))
+                    key = (CONTEXT["label"], tuple(int(c) for c in fill[:3]), tuple(int(c // 24) for c in med), int(getattr(font, "size", 0)))   # one group per SIZE: small text must not hide behind large text in the same color
                     size = getattr(font, "size", 0)
                     r = RECORDS.setdefault(key, dict(ctx=CONTEXT["label"], fill=list(map(int, fill[:3])),
                                                      bg=[int(c) for c in med], text="", n=0, size=size,
@@ -65,7 +65,6 @@ def _hook(self, xy, text, fill=None, font=None, *a, **k):
                     r["n"] += 1
                     if len(r["text"]) < 34:
                         r["text"] += str(text).replace("\n", " ")
-                    r["size"] = max(r["size"], size)
                     r["ratio"] = min(r["ratio"], _ratio(fl, bg_l))
                     r["worst"] = min(r["worst"], _ratio(fl, worst))
     except Exception:

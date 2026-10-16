@@ -16,7 +16,7 @@ QUICK_SIPS_STYLE_GUIDE.md for the full spec.
 """
 from PIL import Image, ImageDraw, ImageOps
 from tokens import *
-from core import (font, text_w, tracked_text, wrap, paragraph,
+from core import (legible, font, text_w, tracked_text, wrap, paragraph,
                    load_photo, cover_fit, scrim, chip, tracked_w, wrap_tracked,
                    wrap_around, QA)
 from modules import _start, _finish
@@ -248,7 +248,7 @@ def qs_benchmark_bottle(img, d, pal, qa, heading, photo, wine, producer, origin,
     tag_lines = wrap(d, producer, of, cap_w)
     oa, od = of.getmetrics(); olh = int((oa + od) * 1.24)
     for ln in tag_lines:
-        d.text((cap_x, cy), ln, font=of, fill=GOLD)
+        d.text((cap_x, cy), ln, font=of, fill=legible(GOLD, PAPER))
         cy += olh
     cy += 2
 
@@ -308,11 +308,11 @@ def qs_tasting_dashboard(d, y0, x0, w, pal, qa, attributes,
         dw = text_w(d, descriptor, val_f)
         d.text((x0, y), label, font=val_f, fill=INK)
         if lw + min_gap + dw <= w:
-            d.text((x0 + w - dw, y), descriptor, font=val_f, fill=GOLD)
+            d.text((x0 + w - dw, y), descriptor, font=val_f, fill=legible(GOLD, PAPER))
             y += line_h + text_bar_gap
         else:
             y += line_h + 4
-            d.text((x0, y), descriptor, font=val_f, fill=GOLD)
+            d.text((x0, y), descriptor, font=val_f, fill=legible(GOLD, PAPER))
             y += line_h + text_bar_gap
         d.rounded_rectangle([x0, y, x0 + w, y + bar_h], radius=bar_h // 2, fill=LINE)
         fill_w = max(bar_h, int(w * frac))

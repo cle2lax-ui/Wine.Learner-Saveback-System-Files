@@ -860,3 +860,14 @@ y=100; body last line 2380 / bottle base 2382; footer clearance 177px.
 across lines ("Dr. / Loosen's", "Ernst / Loosen"). A non-breaking space does
 not help (Python's `str.split()` treats it as whitespace). Reword so the name
 falls early in a line, and look at the render.
+
+**Second deck in this format: Roederer Estate L'Ermitage Brut 2019** (`arc3/render_wad_roederer_lermitage.py`, review in
+`arc3/REVIEW_WAD_roederer_lermitage.md`; a POST, not a Reel). Three things it taught:
+- **A long producer name breaks the page-2 hierarchy check.** The producer is the headline and shrinks to fit one line
+  (200px down to 174px for "Roederer Estate"); the format wants it 30px above the lockup (160px). Set `lockup_size` on
+  page 2 (130px here) instead of shrinking the name. "Dr. Loosen" was short enough never to hit this.
+- **Sweep the page-1 scrim per photo.** The Loosen value (0.46) was more than a blue sky needed: 0.30 kept the gold note at
+  4.62:1 against the brightest pixels and the hero at 86% of its brightness. Below 0.25 the note fails 4.5:1.
+- **Sparkling wine on the dashboard:** the five SAT rows still work (Dry from a published dosage; the other rows from
+  reviews, with the inferred ones labeled in the script). Mousse goes in the tasting notes, not the dashboard. Do not print
+  lees time or alcohol when the sources disagree; say so in the script instead.

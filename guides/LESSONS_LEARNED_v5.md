@@ -667,3 +667,16 @@ The house gold (196, 158, 84) measures 2.39:1 on paper, 3.68:1 on the signature 
   real failures; this did not -- it also caught four pale gray map labels on the Mendocino atlas slide.
 - Known and left: the specimen suite's gray page chrome over a dark photo, and ink on the orange tiles at 4.48:1 (a hair
   under 4.5; locked Mosel slides 4 and 6).
+
+---
+
+## The audit must judge each text size on its own; format code needs `legible` too (Oct 2026)
+
+`engine/text_audit.py` first grouped text by color and background and took each group's LARGEST size to pick the 3:1 or
+4.5:1 threshold. A 110px gold line therefore carried small gold text (dashboard descriptors, producer names) through as
+"large" at 3.37:1. Groups are now per size. Re-running on every deck found the Quick Sips gold (168, 130, 60) failing at
+3.37:1 in formats/quick_sips.py and formats/what_am_i_drinking.py (descriptors, producer names, the source line, the region
+line); all five text sites now use `core.legible`, so the rule covers the formats, not just `modules.py`. The locked Loosen
+What Am I Drinking? deck's two regression renders changed as a result and the reference was re-frozen (the delivered images are
+unchanged). **After changing a shared color rule, re-run the audit on EVERY deck, and check the audit itself can see the
+case you fixed.**
