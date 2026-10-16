@@ -12,10 +12,19 @@ L'Ermitage"), and he asked for that photo, so the deck is about that wine. A Bru
 Every claim traces to the producer's technical sheet (read in full), a named critic, D3 or D1; the trace is in the script's
 docstring. Checked and kept: 100 points from Wine Enthusiast, "the first it has given an American sparkling wine" (K&L's
 wording; Roederer's 5 June 2025 press release says "first-ever perfect score for an American-made sparkling wine from a
-major wine publication"). Checked and left OUT because the sources conflict:
-- Lees time: reviewers say five years or four; a 2019 vintage disgorged February 2024 is nearer four. No figure given.
-- Alcohol as a number: the producer's sheet says 12.9%, the importer and Wine.com 13.2%. Both read Medium on the dashboard.
-- Any Jeb Dunnuck score: retailers show both 95 and 96.
+major wine publication"). Steve's direction (round 2): "use the lees aging time and alcohol from the producer's tech sheet."
+- **Alcohol:** 12.9%, from the sheet, now printed on page 2 (the importer and Wine.com list 13.2%; the sheet is the source).
+- **Aging:** the sheet states NO lees time (read in full at both addresses on the producer's site, and the rose's sheet).
+  It gives "disgorged February 2024" and "an additional seven months on the cork"; both are now on page 2. No lees figure
+  is printed, because the producer gives none: reviewers say five years (Wine Enthusiast, K&L), a retailer says four, and a
+  2019 harvest disgorged in February 2024 points to about four. FLAGGED to Steve: if he wants a lees figure, it needs a named
+  source and the sources conflict.
+- Page 2 had to be cut to fit (the layout check failed at ~78 words): the reviewer-sourced "lowest dosage the wine has ever
+  had" (Vinous) went, not the producer-sheet facts.
+- Left out: any Jeb Dunnuck score (retailers show both 95 and 96).
+- **D4 (the WSET sparkling-wine unit) is NOT in the project files** and could not be checked for Anderson Valley facts; the
+  only Anderson Valley sparkling content available is D3's line (Pinot Noir and Chardonnay are used in both sparkling and
+  still wines). OPEN until Steve adds D4.
 Three dashboard rows are INFERRED and labeled so in the script: Acidity (Medium (+): the producer calls 2019 a lower-acidity
 vintage, "less classic, taut", while reviewers say "bright", "vibrant"), Body, and Aroma Intensity.
 
@@ -46,7 +55,7 @@ Measured on rendered pixels: text top y=100 / bottle top y=101; last body line y
 clearance 177px. Identical to the Loosen deck's grid.
 
 ## Brevity
-Page 1: 74 words. Page 2: 60. Budget 130. No cuts needed beyond the duplicate above.
+Page 1: 74 words. Page 2: 62. Budget 130. Page 2 was cut once to fit the layout check (see the Wintour section).
 
 ## Social Pass
 All eight gates are answered in `arc3/CAPTION_WAD_roederer_lermitage.md`. The decode layer is the dosage (6 g/L, page 2)

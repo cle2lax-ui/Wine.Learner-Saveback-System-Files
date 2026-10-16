@@ -30,10 +30,15 @@ SOURCE TRACE -- nothing below is from memory:
   D3 Ch. 23.1 (Anderson Valley): a narrow valley a few miles from the Pacific; cold air and fog along the river
     (measured 4.2 miles from the AVA to open ocean: arc3/prepare_fg_classic_maps.py).
 
+STEVE'S DIRECTION (Oct 2026): "Use the lees aging time and alcohol from the producer's tech sheet."
+  Alcohol: 12.9%, from the sheet, printed on page 2. (The importer and Wine.com list 13.2%; the sheet is the source.)
+  Aging: the sheet (read in full, on both of the producer's own addresses, and the rose's sheet too) states NO lees
+    time. It gives "disgorged February 2024" and "an additional seven months on the cork prior to release", both
+    printed on page 2. No lees figure is printed, because the producer gives none: reviewers say "five years" (Wine
+    Enthusiast, K&L), a retailer says "4 years", and a 2019 harvest disgorged in February 2024 points to about four.
+
 DELIBERATELY NOT USED
-  Lees time: reviewers say "five years" (Wine Enthusiast, K&L) or "four" (a retailer), but a 2019 vintage disgorged in
-    February 2024 is nearer four; the sources conflict, so no figure is given.
-  Alcohol as a number: the producer's sheet says 12.9%, the importer and Wine.com 13.2%. Both are WSET "Medium".
+  Any lees duration (above): the producer's sheet has none, and the other sources conflict.
   Any Dunnuck score (95 vs 96, above).
 
 STRUCTURE DASHBOARD -- WSET Level 3 terms only; values on the Loosen deck's scale (Low .20, Medium .50, Medium(+) .72,
@@ -116,9 +121,13 @@ SLOT_2 = dict(
     wine_lines=["L'Ermitage", "Brut"],
     rule=False,
     lead="Dry, creamy, and rare.",
-    body="The 2019: 52% Chardonnay and 48% Pinot Noir, in just 4,850 cases. Dosage is just 6 g/L, "
-         "the lowest the wine has had, and it is the first L'Ermitage to go through malolactic fermentation. Wine "
-         "Enthusiast gave this 2019 a 100, the first it has given an American sparkling wine.",
+    # Steve: use the aging and alcohol from the producer's tech sheet. The sheet gives alcohol 12.9%, disgorged
+    # February 2024 and seven months on the cork; it states NO lees time, so none is printed (see the docstring).
+    body="The 2019: 52% Chardonnay and 48% Pinot Noir, 12.9% alcohol, 4,850 cases. Dosage is just 6 g/L, and 2019 "
+         "is the first L'Ermitage through malolactic fermentation. Disgorged February 2024, it rested seven months "
+         "on the cork. Wine Enthusiast gave this 2019 a 100, the first it has given an American sparkling wine.",
+    # Cut to fit (the layout check failed at ~78 words): the reviewer-sourced "lowest dosage the wine has had" (Vinous) went,
+    # not the producer-sheet facts Steve asked for.
     body_anchor="bottom",
 )
 

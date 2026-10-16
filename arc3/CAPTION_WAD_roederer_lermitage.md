@@ -52,7 +52,7 @@ A second look at page 2: the dosage is 6 g/L. In the EU, extra brut runs from 0 
 8. **Second beat:** the pinned comment, once guesses have come in (suggest 24 hours).
 
 ### Source trace
-- Dosage 6 g/L, "the lowest ever" (Vinous; K&L), 4,850 cases, first malolactic vintage: the producer's sheet and reviews (see `arc3/render_wad_roederer_lermitage.py`).
+- Alcohol 12.9%, dosage 6 g/L, 4,850 cases, disgorged February 2024, seven months on the cork, first malolactic vintage: the producer's tech sheet (see `arc3/render_wad_roederer_lermitage.py`). No lees time is stated anywhere on it, so none is printed.
 - "The first it has given an American sparkling wine": K&L's wording ("first 100-point score for a US sparkling wine from Wine Enthusiast"); the producer's press release (5 June 2025) says "first-ever perfect score for an American-made sparkling wine from a major wine publication".
 - EU ranges: Regulation (EU) 2019/33, Annex III Part A (extra brut: between 0 and 6 g/L of sugar; brut: less than 12). Note the limit is on the finished wine's sugar, of which the dosage is most of it; the comment asks a question and does not call the wine extra brut.
 - Autolysis descriptors: D1 (lees contribute yoghurt, dough, biscuit, toasted bread).
