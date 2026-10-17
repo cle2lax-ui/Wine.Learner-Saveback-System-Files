@@ -285,3 +285,28 @@ row up to a small line under the top-right grid mark (`_finish()`'s
 - **Verify numbers against current official statistics, not only D3.** D3's Ahr red share (81%) and
   Wurttemberg's grape ranking were slightly behind the official figures (79%; Spatburgunder now ahead of
   Schwarzriesling). Word the copy to be true under both and record the difference in the deck's notes.
+
+---
+
+## v5 additions (Mendocino deck)
+
+- **A closing page with a bars chart needs the rule moved.** `_bars_diagram` returns the LAST BAR'S own bottom, unlike the bottle-size
+  and sweetness helpers, so the closing page's short rule at `diagram_bottom - 10` landed inside that bar's row and underlined its
+  label. It now sits 36px below the chart when `closing=True` and `diagram="bars"`; nothing else changed.
+- **Budget the closing page when it carries a chart.** A two-line headline plus a two-line body plus a 3-row chart left "Cheers!"
+  16px from the page edge. One line of headline, one of body and the distances moved into the chart's labels gave 230px.
+  Measure it (QA does not): the lowest ink in the left column against the page height; the guide's good mark is 217px.
+- **The series cobalt numerals are 1.98:1 on the ink block** (the 01-05 numerals and the closing "!", 150 to 230px; the floor for large
+  type is 3:1). Per deck, pass `accent_text_color=legible(FFFA_ACCENT, INK, 3.3)` (a lighter blue, same hue, 3.3:1). The grid mark,
+  rules and bars stay cobalt. Whether to make this the default is Steve's decision. The "5" inside the checklist icon's badge is icon
+  artwork and is left as drawn.
+- **A landscape cover photo ignores `photo_anchor`.** It fills the page height, so a vertical anchor changes nothing (identical
+  contrast at every anchor). If the type zone sits on mid-tone water or sky, build a graded copy instead
+  (`arc3/build_fffa_mendocino_cover.py`: a smoothstep multiplicative ramp over the lower part). Measure the WORST pixels, not the median:
+  the kicker was 3.46:1 at its median but 2.90:1 at its worst; the lightest grade tried gave 3.66:1.
+- **Audit with `engine/text_audit.py`** (per size), then check the cover and the closing page by eye: the audit measures contrast, not
+  collisions.
+- **Sourcing a regional deck.** When the textbook's region has been spent by a Field Guide, mine the primary regulatory text (the
+  TTB's AVA rules are on ttb.gov and carry degree-days, acreage and history) and COMPUTE facts from the AVA polygons; cross-check the
+  polygon method against a figure the rule itself states before trusting it. Treat "first" and "only" as the riskiest claims.
+

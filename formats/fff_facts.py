@@ -531,6 +531,11 @@ def fff_fact(slot, slide_no, total=FFFA_SLIDE_COUNT, closing=False, diagram=None
         cf = font("display_black", cheers_size)
         qa.size("!cheers", cheers_size)
         cy = diagram_bottom - 10
+        if diagram == "bars":
+            # The bars helper returns the LAST BAR'S own bottom (the bottle-size and sweetness helpers return a bottom with
+            # room below it), so -10 put this rule inside that bar's row, underlining its label like a link. Only closing
+            # pages that carry a bars chart take this branch; every other deck renders exactly as before.
+            cy = diagram_bottom + 36
         d.line([(M, cy), (M + 140, cy)], fill=FFFA_ACCENT, width=6)
         cy += 40
         d.text((M, cy), "Cheers", font=cf, fill=hcolor)

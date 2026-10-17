@@ -105,3 +105,13 @@ tile). Before: 594 words, two slides over the 70-word budget (slide 6: 75, slide
   still point at the earlier code.
 - **Final audit of this deck:** every text group at or above threshold.
 - Open dot on slide 13 (top right of the photo): the series' own closing mark, placed there by Steve's earlier direction.
+
+---
+
+# Addendum (FFFA research, Oct 2026): the Mendocino Ridge rename
+
+While verifying facts for the FFFA deck, found that the TTB proposed renaming the Mendocino Ridge AVA "Mendocino Coast Ridge"
+(NPRM 5 Jan 2024; comments closed 5 Mar 2024) and that its regulatory agenda targets a FINAL RULE for October 2026. No final rule was
+published when checked, so "Mendocino Ridge" (slide 11) is correct today, with a two-year label transition if the rule lands.
+**Check the Federal Register before posting this deck.** The locked deck's PNGs are unchanged.
+
