@@ -1,5 +1,5 @@
 # FIVE FASCINATING FACTS ABOUT MENDOCINO: caption (draft)
-6 pages (cover plus five facts) · review draft, not yet locked · posting date to be set · American English
+6 pages (cover plus five facts) · LOCKED by Steve, Oct 2026 (tag fffa-mendocino-final) · posting date to be set · American English
 
 ---
 

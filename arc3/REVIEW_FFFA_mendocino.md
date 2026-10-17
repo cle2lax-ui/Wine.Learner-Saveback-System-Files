@@ -1,6 +1,6 @@
 # Five Fascinating Facts About Mendocino: review record
 
-Six pages (cover plus five facts), `arc3/render_fffa_mendocino.py`, format `formats/fff_facts.py`. All six pages pass QA.
+LOCKED by Steve, Oct 2026 (tag `fffa-mendocino-final`). Six pages (cover plus five facts), `arc3/render_fffa_mendocino.py`, format `formats/fff_facts.py`. All six pages pass QA.
 The Field Guide had spent the obvious Mendocino facts, so these five are new and each was checked against WSET first
 (D1, D3, D4), then the primary regulatory text (TTB), then outside sources. The full trace, including what conflicted, is
 in the script's docstring.
