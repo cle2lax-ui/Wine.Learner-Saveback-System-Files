@@ -778,7 +778,7 @@ def s_f5(u, ur=0.0, D=6.0):
         fill_rect(f, x, ly0, x + sw, ly0 + 22, (255, 255, 255), 0.18 * a)
         text(f, ["I", "II", "III", "IV", "V"][i], "cond", 58, INK, x + sw / 2, ly1 - 20, align="center", alpha=a, tracking=2)
     text(f, "WINKLER HEAT CLASS", "condb", 34, PAPER, 60, 1226, tracking=4, alpha=out_cubic(prog(u, 1.0, 1.3)) * 0.9)
-    seg_c = lambda i: lx0 + i * (sw + gp) + sw / 2                  # centre of rung i (0 = I)
+    seg_c = lambda i: lx0 + i * (sw + gp) + sw / 2                  # center of rung i (0 = I)
     for k, mx in (("Philo", seg_c(0)), ("Boonville", seg_c(1)), ("Ukiah", lx0 + 2 * (sw + gp) - gp / 2)):   # II-III: the line between II and III
         q = out_back(prog(u, times[k] + 0.25, times[k] + 0.55), 2.2)
         if q > 0:
