@@ -290,6 +290,7 @@ photos/us_mendo_ukiah_vineyard_missvain.jpg
 photos/wad_loosen_treppchen_bottle.png
 photos/wad_loosen_treppchen_bottle2.jpg
 photos/wad_roederer_lermitage_bottle.jpg
+reels/CAPTION_FFFA_mendocino_reel.md
 reels/CAPTION_FG_mendocino.md
 reels/CAPTION_GTR_anderson_valley.md
 reels/README.md
@@ -299,6 +300,7 @@ reels/check_reels.py
 reels/germany_audio.py
 reels/germany_reel.py
 reels/gtr_ident.py
+reels/mendo_fffa_audio.py
 reels/mendo_fffa_reel.py
 reels/mendo_fg_audio.py
 reels/mendo_fg_reel.py
