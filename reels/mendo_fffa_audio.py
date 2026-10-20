@@ -9,7 +9,7 @@ big hits, toms in the fills. The v2 marimba/bell/sonar/pop sounds are gone (the 
 THE SHAPE:
   0-2    the opening bumper: crash + horn hit + an open A5 ring, then palm-muted pedal 8ths build and a snare/tom roll
   2-4    the montage on 16ths: kick/snare, a shutter click and a horn stab per shot; a roll into the whip
-  4-10   fact 1: a sparse bar; STOP-TIME at the freeze (scratch, shutter, nothing else); the full riff slams back on the title
+  4-10   fact 1: a sparse bar; STOP-TIME at the freeze (a horn hit, a shutter click, nothing else); the full riff slams back on the title
   10-18  fact 2: the full groove; four ascending horn stabs for the four lit tiles; stop-time before UNDER 1%
   18-24  fact 3 COLD: half-time, a clean tremolo guitar arpeggio, low toms, wind; the horns return when the vines wake
   24-30  fact 4 SUNRISE: half-time, a sustained open chord and a rising horn swell; stop-time before the stamp, then it slams
@@ -274,7 +274,7 @@ def build():
     hit(4.0, 1.1)
     place(bassb, bass(ROOT["A"], 0.6), 4.0, 0.9)
     place(drums, hat(), 4.25, 0.4)
-    place(sfx, scratch(0.28), 4.4, 0.7)
+    place(horns, horn(HORN["A"] + (HORN["A"][0] * 4,), 0.45, fall=0.05), T("s_f1", 0.5), 0.8)       # the freeze: a horn hit on the beat, then stop-time
     place(sfx, shutter(), T("s_f1", 0.5), 0.8)
     place(sfx, rim(), T("s_f1", 0.8), 0.5)
     groove(5.0, 9.5, "full")
@@ -298,7 +298,7 @@ def build():
     for j in range(10):
         place(drums, hat(), T("s_f2", 1.7 + 0.1 * j), 0.18 + 0.03 * j)
     place(sfx, whoosh(0.4, 4000, 300, 0.3), 14.2, 0.45)
-    place(sfx, scratch(0.3), 14.5, 0.6)
+    place(horns, horn(HORN["A"] + (HORN["A"][0] * 4,), 0.45, fall=0.05), 14.5, 0.8)                  # stop-time before UNDER 1%: the same horn hit
     groove(15.0, 17.5, "full")
     hit(T("s_f2", 4.9), 0.7)                                    # the county tile fills; the band comes back
     place(sfx, rim(), T("s_f2", 5.4), 0.5)

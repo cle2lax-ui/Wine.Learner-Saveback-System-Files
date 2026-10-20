@@ -138,7 +138,7 @@ def fringe(img8, px=2):
 _RNG = np.random.default_rng(5)
 
 
-def dust(img8, fi):
+def dust(img8, fi):                                 # (no longer called: the grain and dust were removed)
     """A few specks and one hairline scratch now and then: the film is physical."""
     rg = np.random.default_rng(1000 + fi)
     for _ in range(int(rg.integers(2, 6))):
@@ -151,13 +151,18 @@ def dust(img8, fi):
     return img8
 
 
+_DITHER = ((np.random.default_rng(11).random((H, W, 1)) + np.random.default_rng(12).random((H, W, 1)) - 1.0) * 0.9).astype(np.float32)
+
+
 def post(f, fi, t):
-    """float frame -> graded, fringed, dusty uint8 frame (grain and vignette from the shared finish())."""
+    """float frame -> graded, fringed uint8 frame (vignette from the shared finish()). NO film grain and NO dust or scratches
+    (Steve: the grain static was distracting). A FIXED dither of about one level, the same every frame, so it cannot read as static,
+    stops the slow dark gradients from banding now that the grain no longer dithers them."""
     halation(f)
-    out = finish(f, fi, grain=5.0)
+    f += _DITHER
+    out = finish(f, fi, grain=0.0)
     out = grade(out)
-    out = fringe(out, 2)
-    return dust(out, fi)
+    return fringe(out, 2)
 
 
 # ------------------------------------------------------------------ the series icon and UI furniture
