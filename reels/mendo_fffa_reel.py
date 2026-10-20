@@ -390,6 +390,18 @@ def pill(f, txt, x, y, q, fill, ink, size=40, align="left", tracking=2):
     return x0, x0 + tw
 
 
+_GLOW = {}
+
+
+def cached_glow(key, center, radius, sigma, color):
+    """A big soft glow that never changes: blurred once (a full-frame sigma-40 blur costs over a second a frame)."""
+    if key not in _GLOW:
+        g = np.zeros((H, W, 3), np.float32)
+        cv2.circle(g, center, radius, color, -1, cv2.LINE_AA)
+        _GLOW[key] = cv2.GaussianBlur(g, (0, 0), sigma)
+    return _GLOW[key]
+
+
 _NOISE = cv2.resize(cv2.GaussianBlur(np.random.default_rng(9).random((40, 90)).astype(np.float32), (0, 0), 2.2), (W * 2, 560),
                     interpolation=cv2.INTER_CUBIC)
 _NOISE = (_NOISE - _NOISE.min()) / (_NOISE.max() - _NOISE.min())
@@ -420,7 +432,7 @@ def s_f1(u, ur=0.0, D=4.0):
         f[:] = f * 0.9 + ov * 0.1
     hud(f, 1, u, D)
     if u >= 0.5:                                                    # the freeze: viewfinder, timecode, the callout tag
-        brackets(f, 120, 470, W - 120, 1180, prog(u, 0.5, 0.75), size=84, thick=8)
+        brackets(f, 120, 470, W - 120, 1085, prog(u, 0.5, 0.75), size=84, thick=8)          # clear of the title below
         timecode(f, 64, 396, 4.0 + u if u < 0.5 else 4.5)
         q = out_back(prog(u, 0.75, 1.05), 2.0)
         if q > 0:
@@ -539,8 +551,7 @@ def s_f3(u, ur=0.0, D=6.0):
         tw = 0.6 + 0.4 * math.sin(ur * 2.2 + sx)
         cv2.circle(f, (int(sx), int(sy)), int(sr), (255, 250, 235), -1, cv2.LINE_AA) if tw > 0.55 else None
     cv2.circle(f, (880, 560), 150, (60, 90, 150), -1, cv2.LINE_AA)
-    gl = np.zeros_like(f); cv2.circle(gl, (880, 560), 70, (255, 244, 220), -1, cv2.LINE_AA)
-    f += cv2.GaussianBlur(gl, (0, 0), 38) * 0.9
+    f += cached_glow("moon", (880, 560), 70, 38, (255, 244, 220)) * 0.9
     cv2.circle(f, (880, 560), 56, (250, 246, 232), -1, cv2.LINE_AA)
     dx, dy = shake(ur, 4.0, 3.0)
     ys = valley_y(_XS) + dy * 0.4
@@ -618,7 +629,7 @@ def s_f3(u, ur=0.0, D=6.0):
         fill_rect(f, 0, 1440, W, 1556, (4, 6, 14), 0.66 * a)
         text(f, "MOST VINEYARDS SIT ON THE SLOPES,", "bold", 40, PAPER, 60, 1488, alpha=a, tracking=1)
         text(f, "WHERE COLD AIR CAN DRAIN AWAY.", "bold", 40, YELLOW, 60, 1538, alpha=a, tracking=1)
-    source_tag(f, "WSET D1 · D3", u, 0.5, y=1596)
+    source_tag(f, "WSET D1 · D3", u, 0.5, y=1412)
     return f
 
 
@@ -637,8 +648,7 @@ def s_f4(u, ur=0.0, D=6.0):
     lgrad(f, 0, int(FOG_Y) + 40, (8, 18, 52), (255, 170, 96))
     lgrad(f, int(FOG_Y) + 40, H, (20, 26, 44), (8, 10, 18))
     dx, dy = shake(ur, 5.0, 7.0)
-    sun = np.zeros_like(f); cv2.circle(sun, (800, 930 + int(dy)), 150, (255, 210, 130), -1, cv2.LINE_AA)
-    f += cv2.GaussianBlur(sun, (0, 0), 70) * 1.2
+    f += cached_glow("sun", (800, 930), 150, 70, (255, 210, 130)) * 1.2           # (the disc below still moves with the shake)
     cv2.circle(f, (800, 930 + int(dy)), 74, (255, 238, 196), -1, cv2.LINE_AA)
     far = np.array([[0, 1100], [0, 960], [130, 900], [260, 950], [420, 880], [600, 940], [720, 895], [900, 950], [W, 905], [W, 1100]], np.float32)
     fill_poly(f, far, (52, 66, 112), 1.0)
@@ -690,7 +700,7 @@ def s_f4(u, ur=0.0, D=6.0):
             round_rect(f, 52, 1420, 52 + w1 * q + 56, 1420 + 138 * q, 14, YELLOW, 1.0)
             text(f, lab1, "cond", 54, INK, 80, 1478, tracking=2, alpha=min(1, q * 1.3), scale=q)
             text(f, lab2, "cond", 54, INK, 80, 1536, tracking=2, alpha=min(1, q * 1.3), scale=q)
-    source_tag(f, "TTB 1997 RULE · CSW", u, 0.5, y=1290)
+    source_tag(f, "TTB 1997 RULE · CSW", u, 0.5, y=1262)
     return f
 
 
@@ -700,7 +710,7 @@ import mendo_fg_reel as fg  # noqa: E402  (the real AVA polygons and the county 
 _K = fg.K
 _AVR5 = max(next(a for a in fg._AVA if a["name"] == "Anderson Valley")["rings"], key=len)
 _CTY5 = max(fg._CTY["Mendocino"], key=len)
-PANEL5 = (40, 510, W - 40, 1190)
+PANEL5 = (40, 510, W - 40, 1170)
 _BB = (-123.66, -123.14, 38.95, 39.20)                              # lon0, lon1, lat0, lat1: the whole AVA, and Ukiah
 _S5 = min((PANEL5[2] - PANEL5[0]) / ((_BB[1] - _BB[0]) * _K), (PANEL5[3] - PANEL5[1]) / (_BB[3] - _BB[2]))
 _CX5, _CY5 = ((_BB[0] + _BB[1]) / 2) * _K, -((_BB[2] + _BB[3]) / 2)
@@ -765,7 +775,7 @@ def s_f5(u, ur=0.0, D=6.0):
         if qq > 0:
             px, py = pts[k]
             right = k == "Boonville"
-            lx = px + (34 if right else -34)
+            lx = px + (64 if right else -64)                # clear of the pin's halo ring
             text(f, names[k], "cond", 46, PAPER, lx, py - 8, align="left" if right else "right", tracking=3, alpha=qq)
             text(f, regs[k], "cond", 40, cols[k], lx, py + 38, align="left" if right else "right", tracking=3, alpha=qq)
     # the Winkler heat ladder: five steps, I (cool) to V (hot); markers drop onto it
@@ -777,7 +787,7 @@ def s_f5(u, ur=0.0, D=6.0):
         round_rect(f, x, ly0, x + sw, ly1, 14, HEAT[i], 0.95 * a)
         fill_rect(f, x, ly0, x + sw, ly0 + 22, (255, 255, 255), 0.18 * a)
         text(f, ["I", "II", "III", "IV", "V"][i], "cond", 58, INK, x + sw / 2, ly1 - 20, align="center", alpha=a, tracking=2)
-    text(f, "WINKLER HEAT CLASS", "condb", 34, PAPER, 60, 1226, tracking=4, alpha=out_cubic(prog(u, 1.0, 1.3)) * 0.9)
+    text(f, "WINKLER HEAT CLASS", "condb", 34, PAPER, 60, 1206, tracking=4, alpha=out_cubic(prog(u, 1.0, 1.3)) * 0.9)
     seg_c = lambda i: lx0 + i * (sw + gp) + sw / 2                  # center of rung i (0 = I)
     for k, mx in (("Philo", seg_c(0)), ("Boonville", seg_c(1)), ("Ukiah", lx0 + 2 * (sw + gp) - gp / 2)):   # II-III: the line between II and III
         q = out_back(prog(u, times[k] + 0.25, times[k] + 0.55), 2.2)
