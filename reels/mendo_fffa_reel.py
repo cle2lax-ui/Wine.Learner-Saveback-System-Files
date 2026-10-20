@@ -209,9 +209,9 @@ def hud(f, idx, u, D, show=1.0):
     y = 300
     ic = icon_layer(84)
     blit(f, ic, 56 - 6, y - 70 - 6, show)
-    text(f, "FACT", "condb", 34, PAPER, 160, y - 36, alpha=show * 0.9, tracking=4)
+    text(f, "FACT", "condb", 40, PAPER, 160, y - 36, alpha=show * 0.9, tracking=4)
     text(f, f"0{idx}", "cond", 76, YELLOW, 160, y + 26, alpha=show, tracking=2)
-    text(f, "/ 05", "condb", 36, PAPER, 262, y + 24, alpha=show * 0.75, tracking=3)
+    text(f, "/ 05", "condb", 42, PAPER, 268, y + 24, alpha=show * 0.75, tracking=3)
     seg_w, gap, x0 = 74, 10, W - 56 - (5 * 74 + 4 * 10)
     for i in range(5):
         x = x0 + i * (seg_w + gap)
@@ -259,28 +259,28 @@ MONTAGE = [("us_mendo_roederer_flute_cc0.jpg", 0.55, 0.50, "CHAMPAGNE", "01"),
            (COVER, 0.50, 0.55, "MENDOCINO", "")]
 
 
-def hook_card(f, u, sheen_p=0.0, cta=0.0):
-    """Frame 0, and the frame the Reel returns to: the whole hook, legible at once (nothing here needs to animate in)."""
-    f[:] = ph(COVER).view(1.0 + 0.03 * clamp(u / 4.0), 0.5, 0.5)
+def hook_card(f, u, sheen_p=0.0):
+    """The title page. It opens the Reel (0-2 s) and closes it (the last 2 s): the SAME page and the same 2-second animation.
+    The slow breath returns to 1.0, so the bumper begins and ends on one frame, and the replay is seamless. Nothing animates in:
+    frame 0 is the whole hook."""
+    z = 1.0 + 0.022 * math.sin(math.pi * clamp(u / 2.0, 0, 1))
+    f[:] = ph(COVER).view(z, 0.5, 0.5)
     darken(f, vgrad(760, 1500, 0.0, 0.80), (4, 6, 14))
     darken(f, vgrad(0, 420, 0.45, 0.0), (4, 6, 14))
-    blit(f, icon_layer(150), 50, 1150)
-    text(f, "FIVE FASCINATING", "cond", 70, PAPER, 226, 1222, tracking=5)       # the deck's own two-line kicker
-    text(f, "FACTS ABOUT", "cond", 70, PAPER, 226, 1296, tracking=5)
-    text(f, "Mendocino", "serif", TSIZE, YELLOW, 54, 1510, glow=(18, (255, 160, 40), 0.45))
-    sheen(f, "Mendocino", "serif", TSIZE, 54, 1510, sheen_p, band=130, strength=0.8)
-    text(f, "FIVE FACTS. EVERY ONE SOURCED.", "bold", 40, PAPER, 60, 1572, tracking=3, alpha=0.9)
-    if cta > 0:
-        text(f, "FULL FACTS ON OUR GRID", "condb", 36, YELLOW, 60, 1632, tracking=4, alpha=cta)
+    blit(f, icon_layer(150), 50, 1190)
+    text(f, "FIVE FASCINATING", "cond", 70, PAPER, 226, 1262, tracking=5)       # the deck's own two-line kicker
+    text(f, "FACTS ABOUT", "cond", 70, PAPER, 226, 1336, tracking=5)
+    text(f, "Mendocino", "serif", TSIZE, YELLOW, 54, 1550, glow=(18, (255, 160, 40), 0.45))
+    sheen(f, "Mendocino", "serif", TSIZE, 54, 1550, sheen_p, band=130, strength=0.8)
 
 
 def s_title(u, ur=0.0, D=4.0, S=1.0):
     f = np.zeros((H, W, 3), np.float32)
-    if u < 0.5:                                                 # the hook card: complete from frame 0
-        hook_card(f, u, sheen_p=prog(u, 0.12, 0.5))
+    if u < 2.0:                                                 # the opening bumper: the title page, held 2 s
+        hook_card(f, u, sheen_p=prog(u, 0.4, 1.4))
         return f
-    if u < 2.0:                                                 # the montage: six shots on 16ths, a word apiece
-        v = u - 0.5
+    if u < 3.5:                                                 # the montage: six shots on 16ths, a word apiece
+        v = u - 2.0
         k = min(int(v / 0.25), 5)
         w = v - 0.25 * k
         name, fx, fy, word, num = MONTAGE[k]
@@ -298,29 +298,7 @@ def s_title(u, ur=0.0, D=4.0, S=1.0):
             text(f, num, "cond", 190, PAPER, 60, 560, alpha=0.9, tracking=2)
         fill_rect(f, 0, 0, W, H, (255, 255, 255), 0.55 * (1 - prog(w, 0, 0.05)) if w < 0.05 else 0.0)
         return f
-    if u < 3.5:                                                 # FIVE FACTS. ONE COUNTY.
-        v = u - 2.0
-        f[:] = bgc(INK)
-        yy = np.arange(H, dtype=np.float32)[:, None]
-        xx = np.arange(W, dtype=np.float32)[None, :]
-        r = np.sqrt((xx - W / 2) ** 2 + (yy - 900) ** 2) / 900.0
-        glow = np.clip(1 - r, 0, 1) ** 2 * 0.55
-        f += glow[..., None] * np.array(COBALT, np.float32) * 0.9
-        q = out_back(prog(v, 0.0, 0.3), 2.2)
-        ic = icon_layer(300)
-        blit_center(f, ic, W / 2, 640, clamp(q * 1.4, 0, 1))
-        slam(f, "FIVE FACTS.", "cond", fit_size("FIVE FACTS.", "cond", W - 120, hi=260), YELLOW, W / 2, 1010, v, 0.15, tracking=3)
-        slam(f, "ONE COUNTY.", "cond", fit_size("ONE COUNTY.", "cond", W - 120, hi=260), PAPER, W / 2, 1230, v, 0.65, tracking=3)
-        sheen(f, "FIVE FACTS.", "cond", fit_size("FIVE FACTS.", "cond", W - 120, hi=260), W / 2, 1010, prog(v, 0.5, 1.1), align="center",
-              band=120, tracking=3, strength=0.7)
-        for i in range(5):                                      # five ticks pop, one per beat-ish
-            qq = out_back(prog(v, 0.35 + 0.18 * i, 0.55 + 0.18 * i), 2.4)
-            if qq > 0:
-                cx = W / 2 + (i - 2) * 150
-                round_rect(f, cx - 52 * qq, 1380 - 52 * qq, cx + 52 * qq, 1380 + 52 * qq, 14, COBALT_HI if i < 4 else YELLOW)
-                text(f, f"0{i + 1}", "cond", 56, INK if i == 4 else PAPER, cx, 1400, align="center", scale=qq, alpha=min(1, qq * 1.4))
-        return f
-    v = u - 3.5                                                 # pre-roll: the riser, the numerals scatter, the strobe
+    v = u - 3.5                                                 # pre-roll: the numerals scatter, the strobe
     f[:] = bgc(INK)
     for i in range(5):
         a = 0.9 - 0.9 * prog(v, 0.0, 0.5)
@@ -414,45 +392,42 @@ _BOKEH = [(np.random.default_rng(i + 200).random(), 0.05 + 0.10 * np.random.defa
            np.random.default_rng(i + 280).random(), 22 + 50 * np.random.default_rng(i + 320).random()) for i in range(10)]
 
 
-def s_f1(u, ur=0.0, D=4.0):
+def s_f1(u, ur=0.0, D=6.0):
     f = np.zeros((H, W, 3), np.float32)
-    z = (1.30 - 0.20 * out_expo(prog(u, 0.0, 0.5))) * punch(u, 0.5, 0.07, 0.12)
+    z = (1.30 - 0.20 * out_expo(prog(u, 0.0, 0.5))) * punch(u, 0.5, 0.07, 0.12) * (1 + 0.012 * max(u - 0.5, 0))   # a slow push after the freeze
     f[:] = shot(FLUTE, z, 0.50, 0.42, t=min(u, 0.5), sh=(1.8 if u < 0.5 else 0.0), seed=2.0)
     desat(f, 0.50 * out_cubic(prog(u, 0.5, 0.85)))
     darken(f, vgrad(820, 1500, 0.0, 0.86), (4, 6, 14))
     darken(f, vgrad(0, 400, 0.6, 0.0), (4, 6, 14))
-    for bx, spd, ph0, r in _BUB:                                    # bubbles rise through the glass
+    for bx, spd, ph0, r in _BUB:
         s = (ur * spd * 0.9 + ph0) % 1.0
-        y = 1010 - s * 460
-        cv2.circle(f, (int(bx * W + 8 * math.sin(6 * s + ph0 * 9)), int(y)), int(r), (255, 244, 220), -1, cv2.LINE_AA)
-    for bx, spd, ph0, r in _BOKEH:                                  # warm bokeh drifting up the frame: gloss
+        cv2.circle(f, (int(bx * W + 8 * math.sin(6 * s + ph0 * 9)), int(1010 - s * 460)), int(r), (255, 244, 220), -1, cv2.LINE_AA)
+    for bx, spd, ph0, r in _BOKEH:
         s = (ur * spd * 0.35 + ph0) % 1.0
         ov = f.copy()
         cv2.circle(ov, (int(bx * W), int(1500 - s * 1300)), int(r), (255, 190, 90), -1, cv2.LINE_AA)
         f[:] = f * 0.9 + ov * 0.1
     hud(f, 1, u, D)
-    if u >= 0.5:                                                    # the freeze: viewfinder, timecode, the callout tag
-        brackets(f, 120, 470, W - 120, 1085, prog(u, 0.5, 0.75), size=84, thick=8)          # clear of the title below
-        timecode(f, 64, 396, 4.0 + u if u < 0.5 else 4.5)
-        q = out_back(prog(u, 0.75, 1.05), 2.0)
+    if u >= 0.5:
+        brackets(f, 120, 470, W - 120, 1085, prog(u, 0.5, 0.75), size=84, thick=8)
+        timecode(f, 64, 396, 4.5)
+        q = out_back(prog(u, 0.8, 1.1), 2.0)
         if q > 0:
             dashed(f, 330, 640, 480, 700, YELLOW, 4, 14, 10, p=q)
-            pill(f, "ROEDERER ESTATE", 70, 640, q, YELLOW, INK, size=46)
-    slam(f, "THE CHAMPAGNE JOB", "cond", fit_size("THE CHAMPAGNE JOB", "cond", W - 100, hi=150, tracking=2), YELLOW, W / 2, 1230,
-         u, 1.0, tracking=2, glow=(14, (255, 170, 40), 0.35))
-    sheen(f, "THE CHAMPAGNE JOB", "cond", fit_size("THE CHAMPAGNE JOB", "cond", W - 100, hi=150, tracking=2), W / 2, 1230,
-          prog(u, 1.5, 2.1), align="center", band=110, tracking=2, strength=0.75)
-    yr = int(1900 + 82 * out_cubic(prog(u, 1.3, 2.1)))
-    if u >= 1.3:
-        a = out_cubic(prog(u, 1.3, 1.5))
-        text(f, str(yr), "cond", 150, PAPER, 60, 1372, alpha=a, tracking=2)
-        text(f, "FOUNDED BY A", "bold", 38, PAPER, 372, 1318, alpha=a, tracking=2)
-        text(f, "CHAMPAGNE HOUSE", "bold", 38, YELLOW, 372, 1366, alpha=a, tracking=2)
-    if u >= 2.5:
-        a = out_cubic(prog(u, 2.5, 2.8))
-        fill_rect(f, 60, 1436, 68, 1516, YELLOW, a)
-        text(f, "MANY WINERIES BUY ANDERSON", "bold", 38, PAPER, 90, 1472, alpha=a, dy=14 * (1 - a), tracking=1)
-        text(f, "VALLEY GRAPES FOR SPARKLING.", "bold", 38, PAPER, 90, 1518, alpha=a, dy=14 * (1 - a), tracking=1)
+            pill(f, "ROEDERER ESTATE", 70, 640, q, YELLOW, INK, size=50)
+    ts = fit_size("THE CHAMPAGNE JOB", "cond", W - 100, hi=150, tracking=2)
+    slam(f, "THE CHAMPAGNE JOB", "cond", ts, YELLOW, W / 2, 1230, u, 1.0, tracking=2, glow=(14, (255, 170, 40), 0.35))
+    sheen(f, "THE CHAMPAGNE JOB", "cond", ts, W / 2, 1230, prog(u, 1.5, 2.1), align="center", band=110, tracking=2, strength=0.75)
+    if u >= 1.4:
+        a = out_cubic(prog(u, 1.4, 1.6))
+        text(f, str(int(1900 + 82 * out_cubic(prog(u, 1.4, 2.2)))), "cond", 150, PAPER, 60, 1380, alpha=a, tracking=2)
+        text(f, "FOUNDED BY A", "condb", 58, PAPER, 372, 1326, alpha=a, tracking=2)
+        text(f, "CHAMPAGNE HOUSE", "condb", 58, YELLOW, 372, 1388, alpha=a, tracking=2)
+    if u >= 2.8:
+        a = out_cubic(prog(u, 2.8, 3.1))
+        fill_rect(f, 60, 1450, 68, 1568, YELLOW, a)
+        text(f, "MANY WINERIES BUY ANDERSON", "condb", 60, PAPER, 90, 1500, alpha=a, dy=14 * (1 - a), tracking=1)
+        text(f, "VALLEY GRAPES FOR SPARKLING.", "condb", 60, PAPER, 90, 1564, alpha=a, dy=14 * (1 - a), tracking=1)
     return f
 
 
@@ -467,17 +442,17 @@ def tile_xy(r, c):
     return GX0 + c * (TS + TG), GY0 + r * (TS + TG)
 
 
-def s_f2(u, ur=0.0, D=6.0):
+def s_f2(u, ur=0.0, D=8.0):
     f = bgc((8, 9, 16))
     lgrad(f, 0, H, (10, 12, 26), (6, 7, 12))
-    for gx in range(0, W, 90):                                      # a faint blueprint grid behind the tiles
+    for gx in range(0, W, 90):
         fill_rect(f, gx, 0, gx + 1, H, COBALT, 0.10)
     hud(f, 2, u, D)
     slam(f, "THE FOUR PERCENT", "cond", fit_size("THE FOUR PERCENT", "cond", W - 100, hi=112, tracking=3), YELLOW, W / 2, 450, u, 0.1,
          tracking=3, glow=(12, (255, 170, 40), 0.3))
-    county = u >= 3.6
+    county = u >= 4.6
     cap = "EVERY TILE = 1% OF MENDOCINO COUNTY" if county else "EVERY TILE = 1% OF ANDERSON VALLEY"
-    text(f, cap, "condb", 34, ICE, W / 2, 506, align="center", tracking=3, alpha=out_cubic(prog(u, 0.4, 0.7)))
+    text(f, cap, "condb", 50, ICE, W / 2, 510, align="center", tracking=2, alpha=out_cubic(prog(u, 0.4, 0.7)))
     wave = 22 * prog(u, 0.45, 1.5)
     for r in range(10):
         for c in range(10):
@@ -489,7 +464,6 @@ def s_f2(u, ur=0.0, D=6.0):
             col = np.array(TILE, np.float32) + np.array(COBALT_HI, np.float32) * boost * 0.9
             fill_rect(f, x, y, x + TS, y + TS, tuple(col), a)
             fill_rect(f, x, y, x + TS, y + 3, (255, 255, 255), 0.07 * a)
-    # stage 1: four tiles light, one by one
     lit_layer = np.zeros((H, W, 3), np.float32)
     n_lit = 0
     if not county:
@@ -503,30 +477,27 @@ def s_f2(u, ur=0.0, D=6.0):
             cx, cy, h = x + TS / 2, y + TS / 2, TS / 2 * q
             fill_rect(lit_layer, cx - h, cy - h, cx + h, cy + h, YELLOW, 1.0)
             fill_rect(f, cx - h, cy - h, cx + h, cy + h, YELLOW, 1.0)
-            fill_rect(f, cx - h, cy - h, cx + h, cy - h * 0.1, (255, 255, 255), 0.30)     # a glossy top half
+            fill_rect(f, cx - h, cy - h, cx + h, cy - h * 0.1, (255, 255, 255), 0.30)
         if n_lit:
-            gl = cv2.GaussianBlur(lit_layer, (0, 0), 16)
-            f += gl * 0.9
-    else:                                                            # stage 2: ONE tile, filled to 0.7
+            f += cv2.GaussianBlur(lit_layer, (0, 0), 16) * 0.9
+    else:
         x, y = tile_xy(4, 5)
-        q = out_cubic(prog(u, 3.9, 4.5))
+        q = out_cubic(prog(u, 4.9, 5.5))
         fill_rect(f, x, y + TS * (1 - 0.7 * q), x + TS, y + TS, YELLOW, 1.0)
         gl = np.zeros((H, W, 3), np.float32)
         fill_rect(gl, x, y + TS * (1 - 0.7 * q), x + TS, y + TS, YELLOW, 1.0)
         f += cv2.GaussianBlur(gl, (0, 0), 14) * 0.9
-        brackets(f, x - 24, y - 24, x + TS + 24, y + TS + 24, prog(u, 3.9, 4.2), size=26, thick=5)
-    # the numbers
+        brackets(f, x - 24, y - 24, x + TS + 24, y + TS + 24, prog(u, 4.9, 5.2), size=26, thick=5)
     if not county:
         pct = 4.0 * out_cubic(prog(u, 1.7, 2.7))
         a = out_cubic(prog(u, 1.7, 1.9))
         text(f, f"ABOUT {pct:.0f}%", "cond", 190, YELLOW, W / 2, 1470, align="center", alpha=a, tracking=2, glow=(16, (255, 170, 40), 0.4))
-        text(f, "OF ANDERSON VALLEY IS VINES.", "bold", 40, PAPER, W / 2, 1528, align="center", alpha=out_cubic(prog(u, 2.6, 2.9)), tracking=2)
+        text(f, "OF ANDERSON VALLEY IS VINES.", "condb", 62, PAPER, W / 2, 1546, align="center", alpha=out_cubic(prog(u, 2.6, 2.9)), tracking=2)
+        sheen(f, "ABOUT 4%", "cond", 190, W / 2, 1470, prog(u, 2.8, 3.4), align="center", band=120, tracking=2, strength=0.6)
     else:
-        a = out_cubic(prog(u, 3.9, 4.3))
+        a = out_cubic(prog(u, 4.9, 5.3))
         text(f, "UNDER 1%", "cond", 190, YELLOW, W / 2, 1470, align="center", alpha=a, tracking=2, glow=(16, (255, 170, 40), 0.4))
-        text(f, "OF THE WHOLE COUNTY IS VINES.", "bold", 40, PAPER, W / 2, 1528, align="center", alpha=out_cubic(prog(u, 4.4, 4.7)), tracking=2)
-    sheen(f, "ABOUT 4%", "cond", 190, W / 2, 1470, prog(u, 2.8, 3.4), align="center", band=120, tracking=2, strength=0.6) if not county else None
-    source_tag(f, "WSET D3 · UC DAVIS AVA DATA", u, 0.5, y=1594 - 20)
+        text(f, "OF THE WHOLE COUNTY IS VINES.", "condb", 62, PAPER, W / 2, 1546, align="center", alpha=out_cubic(prog(u, 5.4, 5.7)), tracking=2)
     return f
 
 
@@ -613,23 +584,22 @@ def s_f3(u, ur=0.0, D=6.0):
          tracking=3, glow=(12, (255, 170, 40), 0.3))
     q = out_back(prog(u, 1.7, 2.0), 2.0)
     if q > 0:
-        dashed(f, 540, 1388, 540, 1330 - depth * 0.5 + 30, ICE, 4, 12, 10, p=q)
-        pill(f, "FROST RISK", W / 2, 1416, q, ICE, INK, size=44, align="center")
+        dashed(f, 540, 1356, 540, 1330 - depth * 0.5 + 30, ICE, 4, 12, 10, p=q)
+        pill(f, "FROST RISK", W / 2, 1392, q, ICE, INK, size=48, align="center")
     q = out_back(prog(u, 3.7, 4.0), 2.0)
     if q > 0:
         dashed(f, 200, 1010, 262, 960, GREEN, 4, 12, 10, p=q)
-        pill(f, "MOST VINES", 60, 1052, q, GREEN, INK, size=44)
+        pill(f, "MOST VINES", 60, 1052, q, GREEN, INK, size=48)
     if u < 3.4:
         a = out_cubic(prog(u, 1.2, 1.5))
-        fill_rect(f, 0, 1440, W, 1556, (4, 6, 14), 0.66 * a)
-        text(f, "COLD AIR IS DENSE:", "bold", 42, PAPER, 60, 1488, alpha=a, tracking=2)
-        text(f, "IT SETTLES IN LOW GROUND.", "bold", 42, YELLOW, 60, 1538, alpha=a, tracking=2)
+        fill_rect(f, 0, 1424, W, 1584, (4, 6, 14), 0.70 * a)
+        text(f, "COLD AIR IS DENSE:", "condb", 66, PAPER, 60, 1492, alpha=a, tracking=2)
+        text(f, "IT SETTLES IN LOW GROUND.", "condb", 66, YELLOW, 60, 1562, alpha=a, tracking=2)
     else:
         a = out_cubic(prog(u, 3.5, 3.8))
-        fill_rect(f, 0, 1440, W, 1556, (4, 6, 14), 0.66 * a)
-        text(f, "MOST VINEYARDS SIT ON THE SLOPES,", "bold", 40, PAPER, 60, 1488, alpha=a, tracking=1)
-        text(f, "WHERE COLD AIR CAN DRAIN AWAY.", "bold", 40, YELLOW, 60, 1538, alpha=a, tracking=1)
-    source_tag(f, "WSET D1 · D3", u, 0.5, y=1412)
+        fill_rect(f, 0, 1424, W, 1584, (4, 6, 14), 0.70 * a)
+        text(f, "MOST VINES SIT ON THE SLOPES,", "condb", 66, PAPER, 60, 1492, alpha=a, tracking=1)
+        text(f, "WHERE COLD AIR CAN DRAIN AWAY.", "condb", 66, YELLOW, 60, 1562, alpha=a, tracking=1)
     return f
 
 
@@ -685,22 +655,21 @@ def s_f4(u, ur=0.0, D=6.0):
     p = out_cubic(prog(u, 0.9, 1.6))
     dashed(f, 40, FOG_Y, 40 + 1000 * p, FOG_Y, YELLOW, 4, 22, 14)
     if p > 0.95:
-        text(f, "1,200 FT", "cond", 52, YELLOW, W - 56, FOG_Y - 18, align="right", tracking=3, alpha=out_cubic(prog(u, 1.5, 1.8)))
+        text(f, "1,200 FT", "cond", 62, YELLOW, W - 56, FOG_Y - 18, align="right", tracking=3, alpha=out_cubic(prog(u, 1.5, 1.8)))
     q = out_back(prog(u, 1.2, 1.5), 2.0)
-    pill(f, "MENDOCINO RIDGE", 60, 770, q, YELLOW, INK, size=46)
+    pill(f, "MENDOCINO RIDGE", 60, 770, q, YELLOW, INK, size=52)
     if u >= 1.6:
         a = out_cubic(prog(u, 1.7, 2.0))
-        text(f, "ONLY LAND AT 1,200 FT", "bold", 44, PAPER, 60, 1342, alpha=a, tracking=2, dy=14 * (1 - a))
-        text(f, "OR HIGHER COUNTS.", "bold", 44, PAPER, 60, 1392, alpha=a, tracking=2, dy=14 * (1 - a))
+        text(f, "ONLY LAND AT 1,200 FT", "condb", 66, PAPER, 60, 1334, alpha=a, tracking=2, dy=14 * (1 - a))
+        text(f, "OR HIGHER COUNTS.", "condb", 66, PAPER, 60, 1400, alpha=a, tracking=2, dy=14 * (1 - a))
     if u >= 3.0:
         q = out_back(prog(u, 3.0, 3.35), 2.4)
         if q > 0:
             lab1, lab2 = "THE ONLY NON-CONTIGUOUS", "AVA IN THE U.S."
-            w1 = text_width(lab1, "cond", 54, 2)
-            round_rect(f, 52, 1420, 52 + w1 * q + 56, 1420 + 138 * q, 14, YELLOW, 1.0)
-            text(f, lab1, "cond", 54, INK, 80, 1478, tracking=2, alpha=min(1, q * 1.3), scale=q)
-            text(f, lab2, "cond", 54, INK, 80, 1536, tracking=2, alpha=min(1, q * 1.3), scale=q)
-    source_tag(f, "TTB 1997 RULE · CSW", u, 0.5, y=1262)
+            w1 = text_width(lab1, "cond", 64, 2)
+            round_rect(f, 52, 1432, 52 + w1 * q + 56, 1432 + 140 * q, 14, YELLOW, 1.0)
+            text(f, lab1, "cond", 64, INK, 80, 1494, tracking=2, alpha=min(1, q * 1.3), scale=q)
+            text(f, lab2, "cond", 64, INK, 80, 1556, tracking=2, alpha=min(1, q * 1.3), scale=q)
     return f
 
 
@@ -710,7 +679,7 @@ import mendo_fg_reel as fg  # noqa: E402  (the real AVA polygons and the county 
 _K = fg.K
 _AVR5 = max(next(a for a in fg._AVA if a["name"] == "Anderson Valley")["rings"], key=len)
 _CTY5 = max(fg._CTY["Mendocino"], key=len)
-PANEL5 = (40, 510, W - 40, 1170)
+PANEL5 = (40, 510, W - 40, 1160)
 _BB = (-123.66, -123.14, 38.95, 39.20)                              # lon0, lon1, lat0, lat1: the whole AVA, and Ukiah
 _S5 = min((PANEL5[2] - PANEL5[0]) / ((_BB[1] - _BB[0]) * _K), (PANEL5[3] - PANEL5[1]) / (_BB[3] - _BB[2]))
 _CX5, _CY5 = ((_BB[0] + _BB[1]) / 2) * _K, -((_BB[2] + _BB[3]) / 2)
@@ -768,7 +737,7 @@ def s_f5(u, ur=0.0, D=6.0):
         dashed(f, a[0], a[1], b[0], b[1], PAPER, 4, 16, 10, p=out_cubic(qd))
         if qd >= 1:
             mid = ((a[0] + b[0]) / 2 + 66, (a[1] + b[1]) / 2)
-            pill(f, f"{round(_miles(TOWNS['Philo'], TOWNS['Boonville']))} MI", mid[0], mid[1], out_back(prog(u, 2.3, 2.6), 2.2), PAPER, INK, size=42,
+            pill(f, f"{round(_miles(TOWNS['Philo'], TOWNS['Boonville']))} MI", mid[0], mid[1], out_back(prog(u, 2.3, 2.6), 2.2), PAPER, INK, size=48,
                  align="center")
     for k in ("Philo", "Boonville", "Ukiah"):
         qq = out_cubic(prog(u, times[k] + 0.2, times[k] + 0.5))
@@ -776,8 +745,8 @@ def s_f5(u, ur=0.0, D=6.0):
             px, py = pts[k]
             right = k == "Boonville"
             lx = px + (64 if right else -64)                # clear of the pin's halo ring
-            text(f, names[k], "cond", 46, PAPER, lx, py - 8, align="left" if right else "right", tracking=3, alpha=qq)
-            text(f, regs[k], "cond", 40, cols[k], lx, py + 38, align="left" if right else "right", tracking=3, alpha=qq)
+            text(f, names[k], "cond", 54, PAPER, lx, py - 8, align="left" if right else "right", tracking=3, alpha=qq)
+            text(f, regs[k], "cond", 48, cols[k], lx, py + 38, align="left" if right else "right", tracking=3, alpha=qq)
     # the Winkler heat ladder: five steps, I (cool) to V (hot); markers drop onto it
     ly0, ly1 = 1262, 1342
     sw, gp, lx0 = 188, 10, 60
@@ -787,7 +756,7 @@ def s_f5(u, ur=0.0, D=6.0):
         round_rect(f, x, ly0, x + sw, ly1, 14, HEAT[i], 0.95 * a)
         fill_rect(f, x, ly0, x + sw, ly0 + 22, (255, 255, 255), 0.18 * a)
         text(f, ["I", "II", "III", "IV", "V"][i], "cond", 58, INK, x + sw / 2, ly1 - 20, align="center", alpha=a, tracking=2)
-    text(f, "WINKLER HEAT CLASS", "condb", 34, PAPER, 60, 1206, tracking=4, alpha=out_cubic(prog(u, 1.0, 1.3)) * 0.9)
+    text(f, "WINKLER HEAT CLASS", "condb", 40, PAPER, 60, 1208, tracking=4, alpha=out_cubic(prog(u, 1.0, 1.3)) * 0.9)
     seg_c = lambda i: lx0 + i * (sw + gp) + sw / 2                  # center of rung i (0 = I)
     for k, mx in (("Philo", seg_c(0)), ("Boonville", seg_c(1)), ("Ukiah", lx0 + 2 * (sw + gp) - gp / 2)):   # II-III: the line between II and III
         q = out_back(prog(u, times[k] + 0.25, times[k] + 0.55), 2.2)
@@ -797,13 +766,8 @@ def s_f5(u, ur=0.0, D=6.0):
             cv2.polylines(f, [tri.astype(np.int32)], True, (255, 255, 255), 3, cv2.LINE_AA)
     if u >= 3.5:
         a = out_cubic(prog(u, 3.5, 3.8))
-        fill_rect(f, 0, 1346, W, 1520, (4, 6, 14), 0.66 * a)
-        text(f, "IN SIX MILES,", "bold", 44, PAPER, 60, 1398, alpha=a, tracking=2, dy=14 * (1 - a))
-        text(f, "THE HEAT CLASS CHANGES.", "bold", 44, YELLOW, 60, 1448, alpha=a, tracking=2, dy=14 * (1 - a))
-    if u >= 4.5:
-        a = out_cubic(prog(u, 4.5, 4.8))
-        text(f, "PHILO IS AMONG CALIFORNIA'S COOLEST GRAPE AREAS.", "condb", 34, ICE, 60, 1500, alpha=a, tracking=1)
-    source_tag(f, "TTB 1983 RULE · WSET D1", u, 0.5, y=1590 - 30)
+        text(f, "IN SIX MILES,", "condb", 68, PAPER, 60, 1440, alpha=a, tracking=2, dy=14 * (1 - a))
+        text(f, "THE HEAT CLASS CHANGES.", "condb", 68, YELLOW, 60, 1514, alpha=a, tracking=2, dy=14 * (1 - a))
     return f
 
 
@@ -813,11 +777,14 @@ CARDS = [("01", "CHAMPAGNE", FLUTE, 0.50), ("02", "FOUR PERCENT", "us_mendo_av_e
          ("05", "SIX MILES", "us_mendo_husch_philo_cc0.jpg", 0.50)]
 
 
+EDGES = (0.0, 0.5, 1.0, 1.5, 1.75, 2.0)        # five recap cards that ACCELERATE (2 s in all), then the closing bumper
+
+
 def s_outro(u, ur=0.0, D=4.0):
     f = np.zeros((H, W, 3), np.float32)
-    if u < 2.5:                                                      # five cards, one per beat: the recap
-        k = min(int(u / 0.5), 4)
-        w = u - 0.5 * k
+    if u < 2.0:
+        k = max(i for i in range(5) if u >= EDGES[i])
+        w = u - EDGES[k]
         num, word, name, fy = CARDS[k]
         f[:] = shot(name, 1.30 - 0.22 * out_expo(prog(w, 0, 0.3)), 0.5, fy, t=u, sh=1.4, seed=k * 1.9)
         desat(f, 0.35)
@@ -830,8 +797,7 @@ def s_outro(u, ur=0.0, D=4.0):
         sz = fit_size(word, "cond", W - 110, hi=200, tracking=4)
         text(f, word, "cond", sz, PAPER, W / 2, 1090, align="center", tracking=4, scale=1.0 + 0.10 * (1 - out_expo(prog(w, 0, 0.12))),
              glow=(12, (255, 170, 40), 0.3))
-        # the progress element completes: five segments, one filling per card
-        seg_w, gap, sx0 = 74, 10, W - 56 - (5 * 74 + 4 * 10)
+        seg_w, gap, sx0 = 74, 10, W - 56 - (5 * 74 + 4 * 10)       # the progress element completes
         for i in range(5):
             x = sx0 + i * (seg_w + gap)
             round_rect(f, x, 286, x + seg_w, 306, 10, (255, 255, 255), 0.18)
@@ -839,23 +805,7 @@ def s_outro(u, ur=0.0, D=4.0):
                 round_rect(f, x, 286, x + seg_w, 306, 10, YELLOW, 1.0)
         flash(f, 0.5 * (1 - prog(w, 0, 0.06)) if w < 0.06 else 0.0)
         return f
-    if u < 3.4:                                                      # the end card
-        v = u - 2.5
-        f[:] = bgc(INK)
-        yy = np.arange(H, dtype=np.float32)[:, None]; xx = np.arange(W, dtype=np.float32)[None, :]
-        r = np.sqrt((xx - W / 2) ** 2 + (yy - 860) ** 2) / 900.0
-        f += (np.clip(1 - r, 0, 1) ** 2 * 0.5)[..., None] * np.array(COBALT, np.float32) * 0.9
-        blit_center(f, icon_layer(280), W / 2, 560, clamp(out_back(prog(v, 0, 0.25), 2.2) * 1.4, 0, 1))
-        slam(f, "MENDOCINO.", "cond", fit_size("MENDOCINO.", "cond", W - 100, hi=230, tracking=3), YELLOW, W / 2, 960, v, 0.05, tracking=3,
-             glow=(14, (255, 170, 40), 0.4))
-        slam(f, "FIVE FACTS.", "cond", fit_size("FIVE FACTS.", "cond", W - 100, hi=170, tracking=3), PAPER, W / 2, 1130, v, 0.30, tracking=3)
-        text(f, "EVERY ONE SOURCED.", "bold", 42, PAPER, W / 2, 1210, align="center", tracking=3, alpha=out_cubic(prog(v, 0.45, 0.7)))
-        text(f, "FULL FACTS ON OUR GRID", "condb", 40, YELLOW, W / 2, 1320, align="center", tracking=5, alpha=out_cubic(prog(v, 0.6, 0.85)))
-        sheen(f, "MENDOCINO.", "cond", fit_size("MENDOCINO.", "cond", W - 100, hi=230, tracking=3), W / 2, 960, prog(v, 0.2, 0.8), align="center", band=130,
-              tracking=3, strength=0.7)
-        return f
-    # the last 0.6 s: a smash cut back to FRAME 0, exactly, so the replay reads as continuous
-    hook_card(f, 0.0, sheen_p=0.0)
+    hook_card(f, u - 2.0, sheen_p=prog(u - 2.0, 0.4, 1.4))      # the closing bumper: the SAME title page and animation as the opening
     return f
 
 
@@ -878,11 +828,11 @@ def scene_frame(t):
 
 
 # Cut times (all downbeats of the 120 BPM grid except the final smash cut, which lands on beat 4 of the last bar) and their treatments.
-CUTS_WHIP = (4.0, 26.0)        # a zoom-blur whip with a flash (the series' own `whip`)
-CUTS_FLASH = (8.0, 35.4)       # a hard flash-cut with a punch-in; 35.4 is the smash cut back to frame 0
-CUTS_PUSH = (14.0,)            # a horizontal push with motion blur
-CUTS_GLITCH = (20.0,)          # an RGB-split, slice-shift glitch cut
-CUTS_DIP = (32.0,)             # a three-frame dip to black into the recap
+CUTS_WHIP = (4.0, 30.0)        # a zoom-blur whip with a flash (the series' own `whip`)
+CUTS_FLASH = (10.0, 38.0)      # a hard flash-cut with a punch-in; 38.0 is the smash cut onto the closing bumper
+CUTS_PUSH = (18.0,)            # a horizontal push with motion blur
+CUTS_GLITCH = (24.0,)          # an RGB-split, slice-shift glitch cut
+CUTS_DIP = (36.0,)             # a three-frame dip to black into the recap
 
 
 def glitch(f, p):
@@ -969,8 +919,8 @@ def preview(times, out, cols=6):
     print("preview:", out)
 
 
-SCENE_TABLE[:] = [(0.0, 4.0, s_title), (4.0, 4.0, s_f1), (8.0, 6.0, s_f2), (14.0, 6.0, s_f3), (20.0, 6.0, s_f4),
-                  (26.0, 6.0, s_f5), (32.0, 4.0, s_outro)]
+SCENE_TABLE[:] = [(0.0, 4.0, s_title), (4.0, 6.0, s_f1), (10.0, 8.0, s_f2), (18.0, 6.0, s_f3), (24.0, 6.0, s_f4),
+                  (30.0, 6.0, s_f5), (36.0, 4.0, s_outro)]
 
 if __name__ == "__main__":
     if "--preview" in sys.argv:

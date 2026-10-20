@@ -1,415 +1,416 @@
-"""Score and sound design for FIVE FASCINATING FACTS ABOUT MENDOCINO (36 s, 48 kHz stereo). Original, synthesized in code
-(reels/reel_audio.py plus the instruments below): no samples, no library music, so no licensing question.
+"""Score and sound design for FIVE FASCINATING FACTS ABOUT MENDOCINO (40 s, 48 kHz stereo). v3: a ROCK score.
 
-120 BPM in A minor, one bar = 2 s, so the picture's scenes are the music's bars. THE SHAPE (a caper's):
-  0-0.5   a vinyl-crackle bed and a low drone: the hook card is almost silent, so the montage lands as a hit
-  0.5-2   six cuts on 16ths: shutter click + kick/snare + a stab on each; the snare rolls
-  2-4     FIVE FACTS. ONE COUNTY.: brass stabs, five rising ticks, a riser into the whip
-  4-8     the groove (stop-time breakbeat: kick, ghost snares, hats, a walking bass, fuzz-guitar stabs); STOPS dead on the freeze
-          (4.5-5.0: scratch + shutter, nothing else) and slams back on the title
-  8-14    full groove; four rising coins for the four lit tiles; stop-time again before UNDER 1%
-  14-20   COLD: the groove thins to a kick, a pad and ice bells while the cold air pools; it returns full when the vines light
-  20-26   warm: a pad swell and a glitch burst into the sunrise; the music drops before the stamp, and the stamp lands on it
-  26-32   full groove; sonar pings for the three towns; marimba notes up the heat ladder
-  32-36   five recap hits (one a beat), the end-card slam, then a TAPE STOP on the smash cut: the tail is the same crackle the
-          Reel opened on, so the replay loops
-Every event time is read from the picture (mendo_fffa_reel.T and its cut lists), so a timeline change cannot strand a sound.
-Where a cut has an impact, the impact REPLACES the kick on that beat (the GTR lesson: stacked low end overshoots true peak
-after AAC encoding). Checked by measurement, not by ear (I cannot listen to audio): loudness and true peak of the encoded file.
+Original and synthesized in code (reels/reel_audio.py plus the instruments below): no samples, no library music, so no licensing
+question. 120 BPM in A minor; one bar = 2 s, so the picture's scenes are the music's bars. Steve: "more cool, less whimsical;
+a rock beat, horn hits, driving drums and electric guitar color." So: a straight backbeat (snare on 2 and 4, driving 8th hats),
+an 8th-note bass, double-tracked overdriven power-chord riffs with palm-muted chugs, a horn section for the punctuation and the
+big hits, toms in the fills. The v2 marimba/bell/sonar/pop sounds are gone (the lit tiles are ascending horn stabs).
+
+THE SHAPE:
+  0-2    the opening bumper: crash + horn hit + an open A5 ring, then palm-muted pedal 8ths build and a snare/tom roll
+  2-4    the montage on 16ths: kick/snare, a shutter click and a horn stab per shot; a roll into the whip
+  4-10   fact 1: a sparse bar; STOP-TIME at the freeze (scratch, shutter, nothing else); the full riff slams back on the title
+  10-18  fact 2: the full groove; four ascending horn stabs for the four lit tiles; stop-time before UNDER 1%
+  18-24  fact 3 COLD: half-time, a clean tremolo guitar arpeggio, low toms, wind; the horns return when the vines wake
+  24-30  fact 4 SUNRISE: half-time, a sustained open chord and a rising horn swell; stop-time before the stamp, then it slams
+  30-36  fact 5: everything back, the biggest groove; low toms and horn stabs as the pins drop; a guitar run up the ladder
+  36-40  recap hits (accelerating), then the closing bumper: the SAME hit as the opening, and a ring-out
+Every event time is read from the picture (mendo_fffa_reel.T), so a timeline change cannot strand a sound. Where a cut has an impact
+the impact REPLACES the kick on that beat (the GTR lesson: stacked low end overshoots true peak after AAC), and the 50 ms hole before
+each hit has 4 ms ramps (a square-edged gate made the AAC encoder ring: +1.7 dBTP). Checked by measurement; I cannot listen.
 """
 import os
 import sys
 
 import numpy as np
 from scipy.io import wavfile
-from scipy.signal import fftconvolve
+from scipy.signal import fftconvolve, lfilter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from reel_audio import (SR, BEAT, rng, tvec, lp, hp, bp, place, saw, kick, clap, hat, pluck, knock, tick, pop,  # noqa: E402
-                        impact, whoosh, riser)
+from reel_audio import SR, BEAT, rng, tvec, lp, hp, bp, place, saw, kick, hat, impact, whoosh, riser  # noqa: E402
 import mendo_fffa_reel as R  # noqa: E402
 
 T = R.T
 DUR = R.SCENE_TABLE[-1][0] + R.SCENE_TABLE[-1][1]
 N = int(SR * DUR)
-STEP = BEAT / 4                                            # a 16th: 0.125 s
-CHORD = {"A": (55.0, (220.0, 261.63, 329.63)), "F": (43.65, (174.61, 220.0, 261.63)), "E": (41.2, (164.81, 207.65, 246.94))}
-CYCLE = ["A", "A", "F", "E"]                               # a bar each: Am Am F E (the E major pulls back to Am)
+STEP = BEAT / 4                                             # a 16th: 0.125 s
+LEAD = 0.006                                                # an impact's peak lands about 9 ms after its start
+BREAKS = [(4.5, 5.0), (14.5, 15.0), (26.5, 27.0)]           # stop-time: the band is cut dead
+CUT_HITS = (4.0, 10.0, 18.0, 24.0, 27.0, 30.0, 38.0)        # an impact here REPLACES the kick on the beat
 
 
-# ------------------------------------------------------------------ the new instruments
-def snare():
-    n = int(0.26 * SR); t = tvec(n)
-    nz = bp(rng.normal(0, 1, n), 1500, 8500) * np.exp(-t / 0.075)
-    tone = np.sin(2 * np.pi * 188 * t) * np.exp(-t / 0.05) * 0.5
-    return (nz * 0.6 + tone) * 0.85
+def rel(n, ms=25):
+    r = np.ones(n); m = min(int(ms / 1000 * SR), n); r[-m:] = np.linspace(1, 0, m); return r
 
 
-def ghost():
-    return snare()[:int(0.12 * SR)] * np.linspace(1, 0.2, int(0.12 * SR)) * 0.35
+# ------------------------------------------------------------------ drums and effects
+def snare(g=1.0):
+    n = int(0.30 * SR); t = tvec(n)
+    nz = bp(rng.normal(0, 1, n), 1300, 8000) * np.exp(-t / 0.10)
+    tone = np.sin(2 * np.pi * 195 * t) * np.exp(-t / 0.06) * 0.8 + np.sin(2 * np.pi * 330 * t) * np.exp(-t / 0.03) * 0.3
+    return (nz * 0.85 + tone) * g
 
 
-def tamb():
-    n = int(0.09 * SR); t = tvec(n)
-    return hp(rng.normal(0, 1, n), 6000, 2) * np.exp(-t / 0.03) * 0.28
+def tom(f0):
+    n = int(0.5 * SR); t = tvec(n)
+    f = f0 * (1 + 0.7 * np.exp(-t / 0.035))
+    return (np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / 0.2) + bp(rng.normal(0, 1, n), 200, 1500) * np.exp(-t / 0.012) * 0.35) * 0.95
 
 
-def tick_f(freq, amp=1.0):
-    n = int(0.014 * SR); t = tvec(n)
-    return np.sin(2 * np.pi * freq * t) * np.exp(-t / 0.0035) * amp
+def rim():
+    n = int(0.05 * SR); t = tvec(n)
+    return (np.sin(2 * np.pi * 1750 * t) * np.exp(-t / 0.006) + hp(rng.normal(0, 1, n), 3000) * np.exp(-t / 0.004) * 0.5) * 0.7
+
+
+def crash(dur=1.5):
+    n = int(dur * SR); t = tvec(n)
+    return hp(rng.normal(0, 1, n), 3500) * np.exp(-t / (dur * 0.38)) * 0.5
+
+
+def ride():
+    n = int(0.6 * SR); t = tvec(n)
+    return hp(rng.normal(0, 1, n), 5500) * np.exp(-t / 0.25) * 0.22 + (np.sin(2 * np.pi * 3100 * t) + 0.6 * np.sin(2 * np.pi * 4700 * t)) * np.exp(-t / 0.12) * 0.07
 
 
 def shutter():
-    """A camera: two clicks (mirror, shutter) and a small thunk."""
-    n = int(0.16 * SR); out = np.zeros(n)
-    for d, g in ((0.0, 1.0), (0.05, 0.8)):
-        i = int(d * SR); m = int(0.012 * SR)
-        out[i:i + m] += bp(rng.normal(0, 1, m), 1800, 7500) * np.exp(-tvec(m) / 0.0035) * g
-    out[:int(0.03 * SR)] += np.sin(2 * np.pi * 130 * tvec(int(0.03 * SR))) * np.exp(-tvec(int(0.03 * SR)) / 0.01) * 0.5
-    return out * 0.9
+    n = int(0.14 * SR); t = tvec(n)
+    a = bp(rng.normal(0, 1, n), 700, 6500) * np.exp(-t / 0.006)
+    b = bp(rng.normal(0, 1, n), 400, 3500) * np.exp(-np.clip(t - 0.045, 0, None) / 0.012) * (t >= 0.045)
+    return (a * 0.9 + b * 0.7) * 0.8
 
 
-def scratch(dur=0.32):
-    """A record scratch: a saw whose pitch is dragged back and forth through a band-pass."""
+def scratch(dur=0.28):
     n = int(dur * SR); t = tvec(n)
-    f = 320 + 260 * np.sin(2 * np.pi * 7.0 * t + 0.6) * np.exp(-t / 0.5) - 120 * t / dur
+    f = 150 + 1900 * np.abs(np.sin(np.pi * t / dur * 1.5)) ** 1.2
     ph = 2 * np.pi * np.cumsum(f) / SR
-    tone = (np.sin(ph) + 0.5 * np.sin(2 * ph) + 0.33 * np.sin(3 * ph)) * 0.4
-    nz = bp(rng.normal(0, 1, n), 800, 5200) * 0.5
-    env = np.minimum(1, t / 0.01) * np.exp(-t / (dur * 0.7))
-    return bp(tone + nz, 500, 6000) * env * 0.9
+    tone = np.sign(np.sin(ph)) * 0.4 + np.sin(ph) * 0.4
+    env = np.exp(-t / (dur * 0.7)) * np.clip(1 - (t / dur) ** 6, 0, 1)
+    return (tone + bp(rng.normal(0, 1, n), 800, 6000) * 0.5) * env * 0.7
 
 
-def tape_stop(freqs, dur=0.5):
-    """The tape stops: a chord whose pitch falls to nothing."""
+def glitch_burst(dur=0.26):
     n = int(dur * SR); t = tvec(n)
-    out = np.zeros(n)
-    for fq in freqs:
-        f = fq * np.exp(-t / (dur * 0.34))
-        ph = 2 * np.pi * np.cumsum(f) / SR
-        out += np.sin(ph) + 0.5 * np.sin(2 * ph) + 0.25 * np.sin(3 * ph)
-    return lp(out, 3000) * np.exp(-t / (dur * 0.6)) * 0.30
+    nz = np.round(rng.normal(0, 1, n) * 3) / 3
+    gate = (np.sin(2 * np.pi * 38 * t * (1 + 2 * t)) > 0).astype(float)
+    return bp(nz, 500, 7000) * gate * np.sin(np.pi * t / dur) * 0.5
 
 
-def stab(freqs, dur=0.3, bright=2800):
-    """A brass-ish stab: stacked saws with a fast attack and a quick decay."""
+# ------------------------------------------------------------------ the electric guitar, the horns, the bass
+def ks(freq, dur, decay=0.997):
+    """Karplus-Strong plucked string."""
+    n = int(dur * SR); p = int(SR / freq)
+    ex = np.zeros(n); ex[:p] = lp(rng.normal(0, 1, p), 6000)
+    a = np.zeros(p + 2); a[0] = 1; a[p] = -0.5 * decay; a[p + 1] = -0.5 * decay
+    return lfilter([1], a, ex)
+
+
+_G = {}
+
+
+def egtr(freqs, dur=0.35, mute=False, drive=8.0, var=0):
+    """An overdriven electric guitar (a chord or a single note): strings through a clipper and a speaker-cabinet band-pass.
+    `var` picks a different noise burst, so the L and R takes of a double-tracked riff are different performances."""
+    key = (tuple(freqs), round(dur, 3), mute, drive, var)
+    if key not in _G:
+        y = sum(ks(f, dur + 0.1, 0.985 if mute else 0.9975) for f in freqs)
+        y = np.tanh(drive * y / (np.abs(y).max() + 1e-9))
+        y = bp(y, 95, 2800 if mute else 4200)
+        t = tvec(len(y))
+        env = np.minimum(t / 0.002, 1) * (np.exp(-t / 0.07) if mute else np.exp(-t / (dur * 1.1))) * rel(len(y), 12 if mute else 30)
+        _G[key] = y * env * 0.5
+    return _G[key]
+
+
+def cleang(freq, dur=0.9, var=0):
+    """A clean electric guitar with tremolo: the cold scene's color."""
+    key = ("c", freq, round(dur, 3), var)
+    if key not in _G:
+        y = ks(freq, dur, 0.9985)
+        y = lp(np.tanh(1.3 * y / (np.abs(y).max() + 1e-9)), 3500)
+        t = tvec(len(y))
+        _G[key] = y * (0.72 + 0.28 * np.sin(2 * np.pi * 5.5 * t)) * np.minimum(t / 0.004, 1) * np.exp(-t / (dur * 0.8)) * rel(len(y), 40) * 0.5
+    return _G[key]
+
+
+_H = {}
+
+
+def horn(freqs, dur=0.22, att=0.012, fall=0.0):
+    """A brass section: stacked sawtooth-ish partials, a bright 'blat' at the front of the note, an optional fall at the end."""
+    key = (tuple(freqs), round(dur, 3), round(att, 3), fall)
+    if key not in _H:
+        n = int((dur + 0.06) * SR); t = tvec(n)
+        out = np.zeros(n)
+        for fq in freqs:
+            fr = fq * (1 - fall * np.clip(t / (dur + 0.06), 0, 1) ** 2) if fall else np.full(n, fq)
+            ph = 2 * np.pi * np.cumsum(fr) / SR
+            for h in range(1, 11):
+                out += np.sin(h * ph) / h ** 0.85
+        bright = np.exp(-t / 0.05)
+        out = lp(out, 1500) * (1 - bright) + lp(out, 5200) * bright
+        out = out * np.minimum(t / att, 1) * np.exp(-t / (dur * 0.9)) * rel(n, 28)
+        _H[key] = out / (np.abs(out).max() + 1e-9) * 0.55
+    return _H[key]
+
+
+def bass(freq, dur=0.2):
     n = int(dur * SR); t = tvec(n)
-    out = np.zeros(n)
-    for fq in freqs:
-        out += saw(fq, n, harmonics=10) + saw(fq, n, harmonics=10, detune=9)
-    env = np.minimum(1, t / 0.006) * np.exp(-t / (dur * 0.42))
-    return lp(out, bright) * env * 0.16
+    y = np.tanh(1.5 * (lp(saw(freq, n, 8), 700) * 0.6 + np.sin(2 * np.pi * freq * t) * 0.9))
+    return y * np.minimum(t / 0.004, 1) * np.exp(-t / (dur * 0.85)) * rel(n, 15) * 0.8
 
 
-def fuzz(freqs, dur=0.3):
-    """A fuzz-guitar chord: plucked strings pushed through a clipper."""
-    out = sum(pluck(fq, dur, 1.4) for fq in freqs)
-    out = np.tanh(out * 3.2)
-    return lp(hp(out, 140), 3400) * 0.30
-
-
-def bass_note(freq, dur=0.3):
-    n = int(dur * SR); t = tvec(n)
-    out = np.sin(2 * np.pi * freq * t) + 0.45 * np.sin(2 * np.pi * freq * 2 * t) * np.exp(-t / 0.15) + 0.2 * saw(freq, n, harmonics=6)
-    return lp(out, 420) * np.minimum(1, t / 0.004) * np.exp(-t / (dur * 0.8)) * 0.62
-
-
-def pad(freqs, dur):
-    n = int(dur * SR); t = tvec(n)
-    out = np.zeros(n)
-    for fq in freqs:
-        for dt in (-0.4, 0.4):
-            out += np.sin(2 * np.pi * fq * (1 + dt * 0.004) * t)
-    env = np.minimum(1, t / 0.5) * np.minimum(1, (dur - t) / 0.5)
-    trem = 0.85 + 0.15 * np.sin(2 * np.pi * 5.2 * t)
-    return lp(out, 1800) * env * trem * 0.07
-
-
-def bell(fq, dur=1.2, amp=1.0):
-    n = int(dur * SR); t = tvec(n)
-    return amp * sum(a * np.sin(2 * np.pi * fq * h * t) * np.exp(-t / d) for h, a, d in ((1, 1.0, 0.7), (2.76, 0.3, 0.35), (5.4, 0.12, 0.18))) * 0.3
-
-
-def sonar(fq):
-    n = int(0.9 * SR); t = tvec(n)
-    p = np.sin(2 * np.pi * fq * t) * np.exp(-t / 0.22) * np.minimum(1, t / 0.003)
-    for d, g in ((0.18, 0.4), (0.36, 0.18)):
-        i = int(d * SR); p[i:] += p[:n - i] * g
-    return p * 0.45
-
-
-def marimba(fq):
-    n = int(0.4 * SR); t = tvec(n)
-    return (np.sin(2 * np.pi * fq * t) * np.exp(-t / 0.09) + 0.3 * np.sin(2 * np.pi * fq * 4 * t) * np.exp(-t / 0.03)) * 0.55
-
-
-def fizz(dur=0.12):
-    n = int(dur * SR); t = tvec(n)
-    return hp(rng.normal(0, 1, n), 6500, 2) * np.exp(-t / (dur * 0.35)) * 0.12
-
-
-def glitch_burst(dur=0.22):
-    n = int(dur * SR)
-    nz = np.round(rng.normal(0, 1, n) * 3) / 3                       # bit-crushed
-    gate = (np.sin(2 * np.pi * 38 * tvec(n)) > -0.2).astype(float) * (rng.random(n // 600 + 1).repeat(600)[:n] > 0.35)
-    return bp(nz * gate, 400, 9000) * np.exp(-tvec(n) / (dur * 0.7)) * 0.6
-
-
-def revcym(dur=0.8):
-    n = int(dur * SR); t = tvec(n)
-    return hp(rng.normal(0, 1, n), 5000, 2) * (t / dur) ** 2.4 * 0.5
-
-
-def crash():
-    n = int(1.6 * SR); t = tvec(n)
-    return hp(rng.normal(0, 1, n), 4200, 2) * np.exp(-t / 0.55) * 0.4
-
-
-def stamp():
-    n = int(0.5 * SR); t = tvec(n)
-    thud = np.sin(2 * np.pi * (70 + 60 * np.exp(-t / 0.05)) * t) * np.exp(-t / 0.12)
-    slap = bp(rng.normal(0, 1, n), 700, 4500) * np.exp(-t / 0.03) * 0.6
-    return (thud + slap) * 0.9
-
-
-def crackle_bed(dur):
-    n = int(dur * SR); bed = np.zeros(n)
-    for pos in rng.integers(0, n - 200, int(dur * 38)):
-        m = int(rng.integers(8, 90))
-        bed[pos:pos + m] += rng.normal(0, 1, m) * np.exp(-np.arange(m) / (m * 0.3)) * rng.uniform(0.2, 1.0)
-    return hp(bed, 900) * 0.10 + hp(rng.normal(0, 1, n), 5000) * 0.004
-
-
-# ------------------------------------------------------------------ the arrangement
-BREAKS = [(4.5, 5.0), (11.5, 12.0), (22.5, 23.0)]                    # stop-time: the groove is cut dead
-SECTIONS = [(4.0, 11.5, "full"), (12.0, 13.5, "full"), (14.0, 17.5, "cold"), (18.0, 19.5, "full"),
-            (20.0, 22.5, "light"), (23.0, 25.5, "full"), (26.0, 31.5, "full")]
-ROLLS = [(3.5, 4.0), (13.5, 14.0), (17.5, 18.0), (19.5, 20.0), (25.5, 26.0), (31.5, 31.94)]
-LEAD = 0.006                                                         # an impact's peak lands ~9 ms after its start
-CUT_IMPACTS = (4.0, 8.0, 14.0, 20.0, 26.0)                           # an impact here REPLACES the kick on the beat
+PW = {"A": (110.0, 164.81, 220.0), "C": (130.81, 196.0, 261.63), "D": (146.83, 220.0, 293.66), "F": (87.31, 130.81, 174.61), "E": (82.41, 123.47, 164.81)}
+ROOT = {"A": 55.0, "C": 65.41, "D": 73.42, "F": 43.65, "E": 41.2}
+HORN = {"A": (110.0, 220.0, 329.63, 440.0, 523.25), "C": (130.81, 261.63, 392.0, 523.25, 659.25), "D": (146.83, 293.66, 440.0, 587.33, 698.46),
+        "E": (164.81, 246.94, 329.63, 493.88, 587.33), "F": (174.61, 261.63, 349.23, 440.0, 523.25)}
+BAR_A = [(0, "A", "o", 0.28), (2, "A", "m"), (4, "A", "m"), (6, "A", "m"), (8, "A", "o", 0.20), (10, "C", "o", 0.14), (12, "D", "o", 0.28), (14, "A", "m")]
+BAR_B = [(0, "A", "o", 0.28), (2, "A", "m"), (4, "A", "m"), (6, "A", "m"), (8, "F", "o", 0.20), (10, "F", "m"), (12, "E", "o", 0.40), (14, "E", "m")]
+LICK = {8: 440.0, 10: 523.25, 11: 587.33, 12: 659.25}
 
 
 def build():
-    drums, bassb, gtr, keys, sfx = (np.zeros(N) for _ in range(5))
-    pan_keys = np.zeros(N)
-    K, S, G, H_, HO, TB = kick(), snare(), ghost(), hat(), hat(open_=True), tamb()
+    drums, bassb, gL, gR, horns, sfx, verb = (np.zeros(N) for _ in range(7))
+    kicks = []
+
+    def K(t, g=0.9):
+        place(drums, kick(), t, g); kicks.append(t)
 
     def at_cut(t):
-        return any(abs(t - c) < 1e-3 for c in CUT_IMPACTS)
+        return any(abs(t - c) < 1e-3 for c in CUT_HITS)
 
-    # ---- the groove, bar by bar
-    for (a, b, kind) in SECTIONS:
-        bar0 = a
-        while bar0 < b - 1e-6:
-            ci = int(bar0 // 2) % 4
-            root, chord = CHORD[CYCLE[ci]]
-            for st in range(16):
-                t = bar0 + st * STEP + (0.012 if st % 2 else 0.0)                 # a little swing on the off 16ths
-                if t >= b or any(x <= t < y for x, y in BREAKS):
-                    continue
-                if kind == "full":
-                    if st in (0, 7, 10) and not at_cut(t) and not (st == 0 and False):
-                        place(drums, K, t, 0.80 if st == 0 else 0.62)
-                    if st in (4, 12):
-                        place(drums, S, t, 0.78)
-                    if st in (7, 15, 9):
-                        place(drums, G, t, 0.55)
-                    if st % 2 == 0:
-                        place(drums, H_, t, 0.30 if st % 4 else 0.38)
-                    if st == 14:
-                        place(drums, HO, t, 0.30)
-                    if st % 2 == 0:
-                        place(drums, TB, t, 0.5)
-                    for s0, mult, d in ((0, 1, 0.30), (3, 1, 0.18), (6, 2, 0.18), (8, 1, 0.30), (11, 1.5, 0.18), (14, 1.335 if CYCLE[ci] == "A" else 1, 0.18)):
-                        if st == s0:
-                            place(bassb, bass_note(root * mult * 2 if CYCLE[ci] == "E" else root * mult * 2, d), t, 0.9)
-                    if st in (6, 14):
-                        place(gtr, fuzz(chord, 0.26), t, 0.7)
-                elif kind == "cold":
-                    if st == 0 and not at_cut(t):
-                        place(drums, K, t, 0.62)
-                    if st == 8:
-                        place(drums, K, t, 0.30)
-                    if st in (0, 4, 8, 12):
-                        place(drums, H_, t, 0.18)
-                    if st == 0:
-                        place(bassb, bass_note(root * 2, 0.9), t, 0.7)
-                elif kind == "light":
-                    if st in (0, 10) and not at_cut(t):
-                        place(drums, K, t, 0.66)
-                    if st in (4, 12):
-                        place(drums, knock(), t, 0.7)
-                    if st % 2 == 0:
-                        place(drums, H_, t, 0.2)
-                    if st in (0, 8):
-                        place(bassb, bass_note(root * 2, 0.55), t, 0.8)
-            bar0 += 2.0
-    # ---- snare rolls into the cuts (16ths, crescendo)
-    for a, b in ROLLS:
-        n_ = int((b - a) / STEP)
-        for j in range(n_):
-            place(drums, S, a + j * STEP, 0.20 + 0.42 * (j / max(n_ - 1, 1)))
-    # ---- pads: the warm and the cold
-    for a, b, chord in ((14.0, 18.0, (110.0, 220.0, 261.63, 329.63)), (20.0, 22.5, (174.61, 220.0, 261.63, 349.23)),
-                        (23.0, 26.0, (220.0, 261.63, 329.63, 440.0)), (26.0, 32.0, (110.0, 220.0, 261.63))):
-        place(keys, pad(chord, b - a), a, 0.9)
-    place(keys, pad((55.0, 110.0), 4.0), 0.0, 0.8)                                        # the opening drone
-    place(sfx, crackle_bed(4.0), 0.0, 1.0)
-    place(sfx, crackle_bed(1.0), 35.0, 0.9)                                              # the same crackle returns: the loop
+    def gtr(chord, t, dur=0.3, mute=False, g=0.6, drive=8.0):
+        place(gL, egtr(PW[chord], dur, mute, drive, 0), t, g); place(gR, egtr(PW[chord], dur, mute, drive, 1), t, g)
 
-    # ---- TITLE
-    place(sfx, whoosh(0.5, 200, 3000, 0.8), 0.0 + 0.0, 0.18)                             # the sheen
-    for k_ in range(6):                                                                  # the six montage cuts, on 16ths
-        t = 0.5 + 0.25 * k_
-        place(sfx, shutter(), t, 0.55)
-        place(drums, K if k_ % 2 == 0 else S, t, 0.8)
-        if k_ % 2 == 0:
-            place(keys, stab(CHORD["A"][1] if k_ == 0 else (CHORD["F"][1] if k_ == 2 else CHORD["E"][1]), 0.22), t, 0.9)
-    place(sfx, crash(), 2.0, 0.5)
-    place(sfx, impact(0.7), 2.0, 0.55)
-    place(keys, stab((110.0, 220.0, 261.63, 329.63, 440.0), 0.5), 2.0, 1.0)
-    place(sfx, pop(), 2.05, 0.3)                                                          # the icon
-    place(sfx, impact(0.3), T("s_title", 2.15), 0.3)
-    place(sfx, impact(0.35), T("s_title", 2.65), 0.4)
-    place(keys, stab(CHORD["F"][1], 0.3), T("s_title", 2.65), 0.8)
-    place(sfx, whoosh(0.7, 300, 5000, 0.6), T("s_title", 2.5), 0.22)
-    for i, fq in enumerate((880.0, 1046.5, 1318.5, 1760.0, 2093.0)):                      # the five ticks, rising
-        place(sfx, marimba(fq), T("s_title", 2.35 + 0.18 * i), 0.5)
-    place(sfx, riser(0.5), 3.5, 0.6)
-    # ---- the cuts
-    place(sfx, whoosh(0.5, 300, 6000, 0.7), 4.0 - 0.25, 0.32)
-    place(sfx, impact(1.0), 4.0 - LEAD, 0.66)
-    place(sfx, whoosh(0.5, 300, 6000, 0.7), 26.0 - 0.25, 0.32)
-    place(sfx, impact(0.9), 26.0 - LEAD, 0.64)
-    place(sfx, impact(0.9), 8.0 - LEAD, 0.64)
-    place(sfx, whoosh(0.5, 200, 4500, 0.6), 14.0 - 0.25, 0.34)
-    place(sfx, impact(0.7), 14.0 - LEAD, 0.5)
-    place(sfx, glitch_burst(0.26), 20.0 - 0.05, 0.6)
-    place(sfx, impact(0.7), 20.0 - LEAD, 0.55)
-    # ---- FACT 1: the freeze
-    for t in np.arange(4.0, 8.0, 0.21):
-        place(sfx, fizz(), t + rng.uniform(0, 0.1), rng.uniform(0.3, 0.7))
-    place(sfx, scratch(0.34), T("s_f1", 0.5), 0.75)
-    place(sfx, shutter(), T("s_f1", 0.5), 0.8)
-    place(sfx, pop(), T("s_f1", 0.75), 0.3)
-    for j in range(5):
-        place(sfx, tick(), T("s_f1", 0.80 + 0.06 * j), 0.1)
-    place(keys, stab(CHORD["A"][1], 0.3), T("s_f1", 1.0), 0.9)                            # the title slams: the groove returns on it
-    place(drums, clap(), T("s_f1", 1.0), 0.8)
-    place(sfx, whoosh(0.5, 400, 5000, 0.7), T("s_f1", 1.5), 0.2)
-    place(sfx, pop(), T("s_f1", 1.3), 0.3)
-    for j in range(18):                                                                    # the 1982 counter
-        place(sfx, tick_f(1800 + 70 * j), T("s_f1", 1.3 + 0.8 * j / 18), 0.11)
-    place(sfx, pop(), T("s_f1", 2.5), 0.28)
-    # ---- FACT 2: the tiles
-    place(drums, clap(), T("s_f2", 0.1), 0.7)
-    place(sfx, whoosh(0.9, 400, 6500, 0.8), T("s_f2", 0.3), 0.3)
-    place(sfx, whoosh(1.0, 500, 7500, 0.8), T("s_f2", 0.5), 0.26)
-    for j in range(8):
-        place(sfx, tick(), T("s_f2", 0.28 + 0.08 * j), 0.08)
-    for k_, fq in enumerate((880.0, 1046.5, 1318.5, 1760.0)):                              # four tiles, four rising coins
-        place(sfx, marimba(fq), T("s_f2", 1.7 + 0.22 * k_), 0.8)
-        place(sfx, pop(), T("s_f2", 1.7 + 0.22 * k_), 0.25)
-    for j in range(10):
-        place(sfx, tick_f(2000 + 90 * j), T("s_f2", 1.7 + 1.0 * j / 10), 0.1)
-    place(sfx, pop(), T("s_f2", 2.6), 0.25)
-    place(sfx, revcym(0.7), 11.0, 0.5)                                                      # into the county
-    place(sfx, scratch(0.3), 11.5, 0.7)
-    place(sfx, impact(0.4), 11.5, 0.35)
-    place(drums, clap(), T("s_f2", 3.9), 0.8)
-    place(keys, stab(CHORD["A"][1], 0.3), 12.0, 0.9)
-    place(sfx, marimba(2093.0), T("s_f2", 4.2), 0.8)
-    place(sfx, pop(), T("s_f2", 4.4), 0.25)
-    # ---- FACT 3: cold
-    rng_b = np.random.default_rng(31)
-    for t in np.arange(14.3, 18.0, 0.37):                                                  # ice bells twinkle
-        place(sfx, bell(float(rng_b.choice([1760.0, 2093.0, 2637.0, 3136.0])), 0.9, 0.5), t, rng_b.uniform(0.35, 0.7))
-    place(sfx, lp(rng.normal(0, 1, int(2.3 * SR)), 900) * np.linspace(0, 1, int(2.3 * SR)) ** 2 * 0.5, T("s_f3", 0.9), 0.9)
-    place(sfx, bell(2637.0, 1.4, 1.0), T("s_f3", 1.7), 0.7)
-    place(sfx, pop(), T("s_f3", 1.7), 0.25)
-    place(sfx, revcym(0.5), 17.5, 0.5)
-    for k_, fq in enumerate((440.0, 523.25, 659.25, 880.0)):                               # the vines wake: a green arpeggio
-        place(sfx, marimba(fq), T("s_f3", 3.6 + 0.1 * k_), 0.6)
-    place(sfx, pop(), T("s_f3", 3.7), 0.25)
-    place(drums, clap(), 18.0, 0.7)
-    # ---- FACT 4: sunrise
-    for k_ in range(4):
-        place(sfx, knock(), T("s_f4", 0.2 + 0.12 * k_), 0.5)
-    for j, t in enumerate(np.arange(20.25, 22.5, STEP * 2)):                               # a sparkling arpeggio, A minor pentatonic
-        place(sfx, marimba((440.0, 523.25, 587.33, 659.25, 783.99)[j % 5] * 2), t, 0.20)
-    place(sfx, whoosh(0.8, 300, 6000, 0.9), T("s_f4", 0.9), 0.28)
-    for j in range(8):
-        place(sfx, tick(), T("s_f4", 0.9 + 0.09 * j), 0.08)
-    place(sfx, pop(), T("s_f4", 1.2), 0.28)
-    place(sfx, pop(), T("s_f4", 1.5), 0.28)
-    place(sfx, revcym(0.5), 22.5, 0.55)
-    place(sfx, scratch(0.3), 22.5, 0.5)
-    place(sfx, stamp(), T("s_f4", 3.0), 0.9)                                               # the stamp lands on the drop
-    place(sfx, crash(), T("s_f4", 3.0), 0.5)
-    place(drums, K, T("s_f4", 3.0), 0.8)
-    place(keys, stab(CHORD["A"][1], 0.4), T("s_f4", 3.0), 1.0)
-    # ---- FACT 5: the map
-    place(drums, clap(), T("s_f5", 0.1), 0.6)
-    for i, fq in enumerate((440.0, 523.25, 587.33, 659.25, 783.99)):                       # the ladder, up
-        place(sfx, marimba(fq), T("s_f5", 0.9 + 0.08 * i), 0.55)
-    for u0, fq in ((1.0, 659.25), (1.9, 880.0), (2.9, 1046.5)):                            # Philo, Boonville, Ukiah: sonar pings
-        place(sfx, sonar(fq), T("s_f5", u0), 0.85)
-        place(sfx, knock(), T("s_f5", u0 + 0.25), 0.4)
-    for j in range(12):
-        place(sfx, tick(), T("s_f5", 1.7 + 0.05 * j), 0.1)
-    place(sfx, pop(), T("s_f5", 2.3), 0.3)
-    place(drums, clap(), T("s_f5", 3.5), 0.8)
-    place(keys, stab(CHORD["A"][1], 0.35), T("s_f5", 3.5), 0.9)
-    place(sfx, pop(), T("s_f5", 4.5), 0.25)
-    place(sfx, riser(0.45), 31.5, 0.5)
-    # ---- OUTRO: the dip, five recap hits, the end card, the tape stop
-    for k_ in range(5):
-        t = 32.0 + 0.5 * k_
+    def hornhit(chord, t, dur=0.14, g=0.5, fall=0.0):
+        place(horns, horn(HORN[chord], dur, fall=fall), t, g)
+
+    def fill(c, g=1.0):
+        """A roll into a cut: five crescendo snares and three toms falling (0.5 s)."""
+        for j in range(5):
+            place(drums, snare(), c - 0.5 + j * 0.0625, g * (0.35 + 0.12 * j))
+        for j, f0 in enumerate((190.0, 150.0, 112.0)):
+            place(drums, tom(f0), c - 0.1875 + j * 0.0625, g * 0.85)
+
+    def hit(c, big=1.0, chord="A"):
+        """The hit on a cut: an impact (in place of the kick), a crash, a horn hit with a fall, an open power chord."""
+        place(sfx, impact(big), c - LEAD, 0.55 * big)
+        place(sfx, crash(), c, 0.40 * big)
+        place(horns, horn(HORN[chord] + (HORN[chord][0] * 4,), 0.50, fall=0.04), c, 0.65 * big)
+        gtr(chord, c, 0.65, False, 0.62 * big)
+
+    def groove(t0, t1, mode="full"):
+        k = int(round(t0 / STEP))
+        while k * STEP < t1 - 1e-6:
+            t, i = k * STEP, k % 16
+            bar = int(t // 2.0)
+            k += 1
+            if any(a <= t < b for a, b in BREAKS):
+                continue
+            riff = BAR_B if bar % 2 == 1 else BAR_A
+            if mode == "full":
+                if i in (0, 8, 10) or (i == 14 and bar % 2 == 1):
+                    if not at_cut(t):
+                        K(t, 0.95 if i == 0 else (0.85 if i == 8 else 0.65))
+                if i in (4, 12):
+                    place(drums, snare(), t, 0.92)
+                if i == 15 and bar % 2 == 1:
+                    place(drums, snare(), t, 0.16)
+                if i % 2 == 0:
+                    place(drums, hat(open_=(i == 14 and bar % 2 == 0)), t, 0.5 if i % 4 == 0 else 0.34)
+                for e in riff:
+                    if e[0] == i:
+                        gtr(e[1], t, e[3] if e[2] == "o" else 0.12, e[2] == "m", 0.62 if e[2] == "o" else 0.5)
+                        if i % 2 == 0:
+                            place(bassb, bass(ROOT[e[1]], 0.2), t, 0.85)
+                if i in (6, 14):
+                    hornhit("E" if (i == 14 and bar % 2 == 1) else "A", t, 0.13, 0.5)
+                if bar % 4 == 3 and i in LICK:
+                    place(gL, egtr((LICK[i],), 0.5 if i == 12 else 0.16, False, 5.0, 0), t, 0.4)
+            elif mode == "half":
+                if i == 0 and not at_cut(t):
+                    K(t, 0.9)
+                if i == 8:
+                    place(drums, snare(), t, 0.85)
+                if i % 4 == 0:
+                    place(drums, ride(), t, 0.5)
+                if i == 0:
+                    place(bassb, bass(ROOT["A" if t < 26.0 else "F"], 1.2), t, 0.8)
+            elif mode == "cold":
+                if i in (0, 10) and not at_cut(t):
+                    K(t, 0.7 if i == 0 else 0.5)
+                if i == 8:
+                    place(drums, rim(), t, 0.8)
+                if i == 12 and bar % 2 == 1:
+                    place(drums, tom(100.0), t, 0.4)
+                if i == 0:
+                    place(bassb, bass(ROOT["A" if t < 21.0 else "F"], 1.7), t, 0.8)
+
+    # ============================================================ OPENING BUMPER (0-2) and the montage (2-3.5), the roll (3.5-4)
+    hit(0.0, 0.95)                                              # the bumper's hit: the closing bumper repeats it exactly
+    place(bassb, bass(ROOT["A"], 1.4), 0.0, 0.9)
+    place(sfx, whoosh(0.9, 200, 3000, 0.7), 0.4, 0.25)          # under the title's sheen sweep
+    for j in range(8):                                          # palm-muted pedal 8ths, building
+        t = 1.0 + 0.125 * j
+        gtr("A", t, 0.12, True, 0.28 + 0.05 * j)
+        place(drums, hat(), t, 0.15 + 0.04 * j)
+    fill(2.0, 0.9)
+    place(sfx, riser(0.5), 1.5, 0.35)
+    for k_ in range(6):                                         # the montage on 16ths
+        t = 2.0 + 0.25 * k_
         place(sfx, shutter(), t, 0.5)
-        if not at_cut(t):
-            place(drums, K, t, 0.85)
-        if k_ % 2 == 1:
-            place(drums, clap(), t, 0.8)
-        place(keys, stab(CHORD[("A", "F", "A", "E", "A")[k_]][1], 0.3), t, 0.95)
-    place(sfx, impact(0.9), 32.0 - LEAD, 0.6)
-    place(drums, S, 34.25, 0.5)
-    place(drums, S, 34.375, 0.7)
-    t_end = T("s_outro", 2.5)
-    place(sfx, impact(1.0), t_end - LEAD, 0.66)
-    place(sfx, crash(), t_end, 0.55)
-    place(keys, stab((110.0, 220.0, 261.63, 329.63, 440.0, 523.25), 0.8), t_end, 1.1)
-    place(sfx, pop(), T("s_outro", 3.0), 0.28)
-    place(sfx, tape_stop((220.0, 261.63, 329.63, 110.0), 0.6), 35.38, 1.0)                  # the smash cut back to frame 0
+        if k_ % 2 == 0:
+            K(t, 0.9)
+            hornhit(("A", "C", "D")[k_ // 2], t, 0.13, 0.55)
+        else:
+            place(drums, snare(), t, 0.9)
+        gtr("A", t, 0.12, True, 0.45)
+        place(drums, hat(), t + 0.125, 0.4)
+    fill(4.0, 1.0)
+    place(sfx, riser(0.5), 3.5, 0.4)
+    place(sfx, whoosh(0.3, 300, 6000, 0.7), 3.86, 0.5)
 
-    # ---- the sidechain: a duck on every kick, so the stabs and bass breathe around it
+    # ============================================================ FACT 1 (4-10): sparse, STOP-TIME at the freeze, then the riff
+    hit(4.0, 1.1)
+    place(bassb, bass(ROOT["A"], 0.6), 4.0, 0.9)
+    place(drums, hat(), 4.25, 0.4)
+    place(sfx, scratch(0.28), 4.4, 0.7)
+    place(sfx, shutter(), T("s_f1", 0.5), 0.8)
+    place(sfx, rim(), T("s_f1", 0.8), 0.5)
+    groove(5.0, 9.5, "full")
+    hit(T("s_f1", 1.0), 0.6)                                    # the title slams; the groove returns on it
+    place(drums, snare(), T("s_f1", 1.0), 0.8)
+    for j in range(12):                                         # the year counter: a hi-hat roll that climbs
+        place(drums, hat(), T("s_f1", 1.4 + 0.065 * j), 0.18 + 0.03 * j)
+    place(sfx, rim(), T("s_f1", 2.25), 0.6)
+    hornhit("A", T("s_f1", 2.8), 0.16, 0.6)
+    fill(10.0, 1.0)
+
+    # ============================================================ FACT 2 (10-18): the full groove; four climbing horn stabs; stop-time before UNDER 1%
+    hit(10.0, 1.0)
+    place(sfx, whoosh(0.5, 400, 7000, 0.9), 9.78, 0.35)
+    groove(10.0, 14.5, "full")
+    place(sfx, riser(0.9), T("s_f2", 0.5), 0.3)
+    for k_, (lo, hi_) in enumerate(((220.0, 440.0), (261.63, 523.25), (293.66, 587.33), (329.63, 659.25))):
+        t = T("s_f2", 1.7 + 0.22 * k_)
+        place(horns, horn((lo, hi_, hi_ * 1.5), 0.13), t, 0.62)
+        place(sfx, rim(), t, 0.5)
+    for j in range(10):
+        place(drums, hat(), T("s_f2", 1.7 + 0.1 * j), 0.18 + 0.03 * j)
+    place(sfx, whoosh(0.4, 4000, 300, 0.3), 14.2, 0.45)
+    place(sfx, scratch(0.3), 14.5, 0.6)
+    groove(15.0, 17.5, "full")
+    hit(T("s_f2", 4.9), 0.7)                                    # the county tile fills; the band comes back
+    place(sfx, rim(), T("s_f2", 5.4), 0.5)
+    fill(18.0, 1.0)
+
+    # ============================================================ FACT 3 (18-24): COLD. Half-time, a clean tremolo guitar, toms, wind
+    place(sfx, whoosh(0.5, 200, 4500, 0.5), 17.75, 0.45)
+    place(sfx, impact(0.7), 18.0 - LEAD, 0.5)
+    groove(18.0, 23.5, "cold")
+    for j in range(11):                                         # a sparse clean arpeggio: Am, then F
+        t = 18.5 + 0.5 * j
+        cyc = ((220.0, 329.63, 440.0, 329.63) if t < 21.0 else (174.61, 261.63, 349.23, 261.63))[j % 4]
+        place(sfx, cleang(cyc, 0.9, j % 2), t, 0.6)
+    wind = bp(rng.normal(0, 1, int(5.2 * SR)), 380, 1300) * (0.55 + 0.45 * np.sin(2 * np.pi * 0.35 * tvec(int(5.2 * SR)) + 1.0))
+    place(sfx, wind * np.minimum(tvec(len(wind)) / 0.6, 1) * 0.12, 18.3, 1.0)
+    place(sfx, lp(rng.normal(0, 1, int(2.2 * SR)), 110) * np.minimum(tvec(int(2.2 * SR)) / 1.0, 1), T("s_f3", 0.9), 0.5)
+    place(sfx, cleang(659.25, 1.3), T("s_f3", 1.7), 0.7)
+    place(sfx, rim(), T("s_f3", 1.7), 0.5)
+    place(sfx, rim(), T("s_f3", 3.5), 0.4)
+    t = T("s_f3", 3.7)                                          # the vines wake: the horns return and a lick climbs
+    hornhit("A", t, 0.2, 0.6)
+    for j, f_ in enumerate((220.0, 261.63, 293.66, 329.63)):
+        place(gL, egtr((f_,), 0.14, True, 5.0, 0), t + 0.1 * j, 0.5)
+    place(sfx, riser(0.5), 23.5, 0.4)
+    fill(24.0, 1.0)
+
+    # ============================================================ FACT 4 (24-30): SUNRISE. Half-time, an open chord, a horn swell, stop-time, the stamp
+    place(sfx, glitch_burst(0.26), 23.95, 0.7)
+    hit(24.0, 1.0)
+    groove(24.0, 26.5, "half")
+    gtr("A", 24.2, 1.9, False, 0.5, 6.0)
+    place(horns, horn((220.0, 329.63, 440.0, 523.25), 2.3, att=0.9), 24.2, 0.5)       # a brass swell into the stop
+    for j in range(4):
+        place(sfx, tom(88.0 + 8 * j), T("s_f4", 0.2 + 0.12 * j), 0.8)
+    for j in range(8):                                          # the 1,200 ft line draws: a hi-hat ratchet
+        place(drums, hat(), T("s_f4", 0.9 + 0.1 * j), 0.28)
+    place(sfx, rim(), T("s_f4", 1.5), 0.5)
+    place(sfx, riser(0.5), 26.5, 0.5)
+    place(sfx, impact(1.0), T("s_f4", 3.0) - LEAD, 0.8)         # the stamp lands on the drop
+    place(sfx, crash(), T("s_f4", 3.0), 0.5)
+    hornhit("A", T("s_f4", 3.0), 0.5, 0.8, fall=0.05)
+    gtr("A", T("s_f4", 3.0), 0.65, False, 0.65)
+    groove(27.0, 29.5, "full")
+    fill(30.0, 1.0)
+
+    # ============================================================ FACT 5 (30-36): everything back; pins, a run up the ladder, the biggest groove
+    place(sfx, whoosh(0.3, 300, 6000, 0.7), 29.86, 0.55)
+    hit(30.0, 1.15)
+    groove(30.0, 35.5, "full")
+    for j, f_ in enumerate((220.0, 261.63, 293.66, 329.63, 392.0)):      # the ladder's five rungs: a guitar run up A minor pentatonic
+        place(gL, egtr((f_,), 0.14, True, 5.0, 0), T("s_f5", 0.9 + 0.08 * j), 0.6)
+    for u0, f0, ch in ((1.0, 110.0, "A"), (1.9, 130.0, "C"), (2.9, 150.0, "D")):    # Philo, Boonville, Ukiah: a low tom and a horn stab
+        place(sfx, tom(f0), T("s_f5", u0), 0.9)
+        hornhit(ch, T("s_f5", u0), 0.12, 0.55)
+    for j in range(8):
+        place(drums, hat(), T("s_f5", 1.7 + 0.075 * j), 0.28)
+    place(sfx, rim(), T("s_f5", 2.4), 0.6)
+    hit(T("s_f5", 3.5), 0.6)
+    fill(36.0, 1.0)
+
+    # ============================================================ OUTRO (36-40): the recap hits, then the closing bumper (the same hit)
+    place(sfx, impact(0.9), 36.0 - LEAD, 0.6)
+    for k_, (t_off, ch) in enumerate(((0.0, "A"), (0.5, "C"), (1.0, "D"), (1.5, "E"), (1.75, "A"))):
+        t = 36.0 + t_off
+        place(sfx, shutter(), t, 0.5)
+        if k_:
+            K(t, 0.9)
+        place(drums, snare(), t + (0.0 if k_ % 2 else 0.0), 0.7 if k_ % 2 else 0.0)
+        hornhit(ch, t, 0.14, 0.6)
+        gtr("A", t, 0.12, True, 0.5)
+    place(sfx, riser(1.0), 37.0, 0.3)
+    hit(38.0, 0.95)                                             # the SAME hit as the opening
+    place(bassb, bass(ROOT["A"], 1.8), 38.0, 0.9)
+    place(sfx, whoosh(0.9, 200, 3000, 0.7), 38.4, 0.25)
+
+    # ============================================================ the mix: ducking, the holes before the hits (with ramps), a send reverb, a soft clip
     duck = np.ones(N)
-    for t in np.arange(4.0, 32.0, BEAT):
-        i = int(t * SR); m = min(N, i + int(0.16 * SR))
-        duck[i:m] = np.minimum(duck[i:m], 0.72 + 0.28 * np.linspace(0, 1, m - i))
-    keys *= duck
-    bassb *= duck
-    # ---- the silence around the dip, then the slam
+    for t in kicks:
+        i = int(t * SR); m = min(N, i + int(0.14 * SR))
+        duck[i:m] = np.minimum(duck[i:m], 0.78 + 0.22 * np.linspace(0, 1, m - i))
+    bassb *= duck; gL *= duck; gR *= duck
     dip = np.ones(N)
-    dip[int(31.94 * SR):int(32.0 * SR)] = 0.0
-    for c in (4.0, 8.0, 14.0, 20.0, 26.0, 34.5):                       # a 50 ms hole before each hit: the cut slams into near-silence
+    dip[int(35.94 * SR):int(36.0 * SR)] = 0.0
+    for c in (4.0, 10.0, 18.0, 24.0, 30.0, 38.0):
         dip[int((c - 0.056) * SR):int((c - LEAD) * SR)] = 0.10
-    dip = np.convolve(dip, np.ones(int(0.004 * SR)) / int(0.004 * SR), "same")      # 4 ms ramps: a square-edged gate makes the AAC encoder ring (+1.7 dBTP)
-    # ---- reverb send, stereo
-    ir_n = int(1.2 * SR)
+    ramp = int(0.004 * SR)
+    dip = np.convolve(dip, np.ones(ramp) / ramp, "same")        # 4 ms ramps: a square-edged gate makes the AAC encoder ring
+    ir_n = int(1.3 * SR)
     irL = rng.normal(0, 1, ir_n) * np.exp(-tvec(ir_n) / 0.34); irR = rng.normal(0, 1, ir_n) * np.exp(-tvec(ir_n) / 0.34)
     irL /= np.sqrt((irL ** 2).sum()); irR /= np.sqrt((irR ** 2).sum())
-    send = keys * 0.7 + gtr * 0.4 + sfx * 0.22
-    vL = fftconvolve(send, irL)[:N] * 0.55
-    vR = fftconvolve(send, irR)[:N] * 0.55
-    dl = int(0.011 * SR)
-    gL = gtr * 0.8; gR = np.concatenate([np.zeros(dl), gtr])[:N] * 0.55
-    kL = keys * 0.75; kR = keys * 0.95
-    L = hp(drums * 0.92 + bassb * 0.95 + gL + kL + sfx + vL, 28) * dip
-    Rr = hp(drums * 0.92 + bassb * 0.95 + gR + kR + sfx + vR, 28) * dip
+    send = horns * 0.6 + (gL + gR) * 0.25 + sfx * 0.2
+    vL = fftconvolve(send, irL)[:N] * 0.5
+    vR = fftconvolve(send, irR)[:N] * 0.5
+    L = hp(drums * 0.95 + bassb * 0.9 + gL * 1.0 + horns * 0.85 + sfx + vL, 28) * dip
+    Rr = hp(drums * 0.95 + bassb * 0.9 + gR * 1.0 + horns * 0.85 + sfx + vR, 28) * dip
     out = np.stack([L, Rr], 1)
-    out = np.tanh(out * 1.35) / np.tanh(1.35)
+    fade = np.ones(N); fn = int(0.06 * SR); fade[-fn:] = np.linspace(1, 0, fn)
+    out *= fade[:, None]
+    out = np.tanh(out * 1.3) / np.tanh(1.3)
     return out / (np.max(np.abs(out)) / 0.89)
+
+
+def check_audio(a):
+    """The low band's onset (the impact's boom) within +-100 ms of each hit, in ms from the cut."""
+    from scipy.signal import butter, sosfilt
+    lo = np.convolve(np.abs(sosfilt(butter(2, 150, "low", fs=SR, output="sos"), a.mean(1))), np.ones(48) / 48, "same")
+    res = []
+    for c in (0.0, 4.0, 10.0, 18.0, 24.0, 27.0, 30.0, 36.0, 38.0):
+        i0, i1 = max(int((c - 0.10) * SR), 0), int((c + 0.12) * SR)
+        seg = lo[i0:i1]
+        res.append((c, (i0 + int(np.argmax(seg > 0.35 * seg.max()))) / SR - c))
+    return res
 
 
 if __name__ == "__main__":
@@ -417,3 +418,4 @@ if __name__ == "__main__":
     path = sys.argv[1] if len(sys.argv) > 1 else "/home/claude/mendo_fffa_audio.wav"
     wavfile.write(path, SR, (a * 32767).astype(np.int16))
     print(f"wrote {path}: {len(a) / SR:.2f}s, peak {20 * np.log10(np.abs(a).max()):.2f} dBFS")
+    print("low-band onset vs. hit (ms):", "  ".join(f"{c:g}s:{off * 1000:+.1f}" for c, off in check_audio(a)))
