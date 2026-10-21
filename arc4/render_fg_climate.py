@@ -5,7 +5,7 @@ WSET Diploma D1 Chapter 3.1 (latitude, altitude, slopes and aspect, proximity to
 the vine needs (3.1), climate vs weather (3.4, 3.5), naming a climate (3.4), and what happens when a dial moves (3.6).
 
 SOURCES -- every number below is D1 (page = the running header's page), or arithmetic from D1 and labeled so:
-  p.24  vine thresholds: dormancy under 10 C (50 F), winter freeze around -20 C (-4 F); budburst above 10 C
+  p.24  vine thresholds: dormancy under 10 C (50 F), winter freeze around -20 C (-4 F) can DAMAGE the vine; budburst above 10 C
   p.25  flowering best above 17 C (63 F); fruit set 26-32 C (79-90 F); photosynthesis 18-33 C (64-91 F); last-month mean above
         21 C (70 F) loses acid quickly, below 15 C (59 F) keeps too much; extreme heat, especially dry, slows or stops photosynthesis
   p.25  light limits photosynthesis only below one third of full sunshine (fog slows it; an average cloudy day does not)
@@ -118,15 +118,19 @@ SLIDES = [
         photo_credit=C_DISCHNER,
     )),
 
-    # 2 -- WHAT THE VINE NEEDS: D1 p.24-25. A staircase of thresholds, cool to hot; frost beside it, not a rung.
-    ("stair_ladder", dict(
-        chart=CHART, kicker="WHAT THE VINE NEEDS", headline="Five Temperatures",
-        standfirst="Temperature steers the whole growing year. These are the numbers that matter.",
-        rungs=[("It wakes: 10\u00b0C (50\u00b0F)", "Above it, budburst begins. Spring frost cuts yields; about \u201320\u00b0C (\u20134\u00b0F) in winter can kill the vine."),
-               ("It flowers: 17\u00b0C+", "Warm weather gives even flowering. Cold and damp harms it."),
-               ("It works: 18\u201333\u00b0C", "The best range for photosynthesis."),
-               ("It sets fruit: 26\u201332\u00b0C", "The optimum range."),
-               ("It stalls: extreme heat", "Dry heat is worst.")],
+    # 2 -- WHAT THE VINE NEEDS: D1 p.24-25 (Steve: a thermometer, with the text boxes climbing up the side). Winter freeze: D1 says
+    # "can cause winter freeze and damage the vine" (around -20 C / -4 F), so the slide says damage, not kill.
+    ("thermometer", dict(
+        chart=dict(CHART, ripe=[(58, 84, 110), SLATE, SAGE, GOLD, TERRA, BURG]),
+        kicker="WHAT THE VINE NEEDS", headline="The Vine's Thermometer",
+        standfirst="Temperature steers the whole growing year. Here is what each reading does to the vine.",
+        scale=dict(min=-25, max=40, ticks=[-20, -10, 0, 10, 20, 30, 40]),
+        marks=[("Winter freeze", "Around \u201320\u00b0C (\u20134\u00b0F) can damage the vine.", -20, None),
+               ("It wakes: 10\u00b0C", "Above 10\u00b0C (50\u00b0F), budburst begins. Spring frost on new buds cuts yields.", 10, None),
+               ("It flowers: 17\u00b0C+", "Best above 17\u00b0C (63\u00b0F). Cold, damp weather hurts flowering.", 17, None),
+               ("It works: 18\u201333\u00b0C", "64\u201391\u00b0F: the best range for photosynthesis, so for making sugar.", 18, 33),
+               ("It sets fruit: 26\u201332\u00b0C", "79\u201390\u00b0F: the optimum range for fruit set.", 26, 32),
+               ("It stalls: extreme heat", "Above the range, and especially when dry, photosynthesis slows or stops.", 33, "top")],
     )),
 
     # 3 -- CLIMATE IS NOT WEATHER: D1 p.41, p.44. Bordeaux 2013 vs 2016.

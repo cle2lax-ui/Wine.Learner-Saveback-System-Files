@@ -4,7 +4,7 @@ Files: `arc4/render_fg_climate.py` (the deck), `arc4/prepare_climate_maps.py` (t
 Output: `/home/claude/out_fg_climate/` (13 PNGs at 2160x2700 and `FG_Climate_review.pdf`).
 
 ## What was checked
-- **Layouts:** 13 distinct layouts in 13 slides; four led by a graphic (staircase, world map, altitude charts, climate bands).
+- **Layouts:** 13 distinct layouts in 13 slides; four led by a graphic (thermometer, world map, altitude charts, climate bands).
 - **Layout QA harness:** every slide passes (it caught and forced fixes for a staircase side-note, a legend overflow on the Hermitage
   slide, and two map-label collisions).
 - **Text legibility** (`engine/text_audit.py`): 116 text groups, 0 below threshold (paper text on the first slate blue measured 4.04:1;
@@ -16,7 +16,14 @@ Output: `/home/claude/out_fg_climate/` (13 PNGs at 2160x2700 and `FG_Climate_rev
   Bordeaux autumn, Epernay, Mendoza banner), so every photo can also go in the Reel. Locations come from each file's own title; the sunset
   and the fog photo carry no place claim.
 
-## Engine changes (both default-preserving)
+## Slide 2 (Steve's request): a thermometer
+The staircase became a vertical thermometer with the text boxes climbing up the side (a new engine layout, `thermometer`, M27). Cold is at the
+bottom, heat at the top; the glass tube is a cold-to-hot gradient and each box takes the color at its own reading. Six readings from D1 p.24-25:
+winter freeze, wakes at 10, flowers above 17, works 18-33, sets fruit 26-32, extreme heat. Wording corrected on this pass: D1 says winter freeze
+"can damage the vine" (the staircase version said "kill"). The layout raises an error if any note overflows its box.
+
+## Engine changes (all default-preserving)
+0. `thermometer`: a new layout (nothing else uses it).
 1. `stat_wall`: an optional `famous_label` slot (the strip was hard-labeled "FAMOUS NAMES").
 2. `chart_stack`: an empty second legend label now draws only the solid key (it drew an empty hatched swatch).
 

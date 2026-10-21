@@ -2965,6 +2965,105 @@ def stair_ladder(slot, slide_no, total, pal):
     return _finish(img, d, qa, slide_no, total)
 
 
+
+def thermometer(slot, slide_no, total, pal):
+    """M27 THERMOMETER -- a vertical thermometer with callout boxes climbing the page beside it, each tied by a line to its
+    reading on the scale (cold at the bottom, hot at the top). slots: kicker, headline(one line), standfirst, chart (palette; its
+    ch['ripe'] is the colour ramp from the scale's minimum to its maximum), scale=dict(min, max, ticks[...]) in degrees, and
+    marks[(name, note, low, high)] listed BOTTOM-TO-TOP: high=None is a point reading at `low`; high=<number> is a range bar from
+    low to high; high="top" is a bar from low to the top of the scale. Overlapping ranges sit in a second column; every line starts
+    at the same x, so the lines (anchors rise with the list) cannot cross. A box takes the ramp colour at its own reading and its
+    text colour is picked by measured contrast."""
+    from PIL import Image as _Im, ImageDraw as _Dr
+    ch = chart_palette(slot, pal)
+    img, d, qa = _start("M27 thermometer", slide_no, total, pal)
+    y = kicker_block(d, slot["kicker"], pal, y=150); qa.size("kicker", 70)
+    y, hs = one_line_headline(d, slot["headline"], y, pal); qa.size("headline", hs, headline=True)
+    y = standfirst(d, (M, y + 8), slot["standfirst"], W - 2 * M, leading=1.14) + 50
+    qa.size("standfirst", TYPE["standfirst"])
+    sc = slot["scale"]; tmin, tmax = sc["min"], sc["max"]
+    marks = slot["marks"]; n = len(marks)
+    zone_top, zone_bot = y, CONTENT_BOTTOM - 20
+    ramp = ch["ripe"]
+
+    def color_at(T):
+        t = min(max((T - tmin) / (tmax - tmin), 0.0), 1.0) * (len(ramp) - 1)
+        i = min(int(t), len(ramp) - 2)
+        return tuple(int(c) for c in blend_rgb(ramp[i], ramp[i + 1], t - i))
+
+    bulb_r, tw = 125, 110
+    cx = M + 340
+    bulb_cy = zone_bot - bulb_r
+    tube_bot, tube_top = bulb_cy - 10, zone_top + 20
+
+    def Y(T):
+        return tube_bot - (T - tmin) / (tmax - tmin) * (tube_bot - tube_top)
+
+    # the glass: bulb first, then the gradient tube pasted through a rounded mask, then the outline and a gloss stripe
+    th = int(tube_bot - tube_top)
+    d.ellipse([cx - bulb_r, bulb_cy - bulb_r, cx + bulb_r, bulb_cy + bulb_r], fill=color_at(tmin), outline=INK, width=8)
+    tube = _Im.new("RGB", (tw, th)); td = _Dr.Draw(tube)
+    for k in range(th):
+        td.line([(0, k), (tw, k)], fill=color_at(tmin + (1 - k / max(th - 1, 1)) * (tmax - tmin)))
+    mask = _Im.new("L", (tw, th), 0); _Dr.Draw(mask).rounded_rectangle([0, 0, tw - 1, th - 1], radius=tw // 2, fill=255)
+    img.paste(tube, (cx - tw // 2, int(tube_top)), mask)
+    d.rounded_rectangle([cx - tw // 2, tube_top, cx + tw // 2, tube_bot], radius=tw // 2, outline=INK, width=8)
+    gl_h = th - tw
+    img.paste(_Im.new("RGB", (16, gl_h), (255, 255, 255)), (cx - tw // 2 + 24, int(tube_top) + tw // 2), _Im.new("L", (16, gl_h), 85))
+    # the scale
+    tf = font("display_bold", 60); ta, td_ = tf.getmetrics()
+    for T in sc["ticks"]:
+        yy = int(Y(T))
+        d.line([(cx - tw // 2 - 36, yy), (cx - tw // 2 - 6, yy)], fill=INK, width=6)
+        lab = ("\u2212" if T < 0 else "") + f"{abs(T)}\u00b0" + ("C" if T == sc["ticks"][-1] else "")
+        d.text((cx - tw // 2 - 52 - text_w(d, lab, tf), yy - (ta + td_) / 2), lab, font=tf, fill=INK)
+    # range bars (a second column where ranges overlap) and point dots, then one horizontal stem to a common x per mark
+    bar_w, bar_gap = 26, 14
+    x_base = cx + tw // 2 + bar_gap
+    x_start = x_base + 2 * (bar_w + bar_gap) + 6
+    placed, anchors = [], []
+    for name, note, lo, hi in marks:
+        if hi is None:
+            T_a = lo
+            d.ellipse([x_base + bar_w // 2 - 17, Y(lo) - 17, x_base + bar_w // 2 + 17, Y(lo) + 17], fill=INK, outline=PAPER, width=4)
+            x_edge = x_base + bar_w // 2 + 17
+        else:
+            top_T = tmax if hi == "top" else hi
+            col = 0
+            for lo2, hi2, c2 in placed:
+                if lo < hi2 and lo2 < top_T:
+                    col = max(col, c2 + 1)
+            placed.append((lo, top_T, col))
+            T_a = (lo + top_T) / 2
+            bx = x_base + col * (bar_w + bar_gap)
+            d.rounded_rectangle([bx, Y(top_T), bx + bar_w, Y(lo)], radius=8, fill=color_at(T_a), outline=INK, width=4)
+            x_edge = bx + bar_w
+        if x_edge < x_start:
+            d.line([(x_edge, Y(T_a)), (x_start, Y(T_a))], fill=INK, width=5)
+        anchors.append((T_a, Y(T_a)))
+    # the climbing boxes
+    gap = 16
+    bh = (zone_bot - zone_top - gap * (n - 1)) // n
+    x0 = x_start + 170
+    lf = font("display_bold", 66); bf = font("body", FLOOR + 4)
+    qa.size("mark_name", 66); qa.size("mark_note", FLOOR + 4)
+    overflows = []
+    for i, ((name, note, lo, hi), (T_a, ay)) in enumerate(zip(marks, anchors)):
+        y1 = zone_bot - i * (bh + gap); y0 = y1 - bh
+        col = color_at(T_a); fg = best_text_color(col)
+        d.line([(x_start, ay), (x0, (y0 + y1) / 2)], fill=INK, width=5)
+        d.rounded_rectangle([x0, y0, W - M, y1], radius=14, fill=col)
+        d.text((x0 + 36, y0 + 14), name, font=lf, fill=fg)
+        yb = paragraph(d, (x0 + 36, y0 + 14 + 86), note, bf, fg, W - M - x0 - 72, 1.16)
+        if yb is not None and yb > y1 - 6:
+            overflows.append(f"'{name}' ends {yb - (y1 - 6)}px past its box")
+        qa.add_words(note)
+    if overflows:
+        raise ValueError("thermometer: " + "; ".join(overflows) + " -- shorten the notes")
+    qa.box("thermometer", (M, zone_top, W - M, zone_bot))
+    return _finish(img, d, qa, slide_no, total)
+
+
 def chart_stack(slot, slide_no, total, pal):
     """M23 CHART STACK -- one or two stacked data graphics under a one-line
     headline and standfirst.
@@ -3190,7 +3289,7 @@ def tile_grid(slot, slide_no, total, pal):
 
 NEW_MODULES = dict(
     cover_bleed=cover_bleed, region_map=region_map, blades=blades,
-    stair_ladder=stair_ladder, chart_stack=chart_stack, rail_rings=rail_rings,
+    stair_ladder=stair_ladder, thermometer=thermometer, chart_stack=chart_stack, rail_rings=rail_rings,
     hero_facts=hero_facts, tile_grid=tile_grid,
 )
 
