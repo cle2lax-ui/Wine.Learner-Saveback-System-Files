@@ -2969,11 +2969,11 @@ def stair_ladder(slot, slide_no, total, pal):
 def thermometer(slot, slide_no, total, pal):
     """M27 THERMOMETER -- a vertical thermometer with callout boxes climbing the page beside it, each tied by a line to its
     reading on the scale (cold at the bottom, hot at the top). slots: kicker, headline(one line), standfirst, chart (palette; its
-    ch['ripe'] is the colour ramp from the scale's minimum to its maximum), scale=dict(min, max, ticks[...]) in degrees, and
+    ch['ripe'] is the color ramp from the scale's minimum to its maximum), scale=dict(min, max, ticks[...]) in degrees, and
     marks[(name, note, low, high)] listed BOTTOM-TO-TOP: high=None is a point reading at `low`; high=<number> is a range bar from
     low to high; high="top" is a bar from low to the top of the scale. Overlapping ranges sit in a second column; every line starts
-    at the same x, so the lines (anchors rise with the list) cannot cross. A box takes the ramp colour at its own reading and its
-    text colour is picked by measured contrast."""
+    at the same x, so the lines (anchors rise with the list) cannot cross. A box takes the ramp color at its own reading and its
+    text color is picked by measured contrast."""
     from PIL import Image as _Im, ImageDraw as _Dr
     ch = chart_palette(slot, pal)
     img, d, qa = _start("M27 thermometer", slide_no, total, pal)
