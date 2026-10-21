@@ -1,0 +1,27 @@
+# Review: The Field Guide: Climate ("Climate's Impact on Wine") -- 13 slides, built, awaiting Steve's review
+
+Files: `arc4/render_fg_climate.py` (the deck), `arc4/prepare_climate_maps.py` (the world map), `arc4/CAPTION_FG_climate.md`.
+Output: `/home/claude/out_fg_climate/` (13 PNGs at 2160x2700 and `FG_Climate_review.pdf`).
+
+## What was checked
+- **Layouts:** 13 distinct layouts in 13 slides; four led by a graphic (staircase, world map, altitude charts, climate bands).
+- **Layout QA harness:** every slide passes (it caught and forced fixes for a staircase side-note, a legend overflow on the Hermitage
+  slide, and two map-label collisions).
+- **Text legibility** (`engine/text_audit.py`): 116 text groups, 0 below threshold (paper text on the first slate blue measured 4.04:1;
+  the slate was deepened to about 5:1).
+- **Regression:** the two engine changes below are default-preserving; `regress.py` 42 of 42 and `check_reels.py` 26 of 26 after them.
+- **Claims:** every number is D1 Chapter 3 (the page ledger is in the renderer's docstring) or arithmetic from D1, labeled on the
+  slide. No numeric Winkler (growing degree day) bands appear, because D1 gives none.
+- **Photos:** every photo's license and author resolved on Commons; share-alike files were excluded (Douro fog, Monte Bello fog,
+  Bordeaux autumn, Epernay, Mendoza banner), so every photo can also go in the Reel. Locations come from each file's own title; the sunset
+  and the fog photo carry no place claim.
+
+## Engine changes (both default-preserving)
+1. `stat_wall`: an optional `famous_label` slot (the strip was hard-labeled "FAMOUS NAMES").
+2. `chart_stack`: an empty second legend label now draws only the solid key (it drew an empty hatched swatch).
+
+## Things to know
+- The altitude bars are scaled so the longest (18°C) is the full width; all three stay proportional.
+- The Hermitage slide uses the 1900s postcard of the hill (the Arc 1 photo); the layout has no credit slot, so it is credited in the caption.
+- The benchmark asks for five graphic-led slides; this deck has four. A fifth (a diurnal-range graphic) would need numbers D1 does not give.
+- Open for later: a sixth piece could use D1 3.2 Water (500 mm cool, 750 mm warm minimums) and 3.3 Nutrients, which this deck leaves out.

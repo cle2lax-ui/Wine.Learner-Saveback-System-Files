@@ -1,0 +1,269 @@
+"""THE FIELD GUIDE: CLIMATE -- "Climate's Impact on Wine" (Steve's title). A classic carousel (2160x2700, 13 slides, 13 layouts).
+
+Arc 4 entry 1 (plan: arc4/ARC4_CLIMATE_PLAN.md, approved Oct 2026; burgundy signature, per Steve). Spine: the seven natural dials of
+WSET Diploma D1 Chapter 3.1 (latitude, altitude, slopes and aspect, proximity to water, winds, soil, mist/fog/clouds), framed by what
+the vine needs (3.1), climate vs weather (3.4, 3.5), naming a climate (3.4), and what happens when a dial moves (3.6).
+
+SOURCES -- every number below is D1 (page = the running header's page), or arithmetic from D1 and labeled so:
+  p.24  vine thresholds: dormancy under 10 C (50 F), winter freeze around -20 C (-4 F); budburst above 10 C
+  p.25  flowering best above 17 C (63 F); fruit set 26-32 C (79-90 F); photosynthesis 18-33 C (64-91 F); last-month mean above
+        21 C (70 F) loses acid quickly, below 15 C (59 F) keeps too much; extreme heat, especially dry, slows or stops photosynthesis
+  p.25  light limits photosynthesis only below one third of full sunshine (fog slows it; an average cloudy day does not)
+  p.26-27  latitude: more radiation nearer the Equator (Mendoza, South Africa, New South Wales) than nearer the poles (northern
+        France, Germany); wine grapes grow between about 30 and 50 degrees each side of the Equator
+  p.27  altitude: about 0.6 C (1.1 F) cooler per 100 m; Salta vineyards from about 1,280 to 3,000 m; Burgundy and the Loire sit low
+  p.28  aspect: Hermitage's southerly aspect gives Syrah extra ripeness; Burgundy and Alsace grand crus on south-east slopes,
+        generic vineyards on the flat; Stellenbosch whites on south-facing slopes for acidity; the effect grows with latitude
+  p.29-30  water: lakes and seas moderate; Finger Lakes; Carneros; Willamette (about 45 N, 15.9 C growing-season mean, California
+        current, early-ripening Pinot Noir) vs Margaux (about 45 N, 17.7 C, Gulf Stream, late-ripening Cabernet possible)
+  p.30-31  winds: Petaluma Gap; the Zonda in Mendoza; less fungal disease; higher water needs; damage; windbreaks (Neuquen)
+  p.31-32  soil temperature: free-draining soils warm sooner; light chalk (Sancerre, Champagne) reflects; dark volcanic (Etna) holds
+        heat; stony soils store heat and release it at night; the gravelly soils of the Haut-Medoc are D1's stony example (p.38-40)
+  p.32-33  mist and fog (Sonoma, Napa, Leyda Valley, Sauternes); diurnal range (Mendoza, Ribera del Duero big; Mosel, Mornington
+        Peninsula small; the Wachau a cold-night exception)
+  p.41  climate = the annual pattern averaged over about 30 years;  p.42-43 WSET bands by growing-season mean: cool 16.5 C or below,
+        moderate 16.5-18.5, warm 18.5-21, hot above 21; maritime (Bordeaux), Mediterranean (Napa Valley, Coonawarra), continental
+        (Burgundy, Alsace)
+  p.44  weather: Bordeaux 2013 (cold wet spring, uneven flowering, rainy harvest picked early, low quantity and quality) vs 2016
+  p.44-45  climate change: faster vine cycle, earlier budburst; sugar and acid race ahead of aroma and tannin
+DERIVED, NOT STATED (labeled on the slide): the cooling for Salta's 1,280 m and 3,000 m sites (0.6 C x 12.8 and x 30).
+NOT USED (D1 gives none): numeric Winkler (growing degree day) bands.
+PHOTOS (location from each Commons file's own title; the sunset and the fog photo carry no place claim): cover, Zach Dischner (CC BY
+  2.0); Bordeaux vines and Margaux, Megan Mallen (CC BY 2.0); Willamette, Sheila Sund (CC BY 2.0); Mendoza, Justin De La Ornellas;
+  Etna, Neil Weightman; Haut-Medoc, Jonas Roux; Trepail (Champagne), Havang(nl) (CC0); Finger Lakes sunrise, Visit Finger Lakes
+  (CC BY 2.0); Hermitage postcard, Mediatheques Valence Romans agglomeration (no restrictions); fog, Mick Haupt (Pexels).
+"""
+import glob
+import os
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+sys.path.insert(0, os.path.join(HERE, "..", "engine"))
+os.environ.setdefault("AMERICAN_ENGLISH", "1")
+import core      # noqa: E402
+import modules   # noqa: E402
+import variety   # noqa: E402
+import prepare_climate_maps as pcm   # noqa: E402
+from tokens import W, M, INK, PAPER    # noqa: E402
+
+OUT = "/home/claude/out_fg_climate"
+os.makedirs(OUT, exist_ok=True)
+
+# ---- palette: the series burgundy (engine/themes.py), the house gold, and a temperature ramp from cool slate to burgundy
+BURG = (104, 26, 38)
+GOLD = (196, 158, 84)
+SLATE, SAGE, TERRA = (84, 110, 134), (132, 140, 120), (168, 86, 64)      # slate deepened: paper text on it measured 4.04:1, now about 5:1
+PAL = dict(SIGNATURE=BURG, ACCENT=GOLD, LEAD=(140, 95, 58), MARK=BURG)
+CHART = dict(
+    ripe=[SLATE, SAGE, GOLD, TERRA, BURG],           # one step per rung: cool to hot
+    focus=BURG, cool=SLATE, warm=GOLD, vine=(86, 104, 70), shade=BURG, amber=TERRA, gold=GOLD, grape=(120, 22, 62),
+    stone=(110, 100, 92), track=(220, 208, 196), ice=SLATE, ice_fill=(226, 234, 240), ice_text=(54, 78, 100),
+)
+
+
+def credit(*pairs):
+    return "; ".join(f"{who} / {src}" for who, src in pairs)
+
+
+C_DISCHNER = "Zach Dischner / Wikimedia Commons (CC BY 2.0)"
+C_MALLEN = "Megan Mallen / Wikimedia Commons (CC BY 2.0)"
+C_SUND = "Sheila Sund / Wikimedia Commons (CC BY 2.0)"
+C_FINGER = "Visit Finger Lakes / Wikimedia Commons (CC BY 2.0)"
+
+MAP = pcm.build()
+MAP_H = int((W - 2 * M) / MAP["aspect"])
+
+
+def _atlas():
+    px = 12 / (W - 2 * M)
+    N = pcm.N
+    band_fill = (216, 176, 184)
+    regions = []
+    # each belt: the biggest piece carries the label (in open ocean, east of the Americas); every other piece gets a zero-length leader
+    for key, name, lab, tgt in (("north", "30\u00b0\u201350\u00b0 N", N(-60, 38), N(-82, 40)),
+                                ("south", "30\u00b0\u201350\u00b0 S", N(-58, -43), N(-68, -40))):
+        rings = MAP[key]
+        cen = [(sum(p[0] for p in r) / len(r), sum(p[1] for p in r) / len(r)) for r in rings]
+        main = min(range(len(rings)), key=lambda i: (cen[i][0] - tgt[0]) ** 2 + (cen[i][1] - tgt[1]) ** 2)
+        for i, ring in enumerate(rings):
+            if i == main:
+                regions.append(dict(name=name, pts=ring, fill=band_fill, label=lab, target=tgt, side="right"))
+            else:
+                regions.append(dict(name="", pts=ring, fill=band_fill, label=(ring[0][0] + px, ring[0][1]), target=ring[0], side="right"))
+    lines = []
+    for name, lat in MAP["lines"].items():
+        y = (pcm.LAT_TOP - lat) / pcm.SPAN_Y
+        lines.append(dict(pts=[(0.0, y), (1.0, y)], name=name, label=(0.012, y - 0.017), angle=0))
+    markers = [dict(name="Mendoza", target=N(-68.85, -32.89), label=N(-100, -26), side="left"),
+               dict(name="South Africa", target=N(18.86, -33.93), label=N(14, -26.5), side="right"),
+               dict(name="New South Wales", target=N(151.3, -32.75), label=N(176, -52), side="left"),
+               dict(name="N. France, Germany", target=N(5.5, 49.6), label=N(-8, 68), side="right")]
+    return dict(
+        kicker="DIAL 1 \u00b7 LATITUDE", headline="Between 30\u00b0 and 50\u00b0", map_h=MAP_H,
+        outline=MAP["land"][0], outlines=MAP["land"][1:], regions=regions, rivers=lines, markers=markers,
+        legend=[("30\u00b0 to 50\u00b0", "Wine grapes grow between about 30\u00b0 and 50\u00b0 on each side of the Equator."),
+                ("Nearer the Equator", "More solar radiation, and more intense: Mendoza, South Africa, New South Wales."),
+                ("Nearer the poles", "Longer summer days, but often too cool: northern France and Germany.")],
+    )
+
+
+SLIDES = [
+    # 1 -- COVER: a vineyard at sunset (no place claimed). D1 3.1: the sun, the dial behind all the others.
+    ("cover_bleed", dict(
+        photo="cl_vineyard_sunset_dischner", photo_anchor=0.5, photo_zoom=1.0,
+        kicker="THE FIELD GUIDE: CLIMATE", kicker_size=96,
+        kicker_chip=dict(color=(250, 246, 236), alpha=0.45, text=INK),
+        title="Climate\u2019s\nImpact\non Wine", title_top=0.44,
+        photo_credit=C_DISCHNER,
+    )),
+
+    # 2 -- WHAT THE VINE NEEDS: D1 p.24-25. A staircase of thresholds, cool to hot; frost beside it, not a rung.
+    ("stair_ladder", dict(
+        chart=CHART, kicker="WHAT THE VINE NEEDS", headline="Five Temperatures",
+        standfirst="Temperature steers the whole growing year. These are the numbers that matter.",
+        rungs=[("It wakes: 10\u00b0C (50\u00b0F)", "Above it, budburst begins. Spring frost cuts yields; about \u201320\u00b0C (\u20134\u00b0F) in winter can kill the vine."),
+               ("It flowers: 17\u00b0C+", "Warm weather gives even flowering. Cold and damp harms it."),
+               ("It works: 18\u201333\u00b0C", "The best range for photosynthesis."),
+               ("It sets fruit: 26\u201332\u00b0C", "The optimum range."),
+               ("It stalls: extreme heat", "Dry heat is worst.")],
+    )),
+
+    # 3 -- CLIMATE IS NOT WEATHER: D1 p.41, p.44. Bordeaux 2013 vs 2016.
+    ("editorial_lead", dict(
+        photo="cl_margaux_cabernet_mallen", photo_caption="Cabernet Sauvignon vines at Chateau Margaux",
+        kicker="CLIMATE OR WEATHER?", headline="The Pattern and the Year",
+        standfirst="Bordeaux's climate did not change between 2013 and 2016. Its weather did.",
+        items=[("Climate", "The annual pattern of temperature, sunlight, rain, humidity and wind, averaged over about 30 years."),
+               ("Weather", "The variation in any one year against that average. It is what we call vintage variation.")],
+        table=dict(groups=[("Bordeaux 2013", [("Spring", "Cold and wet", "Uneven flowering"), ("Harvest", "Rainy, humid", "Picked early"),
+                                              ("Result", "Low quantity", "And low quality")]),
+                           ("Bordeaux 2016", [("Flowering", "Good weather", "Then a long, warm, dry summer"),
+                                              ("Harvest", "Warm and dry", "A long harvest period"),
+                                              ("Result", "High quality", "And high volume")])]),
+        photo_credit=C_MALLEN,
+    )),
+
+    # 4 -- DIAL 1, LATITUDE: D1 p.26-27 (see prepare_climate_maps.py). Natural Earth land (public domain), clipped bands.
+    ("atlas", _atlas()),
+
+    # 5 -- DIAL 2, ALTITUDE: D1 p.27. Salta's range is D1's; the cooling figures are arithmetic from D1's 0.6 C per 100 m.
+    ("chart_stack", dict(
+        chart=CHART, kicker="DIAL 2 \u00b7 ALTITUDE", headline="Cooler by 0.6\u00b0C Every 100 m",
+        standfirst="Height can rescue a hot, low-latitude site. Burgundy and the Loire sit low, where it is cool enough.",
+        band_chart=dict(title="SALTA PROVINCE, ARGENTINA: VINEYARD ALTITUDES, METERS", axis_max=3500,
+                        ticks=[0, 500, 1000, 1500, 2000, 2500, 3000, 3500],
+                        rows=[("Salta vineyards", "cool", 1280, 3000, 3000)], legend=("about 1,280 to 3,000 m", "")),
+        bar_chart=dict(title="COOLER THAN THE SAME SITE AT SEA LEVEL, \u00b0C (D1's RATE, OUR ARITHMETIC)",
+                       # bar length is a percent of the width: scaled so the longest (18 C) is 100 and the rest stay proportional
+                       bars=[("100 m", 0.6 / 18 * 100, "0.6\u00b0C", "cool", False), ("1,280 m", 7.7 / 18 * 100, "7.7\u00b0C", "cool", False),
+                             ("3,000 m", 100, "18\u00b0C", "focus", True)]),
+    )),
+
+    # 6 -- DIAL 3, SLOPE AND ASPECT: D1 p.28. The Hermitage hill (the postcard); callouts placed against a render.
+    ("spotlight", dict(
+        photo="nr_hermitage_hill", kicker="DIAL 3 \u00b7 SLOPE AND ASPECT", headline="Face the Sun",
+        callouts=[(0.46, 0.40, "A", "The sun side", "Slopes facing the sun get more radiation."),
+                  (0.58, 0.30, "B", "Hermitage", "A southerly aspect gives Syrah extra ripeness."),
+                  (0.38, 0.55, "C", "Low sun, steep slope", "At high latitude, aspect and slope count most."),
+                  (0.80, 0.42, "D", "Away from the sun", "In warm regions it keeps acidity: Stellenbosch whites."),
+                  (0.20, 0.60, "E", "Slope or flat", "Burgundy and Alsace grand crus: south-east slopes.")],
+    )),
+
+    # 7 -- DIAL 4, WATER: D1 p.30. The hero comparison.
+    ("duel", dict(
+        photos=("cl_willamette_sund", "cl_margaux_mallen"), labels=("Willamette Valley", "Margaux"),
+        kicker="DIAL 4 \u00b7 WATER", headline="Two Oceans at 45\u00b0",
+        standfirst="Both sit near 45\u00b0 N. The warmth is not the latitude; it is the water.",
+        mode="table", col_heads=("Oregon", "Bordeaux"),
+        rows=[("Ocean current", "The cold California current", "The warm Gulf Stream"),
+              ("Growing-season mean", "15.9\u00b0C (61\u00b0F)", "17.7\u00b0C (64\u00b0F)"),
+              ("Grape", "Early-ripening Pinot Noir", "Late-ripening Cabernet Sauvignon")],
+        photo_credit=f"{C_SUND}; {C_MALLEN}",
+    )),
+
+    # 8 -- DIAL 5, WIND: D1 p.30-31. The Mendoza portrait on a side rail (D1 names the Zonda in Mendoza).
+    ("side_rail", dict(
+        photo="cl_mendoza_vineyard", photo_caption="Vines in Mendoza", side="right",
+        photo_credit="Justin De La Ornellas / Wikimedia Commons (CC BY 2.0)",
+        kicker="DIAL 5 \u00b7 WIND", headline="Wind Cools,\nHeats and Dries",
+        standfirst="It moves heat, and it moves moisture.",
+        items=[("Funneled", "Valleys that face the coast, like the Petaluma Gap, pull cool wind far inland."),
+               ("Heated", "Wind that crosses hot land brings warm air, as the Zonda does in Mendoza."),
+               ("Healthier", "Moving air stops damp, stagnant air building in the canopy, so less fungal disease."),
+               ("Costly", "Wind raises water needs and can damage vines and trellis. Tree windbreaks help, as in Neuqu\u00e9n.")],
+    )),
+
+    # 9 -- DIAL 6, SOIL: D1 p.31-32 (and p.38-40 for the Haut-Medoc gravel).
+    ("blades", dict(
+        blades=[dict(photo="cl_champagne_trepail", caption="Champagne, Tr\u00e9pail", anchor=0.5),
+                dict(photo="cl_etna_passopisciaro", caption="Etna", anchor=0.5),
+                dict(photo="cl_haut_medoc", caption="Haut-M\u00e9doc, gravel", anchor=0.5)],
+        blade_h=1180, kicker="DIAL 6 \u00b7 SOIL", headline="Soil Sets the Temperature Too",
+        items=[("Light and reflective", "Chalk, as in Champagne and Sancerre, bounces light up into the canopy."),
+               ("Dark and heat-holding", "Volcanic soil, as on Etna, soaks up heat and gives it back at night."),
+               ("Free-draining and stony", "Gravel warms sooner in spring, and stony soil releases heat at night.")],
+        photo_credit="Havang(nl) / Wikimedia Commons (CC0); Neil Weightman, Jonas Roux / Wikimedia Commons (CC BY 2.0)",
+    )),
+
+    # 10 -- DIAL 7, FOG AND CLOUD: D1 p.25, p.32-33. The Pexels fog photo carries no place claim.
+    ("fact_file", dict(
+        photo="us_mendo_fog_redwoods_pexels", photo_caption="Fog among redwoods", photo_credit="Mick Haupt / Pexels",
+        kicker="DIAL 7 \u00b7 FOG AND CLOUD", headline="Fog Slows the Clock",
+        facts=[("What it is", "Tiny water drops just above the ground. Dense mist is fog."),
+               ("Where", "Most often in the morning: Sonoma, Napa, Leyda Valley, Sauternes."),
+               ("The limit", "Light limits photosynthesis only below one third of full sun."),
+               ("The effect", "Slower sugar build-up and acid loss: good in warm regions."),
+               ("The risk", "More humidity: fungal disease, or noble rot where afternoons are dry.")],
+    )),
+
+    # 11 -- THE DAY-NIGHT GAP: D1 p.27-28, p.33.
+    ("tile_grid", dict(
+        kicker="THE DAY\u2013NIGHT GAP", headline="Diurnal Range",
+        standfirst="The difference between day and night. Whether it helps depends on the climate.",
+        tile_colors=[(BURG, PAPER), (SLATE, PAPER), (GOLD, INK), (TERRA, PAPER)],
+        tiles=[("Warm climates", "A big range helps", "Mendoza, Ribera del Duero: cool nights slow acid loss and help color form."),
+               ("Cool climates", "A small range helps", "Mosel, Mornington Peninsula: warmer nights let ripening carry on."),
+               ("The Wachau", "A cold-night exception", "Top sites have cool days and cold nights. The reasons are not known."),
+               ("High and inland", "Bigger ranges", "Thinner air holds less heat, so nights cool fast.")],
+    )),
+
+    # 12 -- NAME THE CLIMATE: D1 p.42-43.
+    ("stat_wall", dict(
+        kicker="NAME THE CLIMATE", headline="Cool, Moderate, Warm, Hot",
+        standfirst="WSET sorts climates by the mean temperature of the growing season, then by pattern.",
+        stats=[("\u226416.5\u00b0", "COOL", "62\u00b0F or below. Willamette Valley: 15.9\u00b0C."),
+               ("16.5\u201318.5\u00b0", "MODERATE", "62\u201365\u00b0F. Margaux: 17.7\u00b0C."),
+               ("18.5\u201321\u00b0", "WARM", "65\u201370\u00b0F."),
+               (">21\u00b0", "HOT", "Above 70\u00b0F.")],
+        famous=["Maritime: Bordeaux", "Mediterranean: Napa Valley, Coonawarra", "Continental: Burgundy, Alsace"], famous_label="THREE PATTERNS",
+    )),
+
+    # 13 -- CLOSE: D1 p.44-45. A Finger Lakes sunrise (D1's water-moderated example).
+    ("statement", dict(
+        variant="cover", photo="cl_finger_lakes_sunrise", photo_anchor=0.5,
+        title="When a Dial\nMoves",
+        subtitle="Warmer years speed the vine and push sugar ahead of aroma and tannin.",
+        photo_credit=C_FINGER,
+    )),
+]
+
+
+def build():
+    variety.report([name for name, _ in SLIDES])
+    for stale in glob.glob(f"{OUT}/*.png"):
+        os.remove(stale)
+    paths = []
+    total = len(SLIDES)
+    for i, (name, slot) in enumerate(SLIDES, start=1):
+        img = modules.MODULES[name](slot, i, total, PAL)
+        p = f"{OUT}/{i:02d}_{name}.png"
+        img.save(p)
+        paths.append(p)
+        print(f"  {i:02d} {name}")
+    core.assemble_pdf(paths, f"{OUT}/FG_Climate_review.pdf")
+    print("PDF:", f"{OUT}/FG_Climate_review.pdf")
+
+
+if __name__ == "__main__":
+    build()

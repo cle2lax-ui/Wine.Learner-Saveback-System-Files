@@ -927,7 +927,7 @@ def stat_wall(slot, slide_no, total, pal):
         qa.add_words(label + " " + note)
     if slot.get("famous"):
         fy = y + rows * cell_h + 30
-        famous_names(d, (M, fy), slot["famous"], W - 2 * M, pal)
+        famous_names(d, (M, fy), slot["famous"], W - 2 * M, pal, label=slot.get("famous_label", "FAMOUS NAMES"))
         qa.size("famous", TYPE["caption"])
     return _finish(img, d, qa, slide_no, total)
 
@@ -3022,10 +3022,11 @@ def chart_stack(slot, slide_no, total, pal):
         base_lbl, ext_lbl = bc["legend"]
         d.rectangle([M, y + 8, M + 70, y + 58], fill=INK)
         d.text((M + 90, y), base_lbl, font=kf, fill=INK)
-        hx = M + 90 + text_w(d, base_lbl, kf) + 80
-        d.rectangle([hx, y + 8, hx + 70, y + 58], outline=INK, width=4)
-        hatch_fill(d, (hx, y + 8, hx + 70, y + 58), INK, step=16, width=3)
-        d.text((hx + 90, y), ext_lbl, font=kf, fill=INK)
+        if ext_lbl:                       # an empty second label means there is no extension to explain: draw only the solid key
+            hx = M + 90 + text_w(d, base_lbl, kf) + 80
+            d.rectangle([hx, y + 8, hx + 70, y + 58], outline=INK, width=4)
+            hatch_fill(d, (hx, y + 8, hx + 70, y + 58), INK, step=16, width=3)
+            d.text((hx + 90, y), ext_lbl, font=kf, fill=INK)
         qa.box("scale", (M, ay - len(bc["rows"]) * (row_h + row_gap), W - M, y + 70))
         y += 190
 

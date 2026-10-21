@@ -67,6 +67,10 @@ arc3/render_fg_mendocino_classic.py
 arc3/render_wad_roederer_lermitage.py
 arc3/sample_fg_classic_palette.py
 arc4/ARC4_CLIMATE_PLAN.md
+arc4/CAPTION_FG_climate.md
+arc4/REVIEW_FG_climate.md
+arc4/prepare_climate_maps.py
+arc4/render_fg_climate.py
 archive/CHANGELOG_fffa_v4.md
 archive/CHANGELOG_quicksips_rrv.md
 archive/CHANGELOG_saveback_v2.md
@@ -128,6 +132,7 @@ data/geo/germany.geojson
 data/geo/mendocino_avas.geojson
 data/geo/mendocino_counties.geojson
 data/geo/mosel_river.geojson
+data/geo/ne_110m_land.geojson
 data/geo/ne_rivers_na.geojson
 data/geo/rhineland_palatinate.geojson
 data/geo/source_WeinbaugebieteDeutschland.svg
@@ -208,6 +213,15 @@ photos/QS_glass_icon_ink.png
 photos/bottle_mendo_domaine_anderson_pn_2023.png
 photos/bottle_mendo_navarro_gewurz_deep_end.png
 photos/bottle_mendo_roederer_lermitage_2019.png
+photos/cl_champagne_trepail.jpg
+photos/cl_etna_passopisciaro.jpg
+photos/cl_finger_lakes_sunrise.jpg
+photos/cl_haut_medoc.jpg
+photos/cl_margaux_cabernet_mallen.jpg
+photos/cl_margaux_mallen.jpg
+photos/cl_mendoza_vineyard.jpg
+photos/cl_vineyard_sunset_dischner.jpg
+photos/cl_willamette_sund.jpg
 photos/de_baden_kaiserstuhl_terraces.jpg
 photos/de_baden_red_grapes.jpg
 photos/de_bernkastel_aerial.jpg
