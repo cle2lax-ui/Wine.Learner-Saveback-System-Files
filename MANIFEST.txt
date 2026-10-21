@@ -66,6 +66,7 @@ arc3/render_fg_mendocino.py
 arc3/render_fg_mendocino_classic.py
 arc3/render_wad_roederer_lermitage.py
 arc3/sample_fg_classic_palette.py
+arc4/ARC4_CLIMATE_PLAN.md
 archive/CHANGELOG_fffa_v4.md
 archive/CHANGELOG_quicksips_rrv.md
 archive/CHANGELOG_saveback_v2.md
