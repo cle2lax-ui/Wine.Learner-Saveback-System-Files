@@ -1,10 +1,10 @@
-# Review: The Field Guide: Climate ("Climate's Impact on Wine") -- 13 slides, built, awaiting Steve's review
+# Review: The Field Guide: Climate ("Climate's Impact on Wine") -- 14 slides, built, awaiting Steve's review
 
 Files: `arc4/render_fg_climate.py` (the deck), `arc4/prepare_climate_maps.py` (the world map), `arc4/CAPTION_FG_climate.md`.
 Output: `/home/claude/out_fg_climate/` (13 PNGs at 2160x2700 and `FG_Climate_review.pdf`).
 
 ## What was checked
-- **Layouts:** 13 distinct layouts in 13 slides; four led by a graphic (thermometer, world map, altitude charts, climate bands).
+- **Layouts:** 14 distinct layouts in 14 slides; four led by a graphic (thermometer, world map, altitude charts, climate bands).
 - **Layout QA harness:** every slide passes (it caught and forced fixes for a staircase side-note, a legend overflow on the Hermitage
   slide, and two map-label collisions).
 - **Text legibility** (`engine/text_audit.py`): 116 text groups, 0 below threshold (paper text on the first slate blue measured 4.04:1;
@@ -15,6 +15,13 @@ Output: `/home/claude/out_fg_climate/` (13 PNGs at 2160x2700 and `FG_Climate_rev
 - **Photos:** every photo's license and author resolved on Commons; share-alike files were excluded (Douro fog, Monte Bello fog,
   Bordeaux autumn, Epernay, Mendoza banner), so every photo can also go in the Reel. Locations come from each file's own title; the sunset
   and the fog photo carry no place claim.
+
+## Slide 4 (Steve's request): a page on climate change and how the wine world adjusts
+New, right after slide 3 (`feature_trio`): three columns, new grapes / new sites / new aspects, with the long-term shift as the footnote. All WSET:
+D1 p.44-46 (rising temperatures; later-ripening varieties may be preferable; once-too-cold regions may improve), D1 (Garnacha, drought-tolerant),
+D1 p.27-28 (0.6 C per 100 m; shade-facing slopes, Stellenbosch), D3 p.347 (Rioja: high-altitude vineyards more desirable), D3 p.269 (Tuscany: higher
+sites, less sunny aspects), D3 Bordeaux (hot, dry European summers). Three new CC BY 2.0 photos (Grenache, Cafayate in Salta Province, Chianti), each
+location from its own Commons description. The closing slide's line changed so it no longer repeats slide 4 (and Syrah pepper stays reserved for entry 5).
 
 ## Slide 2 (Steve's request): a thermometer
 The staircase became a vertical thermometer with the text boxes climbing up the side (a new engine layout, `thermometer`, M27). Cold is at the

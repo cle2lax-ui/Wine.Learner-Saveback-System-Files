@@ -1,4 +1,4 @@
-"""THE FIELD GUIDE: CLIMATE -- "Climate's Impact on Wine" (Steve's title). A classic carousel (2160x2700, 13 slides, 13 layouts).
+"""THE FIELD GUIDE: CLIMATE -- "Climate's Impact on Wine" (Steve's title). A classic carousel (2160x2700, 14 slides, 14 layouts).
 
 Arc 4 entry 1 (plan: arc4/ARC4_CLIMATE_PLAN.md, approved Oct 2026; burgundy signature, per Steve). Spine: the seven natural dials of
 WSET Diploma D1 Chapter 3.1 (latitude, altitude, slopes and aspect, proximity to water, winds, soil, mist/fog/clouds), framed by what
@@ -26,12 +26,15 @@ SOURCES -- every number below is D1 (page = the running header's page), or arith
         (Burgundy, Alsace)
   p.44  weather: Bordeaux 2013 (cold wet spring, uneven flowering, rainy harvest picked early, low quantity and quality) vs 2016
   p.44-45  climate change: faster vine cycle, earlier budburst; sugar and acid race ahead of aroma and tannin
+  p.44-46 (slide 4): rising temperatures; later-ripening varieties may be preferable; regions once too cold may improve; growers and wine
+        businesses have already started to act. D1 (Garnacha: the drought-tolerant variety). D3 p.347 (Rioja: high-altitude vineyards more
+        desirable), D3 p.269 (Tuscany: higher sites, less sunny aspects), D3 Bordeaux (hot, dry summers across Europe)
 DERIVED, NOT STATED (labeled on the slide): the cooling for Salta's 1,280 m and 3,000 m sites (0.6 C x 12.8 and x 30).
 NOT USED (D1 gives none): numeric Winkler (growing degree day) bands.
 PHOTOS (location from each Commons file's own title; the sunset and the fog photo carry no place claim): cover, Zach Dischner (CC BY
   2.0); Bordeaux vines and Margaux, Megan Mallen (CC BY 2.0); Willamette, Sheila Sund (CC BY 2.0); Mendoza, Justin De La Ornellas;
   Etna, Neil Weightman; Haut-Medoc, Jonas Roux; Trepail (Champagne), Havang(nl) (CC0); Finger Lakes sunrise, Visit Finger Lakes
-  (CC BY 2.0); Hermitage postcard, Mediatheques Valence Romans agglomeration (no restrictions); fog, Mick Haupt (Pexels).
+  (CC BY 2.0); Grenache, Stephan Ridgway; Cafayate, aaepstein; Chianti, Matthew Hutchinson (all CC BY 2.0); Hermitage postcard, Mediatheques Valence Romans agglomeration (no restrictions); fog, Mick Haupt (Pexels).
 """
 import glob
 import os
@@ -148,10 +151,25 @@ SLIDES = [
         photo_credit=C_MALLEN,
     )),
 
-    # 4 -- DIAL 1, LATITUDE: D1 p.26-27 (see prepare_climate_maps.py). Natural Earth land (public domain), clipped bands.
+    # 4 -- WHEN THE CLIMATE SHIFTS (Steve: a page on long-term change and how the wine world adjusts: new varieties, new sites, changing aspect).
+    # Every claim is WSET: D1 p.44-45 (3.6: rising temperatures, a faster cycle, sugar ahead of aroma and tannin; later-ripening varieties may be
+    # preferable; regions once too cold may improve), D1 p.27 (0.6 C per 100 m), D1 p.28 (shade-facing slopes in warm regions; Stellenbosch
+    # whites), D1 (Garnacha as the drought-tolerant variety), D3 p.347 (Rioja: climate change has made high-altitude vineyards "not just more
+    # viable, but more desirable"), D3 p.269 (Tuscany: "growers are looking to plant on higher sites or those with less sunny aspects"), and
+    # D3 Bordeaux (climate change has led to hot, dry summers across Europe).
+    ("feature_trio", dict(
+        kicker="A WARMING CLIMATE", headline="Three Ways Growers Adapt",
+        features=[("New grapes", "Warming regions may need later-ripening varieties. Drought-tolerant grapes like Garnacha cope with dry years.", "cl_grenache_old_vines"),
+                  ("New sites", "Each 100 m up is about 0.6\u00b0C cooler. In Rioja, climate change has made high vineyards more desirable. Colder places may start to ripen grapes.", "cl_cafayate_aaepstein"),
+                  ("New aspects", "In Tuscany, growers are looking at higher sites and less sunny aspects. Shade-facing slopes keep acidity in warm regions, as in Stellenbosch.", "cl_chianti_hutchinson")],
+        footnote="The long-term shift: rising temperatures speed the vine cycle and push sugar ahead of aroma and tannin. Europe's summers are hotter and drier, and extreme weather is more frequent.",
+        photo_credit="Stephan Ridgway, aaepstein, Matthew Hutchinson / Wikimedia Commons (CC BY 2.0)",
+    )),
+
+    # 5 -- DIAL 1, LATITUDE: D1 p.26-27 (see prepare_climate_maps.py). Natural Earth land (public domain), clipped bands.
     ("atlas", _atlas()),
 
-    # 5 -- DIAL 2, ALTITUDE: D1 p.27. Salta's range is D1's; the cooling figures are arithmetic from D1's 0.6 C per 100 m.
+    # 6 -- DIAL 2, ALTITUDE: D1 p.27. Salta's range is D1's; the cooling figures are arithmetic from D1's 0.6 C per 100 m.
     ("chart_stack", dict(
         chart=CHART, kicker="DIAL 2 \u00b7 ALTITUDE", headline="Cooler by 0.6\u00b0C Every 100 m",
         standfirst="Height can rescue a hot, low-latitude site. Burgundy and the Loire sit low, where it is cool enough.",
@@ -164,7 +182,7 @@ SLIDES = [
                              ("3,000 m", 100, "18\u00b0C", "focus", True)]),
     )),
 
-    # 6 -- DIAL 3, SLOPE AND ASPECT: D1 p.28. The Hermitage hill (the postcard); callouts placed against a render.
+    # 7 -- DIAL 3, SLOPE AND ASPECT: D1 p.28. The Hermitage hill (the postcard); callouts placed against a render.
     ("spotlight", dict(
         photo="nr_hermitage_hill", kicker="DIAL 3 \u00b7 SLOPE AND ASPECT", headline="Face the Sun",
         callouts=[(0.46, 0.40, "A", "The sun side", "Slopes facing the sun get more radiation."),
@@ -174,7 +192,7 @@ SLIDES = [
                   (0.20, 0.60, "E", "Slope or flat", "Burgundy and Alsace grand crus: south-east slopes.")],
     )),
 
-    # 7 -- DIAL 4, WATER: D1 p.30. The hero comparison.
+    # 8 -- DIAL 4, WATER: D1 p.30. The hero comparison.
     ("duel", dict(
         photos=("cl_willamette_sund", "cl_margaux_mallen"), labels=("Willamette Valley", "Margaux"),
         kicker="DIAL 4 \u00b7 WATER", headline="Two Oceans at 45\u00b0",
@@ -186,7 +204,7 @@ SLIDES = [
         photo_credit=f"{C_SUND}; {C_MALLEN}",
     )),
 
-    # 8 -- DIAL 5, WIND: D1 p.30-31. The Mendoza portrait on a side rail (D1 names the Zonda in Mendoza).
+    # 9 -- DIAL 5, WIND: D1 p.30-31. The Mendoza portrait on a side rail (D1 names the Zonda in Mendoza).
     ("side_rail", dict(
         photo="cl_mendoza_vineyard", photo_caption="Vines in Mendoza", side="right",
         photo_credit="Justin De La Ornellas / Wikimedia Commons (CC BY 2.0)",
@@ -198,7 +216,7 @@ SLIDES = [
                ("Costly", "Wind raises water needs and can damage vines and trellis. Tree windbreaks help, as in Neuqu\u00e9n.")],
     )),
 
-    # 9 -- DIAL 6, SOIL: D1 p.31-32 (and p.38-40 for the Haut-Medoc gravel).
+    # 10 -- DIAL 6, SOIL: D1 p.31-32 (and p.38-40 for the Haut-Medoc gravel).
     ("blades", dict(
         blades=[dict(photo="cl_champagne_trepail", caption="Champagne, Tr\u00e9pail", anchor=0.5),
                 dict(photo="cl_etna_passopisciaro", caption="Etna", anchor=0.5),
@@ -210,7 +228,7 @@ SLIDES = [
         photo_credit="Havang(nl) / Wikimedia Commons (CC0); Neil Weightman, Jonas Roux / Wikimedia Commons (CC BY 2.0)",
     )),
 
-    # 10 -- DIAL 7, FOG AND CLOUD: D1 p.25, p.32-33. The Pexels fog photo carries no place claim.
+    # 11 -- DIAL 7, FOG AND CLOUD: D1 p.25, p.32-33. The Pexels fog photo carries no place claim.
     ("fact_file", dict(
         photo="us_mendo_fog_redwoods_pexels", photo_caption="Fog among redwoods", photo_credit="Mick Haupt / Pexels",
         kicker="DIAL 7 \u00b7 FOG AND CLOUD", headline="Fog Slows the Clock",
@@ -221,7 +239,7 @@ SLIDES = [
                ("The risk", "More humidity: fungal disease, or noble rot where afternoons are dry.")],
     )),
 
-    # 11 -- THE DAY-NIGHT GAP: D1 p.27-28, p.33.
+    # 12 -- THE DAY-NIGHT GAP: D1 p.27-28, p.33.
     ("tile_grid", dict(
         kicker="THE DAY\u2013NIGHT GAP", headline="Diurnal Range",
         standfirst="The difference between day and night. Whether it helps depends on the climate.",
@@ -232,7 +250,7 @@ SLIDES = [
                ("High and inland", "Bigger ranges", "Thinner air holds less heat, so nights cool fast.")],
     )),
 
-    # 12 -- NAME THE CLIMATE: D1 p.42-43.
+    # 13 -- NAME THE CLIMATE: D1 p.42-43.
     ("stat_wall", dict(
         kicker="NAME THE CLIMATE", headline="Cool, Moderate, Warm, Hot",
         standfirst="WSET sorts climates by the mean temperature of the growing season, then by pattern.",
@@ -243,11 +261,11 @@ SLIDES = [
         famous=["Maritime: Bordeaux", "Mediterranean: Napa Valley, Coonawarra", "Continental: Burgundy, Alsace"], famous_label="THREE PATTERNS",
     )),
 
-    # 13 -- CLOSE: D1 p.44-45. A Finger Lakes sunrise (D1's water-moderated example).
+    # 14 -- CLOSE: D1 p.44-45. A Finger Lakes sunrise (D1's water-moderated example).
     ("statement", dict(
         variant="cover", photo="cl_finger_lakes_sunrise", photo_anchor=0.5,
         title="When a Dial\nMoves",
-        subtitle="Warmer years speed the vine and push sugar ahead of aroma and tannin.",
+        subtitle="Rising temperatures are already showing, and growers have started to act.",   # D1 p.44, p.46
         photo_credit=C_FINGER,
     )),
 ]

@@ -904,5 +904,41 @@
   "slot": "cl_finger_lakes_sunrise",
   "credit": "Visit Finger Lakes / Wikimedia Commons (CC BY 2.0)",
   "local_path": "/home/claude/repo/photos/cl_finger_lakes_sunrise.jpg"
+ },
+ {
+  "title": "File:90 yr Old Grenache Vines.jpg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/1/16/90_yr_Old_Grenache_Vines.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "width": 3264,
+  "height": 1832,
+  "author": "Stephan Ridgway",
+  "license": "CC BY 2.0",
+  "description": "From Charles Melton Winery in South Australia in September 2010",
+  "slot": "cl_grenache_old_vines",
+  "credit": "Stephan Ridgway / Wikimedia Commons (CC BY 2.0)",
+  "local_path": "/home/claude/repo/photos/cl_grenache_old_vines.jpg"
+ },
+ {
+  "title": "File:Chianti vineyards.jpg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Chianti_vineyards.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "width": 3072,
+  "height": 2304,
+  "author": "Matthew Hutchinson",
+  "license": "CC BY 2.0",
+  "description": "Grapevines in the Chianti wine zone of Tuscany in Central Italy",
+  "slot": "cl_chianti_hutchinson",
+  "credit": "Matthew Hutchinson / Wikimedia Commons (CC BY 2.0)",
+  "local_path": "/home/claude/repo/photos/cl_chianti_hutchinson.jpg"
+ },
+ {
+  "title": "File:Cafayate, Argentina.jpg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Cafayate%2C_Argentina.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "width": 3872,
+  "height": 2592,
+  "author": "aaepstein",
+  "license": "CC BY 2.0",
+  "description": "A winery near Cafayate, Salta Province (Argentina).",
+  "slot": "cl_cafayate_aaepstein",
+  "credit": "aaepstein / Wikimedia Commons (CC BY 2.0)",
+  "local_path": "/home/claude/repo/photos/cl_cafayate_aaepstein.jpg"
  }
 ]
