@@ -276,7 +276,7 @@ SLIDES = [
     # viable, but more desirable"), D3 p.269 (Tuscany: "growers are looking to plant on higher sites or those with less sunny aspects"), and
     # D3 Bordeaux (climate change has led to hot, dry summers across Europe).
     ("feature_trio", dict(
-        kicker="A FEW WORDS ON CLIMATE CHANGE", headline="Three Ways Growers Adapt",
+        kicker="A FEW WORDS ON CLIMATE CHANGE", headline="Longer-term climate trends\nare getting warmer",
         features=[("New grapes", "Warming regions may need later-ripening varieties. Drought-tolerant grapes like Garnacha cope with dry years.", "cl_grenache_old_vines"),
                   ("New sites", "Each 100 m up is about 0.6\u00b0C cooler. In Rioja, climate change has made high vineyards more desirable. Colder places may start to ripen grapes.", "cl_cafayate_aaepstein"),
                   ("New aspects", "In Tuscany, growers are looking at higher sites and less sunny aspects. Shade-facing slopes keep acidity in warm regions, as in Stellenbosch.", "cl_chianti_hutchinson")],

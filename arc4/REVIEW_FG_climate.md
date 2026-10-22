@@ -23,8 +23,8 @@ Output: `/home/claude/out_fg_climate/` (13 PNGs at 2160x2700 and `FG_Climate_rev
   last two slides, labeled **A Few Words on Climate Change** (climate vs weather, then the three ways growers adapt).
 - The thermometer moved from slide 2 to slide 11 (the Factors must follow the wheel directly). The closing slide sits before the climate-change pair, as the lead-in.
 
-## Slide 4 (Steve's request, now slide 15): a page on climate change and how the wine world adjusts
-New, right after slide 3 (`feature_trio`): three columns, new grapes / new sites / new aspects, with the long-term shift as the footnote. All WSET:
+## Slide 15 (Steve's request): a page on climate change and how the wine world adjusts
+Titled "Longer-term climate trends are getting warmer" (Steve's wording, on two lines). Written as slide 4 and moved to the end (`feature_trio`): three columns, new grapes / new sites / new aspects, with the long-term shift as the footnote. All WSET:
 D1 p.44-46 (rising temperatures; later-ripening varieties may be preferable; once-too-cold regions may improve), D1 (Garnacha, drought-tolerant),
 D1 p.27-28 (0.6 C per 100 m; shade-facing slopes, Stellenbosch), D3 p.347 (Rioja: high-altitude vineyards more desirable), D3 p.269 (Tuscany: higher
 sites, less sunny aspects), D3 Bordeaux (hot, dry European summers). Three new CC BY 2.0 photos (Grenache, Cafayate in Salta Province, Chianti), each
@@ -37,6 +37,7 @@ winter freeze, wakes at 10, flowers above 17, works 18-33, sets fruit 26-32, ext
 "can damage the vine" (the staircase version said "kill"). The layout raises an error if any note overflows its box.
 
 ## Engine changes (all default-preserving)
+0. `feature_trio` now accepts a two-line headline and raises an error if any line is too wide (a long title used to clip silently with no QA flag).
 0. `thermometer`, `factor_wheel`, `cross_section` and the icons (`engine/icons.py`): new layouts and helpers (nothing else uses them).
 1. `stat_wall`: an optional `famous_label` slot (the strip was hard-labeled "FAMOUS NAMES").
 2. `chart_stack`: an empty second legend label now draws only the solid key (it drew an empty hatched swatch).

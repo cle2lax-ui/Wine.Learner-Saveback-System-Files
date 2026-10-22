@@ -2179,7 +2179,12 @@ def feature_trio(slot, slide_no, total, pal):
     competing with the photo band)"""
     img, d, qa = _start("M14 feature_trio", slide_no, total, pal)
     y = kicker_block(d, slot["kicker"], pal); qa.size("kicker", 70)
-    y = headline(d, slot["headline"], y, fill=pal["SIGNATURE"], show_underline=False); qa.size("headline", TYPE["display_md"], headline=True)
+    hf_ = font("display_black", TYPE["display_md"])
+    for ln_ in slot["headline"].split("\n"):                    # a headline may carry a line break; every line must fit (it used to clip silently)
+        if text_w(d, ln_, hf_) > W - 2 * M:
+            raise ValueError(f"feature_trio: the headline line {ln_!r} is too wide; add a line break or cut the copy")
+        y = headline(d, ln_, y, fill=pal["SIGNATURE"], show_underline=False)
+    qa.size("headline", TYPE["display_md"], headline=True)
     y += 60
     col_gap = 70
     col_w = (W - 2 * M - 2 * col_gap) // 3

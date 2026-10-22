@@ -37,7 +37,7 @@ The seven natural factors in D1 3.1 are the spine (the chapter lists exactly the
 | 12 | Name the climate | WSET bands by growing-season mean: cool 16.5 C or below, moderate 16.5-18.5, warm 18.5-21, hot above 21; maritime, Mediterranean, continental with D1's examples (p. 43) | graphic: a gauge with Willamette and Bordeaux marked |
 | 13 | When a Factor moves | climate change speeds the cycle and splits sugar from aroma and tannin (pp. 44-45); bridges to the rest of the arc | statement |
 
-*Update (Oct 21, Steve):* slide 2 became a thermometer, and a new slide 4 ("Three Ways Growers Adapt": new grapes, new sites, new aspects, from D1 and D3) follows slide 3, so the Field Guide is 14 slides.
+*Update (Oct 21, Steve):* slide 2 became a thermometer, and a new slide 4 ("Longer-term climate trends are getting warmer": new grapes, new sites, new aspects, from D1 and D3; it ended up as slide 15, the last slide) follows slide 3, so the Field Guide is 14 slides.
 
 ## 3. Entries 2-6
 **2. Guess the Wine Region, "Same Latitude, Different Ocean."** Page 1 (no names): a map with the 45 degrees North line, clues about an early-ripening red, a cold ocean current, 15.9 C. Page 2: Willamette Valley, then the Margaux contrast (same latitude, Gulf Stream, 17.7 C, late-ripening Cabernet). D1 p. 30; cross-check D3's Oregon material at build.
