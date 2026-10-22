@@ -19,6 +19,6 @@ Photos: Zach Dischner, Megan Mallen, Sheila Sund, Justin De La Ornellas, Neil We
 Stephan Ridgway, aaepstein and Matthew Hutchinson (all CC BY 2.0), Havang(nl) (CC0), via Wikimedia Commons; the Hermitage hill, Véronique Pagnier (public domain), via Wikimedia Commons; Mick Haupt via Pexels. Map: land from Natural Earth (public domain).
 Sources: WSET D1 (Chapter 3, The Growing Environment).
 
-**Notes for Steve (not for the caption):** two figures on the slides are our arithmetic from D1's 0.6°C per 100 m (7.7°C at
-1,280 m and 18°C at 3,000 m) and are labeled so; the 1.8°C gap in the Willamette/Margaux hook is 17.7 minus 15.9. The Hermitage
+**Notes for Steve (not for the caption):** the cooling figures on the altitude slide (3.0, 6.0, 12.0 and 18.0°C) are our arithmetic from
+D1's 0.6°C per 100 m, for an imaginary region, and are labeled so; the 1.8°C gap in the Willamette/Margaux hook is 17.7 minus 15.9. The Hermitage
 photo is public domain and is cropped to the hill and chapel; its layout (spotlight) has no credit slot, so its credit is here.

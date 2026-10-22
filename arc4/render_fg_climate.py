@@ -29,7 +29,7 @@ SOURCES -- every number below is D1 (page = the running header's page), or arith
   p.44-46 (slide 4): rising temperatures; later-ripening varieties may be preferable; regions once too cold may improve; growers and wine
         businesses have already started to act. D1 (Garnacha: the drought-tolerant variety). D3 p.347 (Rioja: high-altitude vineyards more
         desirable), D3 p.269 (Tuscany: higher sites, less sunny aspects), D3 Bordeaux (hot, dry summers across Europe)
-DERIVED, NOT STATED (labeled on the slide): the cooling for Salta's 1,280 m and 3,000 m sites (0.6 C x 12.8 and x 30).
+DERIVED, NOT STATED (labeled on the slide): the cooling for the imaginary region's 500, 1,000, 2,000 and 3,000 m sites (0.6 C per 100 m x 5, 10, 20, 30 = 3.0, 6.0, 12.0, 18.0).
 NOT USED (D1 gives none): numeric Winkler (growing degree day) bands.
 PHOTOS (location from each Commons file's own title; the sunset and the fog photo carry no place claim): cover, Zach Dischner (CC BY
   2.0); Bordeaux vines and Margaux, Megan Mallen (CC BY 2.0); Willamette, Sheila Sund (CC BY 2.0); Mendoza, Justin De La Ornellas;
@@ -133,17 +133,23 @@ SLIDES = [
     # 3 -- FACTOR 1, LATITUDE: D1 p.26-27 (see prepare_climate_maps.py). Natural Earth land (public domain), clipped bands.
     ("atlas", dict(_atlas(), _factor=("latitude", 1))),
 
-    # 4 -- FACTOR 2, ALTITUDE: D1 p.27. Salta's range is D1's; the cooling figures are arithmetic from D1's 0.6 C per 100 m.
-    ("chart_stack", dict(_factor=("altitude", 2), 
-        chart=CHART, kicker="FACTOR 2 \u00b7 ALTITUDE", headline="Cooler by 0.6\u00b0C Every 100 m",
-        standfirst="Height can rescue a hot, low-latitude site. Burgundy and the Loire sit low, where it is cool enough.",
-        band_chart=dict(title="SALTA PROVINCE, ARGENTINA: VINEYARD ALTITUDES, METERS", axis_max=3500,
-                        ticks=[0, 500, 1000, 1500, 2000, 2500, 3000, 3500],
-                        rows=[("Salta vineyards", "cool", 1280, 3000, 3000)], legend=("about 1,280 to 3,000 m", "")),
-        bar_chart=dict(title="COOLER THAN THE SAME SITE AT SEA LEVEL, \u00b0C (D1's RATE, OUR ARITHMETIC)",
-                       # bar length is a percent of the width: scaled so the longest (18 C) is 100 and the rest stay proportional
-                       bars=[("100 m", 0.6 / 18 * 100, "0.6\u00b0C", "cool", False), ("1,280 m", 7.7 / 18 * 100, "7.7\u00b0C", "cool", False),
-                             ("3,000 m", 100, "18\u00b0C", "focus", True)]),
+    # 4 -- FACTOR 2, ALTITUDE: D1 p.27 (about 0.6 C cooler per 100 m). Steve: the bars read as increasing when they mean "cooler", so show a cross-
+    # section of an IMAGINARY region (seaside vineyards, gradual slopes, then steep slopes) with each site flagged by how much cooler it is than the
+    # seaside one. Every figure is arithmetic from D1's rate (500 m x 0.006 = 3.0 C; 1,000 m = 6.0; 2,000 m = 12.0; 3,000 m = 18.0), labeled as such.
+    # Salta (D1: vineyards from about 1,280 to 3,000 m) is real and is named in the footnote for scale.
+    ("cross_section", dict(_factor=("altitude", 2),
+        kicker="FACTOR 2 \u00b7 ALTITUDE", headline="Cooler by 0.6\u00b0C Every 100 m",
+        standfirst="Height can rescue a hot, low-latitude site. Climb an imaginary coast and watch the temperature fall.",
+        elev_max=3900, ticks=[0, 1000, 2000, 3000],
+        profile=[(0.14, 0), (0.40, 40), (0.66, 1000), (0.88, 3000), (1.0, 3080)],
+        zones=[(0.14, 0.40, "Coastal plain", (214, 196, 150)), (0.40, 0.66, "Gradual slopes", (172, 160, 128)), (0.66, 0.88, "Steep slopes", (132, 128, 112))],
+        sites=[(0, 0.25, "Seaside", "the baseline", (196, 158, 84)),
+               (500, None, "500 m", "3.0\u00b0C cooler", (150, 168, 182)),
+               (1000, None, "1,000 m", "6.0\u00b0C cooler", (112, 138, 160)),
+               (2000, None, "2,000 m", "12.0\u00b0C cooler", (84, 110, 134)),
+               (3000, None, "3,000 m", "18.0\u00b0C cooler", (58, 84, 110))],
+        footnote="An imaginary region; each reading is our arithmetic from D1's 0.6\u00b0C per 100 m. For scale, Salta's real vineyards in Argentina run from about 1,280 to 3,000 m.",
+        chart=CHART,
     )),
 
     # 5 -- FACTOR 3, SLOPE AND ASPECT: D1 p.28. The Hermitage hill in color (Steve: not the black-and-white postcard). "Tain - Chapelle et

@@ -3113,6 +3113,112 @@ def factor_wheel(slot, slide_no, total, pal):
     return _finish(img, d, qa, slide_no, total)
 
 
+
+def cross_section(slot, slide_no, total, pal):
+    """M29 CROSS SECTION -- a side-on landscape: the sea, then land rising along `profile`, with flagged sites at chosen elevations.
+    slots: kicker, headline(one line), standfirst, elev_max (m, the diagram's top), ticks[m], profile[(x 0-1, elevation m)] from the coast
+    inland (the first point is the coast at elevation 0), zones[(x0, x1, label, color)] drawn as a strip under the diagram, sites[(elev, x or None,
+    title, sub, color)] -- x=None finds where the profile reaches `elev`, footnote, land/sea/vine (colors). Each site gets a row of vines on the
+    slope and a flag above it joined by a leader; a taller site is further up the page, so flags never collide. Flag text color by contrast."""
+    ch = chart_palette(slot, pal)
+    img, d, qa = _start("M29 cross_section", slide_no, total, pal)
+    y = kicker_block(d, slot["kicker"], pal, y=150); qa.size("kicker", 70)
+    y, hs = one_line_headline(d, slot["headline"], y, pal); qa.size("headline", hs, headline=True)
+    y = standfirst(d, (M, y + 8), slot["standfirst"], W - 2 * M, leading=1.14) + 30
+    qa.size("standfirst", TYPE["standfirst"])
+    zone_top, zone_bot = y, CONTENT_BOTTOM - 20
+    ff = font("body", FLOOR); qa.size("footnote", FLOOR)
+    from PIL import Image as _Im, ImageDraw as _Dr         # measure the footnote first, so the diagram gets exactly the room that is left
+    fh = paragraph(_Dr.Draw(_Im.new("RGB", (W, 600), PAPER)), (M, 0), slot["footnote"], ff, INK, W - 2 * M, 1.18) or 240
+    foot_y = zone_bot - int(fh) + 6
+    paragraph(d, (M, foot_y), slot["footnote"], ff, INK, W - 2 * M, 1.18)
+    qa.add_words(slot["footnote"])
+    strip_h = 96
+    strip_y0 = foot_y - strip_h - 34
+    top, bot = zone_top + 6, strip_y0 - 26
+    x0, x1 = M + 150, W - M
+    Wd = x1 - x0
+    base = bot - 110                                        # the sea-level line; 110 px of ground and sea floor below it
+    emax = slot["elev_max"]
+    ppm = (base - top) / emax
+    Ey = lambda e: base - e * ppm
+    prof = slot["profile"]
+
+    def elev_at(xf):
+        if xf <= prof[0][0]:
+            return 0.0
+        for (xa, ea), (xb, eb) in zip(prof, prof[1:]):
+            if xa <= xf <= xb:
+                return ea + (eb - ea) * (xf - xa) / (xb - xa)
+        return prof[-1][1]
+    N_ = 500
+    els = [elev_at(prof[0][0] + (1 - prof[0][0]) * i / N_) for i in range(N_ + 1)]
+    for _ in range(3):                                      # soften the corners
+        els = [sum(els[max(0, i - 6):i + 7]) / len(els[max(0, i - 6):i + 7]) for i in range(len(els))]
+    xs = [x0 + Wd * (prof[0][0] + (1 - prof[0][0]) * i / N_) for i in range(N_ + 1)]
+    coast_x = x0 + Wd * prof[0][0]
+    # gridlines and the elevation axis
+    tf = font("display_bold", 50); ta, td_ = tf.getmetrics()
+    for t in slot["ticks"]:
+        yy = int(Ey(t))
+        d.line([(x0 - 14, yy), (x1, yy)], fill=ch["track"], width=3)
+        lab = f"{t:,}"
+        d.text((x0 - 26 - text_w(d, lab, tf), yy - (ta + td_) / 2), lab, font=tf, fill=INK)
+    d.text((M, top - 4), "m", font=tf, fill=INK)
+    # the sea, then the land
+    d.rectangle([x0, base, coast_x, bot], fill=slot.get("sea", (150, 180, 200)))
+    for i in range(0, int(coast_x - x0), 60):
+        d.arc([x0 + i, base - 12, x0 + i + 60, base + 12], 180, 360, fill=PAPER, width=5)
+    poly = [(xs[i], Ey(els[i])) for i in range(N_ + 1)] + [(x1, bot), (coast_x, bot)]
+    d.polygon(poly, fill=slot.get("land", (198, 184, 160)))
+    d.line([(xs[i], Ey(els[i])) for i in range(N_ + 1)], fill=INK, width=7, joint="curve")
+    d.line([(coast_x, base), (x1, base)], fill=INK, width=4)   # sea level, carried across the land
+    lblf = font("display_bold", 60); qa.size("sea_label", 60)
+    d.text(((x0 + coast_x) / 2, (base + bot) / 2 + 6), "Sea", font=lblf, fill=INK, anchor="mm")
+    d.text((x1 - 16, base + 52), "Sea level", font=lblf, fill=INK, anchor="rm")
+    # the sites: vines on the slope, a flag above, a leader between
+    flag_w, flag_h = 480, 178
+    sf = font("display_bold", 64); lf = font("display_bold", 60)
+    qa.size("flag_title", 64); qa.size("flag_sub", 60)
+    placed_flags = []
+    for elev, xf, title, sub, col in slot["sites"]:
+        if xf is None:
+            xf = next(prof[0][0] + (1 - prof[0][0]) * i / N_ for i in range(N_ + 1) if els[i] >= elev)
+        sx = x0 + Wd * xf
+        sy = Ey(elev_at(xf) if elev else els[int((xf - prof[0][0]) / (1 - prof[0][0]) * N_)])
+        for k in range(-3, 4):                              # a row of vines along the slope
+            vx = sx + k * 26
+            vi = max(0, min(N_, int((vx - x0) / Wd * N_ - prof[0][0] * N_ / (1 - prof[0][0]) * 0)))
+            vi = min(N_, max(0, int(((vx - x0) / Wd - prof[0][0]) / (1 - prof[0][0]) * N_)))
+            vy = Ey(els[vi])
+            d.line([(vx, vy), (vx, vy - 30)], fill=slot.get("vine", (86, 104, 70)), width=7)
+            d.ellipse([vx - 11, vy - 40, vx + 11, vy - 18], fill=slot.get("vine", (86, 104, 70)))
+        # a flag sits on the open-sky side (left of a rising slope, so it never covers terrain ahead); the baseline flag is centered.
+        # Flags never overlap: a new one is lifted until it clears the earlier ones.
+        fcx = sx if elev == 0 else sx + 70 - flag_w / 2
+        fcx = min(max(fcx, x0 + flag_w / 2), x1 - flag_w / 2)
+        fb = sy - 60
+        while any(not (fcx + flag_w / 2 + 12 <= r[0] or fcx - flag_w / 2 - 12 >= r[2] or fb <= r[1] - 12 or fb - flag_h >= r[3] + 12) for r in placed_flags):
+            fb -= 8
+        if fb - flag_h < top - 12:
+            raise ValueError(f"cross_section: the flag for '{title}' runs above the diagram; raise elev_max")
+        placed_flags.append((fcx - flag_w / 2, fb - flag_h, fcx + flag_w / 2, fb))
+        fg = best_text_color(col)
+        lx = min(max(sx, fcx - flag_w / 2 + 40), fcx + flag_w / 2 - 40)
+        d.line([(lx, fb), (sx, sy - 44)], fill=INK, width=6)
+        d.rounded_rectangle([fcx - flag_w / 2, fb - flag_h, fcx + flag_w / 2, fb], radius=18, fill=col, outline=INK, width=5)
+        d.text((fcx, fb - flag_h + 54), title, font=sf, fill=fg, anchor="mm")
+        d.text((fcx, fb - 52), sub, font=lf, fill=fg, anchor="mm")
+    # the zones strip
+    zf = font("display_bold", 60); qa.size("zone", 60)
+    for za, zb, label, zc in slot["zones"]:
+        ax, bx = x0 + Wd * za, x0 + Wd * zb
+        d.rounded_rectangle([ax + 3, strip_y0, bx - 3, strip_y0 + strip_h], radius=14, fill=zc)
+        d.text(((ax + bx) / 2, strip_y0 + strip_h / 2 + 2), label, font=zf, fill=best_text_color(zc), anchor="mm")
+    qa.box("cross_section", (M, zone_top, W - M, zone_bot))
+    return _finish(img, d, qa, slide_no, total)
+
+
 def chart_stack(slot, slide_no, total, pal):
     """M23 CHART STACK -- one or two stacked data graphics under a one-line
     headline and standfirst.
@@ -3338,7 +3444,7 @@ def tile_grid(slot, slide_no, total, pal):
 
 NEW_MODULES = dict(
     cover_bleed=cover_bleed, region_map=region_map, blades=blades,
-    stair_ladder=stair_ladder, thermometer=thermometer, factor_wheel=factor_wheel, chart_stack=chart_stack, rail_rings=rail_rings,
+    stair_ladder=stair_ladder, thermometer=thermometer, factor_wheel=factor_wheel, cross_section=cross_section, chart_stack=chart_stack, rail_rings=rail_rings,
     hero_facts=hero_facts, tile_grid=tile_grid,
 )
 

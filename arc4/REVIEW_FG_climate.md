@@ -4,7 +4,7 @@ Files: `arc4/render_fg_climate.py` (the deck), `arc4/prepare_climate_maps.py` (t
 Output: `/home/claude/out_fg_climate/` (13 PNGs at 2160x2700 and `FG_Climate_review.pdf`).
 
 ## What was checked
-- **Layouts:** 15 distinct layouts in 15 slides; five led by a graphic (the Factor wheel, world map, altitude charts, thermometer, climate bands).
+- **Layouts:** 15 distinct layouts in 15 slides; five led by a graphic (the Factor wheel, world map, altitude cross-section, thermometer, climate bands).
 - **Layout QA harness:** every slide passes (it caught and forced fixes for a staircase side-note, a legend overflow on the Hermitage
   slide, and two map-label collisions).
 - **Text legibility** (`engine/text_audit.py`): 116 text groups, 0 below threshold (paper text on the first slate blue measured 4.04:1;
@@ -37,11 +37,14 @@ winter freeze, wakes at 10, flowers above 17, works 18-33, sets fruit 26-32, ext
 "can damage the vine" (the staircase version said "kill"). The layout raises an error if any note overflows its box.
 
 ## Engine changes (all default-preserving)
-0. `thermometer`: a new layout (nothing else uses it).
+0. `thermometer`, `factor_wheel`, `cross_section` and the icons (`engine/icons.py`): new layouts and helpers (nothing else uses them).
 1. `stat_wall`: an optional `famous_label` slot (the strip was hard-labeled "FAMOUS NAMES").
 2. `chart_stack`: an empty second legend label now draws only the solid key (it drew an empty hatched swatch).
 
 ## Things to know
-- The altitude bars are scaled so the longest (18°C) is the full width; all three stay proportional.
+- Slide 4 (Factor 2, altitude) is a cross-section of an IMAGINARY region (new engine layout `cross_section`, M29): a seaside plain, gradual slopes, then steep slopes, with
+  flagged vineyards at 0, 500, 1,000, 2,000 and 3,000 m, each marked "cooler" than the seaside baseline by D1's 0.6°C per 100 m (3.0, 6.0, 12.0, 18.0°C: our arithmetic, labeled).
+  It replaced a bar chart whose bars grew with altitude while meaning "cooler" (Steve's note). Salta's real range (D1, about 1,280 to 3,000 m) is in the footnote.
+  The layout keeps all text at 60 px or more and never lets two flags overlap.
 - The Hermitage slide (now slide 5) uses a color photo, "Tain - Chapelle et vignoble" by Véronique Pagnier (public domain; the file says "Chapelle et vignes à Tain l'Hermitage, Drôme"), cropped to the hill and chapel, replacing the black-and-white postcard (Steve's request). It has four callouts: the photo does not say which way each slope faces, so nothing points at a slope and calls it shaded. The layout has no credit slot, so the credit is in the caption.
 - Open for later: a sixth piece could use D1 3.2 Water (500 mm cool, 750 mm warm minimums) and 3.3 Nutrients, which this deck leaves out.
