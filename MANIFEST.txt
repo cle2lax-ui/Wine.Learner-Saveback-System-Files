@@ -69,6 +69,7 @@ arc3/sample_fg_classic_palette.py
 arc4/ARC4_CLIMATE_PLAN.md
 arc4/CAPTION_FG_climate.md
 arc4/REVIEW_FG_climate.md
+arc4/brevity_count.py
 arc4/prepare_climate_maps.py
 arc4/render_fg_climate.py
 archive/CHANGELOG_fffa_v4.md

@@ -16,7 +16,7 @@ from shapely.ops import unary_union
 HERE = os.path.dirname(os.path.abspath(__file__))
 GEO = os.path.join(HERE, "..", "data", "geo", "ne_110m_land.geojson")
 URL = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_land.geojson"
-LON0, LON1, LAT_TOP, LAT_BOT, STD = -150.0, 180.0, 72.0, -56.0, 45.0
+LON0, LON1, LAT_TOP, LAT_BOT, STD = -140.0, 180.0, 72.0, -56.0, 50.0
 KX = math.cos(math.radians(STD))
 SPAN_X, SPAN_Y = (LON1 - LON0) * KX, LAT_TOP - LAT_BOT
 ASPECT = SPAN_X / SPAN_Y

@@ -49,3 +49,47 @@ winter freeze, wakes at 10, flowers above 17, works 18-33, sets fruit 26-32, ext
   The layout keeps all text at 60 px or more and never lets two flags overlap.
 - The Hermitage slide (now slide 5) uses a color photo, "Tain - Chapelle et vignoble" by Véronique Pagnier (public domain; the file says "Chapelle et vignes à Tain l'Hermitage, Drôme"), cropped to the hill and chapel, replacing the black-and-white postcard (Steve's request). It has four callouts: the photo does not say which way each slope faces, so nothing points at a slope and calls it shaded. The layout has no credit slot, so the credit is in the caption.
 - Open for later: a sixth piece could use D1 3.2 Water (500 mm cool, 750 mm warm minimums) and 3.3 Nutrients, which this deck leaves out.
+
+
+---
+
+# Round 2: the four-designer review and the brevity pass (run before locking; Steve asked whether they had been run, and they had not)
+
+Every slide was rendered and viewed in four review sheets, then re-viewed after the fixes.
+
+## Brevity pass
+Counted EVERY visible word per slide with `arc4/brevity_count.py` (new; merges letter-spaced text, drops duplicate blocks, leaves out only
+READ MORE, page numbers and photo credits). Before: 1,032 words, EIGHT slides over the 70-word budget (3: 76, 4: 87, 7: 81, 9: 75, 10: 88,
+11: 104, 14: 106, 15: 108). After: 827, none over (largest: slide 5 at 69). Mendocino: 561; Mosel: 725.
+
+## Anna Wintour (claims, each checked against the D1 text)
+- Slide 6: "it is the water" overstated D1 (the Gulf Stream is "at least partially" the cause). Now: "Ocean currents help explain the gap."
+- Slide 10: "A big range helps" / "A small range helps" became "often helps" / "may help" (D1: "often thought to be favourable", "may be favourable").
+- Slide 5, chip C: "count most" became "count for more" (D1: importance "increases at high latitudes").
+- Slide 3: "often too cool" became "cooler temperatures" (D1's wording).
+- Slide 15: "later-ripening, drought-tolerant varieties like Garnacha" implied Garnacha is later-ripening; D1 says only drought-tolerant. Split into two sentences.
+- Checked, no change: Bordeaux 2013/2016 (every detail matches), mist and fog, the Wachau, chalk, the winds, the WSET bands in F.
+
+## Coco Chanel (every figure once; cut what repeats)
+- 0.6 C per 100 m was on slides 4 and 15: kept on 4. Willamette 15.9 C and Margaux 17.7 C were on slides 6 and 12: kept on 6 (slide 12 keeps the names).
+  Stellenbosch was on slides 5 and 15: kept on 5.
+- Cut: slide 3's pale latitude-line names (the bands already say 30-50); slide 4's axis labels and "Sea" (the flags carry the heights);
+  slide 7's standfirst (repeated the headline); slide 9's "dense mist is fog"; slide 11's second F column and its wordy standfirst;
+  slide 12's second example per climate pattern; slide 14's Picked-early and Result rows folded into two rows per year; slide 15's repeated footnote clauses.
+
+## Jony Ive (craft)
+- Slide 3: the latitude-line names were tiny, pale italic and collided with "Mendoza" and "South Africa": removed. "N. France, Germany" ran over
+  the Scandinavian coast, then (after a first move) over the Gulf of Mexico: now on the open Russian plain, clear of every outline. The layout QA caught one
+  collision on the way (it is why the label is where it is).
+- Slide 12: the "Three Patterns" strip sat on the footer (no clearance). One example per pattern now keeps it to one line, and cell height is capped.
+- Slide 15: the long title clipped silently (the headline helper never checked width): feature_trio now takes a line break and raises on any line too wide.
+
+## Massimo Vignelli (grid)
+- Slide 5: the legend ended two-thirds down. The hero photo grew (1,160 to 1,480 px); the four chips were re-placed on the hillside.
+- Slide 3: the map was short for its page. Window and standard parallel adjusted (aspect 1.607): about 14 percent taller.
+- Slide 12: with only four stats the cells stretched; capped at 650 px so the strip rises off the footer.
+- Noted, not changed: slide 12's 2x2 cells still leave open paper inside each cell (the layout has no smaller-type setting).
+
+## Engine changes (all default-preserving; regress 42/42, Reel frames 26/26)
+`spotlight` optional `hero_h`; `stat_wall` optional `cell_max`; `cross_section` accepts empty `ticks` and `sea_label=None`; `feature_trio` takes a
+line break in its headline and checks width; the map window and standard parallel are set in `prepare_climate_maps.py`.

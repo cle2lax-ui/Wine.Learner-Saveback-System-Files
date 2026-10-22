@@ -912,6 +912,8 @@ def stat_wall(slot, slide_no, total, pal):
     rows = (len(stats) + 1) // 2
     famous_reserve = 230 if slot.get("famous") else 0
     cell_h = (CONTENT_BOTTOM - y - 20 - famous_reserve) // rows
+    if slot.get("cell_max"):                                  # optional cap: with few stats the cells would otherwise stretch and push the strip onto the footer
+        cell_h = min(cell_h, slot["cell_max"])
     nf = font("display_bold", 150); lf = font("body_bold", 76)
     df = font("body", 64)
     qa.size("stat_num", 150, headline=True); qa.size("stat_label", 76); qa.size("stat_note", 64)
@@ -2051,7 +2053,7 @@ def spotlight(slot, slide_no, total, pal):
     """slots: photo(hero), kicker, headline, callouts[(nx, ny, letter, title, note)x3-6]
     Lettered chips on the hero; legend column below."""
     img, d, qa = _start("M13 spotlight", slide_no, total, pal)
-    hero_h = 1160
+    hero_h = slot.get("hero_h", 1160)
     img.paste(cover_fit(load_photo(slot["photo"]), W, hero_h), (0, 0))
     d = ImageDraw.Draw(img)
     chip_f = font("body_bold", FLOOR)
@@ -3169,7 +3171,8 @@ def cross_section(slot, slide_no, total, pal):
         d.line([(x0 - 14, yy), (x1, yy)], fill=ch["track"], width=3)
         lab = f"{t:,}"
         d.text((x0 - 26 - text_w(d, lab, tf), yy - (ta + td_) / 2), lab, font=tf, fill=INK)
-    d.text((M, top - 4), "m", font=tf, fill=INK)
+    if slot["ticks"]:
+        d.text((M, top - 4), "m", font=tf, fill=INK)
     # the sea, then the land
     d.rectangle([x0, base, coast_x, bot], fill=slot.get("sea", (150, 180, 200)))
     for i in range(0, int(coast_x - x0), 60):
@@ -3179,7 +3182,8 @@ def cross_section(slot, slide_no, total, pal):
     d.line([(xs[i], Ey(els[i])) for i in range(N_ + 1)], fill=INK, width=7, joint="curve")
     d.line([(coast_x, base), (x1, base)], fill=INK, width=4)   # sea level, carried across the land
     lblf = font("display_bold", 60); qa.size("sea_label", 60)
-    d.text(((x0 + coast_x) / 2, (base + bot) / 2 + 6), "Sea", font=lblf, fill=INK, anchor="mm")
+    if slot.get("sea_label", "Sea"):
+        d.text(((x0 + coast_x) / 2, (base + bot) / 2 + 6), slot.get("sea_label", "Sea"), font=lblf, fill=INK, anchor="mm")
     d.text((x1 - 16, base + 52), "Sea level", font=lblf, fill=INK, anchor="rm")
     # the sites: vines on the slope, a flag above, a leader between
     flag_w, flag_h = 480, 178
