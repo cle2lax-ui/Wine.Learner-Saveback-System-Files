@@ -221,6 +221,10 @@ photos/cl_etna_passopisciaro.jpg
 photos/cl_finger_lakes_sunrise.jpg
 photos/cl_grenache_old_vines.jpg
 photos/cl_haut_medoc.jpg
+photos/cl_hermitage_chapelle_mouton.jpg
+photos/cl_hermitage_chapelle_pagnie.jpg
+photos/cl_hermitage_hill_crop.jpg
+photos/cl_hermitage_rhone_pagnie.jpg
 photos/cl_margaux_cabernet_mallen.jpg
 photos/cl_margaux_mallen.jpg
 photos/cl_mendoza_vineyard.jpg

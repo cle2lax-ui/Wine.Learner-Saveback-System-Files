@@ -34,7 +34,7 @@ NOT USED (D1 gives none): numeric Winkler (growing degree day) bands.
 PHOTOS (location from each Commons file's own title; the sunset and the fog photo carry no place claim): cover, Zach Dischner (CC BY
   2.0); Bordeaux vines and Margaux, Megan Mallen (CC BY 2.0); Willamette, Sheila Sund (CC BY 2.0); Mendoza, Justin De La Ornellas;
   Etna, Neil Weightman; Haut-Medoc, Jonas Roux; Trepail (Champagne), Havang(nl) (CC0); Finger Lakes sunrise, Visit Finger Lakes
-  (CC BY 2.0); Grenache, Stephan Ridgway; Cafayate, aaepstein; Chianti, Matthew Hutchinson (all CC BY 2.0); Hermitage postcard, Mediatheques Valence Romans agglomeration (no restrictions); fog, Mick Haupt (Pexels).
+  (CC BY 2.0); Grenache, Stephan Ridgway; Cafayate, aaepstein; Chianti, Matthew Hutchinson (all CC BY 2.0); Hermitage hill, Veronique Pagnier (public domain, cropped to the hill and chapel); fog, Mick Haupt (Pexels).
 """
 import glob
 import os
@@ -146,14 +146,16 @@ SLIDES = [
                              ("3,000 m", 100, "18\u00b0C", "focus", True)]),
     )),
 
-    # 5 -- FACTOR 3, SLOPE AND ASPECT: D1 p.28. The Hermitage hill (the postcard); callouts placed against a render.
-    ("spotlight", dict(_factor=("aspect", 3), 
-        photo="nr_hermitage_hill", kicker="FACTOR 3 \u00b7 SLOPE AND ASPECT", headline="Face the Sun",
-        callouts=[(0.46, 0.40, "A", "The sun side", "Slopes facing the sun get more radiation."),
-                  (0.58, 0.30, "B", "Hermitage", "A southerly aspect gives Syrah extra ripeness."),
-                  (0.38, 0.55, "C", "Low sun, steep slope", "At high latitude, aspect and slope count most."),
-                  (0.80, 0.42, "D", "Away from the sun", "In warm regions it keeps acidity: Stellenbosch whites."),
-                  (0.20, 0.60, "E", "Slope or flat", "Burgundy and Alsace grand crus: south-east slopes.")],
+    # 5 -- FACTOR 3, SLOPE AND ASPECT: D1 p.28. The Hermitage hill in color (Steve: not the black-and-white postcard). "Tain - Chapelle et
+    # vignoble" by Veronique Pagnier, public domain; the file's own description: "Chapelle et vignes a Tain l'Hermitage, Drome". The layout has no
+    # credit slot, so the credit is in the caption. Four callouts only: the photo does not say which way each slope faces, so nothing here points
+    # at a slope and calls it shaded.
+    ("spotlight", dict(_factor=("aspect", 3),
+        photo="cl_hermitage_hill_crop", kicker="FACTOR 3 \u00b7 SLOPE AND ASPECT", headline="Face the Sun",
+        callouts=[(0.62, 0.58, "A", "The sun side", "Slopes facing the sun get more radiation. Warm regions pick shade-facing slopes for acidity, as in Stellenbosch."),
+                  (0.34, 0.50, "B", "Hermitage", "A southerly aspect gives Syrah extra ripeness."),
+                  (0.12, 0.66, "C", "Low sun, steep slope", "At high latitude, aspect and slope count most."),
+                  (0.90, 0.80, "D", "Slope over flat", "Burgundy and Alsace grand crus sit on south-east slopes, not the flat.")],
     )),
 
     # 6 -- FACTOR 4, WATER: D1 p.30. The hero comparison.

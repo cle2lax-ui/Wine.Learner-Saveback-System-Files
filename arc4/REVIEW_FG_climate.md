@@ -43,5 +43,5 @@ winter freeze, wakes at 10, flowers above 17, works 18-33, sets fruit 26-32, ext
 
 ## Things to know
 - The altitude bars are scaled so the longest (18°C) is the full width; all three stay proportional.
-- The Hermitage slide uses the 1900s postcard of the hill (the Arc 1 photo); the layout has no credit slot, so it is credited in the caption.
+- The Hermitage slide (now slide 5) uses a color photo, "Tain - Chapelle et vignoble" by Véronique Pagnier (public domain; the file says "Chapelle et vignes à Tain l'Hermitage, Drôme"), cropped to the hill and chapel, replacing the black-and-white postcard (Steve's request). It has four callouts: the photo does not say which way each slope faces, so nothing points at a slope and calls it shaded. The layout has no credit slot, so the credit is in the caption.
 - Open for later: a sixth piece could use D1 3.2 Water (500 mm cool, 750 mm warm minimums) and 3.3 Nutrients, which this deck leaves out.

@@ -940,5 +940,29 @@
   "slot": "cl_cafayate_aaepstein",
   "credit": "aaepstein / Wikimedia Commons (CC BY 2.0)",
   "local_path": "/home/claude/repo/photos/cl_cafayate_aaepstein.jpg"
+ },
+ {
+  "title": "File:Tain - Chapelle et vignoble.jpg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/1/17/Tain_-_Chapelle_et_vignoble.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "width": 4000,
+  "height": 1613,
+  "author": "V\u00e9ronique PAGNIER",
+  "license": "Public domain",
+  "description": "Chapelle et vignes \u00e0 Tain l'Hermitage, Drome",
+  "slot": "cl_hermitage_chapelle_pagnie",
+  "credit": "V\u00e9ronique PAGNIER / Wikimedia Commons (Public domain)",
+  "local_path": "/home/claude/repo/photos/cl_hermitage_chapelle_pagnie.jpg"
+ },
+ {
+  "title": "File:Tain - Chapelle et vignoble.jpg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/1/17/Tain_-_Chapelle_et_vignoble.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "width": 4000,
+  "height": 1613,
+  "author": "V\u00e9ronique PAGNIER",
+  "license": "Public domain",
+  "description": "Chapelle et vignes \u00e0 Tain l'Hermitage, Drome (cropped to the hill and chapel; the original is slot cl_hermitage_chapelle_pagnie)",
+  "slot": "cl_hermitage_hill_crop",
+  "credit": "V\u00e9ronique PAGNIER / Wikimedia Commons (Public domain)",
+  "local_path": "/home/claude/repo/photos/cl_hermitage_hill_crop.jpg"
  }
 ]
