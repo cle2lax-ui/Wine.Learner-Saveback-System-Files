@@ -64,7 +64,7 @@ READ MORE, page numbers and photo credits). Before: 1,032 words, EIGHT slides ov
 
 ## Anna Wintour (claims, each checked against the D1 text)
 - Slide 6: "it is the water" overstated D1 (the Gulf Stream is "at least partially" the cause). Now: "Ocean currents help explain the gap."
-- Slide 10: "A big range helps" / "A small range helps" became "often helps" / "may help" (D1: "often thought to be favourable", "may be favourable").
+- Slide 10: "A big range helps" / "A small range helps" became "often helps" / "may help" (D1: "often thought to be favorable", "may be favorable").
 - Slide 5, chip C: "count most" became "count for more" (D1: importance "increases at high latitudes").
 - Slide 3: "often too cool" became "cooler temperatures" (D1's wording).
 - Slide 15: "later-ripening, drought-tolerant varieties like Garnacha" implied Garnacha is later-ripening; D1 says only drought-tolerant. Split into two sentences.
