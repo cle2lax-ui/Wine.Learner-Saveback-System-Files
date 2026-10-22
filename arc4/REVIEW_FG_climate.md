@@ -1,10 +1,10 @@
-# Review: The Field Guide: Climate ("Climate's Impact on Wine") -- 14 slides, built, awaiting Steve's review
+# Review: The Field Guide: Climate ("Climate's Impact on Wine") -- 15 slides, built, awaiting Steve's review
 
 Files: `arc4/render_fg_climate.py` (the deck), `arc4/prepare_climate_maps.py` (the world map), `arc4/CAPTION_FG_climate.md`.
 Output: `/home/claude/out_fg_climate/` (13 PNGs at 2160x2700 and `FG_Climate_review.pdf`).
 
 ## What was checked
-- **Layouts:** 14 distinct layouts in 14 slides; four led by a graphic (thermometer, world map, altitude charts, climate bands).
+- **Layouts:** 15 distinct layouts in 15 slides; five led by a graphic (the Factor wheel, world map, altitude charts, thermometer, climate bands).
 - **Layout QA harness:** every slide passes (it caught and forced fixes for a staircase side-note, a legend overflow on the Hermitage
   slide, and two map-label collisions).
 - **Text legibility** (`engine/text_audit.py`): 116 text groups, 0 below threshold (paper text on the first slate blue measured 4.04:1;
@@ -16,7 +16,14 @@ Output: `/home/claude/out_fg_climate/` (13 PNGs at 2160x2700 and `FG_Climate_rev
   Bordeaux autumn, Epernay, Mendoza banner), so every photo can also go in the Reel. Locations come from each file's own title; the sunset
   and the fog photo carry no place claim.
 
-## Slide 4 (Steve's request): a page on climate change and how the wine world adjusts
+## Restructure (Steve, Oct 21): Factors, a wheel, icons, a climate-change section
+- "Dials" became "Factors" everywhere. New slide 2, the **Factor wheel** (new engine layout `factor_wheel`, M28): a hub with the seven Factors around it, each
+  with a code-drawn icon (`engine/icons.py`) and a number. Slides 3-9 are the seven Factors in that order, right after the wheel, each carrying its icon and number as a
+  badge (top right). Then the day-night gap, the vine's thermometer, naming the climate, and the closing slide "When a Factor Moves", which now leads into the
+  last two slides, labeled **A Few Words on Climate Change** (climate vs weather, then the three ways growers adapt).
+- The thermometer moved from slide 2 to slide 11 (the Factors must follow the wheel directly). The closing slide sits before the climate-change pair, as the lead-in.
+
+## Slide 4 (Steve's request, now slide 15): a page on climate change and how the wine world adjusts
 New, right after slide 3 (`feature_trio`): three columns, new grapes / new sites / new aspects, with the long-term shift as the footnote. All WSET:
 D1 p.44-46 (rising temperatures; later-ripening varieties may be preferable; once-too-cold regions may improve), D1 (Garnacha, drought-tolerant),
 D1 p.27-28 (0.6 C per 100 m; shade-facing slopes, Stellenbosch), D3 p.347 (Rioja: high-altitude vineyards more desirable), D3 p.269 (Tuscany: higher
@@ -37,5 +44,4 @@ winter freeze, wakes at 10, flowers above 17, works 18-33, sets fruit 26-32, ext
 ## Things to know
 - The altitude bars are scaled so the longest (18°C) is the full width; all three stay proportional.
 - The Hermitage slide uses the 1900s postcard of the hill (the Arc 1 photo); the layout has no credit slot, so it is credited in the caption.
-- The benchmark asks for five graphic-led slides; this deck has four. A fifth (a diurnal-range graphic) would need numbers D1 does not give.
 - Open for later: a sixth piece could use D1 3.2 Water (500 mm cool, 750 mm warm minimums) and 3.3 Nutrients, which this deck leaves out.

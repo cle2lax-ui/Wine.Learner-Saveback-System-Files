@@ -1,14 +1,14 @@
 # Caption: The Field Guide: Climate ("Climate's Impact on Wine") -- DRAFT for Steve's review
 
 **Hook (first line, under 125 characters):**
-Willamette and Margaux share a latitude, not a climate: 15.9°C vs 17.7°C. Seven dials explain why.
+Willamette and Margaux share a latitude, not a climate: 15.9°C vs 17.7°C. Seven Factors explain why.
 
 **Body:**
-Latitude, altitude, slope, water, wind, soil and fog: seven natural dials set a vineyard's climate. WSET sorts the result by
+Latitude, altitude, slope, water, wind, soil and fog: seven natural Factors set a vineyard's climate. WSET sorts the result by
 growing-season temperature, from cool (16.5°C or below) to hot (above 21°C). And when the climate shifts, growers adapt with
 new grapes, higher sites and cooler aspects.
 
-Which dial surprised you most? Tell us below.
+Which Factor surprised you most? Tell us below.
 
 Send this to whoever thinks wine climate is just about the sun.
 

@@ -140,6 +140,7 @@ data/nrhone_geo.json
 data/nrhone_locator.json
 engine/build.py
 engine/core.py
+engine/icons.py
 engine/map_atlas.py
 engine/modules.py
 engine/palette.py

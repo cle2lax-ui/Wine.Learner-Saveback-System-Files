@@ -3064,6 +3064,55 @@ def thermometer(slot, slide_no, total, pal):
     return _finish(img, d, qa, slide_no, total)
 
 
+
+def factor_wheel(slot, slide_no, total, pal):
+    """M28 FACTOR WHEEL -- a hub with its Factors around it, each a circle holding its icon, a number (the order the following
+    slides take them in) and a label, tied to the hub by a spoke. slots: kicker, headline(one line), standfirst, hub=(line1, line2),
+    nodes[(label, icon_key)] clockwise from the top (icon keys: see icons.KEYS). The icons are drawn in code (engine/icons.py)."""
+    import math
+    import icons
+    img, d, qa = _start("M28 factor_wheel", slide_no, total, pal)
+    y = kicker_block(d, slot["kicker"], pal, y=150); qa.size("kicker", 70)
+    y, hs = one_line_headline(d, slot["headline"], y, pal); qa.size("headline", hs, headline=True)
+    y = standfirst(d, (M, y + 8), slot["standfirst"], W - 2 * M, leading=1.14) + 40
+    qa.size("standfirst", TYPE["standfirst"])
+    nodes = slot["nodes"]; n = len(nodes)
+    zone_top, zone_bot = y, CONTENT_BOTTOM - 20
+    R, label_h = 150, 110
+    rx = 700
+    ry = int((zone_bot - zone_top - 2 * R - label_h - 10) / 1.95)
+    cx = W // 2
+    cy = int(zone_top + 5 + R + ry)
+    sig, gold = pal["SIGNATURE"], pal["ACCENT"]
+    hub_r = 230
+    pos = []
+    for k in range(n):
+        a = math.radians(-90 + k * 360 / n)
+        pos.append((cx + rx * math.cos(a), cy + ry * math.sin(a)))
+    for (px, py) in pos:                                    # spokes first, so the circles sit on top of them
+        ang = math.atan2(py - cy, px - cx)
+        d.line([(cx + hub_r * math.cos(ang), cy + hub_r * math.sin(ang)), (px - R * math.cos(ang), py - R * math.sin(ang))], fill=gold, width=10)
+    d.ellipse([cx - hub_r, cy - hub_r, cx + hub_r, cy + hub_r], fill=sig)
+    d.ellipse([cx - hub_r + 18, cy - hub_r + 18, cx + hub_r - 18, cy + hub_r - 18], outline=gold, width=6)
+    hf = font("display_bold", 62); qa.size("hub", 62)
+    l1, l2 = slot["hub"]
+    d.text((cx, cy - 36), l1, font=hf, fill=PAPER, anchor="mm")
+    d.text((cx, cy + 36), l2, font=hf, fill=PAPER, anchor="mm")
+    nf = font("display_bold", 50); lf = font("display_bold", 64); qa.size("node_label", 64)
+    for k, ((label, key), (px, py)) in enumerate(zip(nodes, pos)):
+        d.ellipse([px - R, py - R, px + R, py + R], fill=PAPER, outline=sig, width=12)
+        ic = icons.icon(key, int(R * 1.38), sig)
+        img.paste(ic, (int(px - ic.width / 2), int(py - ic.height / 2)), ic)
+        bx, by = px - R * 0.74, py - R * 0.74                 # the number badge
+        d.ellipse([bx - 40, by - 40, bx + 40, by + 40], fill=gold, outline=PAPER, width=5)
+        d.text((bx, by + 2), str(k + 1), font=nf, fill=INK, anchor="mm")
+        lw = d.textlength(label, font=lf)
+        d.rectangle([px - lw / 2 - 18, py + R + 14, px + lw / 2 + 18, py + R + 92], fill=PAPER)
+        d.text((px, py + R + 52), label, font=lf, fill=INK, anchor="mm")
+    qa.box("wheel", (M, zone_top, W - M, zone_bot))
+    return _finish(img, d, qa, slide_no, total)
+
+
 def chart_stack(slot, slide_no, total, pal):
     """M23 CHART STACK -- one or two stacked data graphics under a one-line
     headline and standfirst.
@@ -3289,7 +3338,7 @@ def tile_grid(slot, slide_no, total, pal):
 
 NEW_MODULES = dict(
     cover_bleed=cover_bleed, region_map=region_map, blades=blades,
-    stair_ladder=stair_ladder, thermometer=thermometer, chart_stack=chart_stack, rail_rings=rail_rings,
+    stair_ladder=stair_ladder, thermometer=thermometer, factor_wheel=factor_wheel, chart_stack=chart_stack, rail_rings=rail_rings,
     hero_facts=hero_facts, tile_grid=tile_grid,
 )
 

@@ -15,7 +15,7 @@ have their own structures.
 # Modules whose slide is LED by a data graphic, diagram or map (not a
 # photo band over running text). Extend when a new graphic module is added.
 GRAPHIC_MODULES = {
-    "atlas", "map_facsimile", "region_map", "ladder", "stair_ladder", "thermometer",
+    "atlas", "map_facsimile", "region_map", "ladder", "stair_ladder", "thermometer", "factor_wheel",
     "euler_nesting", "timeline", "process_map", "stat_wall",
     "chart_stack", "rail_rings",
 }
