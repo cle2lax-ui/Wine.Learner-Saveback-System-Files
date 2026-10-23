@@ -90,7 +90,7 @@ page()
 # =============================================================================== PAGE 3
 add(ExHeader("1.5", "LABEL", "A shoot at flowering", 6, mins=3, ref="Guide \u00a73\u20135"))
 add(instr("Label the six structures. One of them is the only part drawn in brown wood."))
-_shoot = A.Shoot(244)
+_shoot = A.Shoot(252)
 add(LabelFigure(_shoot, align="center"))
 K.add("1.5", "Label the shoot", [kp(label_key(_shoot))])
 

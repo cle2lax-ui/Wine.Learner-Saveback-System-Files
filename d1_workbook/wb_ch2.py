@@ -127,7 +127,7 @@ page()
 # =============================================================================== PAGE 4
 add(ExHeader("2.7", "LABEL", "A vine flower", 9, mins=4, ref="Guide \u00a75"))
 add(instr("Label the eight parts. The pollen tube is following a path \u2014 trace it before you label it."))
-_fl = A.Flower(370)
+_fl = A.Flower(300)
 add(LabelFigure(_fl, align="center"))
 add(LineFill("The anther and the filament together make up the", w=W, h=19))
 K.add("2.7", "A vine flower", [kp(label_key(_fl) + ".  Anther + filament = the <b>stamen</b>.")])
