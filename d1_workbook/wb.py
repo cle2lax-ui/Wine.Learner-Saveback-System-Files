@@ -28,6 +28,11 @@ from reportlab.platypus import (BaseDocTemplate, PageTemplate, Frame, Paragraph,
                                 TableStyle, KeepTogether, Flowable, PageBreak)
 
 W = FULL_W                      # 518 pt of usable width on every page
+PARITY = int(os.environ.get("WB_PARITY", "0"))   # 1 when this chapter starts on a left-hand (even) page of a bound book
+
+
+def _odd(n):
+    return (n + PARITY) % 2 == 1
 ANS = BURGUNDY                  # answers are always printed in the accent colour
 
 # ------------------------------------------------------------------ styles
@@ -64,7 +69,7 @@ def instr(text):
 def _page(canv, doc):
     canv.saveState()
     pno = doc.page
-    odd = pno % 2 == 1
+    odd = _odd(pno)
     cx = BIND if odd else OUTER
     canv.setFont("Serif", 8.4); canv.setFillColor(SLATE)
     canv.drawString(cx, TOP_Y + 7, doc._wb_title)
@@ -105,7 +110,7 @@ class _Doc(BaseDocTemplate):
     def handle_pageBegin(self):
         BaseDocTemplate.handle_pageBegin(self)
         nxt = self.page + 1
-        self.handle_nextPageTemplate(("k" if self._key_mode else "") + ("odd" if nxt % 2 == 1 else "even"))
+        self.handle_nextPageTemplate(("k" if self._key_mode else "") + ("odd" if _odd(nxt) else "even"))
 
     def afterFlowable(self, f):
         if isinstance(f, KeyMarker):
@@ -113,7 +118,7 @@ class _Doc(BaseDocTemplate):
             self._key_info = (f.chap, f.title, f.items)
             self._key_first = self.page + 1
             nxt = self.page + 1
-            self.handle_nextPageTemplate("k" + ("odd" if nxt % 2 == 1 else "even"))
+            self.handle_nextPageTemplate("k" + ("odd" if _odd(nxt) else "even"))
 
 
 def _page_key(canv, doc):
@@ -121,7 +126,7 @@ def _page_key(canv, doc):
     if doc.page != getattr(doc, "_key_first", -1):
         return
     chap, title, items = doc._key_info
-    odd = doc.page % 2 == 1
+    odd = _odd(doc.page)
     cx = BIND if odd else OUTER
     canv.saveState()
     canv.setFont("Sans-B", 7.2); canv.setFillColor(GOLD); tracked(canv, cx, TOP_Y - 11, "ANSWER KEY", 1.6)
@@ -143,7 +148,7 @@ def build_pdf(path, chap, title, story):
                title="D1 Workbook \u2014 Chapter %s" % chap, author="D1 Companion Workbook")
     doc._wb_title, doc._wb_chap = "D1 \u00b7 Chapter %s \u2014 %s \u00b7 Workbook" % (chap, title), chap
     tm = []
-    for tid, x in (("odd", BIND), ("even", OUTER)):
+    for tid, x in ((("even", OUTER), ("odd", BIND)) if PARITY else (("odd", BIND), ("even", OUTER))):
         fr = Frame(x, BOT_Y, W, TOP_Y - BOT_Y, id=tid, leftPadding=0, rightPadding=0,
                    topPadding=0, bottomPadding=0)
         tm.append(PageTemplate(id=tid, frames=[fr], onPage=_page))

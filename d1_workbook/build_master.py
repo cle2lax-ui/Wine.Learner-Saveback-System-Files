@@ -122,8 +122,8 @@ def draw_about(c, pageno):
         ("The drawings", "Illustrations are pen-and-ink studies made for this workbook. Where a drawing is used, you are asked to label, name or interpret it, and the answer key tells you what each part shows."),
         ("Glossary", "The glossary at the back covers the whole textbook, Chapters 1\u201321, with the chapter or chapters where each term is taught. The textbook itself has no glossary, "
                      "so these entries are compiled from it: use them for a quick check, and go back to the textbook for the exact wording."),
-        ("How the book is laid out", "Every chapter starts on a right-hand page so the punch-side margin stays correct if you print double-sided. Where a chapter ends on a right-hand page, a ruled "
-                                     "<b>Notes</b> page follows. Each page carries its chapter and page number (for example 7\u20093) at the foot, and a running page number for the whole book (p. 29, for example) beside it. "
+        ("How the book is laid out", "Chapters run back to back. The margins alternate from page to page, so the punch-side margin stays on the binding edge if you print double-sided. "
+                                     "Each page carries its chapter and page number (for example 7\u20093) at the foot, and a running page number for the whole book (p. 29, for example) beside it. "
                                      "In a PDF reader, use the bookmarks panel to jump to any chapter, its answer key, or a letter of the glossary."),
     ]
     bullet = _p("ab_bl", fontSize=10.0, leading=14.0, spaceAfter=2, leftIndent=14, bulletIndent=2, bulletFontName="Sans-B", bulletColor=BURGUNDY)
@@ -196,23 +196,6 @@ def band(c, cx, y, text):
     return y - 24
 
 
-# ====================================================================================== notes page
-def draw_notes(chap_prev):
-    def f(c, pageno):
-        cx = chrome(c, pageno, "D1 \u00b7 Notes", "Notes")
-        c.setFont("Sans-B", 7.2); c.setFillColor(GOLD); tracked(c, cx, TOP_Y - 14, "AFTER CHAPTER %d" % chap_prev, 1.6)
-        c.setFont("Serif-B", 22); c.setFillColor(BURGUNDY); c.drawString(cx, TOP_Y - 42, "Notes")
-        y = TOP_Y - 70
-        for head, nlines in (("The three facts I keep forgetting", 4), ("Questions to ask the textbook", 5), ("My own summary, in my own words", 14)):
-            c.setFont("Sans-B", 8.4); c.setFillColor(BURGUNDY); c.drawString(cx, y, head); y -= 7
-            c.setStrokeColor(FEINT); c.setLineWidth(0.5)
-            for i in range(nlines):
-                y -= 22
-                c.line(cx, y, cx + W, y)
-            y -= 20
-    return f
-
-
 # ====================================================================================== tracker
 def draw_tracker(c, pageno):
     cx = chrome(c, pageno, "D1 \u00b7 Spaced-review tracker", "Tracker")
@@ -249,9 +232,11 @@ def draw_tracker(c, pageno):
 
 # ====================================================================================== glossary
 class _GDoc(BaseDocTemplate):
+    start_page = 5
+
     def handle_pageBegin(self):
         BaseDocTemplate.handle_pageBegin(self)
-        self.handle_nextPageTemplate("godd" if (self.page + 1) % 2 == 1 else "geven")
+        self.handle_nextPageTemplate("godd" if (self.page + self.start_page) % 2 == 1 else "geven")
 
 
 class LetterHead(Flowable):
@@ -266,7 +251,7 @@ class LetterHead(Flowable):
         c.setStrokeColor(GOLD); c.setLineWidth(0.8); c.line(22, 12, self.width_ if hasattr(self, "width_") else 240, 12)
 
 
-def build_glossary(first_page_parity_odd=True):
+def build_glossary(start_page=5):
     ents = glossary_data.entries()
     buf = io.BytesIO()
     TOPG = TOP_Y - 8
@@ -279,19 +264,20 @@ def build_glossary(first_page_parity_odd=True):
                 Frame(cx + cw + gap, BOT_Y + 8, cw, top - (BOT_Y + 8), leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0, id="c2")]
 
     def page_cb(canv, doc):
-        chrome(canv, doc.page, "D1 \u00b7 Glossary of terms", "Glossary\u2009\u00b7\u2009%d" % doc.page)
+        chrome(canv, doc.page + start_page - 1, "D1 \u00b7 Glossary of terms", "Glossary\u2009\u00b7\u2009%d" % doc.page)
 
     def first_cb(canv, doc):
         page_cb(canv, doc)
-        cx = BIND
+        cx = BIND if start_page % 2 == 1 else OUTER
         canv.setFont("Sans-B", 7.2); canv.setFillColor(GOLD); tracked(canv, cx, TOP_Y - 14, "THE WHOLE TEXTBOOK, CHAPTERS 1\u201321", 1.6)
         canv.setFont("Serif-B", 26); canv.setFillColor(BURGUNDY); canv.drawString(cx, TOP_Y - 44, "Glossary of terms")
         canv.setFont("Sans", 8.4); canv.setFillColor(SLATE)
         canv.drawString(cx, TOP_Y - 60, "Compiled from the textbook. The number after each entry is the chapter or chapters where the term is taught.")
 
     doc = _GDoc(buf, pagesize=(PW, PH), leftMargin=0, rightMargin=0, topMargin=0, bottomMargin=0)
+    doc.start_page = start_page
     odd_f, even_f = frames(BIND, TOPG), frames(OUTER, TOPG)
-    first_f = frames(BIND, TOP_Y - 72)
+    first_f = frames(BIND if start_page % 2 == 1 else OUTER, TOP_Y - 72)
     doc.addPageTemplates([PageTemplate(id="gfirst", frames=first_f, onPage=first_cb),
                           PageTemplate(id="godd", frames=odd_f, onPage=page_cb),
                           PageTemplate(id="geven", frames=even_f, onPage=page_cb)])
@@ -357,24 +343,29 @@ def main():
     global PLAN, PLAN_ROWS, PTS
     readers = {}
     PTS = {}
+    import subprocess, shutil
+    tmpdir = "/tmp/master_chapters"
+    shutil.rmtree(tmpdir, ignore_errors=True); os.makedirs(tmpdir)
+    page = 5
     for n, title, fn in CHAPTERS:
-        r = PdfReader(os.path.join(OUT, "D1_Workbook_%s.pdf" % fn))
+        npg = len(PdfReader(os.path.join(OUT, "D1_Workbook_%s.pdf" % fn)).pages)
+        par = 0 if page % 2 == 1 else 1                 # a chapter that starts on a left-hand page gets mirrored margins
+        dst = os.path.join(tmpdir, "D1_Workbook_%s.pdf" % fn)
+        env = dict(os.environ, WB_PARITY=str(par))
+        subprocess.run([sys.executable, os.path.join(HERE, "wb_ch%d.py" % n), dst], check=True, env=env, stdout=subprocess.DEVNULL)
+        r = PdfReader(dst)
+        assert len(r.pages) == npg, (n, len(r.pages), npg)
         readers[n] = r
         PTS[n] = chapter_points(r)
-    # ---- the plan: where everything lands
+        page += npg
+    # ---- the plan: where everything lands (chapters run back to back; no filler pages)
     start = 5                                          # cover 1, about 2, contents 3-4
-    starts, notes_after = {}, []
-    page = start
+    starts, page = {}, start
     for n, title, fn in CHAPTERS:
-        assert page % 2 == 1
         starts[n] = page
         page += len(readers[n].pages)
-        if n < 21 and page % 2 == 0:                   # next chapter must start on a right-hand page
-            notes_after.append((n, page)); page += 1
-    if page % 2 == 0:                                  # glossary starts on a right-hand page
-        notes_after.append((21, page)); page += 1
     gloss_start = page
-    gl_bytes, letters = build_glossary()
+    gl_bytes, letters = build_glossary(gloss_start)
     gl_reader = PdfReader(io.BytesIO(gl_bytes))
     tracker_page = gloss_start + len(gl_reader.pages)
     total = tracker_page
@@ -391,13 +382,10 @@ def main():
     w.add_page(one_page(draw_about, 2))
     w.add_page(one_page(draw_toc(1), 3))
     w.add_page(one_page(draw_toc(2), 4))
-    notes_map = dict(notes_after)
     pno = 5
     for n, title, fn in CHAPTERS:
         for p in readers[n].pages:
             w.add_page(p); pno += 1
-        if n in notes_map and notes_map[n] == pno:
-            w.add_page(one_page(draw_notes(n), pno)); pno += 1
     assert pno == gloss_start, (pno, gloss_start)
     for p in gl_reader.pages:
         w.add_page(p); pno += 1
@@ -439,7 +427,7 @@ def main():
         w.write(fh)
     print("master: %d pages -> %s" % (total, out))
     print("chapter starts:", starts)
-    print("notes pages after chapters:", notes_after, "| glossary p.%d (%d pp) | tracker p.%d" % (gloss_start, len(gl_reader.pages), tracker_page))
+    print("glossary p.%d (%d pp) | tracker p.%d" % (gloss_start, len(gl_reader.pages), tracker_page))
     print("points:", PTS, "total", sum(PTS.values()))
 
 
