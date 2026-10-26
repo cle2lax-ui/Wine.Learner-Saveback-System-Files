@@ -28,7 +28,7 @@ ch.ex("SCALE", "Typical maturation", 4, "Write the typical length and storage te
 ch.page()
 
 # ============================================================ PAGE 2
-_bar = A2.Barrel(260)
+_bar = A2.Barrel(330)
 ch.ex("LABEL", "Anatomy of a barrel", 5,
       "Label the four parts. Then finish the sentence. <b>1 point per label, 1 for the sentence.</b>",
       [LabelFigure(_bar, align="center"),

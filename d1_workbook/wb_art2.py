@@ -2,6 +2,7 @@
 """More workbook artwork in the house style: irrigation (Ch6), frost protection and mildews (Ch8), California sprawl (Ch10),
 soil profile with a plough pan (Ch5)."""
 import math
+import random as _random
 import wb_ink as K
 alpha_ = K.alpha
 from wb_art import (Art, HEX, _ground, _post, _wire, _tie, _shoot_with_leaves, _steel, _steel_poly, STEEL_L, STEEL_M, STEEL_D, INK_S,
@@ -333,69 +334,146 @@ class SoilProfile(Art):
 
 
 # ===================================================================== oak barrel (Chapter 14)
+def _mix(a, b, f):
+    f = max(0.0, min(1.0, f))
+    return colors_.Color(a.red + (b.red - a.red) * f, a.green + (b.green - a.green) * f, a.blue + (b.blue - a.blue) * f)
+
+
 class Barrel(Art):
+    """An oak barrel lying on a cradle, in a true three-quarter view.
+    Every part comes from one cylinder projection: the bilge profile, curved stave seams, hoops that wrap the form,
+    the head with its chime, and the bung on the bilge."""
     name = "barrel"
     aspect = 0.5
+    vis = (0.03, 0.90)
+    PHI = math.radians(24)
 
-    def _h(self, x):                                   # half-height of the barrel at x
+    def _g(self):
         W, H = self.W, self.H
-        x0, x1 = 0.16 * W, 0.88 * W
-        u = (x - (x0 + x1) / 2.0) / ((x1 - x0) / 2.0)
-        return H * 0.215 + H * 0.085 * (1 - u * u)
+        return dict(cy=H * 0.50, sx=W * 0.17, L=W * 0.73, hc=H * 0.300, he=H * 0.222)
+
+    def _h(self, t):
+        g = self._g()
+        u = 2 * t - 1
+        return g["he"] + (g["hc"] - g["he"]) * (1 - u * u)
+
+    def _pt(self, t, th):
+        """Screen point on the barrel surface: t along the axis (0 head .. 1 far end), th around it (0 top, pi/2 front, pi bottom)."""
+        g = self._g()
+        h = self._h(t)
+        return (g["sx"] + g["L"] * t * math.cos(self.PHI) + h * math.sin(self.PHI) * math.sin(th), g["cy"] + h * math.cos(th))
+
+    def _seam(self, th, n=36):
+        return [self._pt(i / float(n), th) for i in range(n + 1)]
 
     def draw(self, c):
         W, H = self.W, self.H
-        cy = H * 0.52
-        x0, x1 = 0.16 * W, 0.88 * W
-        xs = [x0 + (x1 - x0) * i / 40.0 for i in range(41)]
-        for xc in (0.32 * W, 0.72 * W):                                      # cradle
-            p = K.path(c, [("M", xc - 26, 3), ("L", xc + 26, 3), ("L", xc + 14, cy - self._h(xc) + 6), ("L", xc - 14, cy - self._h(xc) + 6), ("Z",)])
-            K.fill_linear(c, p, xc - 26, 0, xc + 26, 0, [(0, K.WOOD_L), (0.5, K.WOOD_M), (1, K.WOOD_D)]); K.outline(c, p, K.INK_W, 1.1)
-        cmds = [("M", xs[0], cy + self._h(xs[0]))] + [("L", x, cy + self._h(x)) for x in xs[1:]] + \
-               [("L", x, cy - self._h(x)) for x in reversed(xs)] + [("Z",)]
-        body = K.path(c, cmds)
-        K.fill_linear(c, body, 0, cy + self._h(W / 2.0), 0, cy - self._h(W / 2.0),
-                      [(0, K.WOOD_L), (0.30, HEX("#B98E5E")), (0.62, K.WOOD_M), (1, K.WOOD_D)])
-        for f in (-0.78, -0.52, -0.26, 0.0, 0.26, 0.52, 0.78):               # stave seams
-            K.line(c, [(x, cy + f * self._h(x)) for x in xs], K.WOOD_D, 0.9, pen=False)
-        for k_, f in enumerate((-0.90, -0.65, -0.39, -0.13, 0.13, 0.39, 0.65, 0.90)):  # the grain inside each stave
-            for g_ in (-0.07, 0.0, 0.07):
-                x_a = x0 + (x1 - x0) * (0.05 + 0.12 * ((k_ * 3 + int(g_ * 40)) % 5) / 4.0)
-                x_b = x_a + (x1 - x0) * (0.30 + 0.2 * ((k_ + int(g_ * 30)) % 3) / 2.0)
-                seg = [(x, cy + (f + g_ + 0.012 * math.sin(x * 0.2 + k_)) * self._h(x)) for x in xs if x_a <= x <= x_b]
-                if len(seg) > 3:
-                    K.line(c, seg, alpha_(K.WOOD_D, 0.55), 0.3, pen=False, taper=True)
-        K.hatch(c, body, angle=-35, gap=2.3, col=K.WOOD_D, lw=0.3, depth=0.30, shadow=(0.25, -1.0), a=0.55)
-        for xh in (0.25 * W, 0.34 * W, 0.70 * W, 0.79 * W):                  # hoops
-            hp = K.path(c, [("M", xh - 4.5, cy + self._h(xh - 4.5) + 0.8), ("L", xh + 4.5, cy + self._h(xh + 4.5) + 0.8),
-                            ("L", xh + 4.5, cy - self._h(xh + 4.5) - 0.8), ("L", xh - 4.5, cy - self._h(xh - 4.5) - 0.8), ("Z",)])
-            K.fill_linear(c, hp, xh - 4.5, 0, xh + 4.5, 0, [(0, STEEL_M), (0.35, STEEL_L), (1, STEEL_D)]); K.outline(c, hp, INK_S, 0.9)
+        g = self._g()
+        cy, sx = g["cy"], g["sx"]
+        N = 15
+        ths = [math.pi * k / N for k in range(N + 1)]
+
+        # ground shadow
+        c.saveState(); c.setFillColor(K.alpha(HEX("#3A2A1A"), 0.20))
+        c.ellipse(sx - 4, 2.0, sx + g["L"] * math.cos(self.PHI) + 16, 12.0, stroke=0, fill=1)
+        c.restoreState()
+
+        # the cradle: two timber chocks whose saddle tops follow the barrel's underside
+        belly = self._seam(math.pi, 60)
+
+        def ybot(x):
+            for (x0_, y0_), (x1_, y1_) in zip(belly, belly[1:]):
+                if x0_ <= x <= x1_:
+                    return y0_ + (y1_ - y0_) * (x - x0_) / max(x1_ - x0_, 1e-6)
+            return belly[-1][1] if x > belly[-1][0] else belly[0][1]
+
+        for t_ in (0.20, 0.80):
+            xc = sx + g["L"] * t_ * math.cos(self.PHI)
+            foot = K.rrect(c, xc - 27, 3.5, 54, 7.0, 1.4)
+            K.fill_linear(c, foot, 0, 10.5, 0, 3.5, [(0, K.WOOD_L), (1, K.WOOD_D)]); K.outline(c, foot, K.INK_W, 1.1)
+            xs_ = [xc - 14 + 28 * i / 10.0 for i in range(11)]
+            top_ = [(x, ybot(x) + 2.2) for x in xs_]
+            wedge = K.poly(c, [(xc - 21, 10.5), (xc + 21, 10.5), (xc + 14, top_[-1][1] - 0.6)] + top_[::-1] + [(xc - 14, top_[0][1] - 0.6)])
+            K.fill_linear(c, wedge, xc - 21, 0, xc + 21, 0, [(0, K.WOOD_L), (0.5, K.WOOD_M), (1, K.WOOD_D)]); K.outline(c, wedge, K.INK_W, 1.1)
+            for gx in (-12, -5, 3, 10):
+                K.line(c, [(xc + gx, 12), (xc + gx * 0.75, ybot(xc + gx * 0.75) - 1.0)], alpha_(K.WOOD_D, 0.55), 0.3, pen=False, taper=True)
+
+        # staves: shaded bands that curve around the form, each with its own tone
+        rnd = _random.Random(14)
+        for k in range(N):
+            th_m = (ths[k] + ths[k + 1]) / 2.0
+            top_ = self._seam(ths[k]); bot_ = self._seam(ths[k + 1])
+            band = K.poly(c, top_ + bot_[::-1])
+            lit = 1.0 - th_m / math.pi                                  # 1 at the lit top, 0 at the shaded belly
+            base = _mix(K.WOOD_D, K.WOOD_L, 0.12 + 0.86 * lit ** 0.8)
+            base = _mix(base, HEX("#A97844") if rnd.random() < 0.5 else HEX("#C49A66"), 0.22 * rnd.random())
+            K.flat(c, band, base)
+            for gi in range(3):                                         # grain, following the stave
+                fth = ths[k] + (ths[k + 1] - ths[k]) * (0.2 + 0.3 * gi + 0.1 * rnd.random())
+                t0 = rnd.uniform(0.0, 0.55); t1 = min(1.0, t0 + rnd.uniform(0.25, 0.5))
+                seg = [self._pt(t0 + (t1 - t0) * i / 14.0, fth + 0.004 * math.sin(i * 1.3 + k)) for i in range(15)]
+                K.line(c, seg, alpha_(K.WOOD_D, 0.50), 0.3, pen=False, taper=True)
+        for th in ths[1:-1]:                                            # stave seams
+            K.line(c, self._seam(th), alpha_(HEX("#2A1A0C"), 0.80), 0.8, pen=False)
+
+        # body silhouette: top edge, far rim, bottom edge
+        n = 36
+        top_edge = self._seam(0.0, n)
+        bot_edge = self._seam(math.pi, n)
+        rim = [self._pt(1.0, math.pi * i / 16.0) for i in range(17)]
+        left_ = [self._pt(0.0, math.pi * (1 - i / 16.0)) for i in range(17)]
+        body = K.poly(c, top_edge + rim + bot_edge[::-1] + left_)
+        K.hatch(c, body, angle=-35, gap=2.2, col=K.WOOD_D, lw=0.3, depth=0.34, shadow=(0.25, -1.0), a=0.55)
+
+        # sheen along the lit shoulder
+        for i, (th, al) in enumerate(((0.42, 0.34), (0.58, 0.18))):
+            K.line(c, [self._pt(0.10 + 0.80 * j / 20.0, th) for j in range(21)], K.alpha(HEX("#FFF3DA"), al), 1.6 - 0.5 * i, pen=False, taper=True)
+
+        # hoops wrap the form: each is a band bounded by two circumferential arcs
+        for t_, dt in ((0.075, 0.020), (0.150, 0.015), (0.330, 0.021), (0.670, 0.021), (0.850, 0.015), (0.925, 0.020)):
+            ths_ = [math.pi * i / 22.0 for i in range(23)]
+            a0 = [self._pt(t_ - dt, th) for th in ths_]
+            a1 = [self._pt(t_ + dt, th) for th in ths_]
+            hp = K.poly(c, a0 + a1[::-1])
+            K.fill_linear(c, hp, 0, cy + self._h(t_), 0, cy - self._h(t_), [(0, STEEL_L), (0.38, HEX("#F4F6F8")), (0.55, STEEL_M), (1, STEEL_D)])
+            K.outline(c, hp, INK_S, 0.95)
+            K.line(c, [self._pt(t_ - dt * 0.35, th) for th in ths_[3:-4]], K.alpha(HEX("#FFFFFF"), 0.75), 0.6, pen=False)
+            for th in (math.pi * 0.30, math.pi * 0.55, math.pi * 0.80):
+                rx_, ry_ = self._pt(t_, th)
+                K.blob(c, rx_, ry_, 0.9, 0.9, 0, light=STEEL_L, mid=STEEL_M, dark=STEEL_D, ink=INK_S, lw=0.4)
+
         K.outline(c, body, K.INK_W, 1.4)
-        rx = 0.05 * W                                                       # the head (near end) and the far rim
-        ry = self._h(x0)
-        far = K.ellipse_path(c, x1, cy, rx * 0.35, ry * 0.98, 0)
-        K.fill_linear(c, far, x1, 0, x1 + rx * 0.4, 0, [(0, K.WOOD_M), (1, K.WOOD_D)]); K.outline(c, far, K.INK_W, 1.2)
-        head = K.ellipse_path(c, x0, cy, rx, ry, 0)
-        K.fill_radial(c, head, x0 - rx * 0.3, cy + ry * 0.3, ry * 1.5, [(0, HEX("#D8B685")), (0.6, K.WOOD_L), (1, K.WOOD_M)])
-        K.hatch(c, head, angle=60, gap=1.6, col=K.WOOD_D, lw=0.26, depth=0.4, a=0.5)
-        for f in (-0.55, -0.18, 0.18, 0.55):                                 # head boards
-            yy = ry * math.sqrt(max(0.0, 1 - f * f))
-            K.line(c, [(x0 + f * rx, cy - yy * 0.98), (x0 + f * rx, cy + yy * 0.98)], K.WOOD_D, 0.8)
-        K.outline(c, head, K.INK_W, 1.4)
-        ring = K.ellipse_path(c, x0, cy, rx * 0.78, ry * 0.86, 0)
-        K.outline(c, ring, K.WOOD_D, 0.9)
-        bx, by = W * 0.52, cy + self._h(W * 0.52) * 0.84                     # the bung
-        K.blob(c, bx, by, 9, 5.2, 0, light=HEX("#2A1B10"), mid=HEX("#1A100A"), dark=HEX("#0F0905"), ink=K.INK_W, lw=1.1)
-        K.blob(c, bx, by + 0.6, 6.4, 3.4, 0, light=HEX("#D2AC78"), mid=K.WOOD_L, dark=K.WOOD_M, ink=K.INK_W, lw=0.9)
+
+        # the head: chime rim, then the board disc
+        hx, hy = sx, cy
+        ry = g["he"]; rx = ry * math.sin(self.PHI)
+        chime = K.ellipse_path(c, hx, hy, rx + 1.9, ry + 1.5, 0)
+        K.fill_radial(c, chime, hx - rx * 0.4, hy + ry * 0.3, ry * 1.6, [(0, HEX("#C9A06C")), (1, K.WOOD_D)]); K.outline(c, chime, K.INK_W, 1.3)
+        disc = K.ellipse_path(c, hx, hy, rx * 0.93, ry * 0.93, 0)
+        K.fill_radial(c, disc, hx - rx * 0.35, hy + ry * 0.35, ry * 1.5, [(0, HEX("#E3C494")), (0.55, K.WOOD_L), (1, HEX("#AD8250"))])
+        K.hatch(c, disc, angle=60, gap=1.5, col=K.WOOD_D, lw=0.26, depth=0.40, a=0.5)
+        for f in (-0.55, -0.12, 0.30):                                   # head boards: parallel joints
+            yy = ry * 0.93 * math.sqrt(max(0.0, 1 - f * f))
+            K.line(c, [(hx + f * rx * 0.93, hy - yy * 0.97), (hx + f * rx * 0.93, hy + yy * 0.97)], alpha_(HEX("#2A1A0C"), 0.75), 0.7)
+        K.outline(c, disc, K.INK_W, 1.1)
+        ring = K.ellipse_path(c, hx, hy, rx * 0.74, ry * 0.76, 0)                      # the croze groove
+        K.outline(c, ring, alpha_(K.WOOD_D, 0.8), 0.6, pen=False)
+
+        # the bung, high on the bilge
+        bx, by = self._pt(0.50, math.radians(38))
+        hole = K.ellipse_path(c, bx, by, 6.6, 3.9, 8)
+        K.fill_radial(c, hole, bx, by, 8, [(0, HEX("#150C06")), (1, HEX("#2A1B10"))]); K.outline(c, hole, K.INK_W, 1.2)
+        plug = K.ellipse_path(c, bx, by + 0.9, 5.0, 2.9, 8)
+        K.fill_radial(c, plug, bx - 1.5, by + 1.8, 7, [(0, HEX("#E0BE8A")), (0.6, K.WOOD_L), (1, K.WOOD_M)]); K.outline(c, plug, K.INK_W, 0.9)
+        K.line(c, [(bx - 3.0, by + 1.6), (bx + 2.4, by + 2.2)], K.alpha(HEX("#FFFFFF"), 0.5), 0.6, pen=False)
 
     def _targets(self):
-        W, H = self.W, self.H
-        cy = H * 0.52
-        x0 = 0.16 * W
-        return [("Head", (x0 - 0.01 * W, cy + 3), "L"), ("Hoop", (0.25 * W, cy - self._h(0.25 * W) * 0.55), "L"),
-                ("Bung", (W * 0.52, cy + self._h(W * 0.52) * 0.84), "R"), ("Stave", (0.57 * W, cy - self._h(0.57 * W) * 0.35), "R")]
-
-    vis = (0.04, 0.98)
+        hx, hy = self._g()["sx"], self._g()["cy"]
+        rx = self._g()["he"] * math.sin(self.PHI)
+        hp = self._pt(0.150, math.radians(62))
+        bp = self._pt(0.50, math.radians(38))
+        sp = self._pt(0.58, math.radians(112))
+        return [("Head", (hx - rx * 0.30, hy - 2), "L"), ("Hoop", hp, "L"), ("Bung", bp, "R"), ("Stave", sp, "R")]
 
 
 # ===================================================================== bottle necks and closures (Chapter 15)
