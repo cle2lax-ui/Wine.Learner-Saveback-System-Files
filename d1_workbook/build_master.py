@@ -237,7 +237,8 @@ def draw_tracker(c, pageno):
         yy = y - 4 - (i + 1) * rh
         c.setStrokeColor(FEINT); c.setLineWidth(0.4); c.line(cx, yy, cx + W, yy)
         c.setFont("Serif-B", 12); c.setFillColor(BURGUNDY); c.drawString(xs[0] + 2, yy + 9, str(n))
-        short = title if len(title) <= 40 else (title[:38].rsplit(" ", 1)[0] + "\u2026")
+        short = {16: "White Winemaking", 17: "Wines with Residual Sugar", 18: "Red Winemaking", 19: "Ros\u00e9 Winemaking",
+                 20: "No- and Low-Alcohol Winemaking", 21: "Winemaking Choices by Style"}.get(n, title)
         c.setFont("Sans", 8.4); c.setFillColor(INK); c.drawString(xs[1] + 2, yy + 9.5, short)
         c.setFont("Sans", 8.0); c.setFillColor(SLATE); c.drawString(xs[2] + 22, yy + 9.5, "/ %s" % PTS.get(n, ""))
         c.setStrokeColor(INK); c.setLineWidth(0.5); c.line(xs[2] + 2, yy + 8, xs[2] + 20, yy + 8)
