@@ -69,20 +69,36 @@ _tf = [("Dealcoholization can rescue poor fruit.", False, "Quality is set before
        ("Diluting must with water is permitted in the EU.", False, "It is banned in the EU, though common in the US and Australia."),
        ("Removing alcohol can make underripe tannins more astringent.", True, ""),
        ("Reverse osmosis is the most common and most economical option for minor adjustments.", True, ""),
-       ("A \u2018dealcoholized\u2019 label needs the wine to have started full-strength and gone through a real removal process.", True, "")]
-ch.ex("DECIDE", "True or false \u2014 then fix it", 6,
+       ("A \u2018dealcoholized\u2019 label needs the wine to have started full-strength and gone through a real removal process.", True, ""),
+       ("Yield loss of 15\u201330% is one reason dealcoholizing adds cost.", True, ""),
+       ("Reverse osmosis is the most sustainable option.", False, "It wastes a lot of water: each pass removes up to 1.5% abv, so most adjustments need several passes.")]
+ch.ex("DECIDE", "True or false \u2014 then fix it", 8,
       "Circle T or F; correct any false statement. <b>1 point only if the call and the correction are both right.</b>",
       [TFItem(i + 1, t) for i, (t, v, fx) in enumerate(_tf)],
       numbered([(str(i + 1), ("<b><font color=\"%s\">T</font></b>" % hexc(ANS)) if v else
                  ("<b><font color=\"%s\">F</font></b> \u2014 %s" % (hexc(ANS), fx))) for i, (t, v, fx) in enumerate(_tf)]),
       mins=5, ref="1\u20134")
 
+ch.page()
+
+# ============================================================ PAGE 5
+_p13 = [("Cooler site", "Slows sugar accumulation, so lower potential alcohol"),
+        ("Less leaf area", "Less photosynthesis, so less sugar"),
+        ("Early harvest", "Less sugar, but unripe phenolics risk a poor balance, especially in reds"),
+        ("Interrupted fermentation", "Cooling stops it early: lower alcohol, but residual sugar and a need to stabilize"),
+        ("Non-Saccharomyces yeast", "Ferments less sugar into alcohol, alone or sequentially with S. cerevisiae"),
+        ("Reverse osmosis on the must", "Removes sugar before fermentation; may also strip color and volatile aroma")]
+_d13 = [4, 1, 5, 0, 3, 2]
+_l13 = [chr(65 + _d13.index(i)) for i in range(6)]
 _e = ["Volatile compounds such as terpenes and esters boil at temperatures similar to alcohol.",
       "They are often lost alongside it.",
       "At 0.0% abv alcohol and these compounds cannot be fully separated, so no method preserves them."]
 ch.ex("EXPLAIN", "Write like an examiner", 3, "The cause is physical, not a failing of one method.",
       explain("Explain why <b>0.0% abv wine always loses volatile aroma</b>, whichever method is used.", [], lines=3) + [Checklist(_e)],
       kp("1 mark each: volatiles boil near alcohol \u00b7 lost with it \u00b7 cannot be fully separated at 0.0%."), mins=4, ref="3")
+ch.ex("MATCH", "Levers before the still", 6, "Lower alcohol starts in the vineyard and the fermenter. Match each lever to its effect.",
+      match([p[0] for p in _p13], [_p13[i][1] for i in _d13], _l13),
+      pairs([(str(i + 1), _l13[i]) for i in range(6)], ncols=6, width=COLW), mins=4, ref="1\u20132")
 ch.page()
 
 # ============================================================ PAGE 5

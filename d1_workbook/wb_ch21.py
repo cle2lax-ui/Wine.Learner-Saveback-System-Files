@@ -84,6 +84,37 @@ ch.ex("DECIDE", "True or false \u2014 then fix it", 6,
 ch.page()
 
 # ============================================================ PAGE 5
+_p14 = [("Night or early transport", "Cool grapes resist oxidation and microbial spoilage, keeping the fruity style"),
+        ("Pneumatic press, flushed with inert gas", "Takes large loads cheaply and protects against oxidation"),
+        ("Flotation or centrifugation", "Fast clarification to a low-solids must, for a clean aromatic style and lower cost"),
+        ("No hyperoxidation", "It would strip the aromatic compounds the style depends on"),
+        ("Screwcap", "Low OTR, little cork-taint risk and cheap: suits a wine drunk young")]
+_d14 = [3, 0, 4, 2, 1]
+_l14 = [chr(65 + _d14.index(i)) for i in range(5)]
+ch.ex("MATCH", "Inexpensive aromatic white: the reasons", 5, "Match each choice to its reason.",
+      match([p[0] for p in _p14], [_p14[i][1] for i in _d14], _l14),
+      pairs([(str(i + 1), _l14[i]) for i in range(5)], ncols=5, width=COLW), mins=3, ref="1")
+
+_p15 = [("Whole-bunch press", "Less oxidation, low tannin and a smoother mouthfeel; slow and costly"),
+        ("Sedimentation, with some solids kept", "Adds aromatic complexity; may bring low reductive sulfur compounds and less fruit"),
+        ("Optional hyperoxidation", "Removes bitter compounds for a smoother, less oxidation-prone wine, at extra cost"),
+        ("Barrel fermentation", "Deeper color, fuller body, better oak integration, plus blending options"),
+        ("Moderate temperature, 17\u201325\u00b0C", "Retains fruit and avoids low-temperature esters (Pinot Gris to 20\u00b0C, barrel Chardonnay to 25\u00b0C)")]
+_d15 = [2, 4, 0, 3, 1]
+_l15 = [chr(65 + _d15.index(i)) for i in range(5)]
+ch.ex("MATCH", "Premium neutral white: the effects", 5, "Match each choice to its effect.",
+      match([p[0] for p in _p15], [_p15[i][1] for i in _d15], _l15),
+      pairs([(str(i + 1), _l15[i]) for i in range(5)], ncols=5, width=COLW), mins=3, ref="2")
+
+_r16 = ["Pneumatic press during or at the end of fermentation, to limit tannin", "At most 3\u20135 days of post-fermentation maceration, or none",
+        "Fermentation at about 30\u00b0C to promote extraction", "Longer maceration to polymerize tannins and build ageing potential",
+        "Metatartaric acid: quicker and cheaper than cold stabilization", "Glass only: impermeable to oxygen, so the wine can age"]
+_a16 = ["Inexpensive red", "Inexpensive red", "Premium red", "Premium red", "Inexpensive red", "Premium red"]
+ch.ex("TICK", "Inexpensive or premium red?", 6, "Tick the one style each statement describes.",
+      tickgrid(_r16, ["Inexp. red", "Prem. red"], label_w=340),
+      kp(" \u00b7 ".join("<b>%d</b> %s" % (i + 1, a) for i, a in enumerate(_a16))), mins=3, ref="3\u20134")
+ch.page()
+
 _e = ["Both cut cost and time.", "Machine harvest is cheaper for large vineyards, keeping the price low.",
       "Carbonic or heat extraction is fast, and does not tie up tanks in long macerations.", "Both serve the same aim: volume and speed."]
 ch.ex("EXPLAIN", "Write like an examiner", 3, "Give the choice <b>and</b> the reason. A choice alone earns little.",

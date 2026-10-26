@@ -58,13 +58,26 @@ _tf = [("Organic wine is always additive-free.", False,
         "Techniques are options, not requirements; some premium producers choose not to filter."),
        ("Sterile filtering of residual-sugar wines is usually desirable.", True, ""),
        ("Organic wine is always more expensive than conventional.", False,
-        "It sells at every price point; certification adds a small cost, and any premium depends on the market.")]
-ch.ex("DECIDE", "True or false \u2014 then fix it", 6,
+        "It sells at every price point; certification adds a small cost, and any premium depends on the market."),
+       ("France\u2019s Vin m\u00e9thode nature is the first nationally recognized certification for natural wine.", True, ""),
+       ("US Demeter-certified biodynamic wine may use any commercial yeast.", False,
+        "Natural yeasts must be used; certain commercial yeasts are allowed only for a stuck ferment, case by case.")]
+ch.ex("DECIDE", "True or false \u2014 then fix it", 8,
       "Circle T or F; correct any false statement. <b>1 point only if the call and the correction are both right.</b>",
       [TFItem(i + 1, t) for i, (t, v, fx) in enumerate(_tf)],
       numbered([(str(i + 1), ("<b><font color=\"%s\">T</font></b>" % hexc(ANS)) if v else
                  ("<b><font color=\"%s\">F</font></b> \u2014 %s" % (hexc(ANS), fx))) for i, (t, v, fx) in enumerate(_tf)]),
       mins=5, ref="1\u20134")
+
+_p12 = [("Conventional", "All styles, quality levels and prices; the options used depend on style, price, grape health and winemaker belief"),
+        ("Organic", "Sold at every price level; certification is a small cost, and any premium depends on the market"),
+        ("Biodynamic", "Typically mid-priced and above, usually small scale; certification adds a small cost"),
+        ("Natural", "Small batch, mid to premium; equipment savings offset by small-batch cost and any certification")]
+_d12 = [2, 3, 0, 1]
+_l12 = [chr(65 + _d12.index(i)) for i in range(4)]
+ch.ex("MATCH", "Price and scale by approach", 4, "Match each approach to where it sits in the market.",
+      match([p[0] for p in _p12], [_p12[i][1] for i in _d12], _l12),
+      pairs([(str(i + 1), _l12[i]) for i in range(4)], ncols=4, width=COLW), mins=3, ref="1\u20134")
 ch.page()
 
 # ============================================================ PAGE 4

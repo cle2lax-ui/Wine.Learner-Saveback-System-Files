@@ -303,6 +303,13 @@ Hygiene (winery) | Cleaning, sanitizing and controlling spoilage organisms; oak 
 Green manure | Cover crops mown and turned into the soil to decompose and feed it. | 6
 Slurry | Manure in semi-liquid form, used as an organic fertilizer. | 6
 MegaPurple | A grape-derived coloring agent that can deepen high-volume reds; banned in some regions. | 13
+Interrupted fermentation | Stopping alcoholic fermentation early by cooling, giving lower alcohol but residual sugar; the wine must then be stabilized. | 20
+Cold maceration (cold soak) | Chilling crushed grapes before fermentation to extract color with minimal tannin; costs energy and tank space. | 18, 21
+Metatartaric acid | An additive that keeps tartrate crystals from forming; quicker and cheaper than cold stabilization. | 15, 21
+Carboxymethylcellulose (CMC) | A stabilizer used against tartrate crystals; quicker and cheaper in energy than cold stabilization. | 15, 21
+Rectified concentrated grape must (RCGM) | A neutral sugar source added after dealcoholization to restore weight and mouthfeel. | 20
+Straddle machine | A vineyard machine that spans a trellised row, used for trimming and weed control despite tight spacing. | 10
+Cari\u00f1ena | A late-ripening, drought-tolerant black variety, widely planted in Priorat with Garnacha. | 10
 """.strip().split("\n")
 
 

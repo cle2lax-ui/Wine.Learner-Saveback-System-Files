@@ -162,31 +162,46 @@ def toc_row(c, cx, y, num, title, sub, page):
     return h_ + 24
 
 
-def draw_toc(part):
+def draw_toc(part=None):
+    """The whole contents on one page: one line per chapter, with exercise pages, key page and points."""
+    RH = 18.2
+
+    def row(c, cx, y, n, title, sub, pg):
+        c.setFont("Sans-B", 9.6); c.setFillColor(BURGUNDY); c.drawString(cx + 6, y - 12.4, str(n))
+        c.setFont("Sans", 10.0); c.setFillColor(INK); c.drawString(cx + 34, y - 12.4, title.replace("&amp;", "&"))
+        tw = c.stringWidth(title.replace("&amp;", "&"), "Sans", 10.0)
+        sw = c.stringWidth(sub, "Sans", 7.4)
+        sx = cx + W - 34 - sw
+        c.setFont("Sans", 7.4); c.setFillColor(SLATE); c.drawString(sx, y - 12.2, sub)
+        c.setDash(0.6, 2.2); c.setStrokeColor(colors.HexColor("#B9B1A0")); c.setLineWidth(0.5)
+        c.line(cx + 38 + tw, y - 13.2, sx - 6, y - 13.2); c.setDash(1, 0)
+        c.setFont("Sans-B", 10.2); c.setFillColor(BURGUNDY); c.drawRightString(cx + W, y - 12.4, str(pg))
+        return RH
+
+    def plain(c, cx, y, t, p):
+        c.setFont("Sans", 10.0); c.setFillColor(INK); c.drawString(cx + 34, y - 12.4, t)
+        c.setFont("Sans-B", 10.2); c.setFillColor(BURGUNDY); c.drawRightString(cx + W, y - 12.4, str(p))
+        return RH
+
     def f(c, pageno):
         cx = chrome(c, pageno, "D1 \u00b7 Contents", "Contents")
         y = TOP_Y - 14
         c.setFont("Sans-B", 7.2); c.setFillColor(GOLD); tracked(c, cx, y, "COMPANION WORKBOOK TO D1: WINE PRODUCTION", 1.6)
-        c.setFont("Serif-B", 26); c.setFillColor(BURGUNDY); c.drawString(cx, y - 32, "Contents" + ("" if part == 1 else " (continued)"))
-        yy = y - 56
-        if part == 1:
-            yy = band(c, cx, yy, "FRONT MATTER")
-            for (t, p) in (("About this workbook", 2), ):
-                c.setFont("Sans", 10.2); c.setFillColor(INK); c.drawString(cx + 34, yy - 12, t)
-                c.setFont("Sans-B", 10.5); c.setFillColor(BURGUNDY); c.drawRightString(cx + W, yy - 12, str(p)); yy -= 24
-            yy = band(c, cx, yy - 4, "PART ONE  \u00b7  VITICULTURE   (Chapters 1\u201310)")
-            for n, title, sub, pg in PLAN_ROWS[:10]:
-                yy -= toc_row(c, cx, yy, n, title, sub, pg)
-        else:
-            yy = band(c, cx, yy, "PART TWO  \u00b7  WINEMAKING   (Chapters 11\u201321)")
-            for n, title, sub, pg in PLAN_ROWS[10:]:
-                yy -= toc_row(c, cx, yy, n, title, sub, pg)
-            yy = band(c, cx, yy - 6, "BACK MATTER")
-            for (t, p) in (("Glossary of terms", PLAN["glossary"]), ("Spaced-review tracker", PLAN["tracker"])):
-                c.setFont("Sans", 10.2); c.setFillColor(INK); c.drawString(cx + 34, yy - 12, t)
-                c.setFont("Sans-B", 10.5); c.setFillColor(BURGUNDY); c.drawRightString(cx + W, yy - 12, str(p)); yy -= 24
-            c.setFont("Sans", 8.0); c.setFillColor(SLATE)
-            c.drawString(cx, BOT_Y + 6, "Page numbers are the running numbers (p. 29) at the foot of each page, left of the chapter label. Chapter 22 of the textbook is a reading list and has no workbook chapter.")
+        c.setFont("Serif-B", 26); c.setFillColor(BURGUNDY); c.drawString(cx, y - 32, "Contents")
+        yy = y - 54
+        yy = band(c, cx, yy, "FRONT MATTER")
+        yy -= plain(c, cx, yy, "About this workbook", 2)
+        yy = band(c, cx, yy - 4, "PART ONE  \u00b7  VITICULTURE   (Chapters 1\u201310)")
+        for n, title, sub, pg in PLAN_ROWS[:10]:
+            yy -= row(c, cx, yy, n, title, sub, pg)
+        yy = band(c, cx, yy - 4, "PART TWO  \u00b7  WINEMAKING   (Chapters 11\u201321)")
+        for n, title, sub, pg in PLAN_ROWS[10:]:
+            yy -= row(c, cx, yy, n, title, sub, pg)
+        yy = band(c, cx, yy - 4, "BACK MATTER")
+        yy -= plain(c, cx, yy, "Glossary of terms", PLAN["glossary"])
+        yy -= plain(c, cx, yy, "Spaced-review tracker", PLAN["tracker"])
+        c.setFont("Sans", 7.6); c.setFillColor(SLATE)
+        c.drawString(cx, BOT_Y + 6, "Page numbers are the running numbers (p. 29) at the foot of each page. Chapter 22 of the textbook is a reading list and has no workbook chapter.")
     return f
 
 
@@ -346,7 +361,7 @@ def main():
     import subprocess, shutil
     tmpdir = "/tmp/master_chapters"
     shutil.rmtree(tmpdir, ignore_errors=True); os.makedirs(tmpdir)
-    page = 5
+    page = 4
     for n, title, fn in CHAPTERS:
         npg = len(PdfReader(os.path.join(OUT, "D1_Workbook_%s.pdf" % fn)).pages)
         par = 0 if page % 2 == 1 else 1                 # a chapter that starts on a left-hand page gets mirrored margins
@@ -359,7 +374,7 @@ def main():
         PTS[n] = chapter_points(r)
         page += npg
     # ---- the plan: where everything lands (chapters run back to back; no filler pages)
-    start = 5                                          # cover 1, about 2, contents 3-4
+    start = 4                                          # cover 1, about 2, contents 3
     starts, page = {}, start
     for n, title, fn in CHAPTERS:
         starts[n] = page
@@ -375,14 +390,13 @@ def main():
         npg = len(readers[n].pages)
         s = starts[n]
         PLAN_ROWS.append((n, title.replace("&", "&amp;"),
-                          "Exercises pp. %d\u2013%d  \u00b7  Answer key p. %d  \u00b7  %d points" % (s, s + npg - 2, s + npg - 1, PTS[n]), s))
+                          "pp. %d\u2013%d  \u00b7  key p. %d  \u00b7  %d pts" % (s, s + npg - 2, s + npg - 1, PTS[n]), s))
     # ---- write the master
     w = PdfWriter()
     w.add_page(one_page(draw_cover, 1))
     w.add_page(one_page(draw_about, 2))
-    w.add_page(one_page(draw_toc(1), 3))
-    w.add_page(one_page(draw_toc(2), 4))
-    pno = 5
+    w.add_page(one_page(draw_toc(), 3))
+    pno = 4
     for n, title, fn in CHAPTERS:
         for p in readers[n].pages:
             w.add_page(p); pno += 1

@@ -59,6 +59,15 @@ ch.ex("NAME", "Whose vine is it?", 4,
       [WordBank(_bank, ncols=4), PanelFigure([A.TrellisSH(120), A.TrellisBush(120), A2.TrellisSprawl(120), A.TrellisVSP(120)], gap=10)],
       kp("<b>1</b> Finger Lakes (Scott-Henry splits a vigorous canopy) \u00b7 <b>2</b> Priorat (bush vines, low vigor) \u00b7 "
          "<b>3</b> Central Valley (California sprawl, cheap) \u00b7 <b>4</b> Pauillac (VSP, dense plantings)."), mins=3, ref="1\u20134")
+_r11 = ["Dry, warm conditions keep disease pressure low", "Stony slate and quartz soils, low in nutrients", "Regular monitoring for downy mildew and botrytis, with preventive spraying",
+        "Black grapes planted closest to the lakes (e.g. Cabernet Franc)", "Several Riesling clones planted for blending options",
+        "Night picking so fruit is cool in transport", "Straddle machines trim and weed despite tight rows", "Late-ripening, drought-tolerant Garnacha and Cari\u00f1ena"]
+_a11 = ["Priorat", "Priorat", "Pauillac", "Finger Lakes", "Finger Lakes", "Central Valley", "Pauillac", "Priorat"]
+ch.ex("TICK", "Soils, disease and vineyard routine", 8, "Tick the one region each statement describes.",
+      tickgrid(_r11, ["Priorat", "Pauillac", "Finger Lakes", "Central Valley"], label_w=270),
+      kp(" \u00b7 ".join("<b>%d</b> %s" % (k + 1, a) for k, a in enumerate(_a11))), mins=3, ref="1\u20134")
+ch.page()
+
 
 _p5 = [("Pauillac: dense", "Rain removes vine-to-vine competition, and land is expensive"),
        ("Priorat: sparse", "Roots must range widely for scarce water and nutrients"),
@@ -70,7 +79,6 @@ ch.ex("MATCH", "Density follows the scarce resource", 4,
       "Three regions plant sparsely, for three different reasons. Match each choice to its reason.",
       match([p[0] for p in _p5], [_p5[i][1] for i in _d5], _l5),
       pairs([(str(i + 1), _l5[i]) for i in range(4)], ncols=4, width=COLW), mins=3, ref="2\u20134")
-ch.page()
 
 # ============================================================ PAGE 3
 _cw = cached_crossword(10)
@@ -78,6 +86,7 @@ _nw = len(_cw["clues"]["A"]) + len(_cw["clues"]["D"])
 ch.ex("CROSSWORD", "Chapters 8\u201310 vocabulary", _nw, "One point per word. Answers are single words, no spaces.",
       crossword_block(_cw, key=False, cell=16.0), crossword_answers(_cw), mins=6, ref="1\u20134")
 
+ch.page()
 _tf = [("Priorat\u2019s best vineyards face south-west to capture the most heat.", False,
         "They face north-east, to escape the worst afternoon heat."),
        ("Low vigor is a viticultural failure in Priorat.", False,
@@ -94,7 +103,6 @@ ch.ex("DECIDE", "True or false \u2014 then fix it", 6,
       numbered([(str(i + 1), ("<b><font color=\"%s\">T</font></b>" % hexc(ANS)) if v else
                  ("<b><font color=\"%s\">F</font></b> \u2014 %s" % (hexc(ANS), fx))) for i, (t, v, fx) in enumerate(_tf)]),
       mins=5, ref="1\u20134")
-ch.page()
 
 # ============================================================ PAGE 4
 _e = ["Priorat\u2019s scarcity gives very low yields (15\u201325 hl/ha) and heavy hand labor, so only premium or super-premium prices work.",
@@ -105,6 +113,7 @@ ch.ex("EXPLAIN", "Write like an examiner", 3, "Compare on one axis, and tie it t
       kp("1 mark each: Priorat low yield \u2192 premium price \u00b7 Central Valley high yield \u2192 low price \u00b7 neither works with the other\u2019s yield."),
       mins=5, ref="1, 4")
 
+ch.page()
 _mc = [("The main variety of the Finger Lakes, winter-hardy and late-budding, is:", ["Cabernet Franc", "Riesling", "Garnacha", "Merlot"]),
        ("Which profile fits Priorat?", ["VSP, 10,000 vines/ha, machine harvest", "Bush vines, hand harvest, 15\u201325 hl/ha",
                                           "Scott-Henry, 180\u2013200 hl/ha", "California sprawl, irrigated"]),
