@@ -63,7 +63,8 @@ def one_page(draw, pageno):
 
 
 def _bold(t):
-    return t.replace("<b>", '<font name="Sans-B">').replace("</b>", "</font>")
+    """Emphasis in the book's accent colour (the sans fonts here do not differ in weight)."""
+    return t.replace("<b>", '<font color="%s">' % hexc(BURGUNDY)).replace("</b>", "</font>")
 
 
 def para(c, text, style, x, y_top, width):
