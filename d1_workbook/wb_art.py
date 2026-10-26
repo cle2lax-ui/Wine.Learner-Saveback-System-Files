@@ -74,13 +74,16 @@ class Grape(Art):
         # skin
         skin = K.ellipse_path(c, cx, cy, R, ry)
         K.fill_radial(c, skin, cx - 0.35 * R, cy + 0.40 * ry, 1.7 * R, [(0, K.BERRY_L), (0.45, K.BERRY_M), (1, K.BERRY_D)])
+        K.hatch(c, skin, angle=-40, gap=1.5, col=K.INK_P, lw=0.3, depth=0.30, a=0.65)
         K.outline(c, skin, K.INK_P, 1.7)
         # pulp
         pulp = K.ellipse_path(c, cx, cy, R * 0.855, ry * 0.855)
         K.fill_radial(c, pulp, cx - 0.2 * R, cy + 0.25 * ry, 1.05 * R, [(0, HEX("#FBF5E2")), (0.6, HEX("#EDE0BC")), (1, HEX("#D6C397"))])
+        K.stipple(c, pulp, n=260, col=HEX("#9A8660"), r=0.36, seed=5, a=0.5)
+        K.hatch(c, pulp, angle=-40, gap=1.7, col=HEX("#8C7A52"), lw=0.25, depth=0.30, a=0.55)
         K.outline(c, pulp, HEX("#8C7A52"), 0.9)
         # vascular "brush" and cell walls
-        c.saveState(); c.setStrokeColor(colors_alpha(HEX("#B9A472"), 0.55)); c.setLineWidth(0.6); c.setLineCap(1)
+        c.saveState(); c.setStrokeColor(colors_alpha(HEX("#A8935E"), 0.75)); c.setLineWidth(0.6); c.setLineCap(1)
         for i in range(18):
             a = math.radians(i * 20 + 5)
             c.line(cx + R * 0.30 * math.cos(a), cy + ry * 0.30 * math.sin(a), cx + R * 0.80 * math.cos(a), cy + ry * 0.80 * math.sin(a))
@@ -513,6 +516,9 @@ class Flower(Art):
 
 
 # ===================================================================== trellis systems (Chapter 7)
+import random as _rnd
+
+
 def _ground(c, W):
     g = K.path(c, [("M", 0, 0), ("L", W, 0), ("L", W, 9), ("L", 0, 9), ("Z",)])
     K.fill_linear(c, g, 0, 9, 0, 0, [(0, K.SOIL_L), (1, HEX("#C4AB7D"))])
@@ -524,12 +530,92 @@ def _ground(c, W):
             K.line(c, [(i + 6 + d_, 9), (i + 6 + d_ * 2.0, 12.4 + (i % 3))], HEX("#4E7A3A"), 0.6)
 
 
-def _post(c, x, y0, y1, w=4.2):
-    K.tube(c, [(x, y0), (x, y1)], w, w, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.0, hi=0.5, shade=0.4)
+def _post(c, x, y0, y1, w=4.6):
+    """A treated timber post: straight, squared, weathered, with a flat cap. (The vine must never look like this.)"""
+    K.tube(c, [(x, y0), (x, y1)], w, w, HEX("#9A7B52"), light=HEX("#C9AE86"), dark=HEX("#5E4626"), ink=K.INK_W, lw=1.0, hi=0.5, shade=0.4, grain=True)
+    cap = K.rrect(c, x - w / 2.0 - 0.6, y1 - 1.2, w + 1.2, 2.6, 0.8)
+    K.fill_linear(c, cap, 0, y1 + 1.4, 0, y1 - 1.2, [(0, HEX("#B9A07A")), (1, HEX("#6E5632"))]); K.outline(c, cap, K.INK_W, 0.7)
 
 
 def _wire(c, x0, x1, y):
     K.line(c, [(x0, y), (x1, y)], HEX("#4A4A4A"), 0.8)
+
+
+# ---- vine wood: gnarled, tapering, never ruler-straight -------------------------------------------------------------
+BARK_L, BARK_M, BARK_D = HEX("#A9825A"), HEX("#7A5836"), HEX("#4A331C")
+SPUR_L, SPUR_M = HEX("#E2C08C"), HEX("#B98C58")
+
+
+def vine_trunk(c, x, y0, y1, w, seed=0, lean=0.0):
+    """A trunk that twists, flares at the base, tapers, swells and carries pruning scars. Returns its centre-line."""
+    rnd = _rnd.Random(seed * 7 + 3)
+    n = 30
+    ph = rnd.uniform(0, 6.28)
+    cen, wid = [], []
+    for i in range(n):
+        t = i / float(n - 1)
+        xx = x + lean * t + w * 0.34 * math.sin(t * 4.6 + ph) + w * 0.12 * math.sin(t * 11.0 + ph * 1.7)
+        yy = y0 + (y1 - y0) * t
+        flare = 1.0 + 0.62 * math.exp(-t * 8.5)
+        swell = 1.0 + 0.10 * math.sin(t * 12.0 + ph) + 0.05 * math.sin(t * 27.0 + ph)
+        cen.append((xx, yy)); wid.append(w * (1.0 - 0.20 * t) * flare * swell)
+    K.tube(c, cen, wid, None, BARK_M, light=BARK_L, dark=BARK_D, ink=K.INK_W, lw=1.25, hi=0.5, shade=0.45, grain=True)
+    for f in (0.30, 0.55, 0.78):                                            # old pruning scars and burls
+        i = int(f * (n - 1))
+        sd = 1 if (i + seed) % 2 else -1
+        px, py = cen[i][0] + sd * wid[i] * 0.34, cen[i][1]
+        for rr in (1.9, 1.2, 0.6):
+            kp = K.ellipse_path(c, px, py, rr * 1.35, rr * 1.7, 12)
+            K.outline(c, kp, K.alpha(BARK_D, 0.95), 0.4, pen=False)
+    return cen, wid
+
+
+def vine_head(c, x, y, w, seed=0):
+    """The swollen knuckle where the trunk divides into cordons."""
+    rnd = _rnd.Random(seed + 11)
+    sh = K.ellipse_path(c, x, y, w * 0.78, w * 0.56, rnd.uniform(-8, 8))
+    K.fill_radial(c, sh, x - w * 0.25, y + w * 0.2, w * 1.4, [(0, BARK_L), (0.55, BARK_M), (1, BARK_D)])
+    K.hatch(c, sh, angle=60, gap=1.3, col=BARK_D, lw=0.26, depth=0.45, a=0.6)
+    K.outline(c, sh, K.INK_W, 1.2)
+    for k in range(3):
+        K.line(c, [(x - w * 0.5 + k * w * 0.32, y - w * 0.3), (x - w * 0.45 + k * w * 0.32 + 0.8, y + w * 0.28)], alpha_ink(), 0.4, pen=False)
+
+
+def alpha_ink():
+    return K.alpha(BARK_D, 0.85)
+
+
+def vine_cordon(c, hx, hy, sgn, length, w, seed=0, arch=2.0, droop=0.0, spurs=True, spur_gap=None):
+    """A cordon: leaves the head thick, thins toward its tip, undulates, and carries short spurs.
+    Returns the list of (x, y) tops of its spurs (where shoots spring from)."""
+    rnd = _rnd.Random(seed * 13 + 5)
+    m = 22
+    ph = rnd.uniform(0, 6.28)
+    cen, wid = [], []
+    for i in range(m):
+        t = i / float(m - 1)
+        xx = hx + sgn * length * t
+        yy = hy + arch * math.sin(t * math.pi * 0.85) * (1.0 - 0.3 * t) - droop * t * t + w * 0.16 * math.sin(t * 8.5 + ph)
+        cen.append((xx, yy)); wid.append(w * (1.0 - 0.52 * t ** 0.9) * (1.0 + 0.08 * math.sin(t * 17 + ph)))
+    K.tube(c, cen, wid, None, BARK_M, light=BARK_L, dark=BARK_D, ink=K.INK_W, lw=1.1, hi=0.5, shade=0.45, grain=True)
+    tops = []
+    if spurs:
+        gap = spur_gap or max(9.0, w * 2.6)
+        k = 0.17
+        while k < 0.97:
+            i = int(k * (m - 1))
+            x, y = cen[i]
+            tw = max(wid[i] * 0.62, 2.4)
+            lean = rnd.uniform(-1.2, 1.2)
+            sp = [(x, y + wid[i] * 0.32), (x + lean * 0.5, y + wid[i] * 0.32 + 3.0), (x + lean, y + wid[i] * 0.32 + 6.5)]
+            K.tube(c, sp, tw, tw * 0.85, SPUR_M, light=SPUR_L, dark=BARK_M, ink=K.INK_W, lw=0.8, hi=0.5, grain=False)
+            tops.append((x + lean, y + wid[i] * 0.32 + 6.5))
+            k += gap / max(length, 1.0)
+    return tops, cen
+
+
+def _tie(c, x, y):
+    K.line(c, [(x - 1.8, y - 2.2), (x, y + 0.4), (x + 1.8, y - 2.2)], HEX("#5E4626"), 0.9, pen=False)
 
 
 def _shoot_with_leaves(c, ctr, leaves_at, R=5.6, lw=0.6):
@@ -549,18 +635,23 @@ class TrellisBush(Art):
         W, H = self.W, self.H
         _ground(c, W)
         cx = W * 0.5
-        K.tube(c, [(cx, 8), (cx + 1, 30), (cx, 52)], 10, 8.5, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.3, hi=0.5, shade=0.4)
-        K.blob(c, cx, 54, 8, 6, 0, light=K.WOOD_L, mid=K.WOOD_M, dark=K.WOOD_D, ink=K.INK_W, lw=1.2)
-        K.bunch(c, cx - 14, 50, 13, 16)
-        K.bunch(c, cx + 15, 46, 13, 16)
-        for (ax, ay, ctrl, end) in ((cx - 7, 56, ((cx - 30, 92), (cx - 46, 96)), (cx - 46, 60)),
-                                     (cx + 7, 56, ((cx + 30, 92), (cx + 46, 96)), (cx + 46, 60)),
-                                     (cx, 58, ((cx - 6, 110), (cx + 14, 112)), (cx + 20, 84))):
-            ctr = K.bezier((ax, ay), ctrl[0], ctrl[1], end, n=22)
+        cen, wid = vine_trunk(c, cx, 8, 50, 10.5, seed=3, lean=2.0)
+        hx, hy = cen[-1]
+        arms = []
+        for (sgn, ln, up, sd) in ((-1, 21, 14, 1), (1, 22, 15, 2), (1, 8, 24, 3)):
+            pts = []
+            m = 16
+            for i in range(m):
+                t = i / float(m - 1)
+                pts.append((hx + sgn * ln * t * (1.0 if sd < 3 else 0.5), hy + 4 + up * t ** 0.8 + 1.4 * math.sin(t * 7 + sd)))
+            K.tube(c, pts, [5.6 * (1 - 0.5 * i / (m - 1)) + 0.8 for i in range(m)], None, BARK_M, light=BARK_L, dark=BARK_D, ink=K.INK_W, lw=1.0, hi=0.5, shade=0.45, grain=True)
+            arms.append(pts[-1])
+        vine_head(c, hx, hy + 2, 10.5, seed=2)
+        K.bunch(c, hx - 11, hy - 2, 13, 17, rows=(3, 3, 3, 2, 1), seed=1)
+        K.bunch(c, hx + 12, hy - 4, 13, 17, rows=(3, 3, 3, 2, 1), seed=2)
+        for (ax, ay), (ex, ey, sgn) in zip(arms, ((-30, 60, -1), (30, 60, 1), (10, 88, 1))):
+            ctr = K.bezier((ax, ay), (ax + ex * 0.35, ay + 30), (ax + ex * 0.9, ay + 34), (ax + ex, ay + ey * 0.0 - 20), n=22)
             _shoot_with_leaves(c, ctr, (0.18, 0.36, 0.54, 0.72, 0.9), R=6.8)
-
-    def _targets(self):
-        return []
 
 
 class TrellisVSP(Art):
@@ -574,17 +665,20 @@ class TrellisVSP(Art):
             _wire(c, 8, W - 8, y)
         _post(c, 8, 8, 130); _post(c, W - 8, 8, 130)
         cx = W * 0.5
-        K.tube(c, [(cx, 8), (cx, 46)], 7.5, 6.5, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.2, hi=0.5, shade=0.4)
-        K.tube(c, [(20, 47), (W - 20, 47)], 5.5, 5.0, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.1, hi=0.5, shade=0.4)
-        for x in (36, 74, 96):
-            K.line(c, [(x, 44), (x, 40)], K.INK_G, 1.0)
-            K.bunch(c, x, 40, 11, 14)
-        for i, x in enumerate((26, 38, 50, 70, 82, 94)):
-            ctr = [(x + 1.2 * math.sin(j / 4.0 + i), 50 + (120 - 50) * j / 18.0) for j in range(19)]
-            _shoot_with_leaves(c, ctr, (0.18, 0.40, 0.62, 0.84), R=5.4)
-
-    def _targets(self):
-        return []
+        cen, wid = vine_trunk(c, cx, 8, 44, 9.0, seed=5, lean=-1.5)
+        hx, hy = cen[-1]
+        tops = []
+        for sgn, ln, sd in ((-1, 38, 1), (1, 38, 2)):
+            t_, cc = vine_cordon(c, hx, 46.5, sgn, ln, 6.0, seed=sd, arch=1.0)
+            tops += t_
+            for (x, y) in cc[3::5]:
+                _tie(c, x, y + 3)
+        vine_head(c, hx, 46.5, 9.0, seed=4)
+        for i, (x, y) in enumerate(sorted(tops)):
+            ctr = [(x + 1.2 * math.sin(j / 4.0 + i), y + (122 - y) * j / 18.0) for j in range(19)]
+            _shoot_with_leaves(c, ctr, (0.16, 0.36, 0.58, 0.8), R=5.4)
+        for x in (36, 74, 94):
+            K.bunch(c, x, 41, 11, 14, rows=(3, 3, 2, 1))
 
 
 class TrellisGDC(Art):
@@ -595,20 +689,22 @@ class TrellisGDC(Art):
         W, H = self.W, self.H
         _ground(c, W)
         cx = W * 0.5
-        K.tube(c, [(cx, 8), (cx, 104)], 7.5, 6.5, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.2, hi=0.5, shade=0.4)
-        K.tube(c, [(16, 104), (W - 16, 104)], 4.5, 4.5, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.0, hi=0.5, shade=0.4)
+        _post(c, cx + 9, 8, 100, 5.4)                                              # the support post, separate from the vine
+        K.tube(c, [(16, 104), (W - 16, 104)], 4.4, 4.4, HEX("#9A7B52"), light=HEX("#C9AE86"), dark=HEX("#5E4626"), ink=K.INK_W, lw=1.0, hi=0.5, shade=0.4, grain=True)
+        cen, wid = vine_trunk(c, cx - 3, 8, 98, 9.0, seed=8, lean=2.0)
+        hx, hy = cen[-1]
+        for sgn, sd in ((-1, 1), (1, 2)):                                           # a cordon along each side of the cross-arm
+            _t, cc = vine_cordon(c, hx, 101.5, sgn, 44, 5.2, seed=sd, arch=1.2, droop=1.0, spurs=False)
+        vine_head(c, hx, 100, 8.0, seed=6)
         for x in (16, W - 16):
             K.blob(c, x, 104, 3.4, 3.4, 0, light=HEX("#C9CCCF"), mid=HEX("#8A8D90"), dark=HEX("#4A4A4A"), ink=HEX("#2A2A2A"), lw=0.9)
         for side in (-1, 1):
             base = 16 if side < 0 else W - 16
-            for i, dx in enumerate((-9, -3, 3, 9)):
-                x = base + dx
-                ctr = [(x + 1.2 * math.sin(j / 3.0 + i), 101 - (101 - 44) * j / 16.0) for j in range(17)]
+            for i, dx in enumerate((-10, -3.5, 3.5, 10)):
+                x = base + dx + side * 4
+                ctr = [(x + 1.2 * math.sin(j / 3.0 + i), 100 - (100 - 44) * j / 16.0) for j in range(17)]
                 _shoot_with_leaves(c, ctr, (0.15, 0.38, 0.62, 0.86), R=5.2)
             K.bunch(c, base + side * 2, 58, 10, 12)
-
-    def _targets(self):
-        return []
 
 
 class TrellisSH(Art):
@@ -622,19 +718,25 @@ class TrellisSH(Art):
             _wire(c, 8, W - 8, y)
         _post(c, 8, 8, 130); _post(c, W - 8, 8, 130)
         cx = W * 0.5
-        K.tube(c, [(cx, 8), (cx, 58)], 7.5, 6.5, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.2, hi=0.5, shade=0.4)
-        K.tube(c, [(20, 59), (W - 20, 59)], 5.5, 5.0, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.1, hi=0.5, shade=0.4)
-        for i, x in enumerate((32, 60, 88)):                            # upward shoots
-            ctr = [(x + 1.2 * math.sin(j / 4.0 + i), 62 + (123 - 62) * j / 16.0) for j in range(17)]
-            _shoot_with_leaves(c, ctr, (0.2, 0.45, 0.7, 0.92), R=5.4)
-        for i, x in enumerate((46, 74, 100)):                           # downward shoots
-            ctr = [(x + 1.2 * math.sin(j / 4.0 + i), 56 - (56 - 20) * j / 12.0) for j in range(13)]
-            _shoot_with_leaves(c, ctr, (0.25, 0.55, 0.85), R=5.0)
-        K.bunch(c, 40, 52, 10, 12)
-        K.bunch(c, 66, 52, 10, 12)
-
-    def _targets(self):
-        return []
+        cen, wid = vine_trunk(c, cx, 8, 54, 9.0, seed=9, lean=1.5)
+        hx, hy = cen[-1]
+        tops = []
+        for sgn, sd in ((-1, 1), (1, 2)):
+            t_, cc = vine_cordon(c, hx, 59.5, sgn, 38, 6.0, seed=sd + 3, arch=0.8)
+            tops += t_
+            for (x, y) in cc[3::5]:
+                _tie(c, x, y + 3)
+        vine_head(c, hx, 59.5, 9.0, seed=7)
+        tops = sorted(tops)
+        for i, (x, y) in enumerate(tops):
+            if i % 2 == 0:
+                ctr = [(x + 1.2 * math.sin(j / 4.0 + i), y + (123 - y) * j / 16.0) for j in range(17)]
+                _shoot_with_leaves(c, ctr, (0.2, 0.45, 0.7, 0.92), R=5.4)
+            else:
+                ctr = [(x + 1.2 * math.sin(j / 4.0 + i), 56 - (56 - 20) * j / 12.0) for j in range(13)]
+                _shoot_with_leaves(c, ctr, (0.25, 0.55, 0.85), R=5.0)
+        K.bunch(c, 40, 54, 10, 12)
+        K.bunch(c, 66, 54, 10, 12)
 
 
 # ===================================================================== presses (Chapter 13)

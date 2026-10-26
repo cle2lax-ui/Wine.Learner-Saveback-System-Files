@@ -30,15 +30,17 @@ ch.ex("TICK", "Vegan-suitable fining?", 6, "Dietary constraints decide the agent
 ch.page()
 
 # ============================================================ PAGE 2
-_p3 = [("Diatomaceous earth", "Vacuum draws wine through inert silica; oxidative unless gas-flushed; disposal cost"),
+_p3 = [("Sedimentation and racking", "Cool-cellar settling, then racking off the sediment; the number of rackings depends on container, volume and labor"),
+       ("Centrifugation", "Spins wine rapidly; can replace depth filtration and allow early bottling; high-volume wineries only"),
+       ("Diatomaceous earth", "Vacuum draws wine through inert silica; oxidative unless gas-flushed; disposal cost"),
        ("Sheet (pad)", "Wine passes through stacked filter sheets; needs a robust frame and trained operators"),
        ("Membrane (cartridge)", "Pores under 1 micron; the final pre-bottling step; slow; needs pre-filtering first"),
        ("Cross-flow", "Wine flows tangentially, self-cleaning; no consumables to buy, but an expensive machine")]
-_d3 = [2, 0, 3, 1]
-_l3 = [chr(65 + _d3.index(i)) for i in range(4)]
-ch.ex("MATCH", "Filtration: depth or surface", 4, "Depth filters are diatomaceous earth and sheet; surface filters are membrane and cross-flow. Match each.",
+_d3 = [4, 0, 5, 2, 1, 3]
+_l3 = [chr(65 + _d3.index(i)) for i in range(6)]
+ch.ex("MATCH", "Clarifying wine", 6, "Settling and spinning, then depth filters (diatomaceous earth, sheet) and surface filters (membrane, cross-flow). Match each.",
       match([p[0] for p in _p3], [_p3[i][1] for i in _d3], _l3),
-      pairs([(str(i + 1), _l3[i]) for i in range(4)], ncols=4, width=COLW), mins=3, ref="1")
+      pairs([(str(i + 1), _l3[i]) for i in range(6)], ncols=6, width=COLW), mins=4, ref="1")
 
 _p4 = [("Cold stabilization", "Hold at \u22124\u00b0C for about 8 days, then filter out the crystals"),
        ("Contact process", "Add potassium bitartrate crystals to seed faster crystallization"),
@@ -66,12 +68,13 @@ _p6 = [("Cloudiness", "Microbial growth with poor filtering, or a protein haze f
        ("Oxidation", "Excess oxygen in winemaking or in bottle: poor closure, faulty bottling"),
        ("Volatile acidity", "Acetic acid bacteria with low SO2 and oxygen exposure"),
        ("Light strike", "UV and visible light reacting with wine compounds: \u2018dirty drains\u2019"),
-       ("Brettanomyces", "A spoilage yeast, hard to eradicate once wood is infected")]
-_d6 = [5, 2, 7, 0, 3, 6, 1, 4]
-_l6 = [chr(65 + _d6.index(i)) for i in range(8)]
-ch.ex("MATCH", "Faults: the named mechanism", 8, "The exam wants the cause, not just the name. Match each fault to its cause.",
+       ("Brettanomyces", "A spoilage yeast, hard to eradicate once wood is infected"),
+       ("Reduction", "Sulfur compounds from stressed, low-nitrogen yeast, or from near-total oxygen exclusion in closed vessels or tight closures")]
+_d6 = [5, 2, 7, 0, 8, 3, 6, 1, 4]
+_l6 = [chr(65 + _d6.index(i)) for i in range(9)]
+ch.ex("MATCH", "Faults: the named mechanism", 9, "The exam wants the cause, not just the name. Match each fault to its cause.",
       match([p[0] for p in _p6], [_p6[i][1] for i in _d6], _l6),
-      pairs([(str(i + 1), _l6[i]) for i in range(8)], ncols=8, width=COLW), mins=4, ref="4")
+      pairs([(str(i + 1), _l6[i]) for i in range(9)], ncols=9, width=COLW), mins=4, ref="4")
 
 _arts = [A2.NeckScrewcap(100), A2.NeckCork(100), A2.NeckGlassStopper(100), A2.NeckSynthetic(100)]
 ch.ex("NAME", "Name the closure", 5,
@@ -135,11 +138,12 @@ _mc = [("Which agent removes unstable proteins that could cause haze in white an
        ("A natural cork carries which two real problems?", ["TCA taint and inconsistent OTR", "Low cost and high OTR", "Scalping and sulfites", "Weight and fragility"]),
        ("Bulk shipping\u2019s real cost is chiefly that it:", ["Raises carbon emissions", "Moves bottling jobs and relationships away from the producer\u2019s country",
                                                               "Shortens shelf life", "Is banned in the EU"]),
-       ("Light strike is best avoided with:", ["Clear glass and display lighting", "Dark (brown) glass and no display lighting", "A screwcap", "Sorbic acid"])]
+       ("HACCP differs from ISO certification in that it is:", ["Audited externally", "Run by the company itself, with no external audit",
+                                                                    "Only for retailers", "A consumer label"])]
 ch.ex("CHOOSE", "Multiple choice", 5, "Circle one answer. The live D1 paper is written \u2014 use these to find gaps.",
       [MCQ(i + 1, q, o) for i, (q, o) in enumerate(_mc)],
       numbered([("1", "<b>B</b> \u2014 bentonite"), ("2", "<b>B</b> \u2014 \u22124\u00b0C for about 8 days"), ("3", "<b>A</b> \u2014 TCA taint and inconsistent OTR"),
-                ("4", "<b>B</b> \u2014 jobs and relationships move"), ("5", "<b>B</b> \u2014 dark glass, no display lighting")]), mins=4, ref="2\u20139")
+                ("4", "<b>B</b> \u2014 jobs and relationships move"), ("5", "<b>B</b> \u2014 run by the company, no external audit")]), mins=4, ref="2\u20139")
 
 _e = ["Total package oxygen has four sources: dissolved oxygen, headspace oxygen, oxygen in the closure, and the closure\u2019s OTR.",
       "Headspace is usually the biggest single contributor.",

@@ -98,6 +98,14 @@ ch.ex("EXPLAIN", "Write like an examiner", 3, "The answer is a ratio, not the ag
       explain("Explain why a <b>small barrel matures wine faster</b> than a large tank or vat.", [], lines=3) + [Checklist(_e)],
       kp("1 mark each: higher surface-area-to-volume \u00b7 more evaporation and topping up \u00b7 more wood extraction per liter."), mins=4, ref="1\u20132")
 
+_r11 = ["Much cheaper than a barrel", "Large surface area, so a quick effect", "Staves fixed inside a tank, or left floating",
+        "Chips placed in a permeable sack", "Often paired with micro-oxygenation to integrate the oak", "Gentle oxidation through the wood itself"]
+_a11 = ["Alternatives", "Alternatives", "Alternatives", "Alternatives", "Alternatives", "Barrel"]
+ch.ex("TICK", "Barrel or oak alternative?", 6, "Inexpensive and mid-priced wines often use alternatives to get oak flavor. Tick one for each.",
+      tickgrid(_r11, ["Oak barrel", "Oak alternatives"], label_w=340),
+      kp(" \u00b7 ".join("<b>%d</b> %s" % (i + 1, a) for i, a in enumerate(_a11)) + ".  Effects vary with species, size, toast and micro-oxygenation."), mins=3, ref="2")
+ch.page()
+
 _mc = [("American oak differs from European oak in having:", ["Higher lactones (coconut)", "Tighter grain", "Less intensity", "Higher cost"]),
        ("Oak staves are seasoned outdoors for 2\u20133 years to:", ["Raise bitterness", "Lower bitterness and raise some aromatics such as clove",
                                                                    "Remove all tannin", "Add toast"]),

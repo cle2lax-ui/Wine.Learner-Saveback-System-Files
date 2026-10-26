@@ -70,11 +70,15 @@ ch.ex("SCALE", "Fermentation temperature and style", 4, "Write the typical use o
       kp("<b>12\u201316\u00b0C</b> fresh, fruity whites and ros\u00e9 (esters) \u00b7 <b>17\u201325\u00b0C</b> easy-drinking fruity reds; top end for barrel whites \u00b7 "
          "<b>26\u201332\u00b0C</b> concentrated, high-tannin reds (maximum color and tannin) \u00b7 <b>above 35\u00b0C</b> risk of slowing or sticking."), mins=3, ref="6")
 
-_ch = [("MLF", ["Lactic acid bacteria turn malic acid into lactic acid and CO2", Blank("Acidity falls and pH rises"),
-                Blank("A softer, smoother wine; welcome in high-acid wines"), "Possible loss of fruit, buttery notes, more VA"])]
-ch.ex("CHAIN", "Malolactic conversion", 2, "Complete the dotted boxes.",
-      [Chain(items, label=lab, box_h=46) for lab, items in _ch],
-      kp("Acidity falls and pH rises \u2192 a softer, smoother wine (best in high-acid wines)."), mins=2, ref="7")
+_p7 = [("Chaptalization", "Adds dry sugar (or concentrated must) before fermentation to raise potential alcohol"),
+       ("Acidification", "Adds acid, usually tartaric, when grapes are low in acidity, as in warm climates"),
+       ("Deacidification", "Adds calcium or potassium carbonate: acidity falls as tartrates precipitate; allow for MLF"),
+       ("Color adjustment", "Fining removes unwanted tints; grape-derived MegaPurple deepens some reds, but is banned in some regions")]
+_d7 = [2, 0, 3, 1]
+_l7 = [chr(65 + _d7.index(i)) for i in range(4)]
+ch.ex("MATCH", "Adjusting the must or wine", 4, "Match each adjustment to what it does.",
+      match([p[0] for p in _p7], [_p7[i][1] for i in _d7], _l7),
+      pairs([(str(i + 1), _l7[i]) for i in range(4)], ncols=4, width=COLW), mins=3, ref="5")
 ch.page()
 
 # ============================================================ PAGE 4

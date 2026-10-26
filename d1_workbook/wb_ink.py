@@ -534,7 +534,7 @@ def tube(c, centre, w0, w1, base, light=None, dark=None, ink=INK_G, lw=1.2, hi=0
         dx, dy = b_[0] - a_[0], b_[1] - a_[1]
         d = math.hypot(dx, dy) or 1.0
         nx, ny = -dy / d, dx / d
-        w = w0 + (w1 - w0) * i / float(n - 1)
+        w = (w0[i] if isinstance(w0, (list, tuple)) else w0 + (w1 - w0) * i / float(n - 1))
         left.append((x + nx * w / 2.0, y + ny * w / 2.0))
         right.append((x - nx * w / 2.0, y - ny * w / 2.0))
         nrm.append((nx, ny, w))
@@ -549,7 +549,7 @@ def tube(c, centre, w0, w1, base, light=None, dark=None, ink=INK_G, lw=1.2, hi=0
         flat(c, band(0.06, 0.06 + hi * 0.5), alpha(light, 0.85))
     if dark is not None:
         flat(c, band(-0.5, -0.5 + shade), alpha(dark, 0.55))
-    wmean = (w0 + w1) / 2.0
+    wmean = (sum(w0) / len(w0)) if isinstance(w0, (list, tuple)) else (w0 + w1) / 2.0
     if grain is None:
         grain = (ink == INK_W) and wmean >= 3.6
     if grain:

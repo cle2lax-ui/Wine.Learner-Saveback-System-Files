@@ -89,10 +89,16 @@ ch.ex("TICK", "Maritime, Mediterranean or continental?", 5, "Tick one type for e
 ch.page()
 
 # ============================================================ PAGE 4
-_o = ["Multiply by the number of days in the month", "Subtract 10\u00b0C (50\u00b0F) from the month\u2019s mean temperature",
-      "Add up every month of the growing season, leaving out negative months"]
-ch.ex("ORDER", "The GDD procedure", 3, "Number the steps 1\u20133 in the order you carry them out.",
-      order(_o, [2, 1, 3]), kp("Top to bottom: <b>2 \u00b7 1 \u00b7 3</b> (subtract, multiply, add)."), mins=2, ref="7")
+_p8 = [("Growing degree days", "Heat summation (Amerine and Winkler); five Winkler zones"),
+       ("Huglin Index", "Mean and maximum temperatures plus day length; used in Europe"),
+       ("MJT", "Mean July/January temperature plus continentality, humidity, sunshine"),
+       ("GST", "Mean of the whole growing season; tracks GDD, easier to find"),
+       ("Continentality", "Gap between hottest and coldest month means; low near water")]
+_d8 = [3, 0, 4, 1, 2]
+_l8 = [chr(65 + _d8.index(i)) for i in range(5)]
+ch.ex("MATCH", "Four climate models and continentality", 5, "Match each model, or measure, to what makes it distinctive.",
+      match([p[0] for p in _p8], [_p8[i][1] for i in _d8], _l8),
+      pairs([(str(i + 1), _l8[i]) for i in range(5)], ncols=5, width=COLW), mins=4, ref="7")
 
 _m = [("April", 11, 30), ("May", 14, 31), ("June", 17, 30), ("July", 19, 31), ("August", 18, 31), ("September", 15, 30),
       ("October", 9, 31)]
@@ -112,19 +118,18 @@ tb.setStyle(TableStyle([("VALIGN", (0, 0), (-1, -1), "MIDDLE"), ("LEFTPADDING", 
                         ("LINEABOVE", (0, 0), (-1, 0), LINE_BOLD, INK), ("LINEBELOW", (0, 0), (-1, 0), LINE_RULE, INK),
                         ("LINEBELOW", (0, 1), (-1, -2), 0.3, FEINT), ("LINEBELOW", (0, -1), (-1, -1), LINE_BOLD, INK)]))
 ch.ex("CALCULATE", "Growing degree days", 8,
-      "A northern-hemisphere vineyard (hypothetical monthly means). Work each month, then total the season. "
-      "<b>1 point per month, 1 for the total.</b> Hint: not every month counts.",
+      "A northern-hemisphere vineyard (hypothetical monthly means). For each month: mean \u221210\u00b0C, times the days; then add the months, leaving out negative ones. "
+      "<b>1 point per month, 1 for the total.</b>",
       tb,
       kp("Apr <b>%d</b> \u00b7 May <b>%d</b> \u00b7 Jun <b>%d</b> \u00b7 Jul <b>%d</b> \u00b7 Aug <b>%d</b> \u00b7 Sep <b>%d</b> \u00b7 "
          "Oct <b>%d</b> (negative: not counted). <b>GDD = %s.</b>" % (_gdd[0], _gdd[1], _gdd[2], _gdd[3], _gdd[4], _gdd[5], _gdd[6],
                                                                   format(_tot, ","))), mins=5, ref="7")
 
-_s10 = ["Willamette Valley: 15.9\u00b0C (61\u00b0F)", "A region at exactly 16.5\u00b0C (62\u00b0F)", "A region at 17.4\u00b0C",
-        "A region at 19.6\u00b0C", "A region at 22.3\u00b0C"]
-ch.ex("DECIDE", "Which WSET climate band?", 5,
+_s10 = ["Willamette Valley: 15.9\u00b0C (61\u00b0F)", "A region at 17.4\u00b0C", "A region at 19.6\u00b0C", "A region at 22.3\u00b0C"]
+ch.ex("DECIDE", "Which WSET climate band?", 4,
       "Circle <b>C</b> cool (\u226416.5\u00b0C), <b>M</b> moderate, <b>W</b> warm or <b>H</b> hot (&gt;21\u00b0C) by average growing season temperature.",
       choose(_s10, ["C", "M", "W", "H"]),
-      kp("<b>1</b> C \u00b7 <b>2</b> C (16.5 or below) \u00b7 <b>3</b> M \u00b7 <b>4</b> W \u00b7 <b>5</b> H"), mins=2, ref="7")
+      kp("<b>1</b> C \u00b7 <b>2</b> M \u00b7 <b>3</b> W \u00b7 <b>4</b> H"), mins=2, ref="7")
 ch.page()
 
 # ============================================================ PAGE 5
@@ -135,8 +140,10 @@ _tf = [("Vines need full sunshine to photosynthesize well.", False, "Light limit
        ("Scientific backing links soil chemistry to particular wine aromas.", False,
         "Backing is lacking; the physical parameters (water, drainage, heat) are what is well recognized."),
        ("Rain at flowering and fruit set can cut yields or cause uneven ripening.", True, ""),
-       ("Sunlight and UV are weaker at high altitude.", False, "They are more intense at altitude.")]
-ch.ex("DECIDE", "True or false \u2014 then fix it", 6,
+       ("Sunlight and UV are weaker at high altitude.", False, "They are more intense at altitude."),
+       ("Vintage variation is unwanted in every wine style.", False,
+        "It is welcomed in some styles, but unwanted in non-vintage sparkling and many high-volume, inexpensive wines.")]
+ch.ex("DECIDE", "True or false \u2014 then fix it", 7,
       "Circle T or F; correct any false statement. <b>1 point only if the call and the correction are both right.</b>",
       [TFItem(i + 1, t) for i, (t, v, fx) in enumerate(_tf)],
       numbered([(str(i + 1), ("<b><font color=\"%s\">T</font></b>" % hexc(ANS)) if v else

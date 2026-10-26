@@ -287,6 +287,22 @@ Wine-based beverage | Below about 5.5% abv some countries no longer class a prod
 UK labeling terms | Low alcohol: 1.2% abv or less; non-alcoholic: 0.5% or less; alcohol free: 0.05% or less. | 20
 Style (inexpensive or premium) | Four styles, inexpensive and premium white and red, set by one aim: volume and price, or quality and complexity. Every later choice follows from it. | 21
 Reason, not just choice | D1 marking rewards the reason a choice fits a style and its influence on the wine, not the choice alone. | 21
+Huglin Index | A heat model like GDD that uses mean and maximum temperatures and day length; bands are mapped to varieties; widely used in Europe. | 3
+Mean July/January temperature (MJT) | A climate model using the mean temperature of July (north) or January (south) with continentality, humidity and sunshine; six bands. | 3
+Winkler zones | The five bands of growing degree days, from Zone I (coolest) to Zone V (very hot). | 3
+Continentality | The difference between the mean temperatures of the hottest and coldest months; low near large bodies of water, high far inland. | 3
+Vintage variation | Year-to-year differences in wine style and quality caused by weather; welcomed in some styles, unwanted in non-vintage sparkling and inexpensive volume wines. | 3
+Drought | Too little water: stomata close, photosynthesis falls, ripening slows and, if prolonged, vines die. | 8
+Waterlogging | Soil so wet that roots lack oxygen; slows growth and can kill the vine. | 3, 8
+Untimely rainfall | Rain at flowering (coulure, millerandage) or near harvest (swollen, split grapes and grey rot). | 8
+Winter freeze | Damage to dormant vines below about \u221220\u00b0C; the graft and canes are most at risk. | 8
+Oak alternatives | Chips or staves, in a sack, floating or fixed inside a tank: much cheaper than barrels and quick to act. | 14
+Reduction | Sulfur-like odors from onion to rotten egg, from stressed yeast or near-total oxygen exclusion; a fault at higher levels. | 15
+Sedimentation (of wine) | Natural settling in a cool cellar, followed by racking off the sediment. | 15
+Hygiene (winery) | Cleaning, sanitizing and controlling spoilage organisms; oak pores remain a possible source. | 15
+Green manure | Cover crops mown and turned into the soil to decompose and feed it. | 6
+Slurry | Manure in semi-liquid form, used as an organic fertilizer. | 6
+MegaPurple | A grape-derived coloring agent that can deepen high-volume reds; banned in some regions. | 13
 """.strip().split("\n")
 
 

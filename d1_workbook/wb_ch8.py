@@ -12,20 +12,24 @@ ch = Chapter("8", "Hazards, Pests and Diseases",
               "learn the pattern: cause, symptoms, management"])
 
 # ============================================================ PAGE 1
-_r1 = ["Site selection (avoid frost pockets)", "Delayed pruning", "A late-budding variety", "High training and bare soil",
-       "Water sprinklers (aspersion)", "Wind machines", "Helicopters", "Heaters and candles"]
-_a1 = ["Reduce", "Reduce", "Reduce", "Reduce", "Combat", "Combat", "Combat", "Combat"]
-ch.ex("TICK", "Reduce the risk or combat the threat?", 8,
+_r1 = ["Site selection (avoid frost pockets)", "Delayed pruning", "A late-budding variety",
+       "Water sprinklers (aspersion)", "Wind machines", "Heaters and candles"]
+_a1 = ["Reduce", "Reduce", "Reduce", "Combat", "Combat", "Combat"]
+ch.ex("TICK", "Reduce the risk or combat the threat?", 6,
       "Some protection costs nothing when frost is not coming; some costs every time it is used. Tick one for each.",
       tickgrid(_r1, ["Reduces risk", "Combats active threat"], label_w=330),
       kp(" \u00b7 ".join("<b>%d</b> %s" % (i + 1, a) for i, a in enumerate(_a1))), mins=3, ref="1")
 
-_s2 = ["A large volume of cold air moving in", "Forms on a still, clear night as the earth loses its heat",
-       "Wind machines can help, if there is a warm inversion layer", "Aspersion is the only method that works",
-       "Dense cold air pools in valley bottoms"]
-ch.ex("DECIDE", "Advective or radiative frost?", 5, "Circle <b>A</b> advective or <b>R</b> radiative.",
-      choose(_s2, ["A", "R"]),
-      kp("<b>1</b> A \u00b7 <b>2</b> R \u00b7 <b>3</b> R \u00b7 <b>4</b> A \u00b7 <b>5</b> R. Name the frost type before naming a fix."), mins=3, ref="1")
+_p9 = [("Drought", "Stomata close and photosynthesis falls; choose a drought-tolerant rootstock (110R, 140R) and variety (Garnacha)"),
+       ("Excess water", "Too much shoot growth, a humid canopy, waterlogging; plant on a slope or free-draining soil, or drain"),
+       ("Untimely rain", "Coulure or millerandage at flowering; swollen, split grapes and grey rot near harvest"),
+       ("Winter freeze", "Below \u221220\u00b0C the graft and canes are at risk; hill up soil, hardy varieties, warmer sites"),
+       ("Hail", "Rips shoots and leaves, and wounds invite botrytis; netting in sunny Mendoza, silver iodide rockets, insurance")]
+_d9 = [3, 0, 4, 1, 2]
+_l9 = [chr(65 + _d9.index(i)) for i in range(5)]
+ch.ex("MATCH", "Weather hazards: effect and response", 5, "Match each hazard to its effect and management.",
+      match([p[0] for p in _p9], [_p9[i][1] for i in _d9], _l9),
+      pairs([(str(i + 1), _l9[i]) for i in range(5)], ncols=5, width=COLW), mins=3, ref="1")
 ch.page()
 
 # ============================================================ PAGE 2

@@ -4,7 +4,8 @@ soil profile with a plough pan (Ch5)."""
 import math
 import wb_ink as K
 alpha_ = K.alpha
-from wb_art import Art, HEX, _ground, _post, _wire, _shoot_with_leaves, _steel, _steel_poly, STEEL_L, STEEL_M, STEEL_D, INK_S
+from wb_art import (Art, HEX, _ground, _post, _wire, _tie, _shoot_with_leaves, _steel, _steel_poly, STEEL_L, STEEL_M, STEEL_D, INK_S,
+                    vine_trunk, vine_head, vine_cordon, BARK_L, BARK_M, BARK_D)
 
 BL_L, BL_M, BL_D, BL_I = HEX("#CFE8F6"), HEX("#7DBBE0"), HEX("#2F7FB0"), HEX("#1D4F73")
 PIPE_L, PIPE_M, PIPE_D, PIPE_I = HEX("#6B7279"), HEX("#3A3F44"), HEX("#1E2327"), HEX("#101315")
@@ -15,17 +16,23 @@ def _drop(c, x, y, s=1.0):
     K.blob(c, x, y, 1.7 * s, 2.5 * s, 0, light=BL_L, mid=BL_M, dark=BL_D, ink=BL_I, lw=0.5)
 
 
-def _vine(c, cx, y0, th=24, ch=44, spread=15, bunches=True, R=5.0):
-    K.tube(c, [(cx, y0), (cx, y0 + th)], 6.5, 5.5, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.1, hi=0.5, shade=0.4)
-    K.tube(c, [(cx - spread, y0 + th + 1), (cx + spread, y0 + th + 1)], 4.5, 4.5, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D,
-           ink=K.INK_W, lw=1.0, hi=0.5, shade=0.4)
-    for i, dx in enumerate((-0.8, -0.3, 0.3, 0.8)):
-        x = cx + dx * spread
-        ctr = [(x + 1.0 * math.sin(j / 3.0 + i), y0 + th + 3 + ch * j / 12.0) for j in range(13)]
+def _vine(c, cx, y0, th=24, ch=44, spread=15, bunches=True, R=5.0, seed=None):
+    """A small, realistic vine: gnarled trunk, knuckled head, two spurred cordons, shoots, bunches."""
+    sd = int(cx) if seed is None else seed
+    cen, wid = vine_trunk(c, cx, y0, y0 + th, 6.8, seed=sd % 9, lean=((sd % 3) - 1) * 1.2)
+    hx, hy = cen[-1]
+    tops = []
+    for sgn in (-1, 1):
+        tp, cc = vine_cordon(c, hx, hy + 1.0, sgn, spread, 4.0, seed=sd % 7 + (0 if sgn < 0 else 3), arch=0.8, spur_gap=6.5)
+        tops += tp
+    vine_head(c, hx, hy + 0.5, 6.2, seed=sd % 5)
+    tops = sorted(tops)
+    for i, (x, y) in enumerate(tops):
+        ctr = [(x + 1.0 * math.sin(j / 3.0 + i), y + ch * j / 12.0) for j in range(13)]
         _shoot_with_leaves(c, ctr, (0.25, 0.5, 0.75, 0.95), R=R)
     if bunches:
         for dx in (-0.55, 0.55):
-            K.bunch(c, cx + dx * spread, y0 + th - 5, 8, 11)
+            K.bunch(c, hx + dx * spread, hy - 4, 8, 11)
 
 
 def _arrow(c, pts, col, lw=1.6):
@@ -251,13 +258,18 @@ class TrellisSprawl(Art):
         _post(c, 8, 8, 100); _post(c, W - 8, 8, 100)
         _wire(c, 8, W - 8, 88)
         cx = W * 0.5
-        K.tube(c, [(cx, 8), (cx, 60)], 7.5, 6.5, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.2, hi=0.5, shade=0.4)
-        K.tube(c, [(20, 61), (W - 20, 61)], 5.5, 5.0, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.1, hi=0.5, shade=0.4)
+        cen, wid = vine_trunk(c, cx, 8, 58, 10.0, seed=2, lean=-2.0)
+        hx, hy = cen[-1]
+        tops = []
+        for sgn, sd in ((-1, 1), (1, 2)):
+            tp, cc = vine_cordon(c, hx, 61, sgn, 40, 6.2, seed=sd + 5, arch=1.0)
+            tops += tp
+        vine_head(c, hx, 61, 9.5, seed=5)
         for x in (34, 62, 88):
             K.bunch(c, x, 56, 10, 12)
-        for i, x in enumerate((28, 44, 60, 76, 92)):
+        for i, (x, y) in enumerate(sorted(tops)):
             sgn = -1 if i % 2 == 0 else 1
-            ctr = K.bezier((x, 63), (x + 2, 98), (x + sgn * 10, 108), (x + sgn * 14, 74), n=22)
+            ctr = K.bezier((x, y), (x + 2, 98), (x + sgn * 10, 108), (x + sgn * 14, 74), n=22)
             _shoot_with_leaves(c, ctr, (0.2, 0.4, 0.6, 0.8, 0.95), R=5.6)
 
 
@@ -270,7 +282,14 @@ class SoilProfile(Art):
         W, H = self.W, self.H
         top = H - 50
         pan_t, pan_b = top - 38, top - 47
-        band = lambda y0, y1: K.path(c, [("M", 0, y0), ("L", W, y0), ("L", W, y1), ("L", 0, y1), ("Z",)])
+        def wave(yb, x):
+            return yb + 1.7 * math.sin(x * 0.043 + yb * 0.7) + 0.9 * math.sin(x * 0.121 + yb)
+        xs_ = [i * W / 60.0 for i in range(61)]
+
+        def band(y0, y1):
+            top_ = [(x, wave(y1, x) if y1 < top - 0.5 else y1) for x in xs_]
+            bot_ = [(x, wave(y0, x) if y0 > 1 else y0) for x in reversed(xs_)]
+            return K.poly(c, top_ + bot_)
         sub = band(0, pan_b)
         K.fill_linear(c, sub, 0, pan_b, 0, 0, [(0, HEX("#D9C49C")), (1, HEX("#C4AB7A"))])
         tops = band(pan_t, top)
@@ -292,9 +311,9 @@ class SoilProfile(Art):
             K.blob(c, x, y, r, r * 0.8, 15, light=HEX("#E8D7B5"), mid=HEX("#BBA173"), dark=HEX("#8C7549"), ink=HEX("#6B5A38"), lw=0.6)
         K.line(c, [(0, top), (W, top)], K.INK_W, 1.2)
         for yy in (pan_t, pan_b):
-            K.line(c, [(0, yy), (W, yy)], HEX("#1C1612"), 0.9)
+            K.line(c, [(x, wave(yy, x)) for x in xs_], HEX("#1C1612"), 0.9, taper=False)
         vx = 92
-        K.tube(c, [(vx, top), (vx, top + 16)], 8, 7, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.2, hi=0.5, shade=0.4)
+        vine_trunk(c, vx, top - 3, top + 17, 8.5, seed=6)
         for i, dx in enumerate((-12, -4, 6, 14)):
             ctr = [(vx + dx + 1.2 * math.sin(j / 3.0 + i), top + 14 + 2 + 15 * j / 8.0) for j in range(9)]
             _shoot_with_leaves(c, ctr, (0.3, 0.6, 0.9), R=6.2, lw=0.7)
@@ -385,10 +404,10 @@ CORK_L, CORK_M, CORK_D = HEX("#DDBB84"), HEX("#C79B5C"), HEX("#9B7237")
 
 
 def _neck_paths(c):
-    outer = K.path(c, [("M", 33, 134), ("L", 67, 134), ("L", 67, 123), ("L", 62, 120), ("L", 62, 86), ("C", 62, 66, 92, 60, 92, 34),
-                       ("L", 92, 8), ("L", 8, 8), ("L", 8, 34), ("C", 8, 60, 38, 66, 38, 86), ("L", 38, 120), ("L", 33, 123), ("Z",)])
-    inner = K.path(c, [("M", 41.5, 134), ("L", 58.5, 134), ("L", 58.5, 86), ("C", 58.5, 68, 88.5, 62, 88.5, 34), ("L", 88.5, 11.5),
-                       ("L", 11.5, 11.5), ("L", 11.5, 34), ("C", 11.5, 62, 41.5, 68, 41.5, 86), ("Z",)])
+    outer = K.path(c, [("M", 33, 134), ("L", 67, 134), ("L", 67, 123), ("L", 62, 120), ("L", 62, 92), ("C", 62, 70, 83, 64, 83, 38),
+                       ("L", 83, 8), ("L", 17, 8), ("L", 17, 38), ("C", 17, 64, 38, 70, 38, 92), ("L", 38, 120), ("L", 33, 123), ("Z",)])
+    inner = K.path(c, [("M", 41.5, 134), ("L", 58.5, 134), ("L", 58.5, 92), ("C", 58.5, 72, 79.5, 66, 79.5, 38), ("L", 79.5, 11.5),
+                       ("L", 20.5, 11.5), ("L", 20.5, 38), ("C", 20.5, 66, 41.5, 72, 41.5, 92), ("Z",)])
     return outer, inner
 
 
@@ -402,8 +421,9 @@ def _bottle_neck(c, wine_y=92, wine=(HEX("#F3DE8E"), HEX("#D9B450"))):
     c.restoreState()
     K.line(c, [(41.5, wine_y), (58.5, wine_y)], HEX("#B58C2E"), 0.9)
     K.hatch(c, outer, angle=-35, gap=1.5, col=GL_I, lw=0.24, depth=0.12, shadow=(0.8, -0.6), a=0.5)
-    K.line(c, [(20, 30), (20, 52)], HEX("#FFFFFF"), 2.0)
-    K.line(c, [(24, 26), (24, 40)], HEX("#FFFFFF"), 0.9)
+    K.line(c, [(24, 30), (24, 56)], HEX("#FFFFFF"), 2.0)
+    K.line(c, [(28, 26), (28, 40)], HEX("#FFFFFF"), 0.9)
+    K.line(c, [(71, 46), (71, 24)], HEX("#FFFFFF"), 0.8)
     K.line(c, [(42.6, 118), (42.6, 90)], HEX("#FFFFFF"), 1.1)
     K.line(c, [(41.5, wine_y), (43.5, wine_y + 1.5), (56.5, wine_y + 1.5), (58.5, wine_y)], HEX("#B58C2E"), 0.8, pen=False)
     K.outline(c, inner, HEX("#6F8F7D"), 0.8)
@@ -475,9 +495,27 @@ LEES_L, LEES_D = HEX("#A68455"), HEX("#5E4423")
 def _tank_cutaway(c):
     """A stainless tank with a cut-away window; returns the window path (for clipping)."""
     _steel(c, 22, 20, 106, 104, r=11)
+    _tank_trim(c, 22, 20, 106, 104, valve=False)
     win = K.rrect(c, 33, 31, 84, 82, 6)
     K.fill_linear(c, win, 0, 113, 0, 31, [(0, HEX("#FBF8EC")), (1, HEX("#F2EBD2"))])
     return win
+
+
+def _tank_trim(c, x, y, w, h, valve=True):
+    """Plinth, weld seams, rim bands and a racking valve, so a tank reads as real stainless equipment."""
+    base = K.rrect(c, x - 3, y - 5, w + 6, 8, 2)
+    K.fill_linear(c, base, 0, y + 3, 0, y - 5, [(0, STEEL_M), (1, STEEL_D)]); K.outline(c, base, INK_S, 1.0)
+    for fx in (x + 3.6, x + w - 3.6):                                              # vertical weld seams on the side strips
+        K.line(c, [(fx, y + 6), (fx, y + h - 6)], INK_S, 0.55, pen=False)
+        for yy in range(int(y + 10), int(y + h - 8), 7):
+            K.line(c, [(fx - 1.0, yy), (fx + 1.0, yy + 1.4)], HEX("#4A5258"), 0.4, pen=False)
+    for fy in (y + h - 5.5, y + 5.5):                                              # horizontal rim bands
+        K.line(c, [(x + 2, fy), (x + w - 2, fy)], HEX("#4A5258"), 0.5, pen=False)
+        K.line(c, [(x + 2, fy + 1.0), (x + w - 2, fy + 1.0)], HEX("#FFFFFF"), 0.5, pen=False)
+    if valve and w > 60:
+        K.tube(c, [(x + w - 2, y + 14), (x + w + 8, y + 14)], 4.4, 4.4, STEEL_M, light=STEEL_L, dark=STEEL_D, ink=INK_S, lw=0.9, hi=0.5, shade=0.4, grain=False)
+        K.blob(c, x + w + 9, y + 14, 3.2, 3.2, 0, light=STEEL_L, mid=STEEL_M, dark=STEEL_D, ink=INK_S, lw=0.8)
+        K.line(c, [(x + w + 9, y + 11), (x + w + 9, y + 17)], INK_S, 0.9, pen=False)
 
 
 def _bubble(c, x, y, r):
@@ -591,7 +629,18 @@ from reportlab.lib import colors as colors_
 
 
 def _cane_top(c, W, y, leafcol=None):
-    K.tube(c, [(6, y + 4), (W * 0.4, y + 1), (W * 0.7, y + 3), (W - 6, y)], 6.0, 5.0, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.1, hi=0.5, shade=0.4)
+    """A one-year cane: gently wavy, with swollen nodes, short laterals and a tendril."""
+    n = 26
+    cen = [(6 + (W - 12) * i / float(n - 1), y + 3 + 3.2 * math.sin(i * 0.33) - 2.0 * (i / float(n))) for i in range(n)]
+    wid = [5.6 - 1.2 * i / float(n) + (1.1 if i % 5 == 2 else 0.0) for i in range(n)]
+    K.tube(c, cen, wid, None, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.1, hi=0.5, shade=0.4)
+    for i in (2, 7, 12, 17, 22):                                         # nodes
+        x_, y_ = cen[i]
+        nd = K.ellipse_path(c, x_, y_, 2.4, 3.6, 0)
+        K.fill_radial(c, nd, x_ - 0.5, y_ + 0.8, 4.0, [(0, K.WOOD_L), (1, K.WOOD_D)]); K.outline(c, nd, K.INK_W, 0.7)
+    tx, ty = cen[20]
+    cur = [(tx + 0.9 * i * math.cos(i * 0.62 + 3.0), ty - 1.0 - 0.9 * i * math.sin(i * 0.62 + 3.0) * 0.6) for i in range(0, 14)]
+    K.line(c, cur, K.INK_G, 0.7, taper=True)
 
 
 class ConcOnVine(Art):
@@ -668,6 +717,7 @@ HOSE_L, HOSE_M = HEX("#8A9096"), HEX("#3F454B")
 
 def _red_tank(c, x=18, y=10, w=84, h=100, cap=True, level=0.9, liq=None):
     _steel(c, x, y, w, h, r=9)
+    _tank_trim(c, x, y, w, h)
     win = K.rrect(c, x + 8, y + 6, w - 16, h - 12, 5)
     K.fill_linear(c, win, 0, y + h, 0, y, [(0, HEX("#FBF8EC")), (1, HEX("#F2EBD2"))])
     c.saveState(); c.clipPath(win, stroke=0, fill=0)
@@ -940,7 +990,7 @@ class HarvestMachine(Art):
         _ground(c, W)
         for xp in (6, W - 6):
             K.tube(c, [(xp, 8), (xp, 106)], 4, 4, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.0, hi=0.5, shade=0.4)
-        K.tube(c, [(W / 2.0, 9), (W / 2.0, 44)], 6.5, 6, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.1, hi=0.5, shade=0.4)
+        vine_trunk(c, W / 2.0, 9, 44, 6.8, seed=4)
         for i, dx in enumerate((-7, -2.5, 2.5, 7)):                                  # the vine's canopy
             ctr = [(W / 2.0 + dx + 0.9 * math.sin(j * 0.5 + i), 44 + j * 4.2) for j in range(14)]
             _shoot_with_leaves_(c, ctr)
