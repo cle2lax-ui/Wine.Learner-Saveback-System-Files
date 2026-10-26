@@ -71,47 +71,28 @@ def para(c, text, style, x, y_top, width):
 
 # ====================================================================================== cover
 def draw_cover(c, pageno):
-    c.setFillColor(DEEP); c.rect(0, 0, PW, PH, stroke=0, fill=1)
-    c.linearGradient(0, PH, 0, 0, [DEEP, colors.HexColor("#5A1426"), colors.HexColor("#2A0911")], [0, 0.55, 1], extend=True)
-    c.setStrokeColor(GOLD); c.setLineWidth(1.2); c.rect(26, 26, PW - 52, PH - 52, stroke=1, fill=0)
-    c.setLineWidth(0.5); c.rect(31, 31, PW - 62, PH - 62, stroke=1, fill=0)
-    # title block, after the textbook's front cover: title, edition line, accompaniment line
-    c.setFillColor(CREAM); c.setFont("Serif-B", 62)
-    c.drawString(62, 690, "D1: Wine"); c.drawString(62, 626, "Production")
-    c.setFont("Sans-B", 10.5); c.setFillColor(GOLD); tracked(c, 64, 596, "COMPANION WORKBOOK  \u00b7  AUGUST 2026 EDITION", 2.2)
-    c.setFont("Sans", 14); c.setFillColor(CREAM)
-    c.drawString(64, 566, "An accompaniment to the")
-    c.setFont("Sans-B", 14); c.drawString(64, 547, "WSET\u00ae Level 4 Diploma in Wines")
-    c.setStrokeColor(GOLD); c.setLineWidth(0.8); c.line(64, 534, 250, 534)
-    # the plate with a pen-and-ink vine
-    px, py, pw_, ph_ = 62, 190, PW - 124, 330
-    c.setFillColor(CREAM); c.roundRect(px, py, pw_, ph_, 8, stroke=0, fill=1)
-    c.setStrokeColor(GOLD); c.setLineWidth(1.0); c.roundRect(px + 7, py + 7, pw_ - 14, ph_ - 14, 5, stroke=1, fill=0)
-    c.saveState()
-    c.translate(px, py)
-    cane = [(30 + 440 * t, ph_ - 52 - 14 * math.sin(t * 3.0) + 8 * t) for t in [i / 24.0 for i in range(25)]]
-    K.tube(c, cane, 15, 12, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.5, hi=0.5, shade=0.4)
-    K.leaf(c, 118, ph_ - 126, 100, rot=14, flip=False)
-    K.leaf(c, pw_ - 118, ph_ - 122, 92, rot=-10, flip=True)
-    K.line(c, [(176, ph_ - 62), (182, ph_ - 88), (170, ph_ - 106)], K.INK_G, 2.0, taper=False)
-    K.line(c, [(pw_ - 176, ph_ - 62), (pw_ - 180, ph_ - 84), (pw_ - 168, ph_ - 100)], K.INK_G, 2.0, taper=False)
-    K.bunch(c, pw_ / 2.0, ph_ - 66, 150, 225, rows=(5, 6, 6, 5, 5, 4, 4, 3, 2, 1), seed=7)
-    for (tx, ty, sd) in ((86, ph_ - 52, -1), (pw_ - 88, ph_ - 52, 1)):                 # tendrils
-        cur = [(tx + sd * (1.0 + 0.7 * i) * math.cos(i * 0.5 + 3.3), ty - 2 + (1.0 + 0.7 * i) * math.sin(i * 0.5 + 3.3)) for i in range(0, 20)]
-        K.line(c, cur, K.INK_G, 1.0, taper=True)
-    c.restoreState()
-    c.setFont("Serif", 9.6); c.setFillColor(colors.HexColor("#8A7A5A"))
-    c.drawCentredString(PW / 2.0, py + 18, "Chapters 1\u201321  \u00b7  Exercises  \u00b7  Answer keys  \u00b7  Glossary")
-    # publisher-style block, bottom
-    c.setStrokeColor(GOLD); c.setLineWidth(0.6); c.line(62, 150, PW - 62, 150)
-    c.setFillColor(CREAM); c.setFont("Sans-B", 9.5); c.drawString(62, 130, "Companion to D1: Wine Production, August 2026 edition (Issue 1.7)")
-    c.setFont("Sans", 8.2); c.setFillColor(colors.HexColor("#E3D8C0"))
-    lines = ["An independent study companion for candidates preparing for the WSET Level 4 Diploma in Wines, Unit D1.",
-             "Not produced, reviewed or endorsed by the Wine & Spirit Education Trust. WSET\u00ae is a registered trademark of the Trust.",
-             "Always check exam wording and detail against the textbook and the current specification."]
-    y = 112
+    """Full-bleed photograph, title stack at the lower left, publisher-style block at the foot: the textbook's cover order."""
+    from reportlab.lib.utils import ImageReader
+    c.drawImage(ImageReader(os.path.join(HERE, "cover", "cover_photo.jpg")), 0, 0, width=PW, height=PH)
+    # a small tag at the upper left, standing in for the publisher's mark
+    c.setFillColor(BURGUNDY); c.rect(40, PH - 74, 188, 26, stroke=0, fill=1)
+    c.setFont("Sans-B", 8.6); c.setFillColor(colors.white); tracked(c, 52, PH - 65, "COMPANION WORKBOOK", 2.0)
+    # title block, in the textbook's order: title, edition, accompaniment line
+    c.setFillColor(colors.white); c.setFont("Sans-B", 58)
+    c.drawString(40, 238, "D1: Wine"); c.drawString(40, 176, "Production")
+    c.setFont("Sans-B", 10.5); c.setFillColor(colors.white); tracked(c, 42, 148, "AUGUST 2026 EDITION", 2.2)
+    c.setFont("Sans", 13.5); c.drawString(42, 122, "An accompaniment to the")
+    c.setFont("Sans-B", 13.5); c.drawString(42, 104, "WSET\u00ae Level 4 Diploma in Wines")
+    # publisher-style block at the foot
+    c.setStrokeColor(colors.Color(1, 1, 1, alpha=0.55)); c.setLineWidth(0.6); c.line(40, 84, PW - 40, 84)
+    c.setFont("Sans-B", 8.4); c.setFillColor(colors.white)
+    c.drawString(40, 69, "Companion to D1: Wine Production, August 2026 edition (Issue 1.7)")
+    c.setFont("Sans", 7.2); c.setFillColor(colors.Color(1, 1, 1, alpha=0.88))
+    lines = ["Chapters 1\u201321: exercises, answer keys, glossary and a spaced-review tracker.",
+             "An independent study companion. Not produced, reviewed or endorsed by the Wine & Spirit Education Trust. WSET\u00ae is a registered trademark of the Trust."]
+    y = 56
     for ln in lines:
-        c.drawString(62, y, ln); y -= 12.4
+        c.drawString(40, y, ln); y -= 10.6
 
 
 # ====================================================================================== about page
