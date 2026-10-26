@@ -1,0 +1,150 @@
+{
+ "chapter": 1,
+ "seed": 1,
+ "size": 13,
+ "placed": [
+  [
+   "INFLORESCENCE",
+   "A cluster of flowers",
+   6,
+   0,
+   "A"
+  ],
+  [
+   "FRUIT",
+   "The grape is one",
+   3,
+   2,
+   "A"
+  ],
+  [
+   "TEINTURIER",
+   "A grape with red-colored pulp",
+   1,
+   3,
+   "A"
+  ],
+  [
+   "VINIFERA",
+   "Vitis ___: the species behind nearly all wine",
+   0,
+   5,
+   "D"
+  ],
+  [
+   "CANE",
+   "One-year-old wood that carries buds for the next crop",
+   9,
+   5,
+   "D"
+  ],
+  [
+   "FLAVOR",
+   "Taste and aroma together",
+   6,
+   2,
+   "D"
+  ],
+  [
+   "DRY",
+   "Without noticeable sugar",
+   8,
+   8,
+   "A"
+  ],
+  [
+   "LEES",
+   "Spent yeast and other sediment",
+   11,
+   7,
+   "A"
+  ],
+  [
+   "TRUNK",
+   "Permanent wood joining the roots to the arms",
+   0,
+   12,
+   "D"
+  ],
+  [
+   "LAYERING",
+   "Burying a cane so it roots and fills a gap",
+   1,
+   0,
+   "D"
+  ],
+  [
+   "CORDON",
+   "A permanent horizontal arm",
+   11,
+   0,
+   "A"
+  ],
+  [
+   "TART",
+   "Sharply acidic",
+   1,
+   3,
+   "D"
+  ],
+  [
+   "GRAPE",
+   "The fruit of the vine",
+   8,
+   0,
+   "A"
+  ],
+  [
+   "PULP",
+   "Most of a grape’s weight and volume",
+   9,
+   7,
+   "D"
+  ],
+  [
+   "ACID",
+   "Gives freshness",
+   5,
+   8,
+   "D"
+  ],
+  [
+   "SKIN",
+   "The grape’s outer layer, holding color and tannin",
+   3,
+   9,
+   "A"
+  ],
+  [
+   "CROSS",
+   "Offspring of two parents of the same species",
+   0,
+   9,
+   "D"
+  ],
+  [
+   "RIPE",
+   "Ready to harvest",
+   8,
+   9,
+   "D"
+  ],
+  [
+   "CAP",
+   "The floating layer of skins in a red ferment",
+   9,
+   5,
+   "A"
+  ]
+ ],
+ "stats": {
+  "words": 19,
+  "across": 9,
+  "down": 10,
+  "crossings": 22,
+  "min_cross": 2,
+  "avg_cross": 2.3157894736842106,
+  "grid": "13x13",
+  "fill": "49%"
+ }
+}

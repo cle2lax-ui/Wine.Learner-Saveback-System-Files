@@ -80,3 +80,23 @@ used inside a drawing.
 3. Check each label target lands inside the structure it names, and that numbers read top to bottom.
 4. Confirm the key (`label_key()`) matches the numbering on the page.
 5. Rebuild the chapter and confirm the page count did not change.
+
+
+---
+
+## Standard v2: pen-and-ink realism (supersedes the "friendly, simplified shapes" note above)
+
+The look is a fine botanical / technical engraving with soft colour washes underneath, not clip art.
+
+* **Outlines are pen lines.** Weight tapers and swells: heavier where a form turns away from the light (upper-left light), lighter
+  on the lit side. A very small, position-based wobble keeps shared edges together but stops lines looking ruled (`outline`, `line`).
+* **Shade with hatching and stipple, not only gradients.** Fine parallel hatching on the shadow side of forms (`hatch`); stippling for
+  soil, pith and bark (`stipple`). Soil is shown in strata with shaded stones.
+* **Wood has grain and bark.** Tubes of wood carry fine grain lines, short bark cracks and knots on thick wood (`tube`); barrel staves
+  carry their own grain. Trunks are gnarled, never ruler-straight.
+* **Leaves are veined and serrated** (main veins, highlighted twin lines, side veins on big leaves, sawtooth margin) and hang on petioles
+  from nodes; shoots wave slightly and carry the odd tendril.
+* **Bunches are natural**: staggered rows, uneven berry sizes, a visible rachis and peduncle, berries with bloom, a highlight and a calyx scar.
+* **Metal is hatched and riveted**; glass has refraction highlights and a meniscus; water has ripple lines.
+* Use `K.path`, `K.poly`, `K.rrect`, `K.ellipse_path` (not bare reportlab paths) so every form gets the pen outline and can be hatched.
+* Keep all drawings to the Lodi reference palette: olive-black ink on greens, brown on wood and yellow, warm gold reproductive parts.

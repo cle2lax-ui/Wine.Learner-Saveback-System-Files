@@ -1,0 +1,136 @@
+{
+ "chapter": 13,
+ "seed": 5,
+ "size": 13,
+ "placed": [
+  [
+   "TANNIN",
+   "Causes a drying, astringent sensation",
+   0,
+   9,
+   "D"
+  ],
+  [
+   "TARTARIC",
+   "The usual acid for acidification",
+   2,
+   4,
+   "D"
+  ],
+  [
+   "WHITE",
+   "Wine usually made without skin contact",
+   8,
+   2,
+   "A"
+  ],
+  [
+   "STEMS",
+   "Destemming removes them",
+   0,
+   8,
+   "A"
+  ],
+  [
+   "SULFITES",
+   "Labels must declare them above 10 mg/L",
+   0,
+   12,
+   "D"
+  ],
+  [
+   "CRATES",
+   "Small stackable boxes that limit crushing",
+   7,
+   7,
+   "A"
+  ],
+  [
+   "SWEET",
+   "High in sugar",
+   7,
+   2,
+   "D"
+  ],
+  [
+   "WINE",
+   "Fermented grape juice",
+   9,
+   8,
+   "A"
+  ],
+  [
+   "ROTUNDONE",
+   "Pepper compound in Syrah",
+   2,
+   2,
+   "A"
+  ],
+  [
+   "ROW",
+   "A line of vines",
+   7,
+   8,
+   "D"
+  ],
+  [
+   "POMACE",
+   "The solid remains after pressing",
+   6,
+   0,
+   "D"
+  ],
+  [
+   "ENZYME",
+   "Lysozyme is one",
+   1,
+   6,
+   "D"
+  ],
+  [
+   "AGE",
+   "What fine wine does in the bottle",
+   9,
+   0,
+   "A"
+  ],
+  [
+   "ROSE",
+   "A pink wine",
+   2,
+   2,
+   "D"
+  ],
+  [
+   "TANK",
+   "A steel vessel for fermenting or storing wine",
+   7,
+   10,
+   "D"
+  ],
+  [
+   "DESTEMMING",
+   "Removes stem tannins before fermentation",
+   5,
+   1,
+   "A"
+  ],
+  [
+   "ESTERS",
+   "Fruity aroma compounds promoted by cool fermentation",
+   11,
+   0,
+   "A"
+  ]
+ ],
+ "stats": {
+  "words": 17,
+  "across": 8,
+  "down": 9,
+  "crossings": 21,
+  "min_cross": 2,
+  "avg_cross": 2.4705882352941178,
+  "grid": "12x13",
+  "fill": "49%"
+ }
+}

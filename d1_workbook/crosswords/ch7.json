@@ -1,0 +1,129 @@
+{
+ "chapter": 7,
+ "seed": 7,
+ "size": 13,
+ "placed": [
+  [
+   "SUNBURN",
+   "Damage to exposed grapes from intense sun and heat",
+   8,
+   5,
+   "A"
+  ],
+  [
+   "FRUIT",
+   "The grape is one",
+   7,
+   10,
+   "D"
+  ],
+  [
+   "RIPARIA",
+   "Species behind Riparia Gloire, tolerant of waterlogging",
+   10,
+   5,
+   "A"
+  ],
+  [
+   "ROW",
+   "A line of vines",
+   10,
+   5,
+   "D"
+  ],
+  [
+   "EARTHWORMS",
+   "Living organisms that improve soil health",
+   12,
+   0,
+   "A"
+  ],
+  [
+   "TERRACES",
+   "Flat steps built on steep slopes such as the Douro",
+   1,
+   5,
+   "D"
+  ],
+  [
+   "TRELLIS",
+   "Posts and wires that support the vine",
+   1,
+   5,
+   "A"
+  ],
+  [
+   "RIESLING",
+   "Late-budding, winter-hardy variety",
+   1,
+   3,
+   "D"
+  ],
+  [
+   "PINCHING",
+   "Removing shoot tips at flowering to improve fruit set",
+   6,
+   2,
+   "A"
+  ],
+  [
+   "SELECTION",
+   "Choosing clones or mass material for planting",
+   0,
+   7,
+   "D"
+  ],
+  [
+   "LIME",
+   "Spread on acidic soil, then ploughed in",
+   2,
+   2,
+   "A"
+  ],
+  [
+   "YEAR",
+   "Weather varies from one to the next",
+   9,
+   2,
+   "D"
+  ],
+  [
+   "VIGOR",
+   "A vine’s vegetative strength",
+   0,
+   10,
+   "D"
+  ],
+  [
+   "AGE",
+   "What fine wine does in the bottle",
+   10,
+   0,
+   "A"
+  ],
+  [
+   "GRAPE",
+   "The fruit of the vine",
+   8,
+   0,
+   "D"
+  ],
+  [
+   "STRUCTURE",
+   "How soil particles clump together",
+   4,
+   3,
+   "A"
+  ]
+ ],
+ "stats": {
+  "words": 16,
+  "across": 8,
+  "down": 8,
+  "crossings": 22,
+  "min_cross": 2,
+  "avg_cross": 2.75,
+  "grid": "13x12",
+  "fill": "51%"
+ }
+}

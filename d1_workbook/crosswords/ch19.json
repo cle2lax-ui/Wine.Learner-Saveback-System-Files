@@ -1,0 +1,157 @@
+{
+ "chapter": 19,
+ "seed": 15,
+ "size": 13,
+ "placed": [
+  [
+   "DELESTAGE",
+   "French for rack and return",
+   6,
+   2,
+   "A"
+  ],
+  [
+   "PRESSING",
+   "Whole-bunch ___ gives the least color",
+   4,
+   0,
+   "A"
+  ],
+  [
+   "WHITE",
+   "Wine usually made without skin contact",
+   2,
+   5,
+   "D"
+  ],
+  [
+   "STAVE",
+   "A curved plank of a barrel",
+   0,
+   2,
+   "D"
+  ],
+  [
+   "TANK",
+   "A steel vessel for fermenting or storing wine",
+   8,
+   8,
+   "A"
+  ],
+  [
+   "AROMA",
+   "The smell of a wine",
+   8,
+   9,
+   "D"
+  ],
+  [
+   "ICEWINE",
+   "Canadian wine harvested at −8°C or below",
+   0,
+   10,
+   "D"
+  ],
+  [
+   "CASK",
+   "A barrel",
+   0,
+   0,
+   "A"
+  ],
+  [
+   "TART",
+   "Sharply acidic",
+   5,
+   8,
+   "D"
+  ],
+  [
+   "ROSE",
+   "A pink wine",
+   11,
+   0,
+   "A"
+  ],
+  [
+   "CHAMPAGNE",
+   "Region where red may be blended into white for rose",
+   0,
+   0,
+   "D"
+  ],
+  [
+   "EARLIER",
+   "Rose grapes are harvested ___ than red",
+   6,
+   3,
+   "D"
+  ],
+  [
+   "WINE",
+   "Fermented grape juice",
+   0,
+   9,
+   "A"
+  ],
+  [
+   "SWEETNESS",
+   "Blended in at bottling",
+   2,
+   4,
+   "A"
+  ],
+  [
+   "COLOR",
+   "It decreases during fermentation",
+   9,
+   1,
+   "A"
+  ],
+  [
+   "VINE",
+   "A climbing plant trained on a trellis",
+   4,
+   9,
+   "A"
+  ],
+  [
+   "EISWEIN",
+   "German or Austrian wine from grapes frozen on the vine",
+   0,
+   12,
+   "D"
+  ],
+  [
+   "REMONTAGE",
+   "French for pumping over",
+   12,
+   3,
+   "A"
+  ],
+  [
+   "COOL",
+   "Rose ferments at 12–16°C",
+   9,
+   1,
+   "D"
+  ],
+  [
+   "RCGM",
+   "Rectified concentrated grape must, for short",
+   9,
+   5,
+   "D"
+  ]
+ ],
+ "stats": {
+  "words": 20,
+  "across": 10,
+  "down": 10,
+  "crossings": 26,
+  "min_cross": 2,
+  "avg_cross": 2.6,
+  "grid": "13x13",
+  "fill": "54%"
+ }
+}

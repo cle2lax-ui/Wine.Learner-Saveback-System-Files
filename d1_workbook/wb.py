@@ -772,13 +772,26 @@ class Checklist(Flowable):
 # =================================================================== chapter opener + tracker
 class Opener(Flowable):
     """Page-one block: how to use this workbook and what you will be able to do."""
-    def __init__(self, chap, title, objectives, guide_ref):
+    def __init__(self, chap, title, objectives, guide_ref, fit=False):
         Flowable.__init__(self)
-        self.chap, self.title, self.obj, self.guide = chap, title, objectives, guide_ref
+        self.chap, self.title, self.obj, self.guide, self.fit = chap, title, objectives, guide_ref, fit
+
+    OBX = 262
+
+    def _obj_paras(self, w):
+        out = []
+        for ob in self.obj:
+            p = Paragraph(ob, _p("ob", fontSize=8.8, leading=10.8, leftIndent=9, bulletIndent=0, bulletColor=GOLD),
+                          bulletText="\u2022")
+            pw, ph = p.wrap(w - self.OBX, 100)
+            out.append((p, ph))
+        return out
 
     def wrap(self, aw, ah):
         self.w = aw
-        self.h = 150
+        ps = self._obj_paras(aw)
+        need = 78 + sum(ph for _, ph in ps) + 2.4 * (len(ps) - 1) + 2
+        self.h = max(150, need) if self.fit else 150
         return (aw, self.h)
 
     def draw(self):
@@ -800,13 +813,10 @@ class Opener(Flowable):
             pw, ph = p.wrap(210, 40)
             p.drawOn(c, 24, y - 4 - ph + 8.5)
             y -= 31
-        ox = 262
+        ox = self.OBX
         c.setFont("Sans-B", 6.6); c.setFillColor(GOLD); tracked(c, ox, H - 70, "BY THE END YOU CAN", 1.2)
         yy = H - 84
-        for ob in self.obj:
-            p = Paragraph(ob, _p("ob", fontSize=8.8, leading=10.8, leftIndent=9, bulletIndent=0, bulletColor=GOLD),
-                          bulletText="\u2022")
-            pw, ph = p.wrap(w - ox, 100)
+        for p, ph in self._obj_paras(w):
             p.drawOn(c, ox, yy - ph + 8)
             yy -= ph + 2.4
 
@@ -939,6 +949,517 @@ def make_crossword(words, size=15, seed=7, tries=600):
     return dict(grid=grid, starts=starts, rows=rows, cols=cols, clues=clues)
 
 
+def make_crossword2(words, size=13, seed=1, tries=400, second_pass=True, min_words=12):
+    """A denser crossword: candidate placements come from matching letters, every extra word takes the most crossings
+    available, unplaced words get a second chance, and the best grid by (words placed, crossings, compactness) wins."""
+    rnd = random.Random(seed)
+    best = None
+    words = [w for w in words if len(w[0]) <= size]
+    for _ in range(tries):
+        order_ = list(words)
+        rnd.shuffle(order_)
+        order_.sort(key=lambda x: -len(x[0]) + rnd.random() * 3.0)
+        grid, placed, crossings = {}, [], [0]
+
+        def can(word, r, c_, d):
+            dr, dc = (0, 1) if d == "A" else (1, 0)
+            cross = 0
+            if (r - dr, c_ - dc) in grid or (r + dr * len(word), c_ + dc * len(word)) in grid:
+                return None
+            for i, chx in enumerate(word):
+                rr, cc = r + dr * i, c_ + dc * i
+                if not (0 <= rr < size and 0 <= cc < size):
+                    return None
+                if (rr, cc) in grid:
+                    if grid[(rr, cc)] != chx:
+                        return None
+                    cross += 1
+                elif (rr + dc, cc + dr) in grid or (rr - dc, cc - dr) in grid:
+                    return None
+            return cross
+
+        def put(word, clue, r, c_, d, k):
+            dr, dc = (0, 1) if d == "A" else (1, 0)
+            for i, chx in enumerate(word):
+                grid[(r + dr * i, c_ + dc * i)] = chx
+            placed.append((word, clue, r, c_, d))
+            crossings[0] += k
+
+        def try_place(word, clue):
+            opts = []
+            seen = set()
+            for (gr, gc), g in list(grid.items()):
+                for i, chx in enumerate(word):
+                    if chx != g:
+                        continue
+                    for d in ("A", "D"):
+                        r, c_ = (gr, gc - i) if d == "A" else (gr - i, gc)
+                        if (r, c_, d) in seen:
+                            continue
+                        seen.add((r, c_, d))
+                        k = can(word, r, c_, d)
+                        if k:
+                            opts.append((k, r, c_, d))
+            if not opts:
+                return False
+            mx = max(o[0] for o in opts)
+            k, r, c_, d = rnd.choice([o for o in opts if o[0] == mx])
+            put(word, clue, r, c_, d, k)
+            return True
+
+        w0, cl0 = order_[0]
+        put(w0, cl0, size // 2, (size - len(w0)) // 2, "A", 0)
+        left = []
+        for word, clue in order_[1:]:
+            if not try_place(word, clue):
+                left.append((word, clue))
+        if second_pass:
+            for word, clue in left:
+                try_place(word, clue)
+        rs = [r for (r, _) in grid]; cs = [c_ for (_, c_) in grid]
+        area = (max(rs) - min(rs) + 1) * (max(cs) - min(cs) + 1)
+        score = (len(placed) >= min_words, crossings[0], len(placed), -area)
+        if best is None or score > best[0]:
+            best = (score, dict(grid), list(placed), crossings[0])
+    _, grid, placed, nx = best
+    r0 = min(r for (r, _) in grid); c0 = min(c_ for (_, c_) in grid)
+    grid = {(r - r0, c_ - c0): chx for (r, c_), chx in grid.items()}
+    placed = [(w, cl, r - r0, c_ - c0, d) for (w, cl, r, c_, d) in placed]
+    rows = max(r for (r, _) in grid) + 1; cols = max(c_ for (_, c_) in grid) + 1
+    starts, n = {}, 0
+    for r in range(rows):
+        for c_ in range(cols):
+            if (r, c_) not in grid:
+                continue
+            a = ((r, c_ - 1) not in grid) and ((r, c_ + 1) in grid)
+            d = ((r - 1, c_) not in grid) and ((r + 1, c_) in grid)
+            if a or d:
+                n += 1
+                starts[(r, c_)] = n
+    clues = {"A": [], "D": []}
+    for (w, cl, r, c_, d) in placed:
+        clues[d].append((starts[(r, c_)], cl, w))
+    for d in clues:
+        clues[d].sort()
+    return dict(grid=grid, starts=starts, rows=rows, cols=cols, clues=clues, crossings=nx)
+
+
+def make_crossword3(words, size=12, seed=1, tries=60, min_words=12, max_words=18):
+    """Best-first crossword: at every step place whichever remaining word and position gives the MOST crossings, so the
+    grid interlocks tightly. The best grid over many random starts wins on (crossings, words, compactness)."""
+    rnd = random.Random(seed)
+    words = [w for w in words if len(w[0]) <= size]
+    best = None
+    for t in range(tries):
+        grid, placed, crossings = {}, [], 0
+        letters = {}
+
+        def can(word, r, c_, d):
+            dr, dc = (0, 1) if d == "A" else (1, 0)
+            cross = 0
+            if (r - dr, c_ - dc) in grid or (r + dr * len(word), c_ + dc * len(word)) in grid:
+                return None
+            for i, chx in enumerate(word):
+                rr, cc = r + dr * i, c_ + dc * i
+                if not (0 <= rr < size and 0 <= cc < size):
+                    return None
+                if (rr, cc) in grid:
+                    if grid[(rr, cc)] != chx:
+                        return None
+                    cross += 1
+                elif (rr + dc, cc + dr) in grid or (rr - dc, cc - dr) in grid:
+                    return None
+            return cross
+
+        def put(word, clue, r, c_, d):
+            dr, dc = (0, 1) if d == "A" else (1, 0)
+            for i, chx in enumerate(word):
+                p = (r + dr * i, c_ + dc * i)
+                if p not in grid:
+                    grid[p] = chx
+                    letters.setdefault(chx, []).append(p)
+            placed.append((word, clue, r, c_, d))
+
+        pool = list(words)
+        longs = [w for w in pool if len(w[0]) >= 8] or pool
+        first = rnd.choice(longs)
+        pool.remove(first)
+        put(first[0], first[1], size // 2, (size - len(first[0])) // 2, "A")
+        while pool and len(placed) < max_words:
+            cands = []
+            top = 0
+            for (word, clue) in pool:
+                seen = set()
+                for i, chx in enumerate(word):
+                    for (gr, gc) in letters.get(chx, ()):
+                        for d in ("A", "D"):
+                            r, c_ = (gr, gc - i) if d == "A" else (gr - i, gc)
+                            if (r, c_, d) in seen:
+                                continue
+                            seen.add((r, c_, d))
+                            k = can(word, r, c_, d)
+                            if k and k >= top:
+                                if k > top:
+                                    cands, top = [], k
+                                cands.append((word, clue, r, c_, d))
+            if not cands:
+                break
+            word, clue, r, c_, d = rnd.choice(cands)
+            crossings += top
+            put(word, clue, r, c_, d)
+            pool = [w for w in pool if w[0] != word]
+        rs = [r for (r, _) in grid]; cs = [c_ for (_, c_) in grid]
+        area = (max(rs) - min(rs) + 1) * (max(cs) - min(cs) + 1)
+        score = (len(placed) >= min_words, crossings, len(placed), -area)
+        if best is None or score > best[0]:
+            best = (score, dict(grid), list(placed), crossings)
+    _, grid, placed, nx = best
+    r0 = min(r for (r, _) in grid); c0 = min(c_ for (_, c_) in grid)
+    grid = {(r - r0, c_ - c0): chx for (r, c_), chx in grid.items()}
+    placed = [(w, cl, r - r0, c_ - c0, d) for (w, cl, r, c_, d) in placed]
+    rows = max(r for (r, _) in grid) + 1; cols = max(c_ for (_, c_) in grid) + 1
+    starts, n = {}, 0
+    for r in range(rows):
+        for c_ in range(cols):
+            if (r, c_) not in grid:
+                continue
+            a = ((r, c_ - 1) not in grid) and ((r, c_ + 1) in grid)
+            d = ((r - 1, c_) not in grid) and ((r + 1, c_) in grid)
+            if a or d:
+                n += 1
+                starts[(r, c_)] = n
+    clues = {"A": [], "D": []}
+    for (w, cl, r, c_, d) in placed:
+        clues[d].append((starts[(r, c_)], cl, w))
+    for d in clues:
+        clues[d].sort()
+    return dict(grid=grid, starts=starts, rows=rows, cols=cols, clues=clues, crossings=nx)
+
+
+def make_crossword4(words, size=13, seed=1, tries=300, iters=1500, min_words=14, max_words=22):
+    """Densest crossword: best-first starts, then local search (drop a word, refill with the most-crossing placements,
+    keep if the (words, crossings, compactness) score does not fall)."""
+    rnd = random.Random(seed)
+    words = [w for w in words if len(w[0]) <= size]
+    clue_of = {w: cl for w, cl in words}
+
+    def cells_of(item):
+        word, clue, r, c_, d = item
+        dr, dc = (0, 1) if d == "A" else (1, 0)
+        return [(r + dr * i, c_ + dc * i) for i in range(len(word))]
+
+    def grid_of(pl):
+        g = {}
+        for it in pl:
+            for p, chx in zip(cells_of(it), it[0]):
+                g[p] = chx
+        return g
+
+    def cross_of(pl):
+        cnt = {}
+        for it in pl:
+            for p in cells_of(it):
+                cnt[p] = cnt.get(p, 0) + 1
+        return sum(1 for v in cnt.values() if v > 1)
+
+    def connected(pl):
+        if not pl:
+            return False
+        cs = [set(cells_of(it)) for it in pl]
+        seen, stack = {0}, [0]
+        while stack:
+            i = stack.pop()
+            for j in range(len(pl)):
+                if j not in seen and cs[i] & cs[j]:
+                    seen.add(j); stack.append(j)
+        return len(seen) == len(pl)
+
+    def can(grid, word, r, c_, d):
+        dr, dc = (0, 1) if d == "A" else (1, 0)
+        cross = 0
+        if (r - dr, c_ - dc) in grid or (r + dr * len(word), c_ + dc * len(word)) in grid:
+            return None
+        for i, chx in enumerate(word):
+            rr, cc = r + dr * i, c_ + dc * i
+            if not (0 <= rr < size and 0 <= cc < size):
+                return None
+            if (rr, cc) in grid:
+                if grid[(rr, cc)] != chx:
+                    return None
+                cross += 1
+            elif (rr + dc, cc + dr) in grid or (rr - dc, cc - dr) in grid:
+                return None
+        return cross
+
+    def fill(pl, pool):
+        pl = list(pl)
+        pool = [w for w in pool if w[0] not in {p[0] for p in pl}]
+        while pool and len(pl) < max_words:
+            grid = grid_of(pl)
+            letters = {}
+            for p, chx in grid.items():
+                letters.setdefault(chx, []).append(p)
+            cands, top = [], 0
+            for (word, clue) in pool:
+                seen = set()
+                for i, chx in enumerate(word):
+                    for (gr, gc) in letters.get(chx, ()):
+                        for d in ("A", "D"):
+                            r, c_ = (gr, gc - i) if d == "A" else (gr - i, gc)
+                            if (r, c_, d) in seen:
+                                continue
+                            seen.add((r, c_, d))
+                            k = can(grid, word, r, c_, d)
+                            if k and k >= top:
+                                if k > top:
+                                    cands, top = [], k
+                                cands.append((word, clue, r, c_, d))
+            if not cands:
+                break
+            pick = rnd.choice(cands)
+            pl.append(pick)
+            pool = [w for w in pool if w[0] != pick[0]]
+        return pl
+
+    def score(pl):
+        g = grid_of(pl)
+        rs = [r for (r, _) in g]; cs = [c_ for (_, c_) in g]
+        area = (max(rs) - min(rs) + 1) * (max(cs) - min(cs) + 1)
+        return (len(pl) >= min_words, cross_of(pl), len(pl), -area)
+
+    best = None
+    for _ in range(tries):
+        longs = [w for w in words if len(w[0]) >= 8] or words
+        f = rnd.choice(longs)
+        pl = [(f[0], f[1], size // 2, (size - len(f[0])) // 2, "A")]
+        pl = fill(pl, words)
+        sc = score(pl)
+        if best is None or sc > best[0]:
+            best = (sc, pl)
+    cur_sc, cur = best
+    for _ in range(iters):
+        if len(cur) < 3:
+            break
+        drop = rnd.sample(range(len(cur)), rnd.choice((1, 1, 2)))
+        rest = [it for i, it in enumerate(cur) if i not in drop]
+        if not connected(rest):
+            continue
+        cand = fill(rest, words)
+        sc = score(cand)
+        if sc >= cur_sc:
+            cur_sc, cur = sc, cand
+    placed = cur
+    grid = grid_of(placed)
+    r0 = min(r for (r, _) in grid); c0 = min(c_ for (_, c_) in grid)
+    grid = {(r - r0, c_ - c0): chx for (r, c_), chx in grid.items()}
+    placed = [(w, cl, r - r0, c_ - c0, d) for (w, cl, r, c_, d) in placed]
+    rows = max(r for (r, _) in grid) + 1; cols = max(c_ for (_, c_) in grid) + 1
+    starts, n = {}, 0
+    for r in range(rows):
+        for c_ in range(cols):
+            if (r, c_) not in grid:
+                continue
+            a = ((r, c_ - 1) not in grid) and ((r, c_ + 1) in grid)
+            d = ((r - 1, c_) not in grid) and ((r + 1, c_) in grid)
+            if a or d:
+                n += 1
+                starts[(r, c_)] = n
+    clues = {"A": [], "D": []}
+    for (w, cl, r, c_, d) in placed:
+        clues[d].append((starts[(r, c_)], cl, w))
+    for d in clues:
+        clues[d].sort()
+    return dict(grid=grid, starts=starts, rows=rows, cols=cols, clues=clues, crossings=cross_of(placed))
+
+
+def crossword_from_placed(placed):
+    """Normalize a list of (word, clue, r, c, dir) into the dict the renderer expects."""
+    grid = {}
+    for (w, cl, r, c_, d) in placed:
+        dr, dc = (0, 1) if d == "A" else (1, 0)
+        for i, chx in enumerate(w):
+            grid[(r + dr * i, c_ + dc * i)] = chx
+    r0 = min(r for (r, _) in grid); c0 = min(c_ for (_, c_) in grid)
+    grid = {(r - r0, c_ - c0): chx for (r, c_), chx in grid.items()}
+    placed = [(w, cl, r - r0, c_ - c0, d) for (w, cl, r, c_, d) in placed]
+    rows = max(r for (r, _) in grid) + 1; cols = max(c_ for (_, c_) in grid) + 1
+    starts, n = {}, 0
+    for r in range(rows):
+        for c_ in range(cols):
+            if (r, c_) not in grid:
+                continue
+            a = ((r, c_ - 1) not in grid) and ((r, c_ + 1) in grid)
+            d = ((r - 1, c_) not in grid) and ((r + 1, c_) in grid)
+            if a or d:
+                n += 1
+                starts[(r, c_)] = n
+    clues = {"A": [], "D": []}
+    for (w, cl, r, c_, d) in placed:
+        clues[d].append((starts[(r, c_)], cl, w))
+    for d in clues:
+        clues[d].sort()
+    cnt = {}
+    for (w, cl, r, c_, d) in placed:
+        dr, dc = (0, 1) if d == "A" else (1, 0)
+        for i in range(len(w)):
+            p = (r + dr * i, c_ + dc * i)
+            cnt[p] = cnt.get(p, 0) + 1
+    crossings = sum(1 for v in cnt.values() if v > 1)
+    return dict(grid=grid, starts=starts, rows=rows, cols=cols, clues=clues, crossings=crossings, placed=placed)
+
+
+def crossword_stats(cw):
+    pl = cw["placed"]
+    cnt = {}
+    for (w, cl, r, c_, d) in pl:
+        dr, dc = (0, 1) if d == "A" else (1, 0)
+        for i in range(len(w)):
+            p = (r + dr * i, c_ + dc * i)
+            cnt[p] = cnt.get(p, 0) + 1
+    per = []
+    for (w, cl, r, c_, d) in pl:
+        dr, dc = (0, 1) if d == "A" else (1, 0)
+        per.append(sum(1 for i in range(len(w)) if cnt[(r + dr * i, c_ + dc * i)] > 1))
+    nA = sum(1 for p in pl if p[4] == "A"); nD = len(pl) - nA
+    fill = len(cw["grid"]) / float(cw["rows"] * cw["cols"])
+    return dict(words=len(pl), across=nA, down=nD, crossings=cw["crossings"], min_cross=min(per), avg_cross=sum(per) / float(len(per)),
+                grid="%dx%d" % (cw["rows"], cw["cols"]), fill="%.0f%%" % (100 * fill))
+
+
+def make_crossword5(words, size=13, seed=1, tries=80, iters=3000, min_words=15, max_words=20):
+    """Newspaper-style themed crossword: balanced Across/Down, every word crossing at least two others, as many crossings as the
+    vocabulary allows, compact grid. Score = (enough words, balance, no single-crossing words, crossings, words, compactness)."""
+    rnd = random.Random(seed)
+    words = [w for w in words if len(w[0]) <= size]
+
+    def cells_of(item):
+        word, clue, r, c_, d = item
+        dr, dc = (0, 1) if d == "A" else (1, 0)
+        return [(r + dr * i, c_ + dc * i) for i in range(len(word))]
+
+    def grid_of(pl):
+        g = {}
+        for it in pl:
+            for p, chx in zip(cells_of(it), it[0]):
+                g[p] = chx
+        return g
+
+    def per_word(pl):
+        cnt = {}
+        for it in pl:
+            for p in cells_of(it):
+                cnt[p] = cnt.get(p, 0) + 1
+        return [sum(1 for p in cells_of(it) if cnt[p] > 1) for it in pl], sum(1 for v in cnt.values() if v > 1)
+
+    def connected(pl):
+        if not pl:
+            return False
+        cs = [set(cells_of(it)) for it in pl]
+        seen, stack = {0}, [0]
+        while stack:
+            i = stack.pop()
+            for j in range(len(pl)):
+                if j not in seen and cs[i] & cs[j]:
+                    seen.add(j); stack.append(j)
+        return len(seen) == len(pl)
+
+    def can(grid, word, r, c_, d, used):
+        dr, dc = (0, 1) if d == "A" else (1, 0)
+        cross = 0
+        if (r - dr, c_ - dc) in grid or (r + dr * len(word), c_ + dc * len(word)) in grid:
+            return None
+        for i, chx in enumerate(word):
+            rr, cc = r + dr * i, c_ + dc * i
+            if not (0 <= rr < size and 0 <= cc < size):
+                return None
+            if (rr, cc) in grid:
+                if grid[(rr, cc)] != chx or ((rr, cc), d) in used:
+                    return None
+                cross += 1
+            elif (rr + dc, cc + dr) in grid or (rr - dc, cc - dr) in grid:
+                return None
+        return cross
+
+    def fill(pl, pool):
+        pl = list(pl)
+        pool = [w for w in pool if w[0] not in {p[0] for p in pl}]
+        while pool and len(pl) < max_words:
+            grid = grid_of(pl)
+            used = {(p, it[4]) for it in pl for p in cells_of(it)}
+            letters = {}
+            for p, chx in grid.items():
+                letters.setdefault(chx, []).append(p)
+            nA = sum(1 for p in pl if p[4] == "A"); nD = len(pl) - nA
+            want = "D" if nA > nD else "A" if nD > nA else None
+            cands, top = [], 0
+            for (word, clue) in pool:
+                seen = set()
+                for i, chx in enumerate(word):
+                    for (gr, gc) in letters.get(chx, ()):
+                        for d in ("A", "D"):
+                            r, c_ = (gr, gc - i) if d == "A" else (gr - i, gc)
+                            if (r, c_, d) in seen:
+                                continue
+                            seen.add((r, c_, d))
+                            k = can(grid, word, r, c_, d, used)
+                            if k and k >= top:
+                                if k > top:
+                                    cands, top = [], k
+                                cands.append((word, clue, r, c_, d))
+            if not cands:
+                break
+            pref = [x for x in cands if want and x[4] == want]
+            pick = rnd.choice(pref if (pref and rnd.random() < 0.85) else cands)
+            pl.append(pick)
+            pool = [w for w in pool if w[0] != pick[0]]
+        return pl
+
+    def score(pl):
+        g = grid_of(pl)
+        rs = [r for (r, _) in g]; cs = [c_ for (_, c_) in g]
+        area = (max(rs) - min(rs) + 1) * (max(cs) - min(cs) + 1)
+        per, cross = per_word(pl)
+        nA = sum(1 for p in pl if p[4] == "A"); nD = len(pl) - nA
+        return (-sum(1 for k in per if k < 2), len(pl) >= min_words, -max(0, abs(nA - nD) - 1), cross, len(pl), -area)
+
+    best = None
+    for _ in range(tries):
+        longs = [w for w in words if len(w[0]) >= 8] or words
+        f = rnd.choice(longs)
+        pl = fill([(f[0], f[1], size // 2, (size - len(f[0])) // 2, "A")], words)
+        sc = score(pl)
+        if best is None or sc > best[0]:
+            best = (sc, pl)
+    cur_sc, cur = best
+    for _ in range(iters):
+        if len(cur) < 4:
+            break
+        drop = rnd.sample(range(len(cur)), rnd.choice((1, 1, 2, 3)))
+        rest = [it for i, it in enumerate(cur) if i not in drop]
+        if not connected(rest):
+            continue
+        cand = fill(rest, words)
+        sc = score(cand)
+        if sc >= cur_sc:
+            cur_sc, cur = sc, cand
+    return crossword_from_placed(cur)
+
+
+def cached_crossword(ch):
+    """Load a chapter's cached crossword layout (see gen_crosswords.py); clues are always read fresh from the vocabulary bank."""
+    import json as _json
+    import cw_vocab as _CV
+    here = os.path.dirname(os.path.abspath(__file__))
+    d = _json.load(open(os.path.join(here, "crosswords", "ch%d.json" % ch), encoding="utf-8"))
+    window = {1: [1], 4: [2, 3, 4], 7: [5, 6, 7], 10: [8, 9, 10], 13: [11, 12, 13], 16: [14, 15, 16], 19: [17, 18, 19]}[ch]
+    pool, _ = _CV.pool(window)
+    clue = dict(pool)
+    placed = []
+    for (word, _old, r, c_, dr) in d["placed"]:
+        placed.append((word, clue[word], r, c_, dr))
+    return crossword_from_placed(placed)
+
+
 class CrosswordGrid(Flowable):
     def __init__(self, cw, cell=17.5, key=False):
         Flowable.__init__(self); self.cw, self.cell, self.key = cw, cell, key
@@ -960,15 +1481,22 @@ class CrosswordGrid(Flowable):
 
 
 def crossword_block(cw, key=False, cell=17.5):
+    """Grid at the left; the Across and Down clue lists side by side at the right (keeps a 20-word puzzle compact)."""
+    gw = cw["cols"] * cell + 2
+    avail = W - gw - 14
+    colw = (avail - 12) / 2.0
+
     def clue_pars(d, label):
-        out = [Paragraph(label, _p("cwh", fontName="Sans-B", fontSize=7.0, leading=9, textColor=GOLD, spaceBefore=2, spaceAfter=2))]
+        out = [Paragraph(label, _p("cwh", fontName="Sans-B", fontSize=7.0, leading=9, textColor=GOLD, spaceBefore=0, spaceAfter=2))]
         for n, cl, w in cw["clues"][d]:
             out.append(Paragraph("<b><font color=\"%s\">%d</font></b>&nbsp;&nbsp;%s" % (hexc(BURGUNDY), n, cl),
-                                 _p("cwc", fontSize=8.7, leading=10.6, spaceAfter=2.2, leftIndent=12, firstLineIndent=-12)))
+                                 _p("cwc", fontSize=8.0, leading=9.4, spaceAfter=2.0, leftIndent=11, firstLineIndent=-11)))
         return out
-    gw = cw["cols"] * cell + 2
-    right = clue_pars("A", "ACROSS") + [Spacer(1, 5)] + clue_pars("D", "DOWN")
-    t = Table([[CrosswordGrid(cw, cell, key), right]], colWidths=[gw + 14, W - gw - 14], hAlign="LEFT")
+    clues = Table([[clue_pars("A", "ACROSS"), clue_pars("D", "DOWN")]], colWidths=[colw + 6, colw + 6])
+    clues.setStyle(TableStyle([("VALIGN", (0, 0), (-1, -1), "TOP"), ("LEFTPADDING", (0, 0), (-1, -1), 0),
+                               ("RIGHTPADDING", (0, 0), (0, 0), 6), ("RIGHTPADDING", (1, 0), (1, 0), 0),
+                               ("TOPPADDING", (0, 0), (-1, -1), 0), ("BOTTOMPADDING", (0, 0), (-1, -1), 0)]))
+    t = Table([[CrosswordGrid(cw, cell, key), clues]], colWidths=[gw + 14, avail], hAlign="LEFT")
     t.setStyle(TableStyle([("VALIGN", (0, 0), (-1, -1), "TOP"), ("LEFTPADDING", (0, 0), (-1, -1), 0),
                            ("RIGHTPADDING", (0, 0), (-1, -1), 0), ("TOPPADDING", (0, 0), (-1, -1), 0),
                            ("BOTTOMPADDING", (0, 0), (-1, -1), 0)]))
@@ -1036,3 +1564,220 @@ def crossword_answers(cw):
         return "<b>%s</b>&nbsp; " % label + " \u00b7 ".join(
             '%d <font color="%s"><b>%s</b></font>' % (n, hexc(ANS), w) for n, cl, w in cw["clues"][d])
     return [kp(line("A", "Across")), kp(line("D", "Down"))]
+
+
+# =================================================================== tick grid
+def tickgrid(rows, cols, label_w=None):
+    """Statements down the side, category columns across: tick every box that applies.
+    rows: [str]; cols: [str]. Returns a Table of empty bubbles."""
+    n = len(cols)
+    cw = 62 if n <= 4 else 50
+    lw = label_w or (W - cw * n)
+    head = [Paragraph("", WS["hdr"])] + [Paragraph(c.upper(), _p("tg_h", fontName="Sans-B", fontSize=6.0, leading=7.6,
+                                                              textColor=SLATE, alignment=TA_CENTER)) for c in cols]
+    data = [head]
+    for i, r in enumerate(rows):
+        data.append([Paragraph("<b><font color=\"%s\">%d.</font></b>&nbsp;&nbsp;%s" % (hexc(BURGUNDY), i + 1, r), WS["cell"])]
+                    + [_ChoiceBubble("") for _ in cols])
+    t = Table(data, colWidths=[lw] + [cw] * n, hAlign="LEFT")
+    t.setStyle(TableStyle([("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                           ("LEFTPADDING", (0, 0), (-1, -1), 0), ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+                           ("TOPPADDING", (0, 0), (-1, -1), 3.2), ("BOTTOMPADDING", (0, 0), (-1, -1), 3.2),
+                           ("LINEABOVE", (0, 0), (-1, 0), LINE_BOLD, INK), ("LINEBELOW", (0, 0), (-1, 0), LINE_RULE, INK),
+                           ("LINEBELOW", (0, 1), (-1, -2), 0.3, FEINT), ("LINEBELOW", (0, -1), (-1, -1), LINE_BOLD, INK)]))
+    return t
+
+
+# =================================================================== vertical process flow with blanks
+class VFlow(Flowable):
+    """A process drawn top to bottom. Strings are given steps; Blank()s are for the student to complete.
+    `cols` lays the boxes out in that many parallel columns (a step list that reads down each column)."""
+    def __init__(self, items, key=False, box_h=25, gap=13, width=None, side=None):
+        Flowable.__init__(self)
+        self.items, self.key, self.box_h, self.gap, self.width = items, key, box_h, gap, width
+        self.side = side or {}          # {index: "note text"} annotations to the right
+        self.spaceBefore = 2; self.spaceAfter = 5
+
+    def wrap(self, aw, ah):
+        self.w = min(self.width or aw, aw)
+        n = len(self.items)
+        return (self.w, n * self.box_h + (n - 1) * self.gap)
+
+    def draw(self):
+        c = self.canv
+        n = len(self.items)
+        bw = self.w * (0.62 if self.side else 1.0)
+        H = n * self.box_h + (n - 1) * self.gap
+        for i, it in enumerate(self.items):
+            y = H - (i + 1) * self.box_h - i * self.gap
+            blank_ = isinstance(it, Blank)
+            if blank_ and not self.key:
+                c.setFillColor(colors.white); c.setStrokeColor(BURGUNDY); c.setLineWidth(0.9); c.setDash(2.6, 2.2)
+            elif blank_:
+                c.setFillColor(colors.HexColor("#F6E9EC")); c.setStrokeColor(BURGUNDY); c.setLineWidth(0.9); c.setDash(1, 0)
+            else:
+                c.setFillColor(BOXFILL); c.setStrokeColor(BOXEDGE); c.setLineWidth(0.6); c.setDash(1, 0)
+            c.roundRect(0, y, bw, self.box_h, 3, stroke=1, fill=1)
+            c.setDash(1, 0)
+            if not (blank_ and not self.key):
+                txt = it.a if blank_ else it
+                st = _p("vf_t", fontName="Sans-B" if blank_ else "Sans", fontSize=8.8, leading=10.6,
+                        textColor=ANS if blank_ else INK, alignment=TA_CENTER)
+                p = Paragraph(txt, st); pw, ph = p.wrap(bw - 12, self.box_h)
+                p.drawOn(c, 6, y + (self.box_h - ph) / 2.0)
+            if i < n - 1:
+                ax, ay = bw / 2.0, y - 1
+                c.setStrokeColor(GOLD); c.setFillColor(GOLD); c.setLineWidth(1.1)
+                c.line(ax, ay, ax, ay - self.gap + 5)
+                pth = c.beginPath(); pth.moveTo(ax, ay - self.gap + 1.5); pth.lineTo(ax - 3, ay - self.gap + 7); pth.lineTo(ax + 3, ay - self.gap + 7)
+                pth.close(); c.drawPath(pth, stroke=0, fill=1)
+            if i in self.side:
+                p = Paragraph(self.side[i], _p("vf_s", fontSize=8.4, leading=10.2, textColor=SLATE))
+                pw, ph = p.wrap(self.w - bw - 14, self.box_h + self.gap)
+                p.drawOn(c, bw + 12, y + (self.box_h - ph) / 2.0)
+                c.setStrokeColor(HAIRLINE); c.setLineWidth(0.5); c.line(bw + 2, y + self.box_h / 2.0, bw + 9, y + self.box_h / 2.0)
+
+
+# =================================================================== a row of small drawings to be named
+class PanelFigure(Flowable):
+    """Several small drawings side by side, each with a number and a line to write its name on."""
+    def __init__(self, arts, gap=12, names=None, key=False):
+        Flowable.__init__(self)
+        self.arts, self.gap, self.names, self.key = arts, gap, names or [], key
+        self.spaceBefore = 2; self.spaceAfter = 4
+
+    def wrap(self, aw, ah):
+        self.w = aw
+        return (aw, self.arts[0].H + 40)
+
+    def draw(self):
+        c = self.canv
+        tot = sum(a.W for a in self.arts) + self.gap * (len(self.arts) - 1)
+        x = (self.w - tot) / 2.0
+        for i, art in enumerate(self.arts):
+            c.setFillColor(colors.HexColor("#FBFAF6")); c.setStrokeColor(BOXEDGE); c.setLineWidth(0.6)
+            c.roundRect(x - 2, 26, art.W + 4, art.H + 12, 4, stroke=1, fill=1)
+            c.saveState(); c.translate(x, 30); art.draw(c); c.restoreState()
+            _bubble(c, x + 8, 26 + art.H + 4, str(i + 1), r=6.6, fill=BURGUNDY, txt=colors.white)
+            c.setStrokeColor(INK); c.setLineWidth(0.6); c.line(x, 11, x + art.W, 11)
+            if self.key and i < len(self.names):
+                c.setFont("Sans-B", 8.6); c.setFillColor(ANS); c.drawCentredString(x + art.W / 2.0, 13.4, self.names[i])
+            x += art.W + self.gap
+
+
+# =================================================================== nested rings (each ring contains the next)
+class NestRings(Flowable):
+    """Concentric rounded boxes. rings = [(given_text, answer)], outermost first. The student names each ring."""
+    def __init__(self, rings, key=False, height=170, inset=30):
+        Flowable.__init__(self)
+        self.rings, self.key, self.hh, self.inset = rings, key, height, inset
+        self.spaceBefore = 2; self.spaceAfter = 5
+
+    def wrap(self, aw, ah):
+        self.w = aw
+        return (aw, self.hh)
+
+    def draw(self):
+        c, w, H, d = self.canv, self.w, self.hh, self.inset
+        n = len(self.rings)
+        tints = ["#FBFAF6", "#F3EEE2", "#EADFC9", "#E0D0B0"]
+        for i, (given, ans) in enumerate(self.rings):
+            x0, x1, y0, y1 = i * 38, w - i * 38, i * 9, H - i * 36
+            c.setFillColor(colors.HexColor(tints[min(i, 3)])); c.setStrokeColor(BOXEDGE if i else INK); c.setLineWidth(0.9 if i else 1.1)
+            c.roundRect(x0, y0, x1 - x0, y1 - y0, 10, stroke=1, fill=1)
+        for i, (given, ans) in enumerate(self.rings):
+            x0, y1 = i * 38, H - i * 36
+            ty = y1 - 19
+            _bubble(c, x0 + 15, ty + 3, str(i + 1), r=6.6, fill=BURGUNDY, txt=colors.white)
+            c.setFont("Sans", 8.8); c.setFillColor(INK)
+            c.drawString(x0 + 28, ty, given)
+            bx = (self.w - i * 38) - 14 - 150
+            if self.key:
+                c.setFont("Sans-B", 9.2); c.setFillColor(ANS); c.drawString(bx + 4, ty, ans)
+            else:
+                c.setStrokeColor(BURGUNDY); c.setLineWidth(0.9); c.setDash(2.6, 2.2)
+                c.setFillColor(colors.white); c.roundRect(bx, ty - 5, 150, 17, 3, stroke=1, fill=1); c.setDash(1, 0)
+
+
+# =================================================================== a coloured scale with callout boxes to complete
+class BandScale(Flowable):
+    """A horizontal scale (e.g. temperature) split into bands. Each band has a given header and a box to complete.
+    bands = [(lo, hi, colour_hex, header, answer)]; ticks = [values]"""
+    def __init__(self, lo, hi, bands, ticks, unit="\u00b0C", key=False, box_h=50):
+        Flowable.__init__(self)
+        self.lo, self.hi, self.bands, self.ticks, self.unit, self.key, self.box_h = lo, hi, bands, ticks, unit, key, box_h
+        self.spaceBefore = 2; self.spaceAfter = 5
+
+    def wrap(self, aw, ah):
+        self.w = aw
+        return (aw, self.box_h + 74)
+
+    def draw(self):
+        c, w = self.canv, self.w
+        X = lambda v: 10 + (v - self.lo) / float(self.hi - self.lo) * (w - 20)
+        by, bh = 18, 20
+        c.setFillColor(colors.HexColor("#ECE8DE")); c.setStrokeColor(INK); c.setLineWidth(0.9)
+        c.rect(X(self.lo), by, X(self.hi) - X(self.lo), bh, stroke=1, fill=1)
+        for (a, b, col, head, ans) in self.bands:
+            c.setFillColor(colors.HexColor(col)); c.setStrokeColor(INK); c.setLineWidth(0.7)
+            c.rect(X(a), by, X(b) - X(a), bh, stroke=1, fill=1)
+        c.setFont("Sans", 7.2); c.setFillColor(SLATE)
+        for t in self.ticks:
+            c.setStrokeColor(INK); c.setLineWidth(0.6); c.line(X(t), by, X(t), by - 3)
+            c.drawCentredString(X(t), by - 11, "%g%s" % (t, self.unit))
+        n = len(self.bands)
+        gap = 10
+        bw = (w - gap * (n - 1)) / float(n)
+        top = self.box_h + 74
+        for i, (a, b, col, head, ans) in enumerate(self.bands):
+            bx = i * (bw + gap)
+            by0 = top - self.box_h
+            cx = (X(a) + X(b)) / 2.0
+            c.setStrokeColor(HAIRLINE); c.setLineWidth(0.7)
+            c.line(cx, by + bh, bx + bw / 2.0, by0)
+            c.setFillColor(colors.HexColor(col)); c.circle(cx, by + bh, 2.2, stroke=0, fill=1)
+            c.setFillColor(colors.HexColor("#FBFAF6")); c.setStrokeColor(BOXEDGE); c.setLineWidth(0.6)
+            c.roundRect(bx, by0, bw, self.box_h, 4, stroke=1, fill=1)
+            c.setFont("Sans-B", 7.6); c.setFillColor(BURGUNDY)
+            c.drawString(bx + 6, top - 12, head)
+            if self.key:
+                p = Paragraph(ans, _p("bs_k", fontName="Sans-B", fontSize=7.8, leading=9.2, textColor=ANS))
+                pw, ph = p.wrap(bw - 12, self.box_h - 16)
+                p.drawOn(c, bx + 6, by0 + (self.box_h - 16 - ph) / 2.0 + 2)
+            else:
+                c.setStrokeColor(BURGUNDY); c.setLineWidth(0.8); c.setDash(2.4, 2.0)
+                c.setFillColor(colors.white); c.roundRect(bx + 5, by0 + 5, bw - 10, self.box_h - 22, 3, stroke=1, fill=1); c.setDash(1, 0)
+
+
+# =================================================================== bars whose value labels are left blank
+class FillBars(Flowable):
+    """A simple bar chart: the student writes each bar's value in the dotted box above it.
+    bars = [(label, fraction_of_full_height, answer_text)]"""
+    def __init__(self, bars, width=330, height=118, key=False, unit_note=None):
+        Flowable.__init__(self)
+        self.bars, self.fw, self.fh, self.key, self.note = bars, width, height, key, unit_note
+        self.spaceBefore = 2; self.spaceAfter = 4
+
+    def wrap(self, aw, ah):
+        return (aw, self.fh)
+
+    def draw(self):
+        c = self.canv
+        n = len(self.bars)
+        base, top = 20, self.fh - 30
+        bw = 62
+        gap = (self.fw - n * bw) / float(n + 1)
+        c.setStrokeColor(INK); c.setLineWidth(0.9); c.line(0, base, self.fw, base)
+        for i, (lab, frac, ans) in enumerate(self.bars):
+            x = gap + i * (bw + gap)
+            h = max(4, (top - base) * frac)
+            c.setFillColor(colors.HexColor("#A98255")); c.setStrokeColor(colors.HexColor("#3A2A18")); c.setLineWidth(1.0)
+            c.roundRect(x, base, bw, h, 3, stroke=1, fill=1)
+            c.setFillColor(colors.HexColor("#C9A271")); c.rect(x + 7, base + 3, 7, max(h - 8, 2), stroke=0, fill=1)
+            c.setFont("Sans-B", 7.6); c.setFillColor(SLATE); c.drawCentredString(x + bw / 2.0, base - 11, lab)
+            by = base + h + 5
+            if self.key:
+                c.setFont("Sans-B", 9.2); c.setFillColor(ANS); c.drawCentredString(x + bw / 2.0, by + 3, ans)
+            else:
+                c.setStrokeColor(BURGUNDY); c.setLineWidth(0.9); c.setDash(2.6, 2.2)
+                c.setFillColor(colors.white); c.roundRect(x + 2, by, bw - 4, 17, 3, stroke=1, fill=1); c.setDash(1, 0)

@@ -215,27 +215,7 @@ K.add("1.12", "Who are the parents?", [kp("<b>1</b> %s \u00b7 <b>2</b> %s \u00b7
                                           "The hybrid is <b>Vidal Blanc</b> (two species)." % tuple(_l12))])
 
 # ---- 1.13 crossword
-_words = [
-    ("NODE", "Swelling on a shoot where leaves and buds attach"),
-    ("INTERNODE", "Length of shoot between two nodes"),
-    ("TENDRIL", "Coils round a trellis wire for support"),
-    ("STOMATA", "Pores on the underside of a leaf"),
-    ("CORDON", "Horizontal arm of permanent wood"),
-    ("CLONE", "A group of vines with identical characteristics, from one selected vine"),
-    ("HYBRID", "Offspring of parents from two different species"),
-    ("BLOOM", "Powdery, waxy coating on a grape"),
-    ("CANE", "A lignified shoot"),
-    ("PINOTAGE", "Cross of Pinot Noir and Cinsaut"),
-    ("LAYERING", "Burying a cane so it roots and fills a gap"),
-    ("LATERAL", "Shoot that grows from a prompt bud"),
-    ("CUTTING", "The most common propagation method"),
-    ("ROOTSTOCK", "What a <i>V. vinifera</i> cutting is grafted onto"),
-    ("LIGNIFY", "Turn woody, rigid and brown"),
-    ("CANOPY", "Shoots plus all their structures"),
-    ("PETIOLE", "A leaf stalk"),
-    ("SPUR", "Short length of one-year-old wood"),
-]
-_cw1 = make_crossword(_words, size=13, seed=11, tries=500)
+_cw1 = cached_crossword(1)
 _nw = len(_cw1["clues"]["A"]) + len(_cw1["clues"]["D"])
 add(ExHeader("1.13", "CROSSWORD", "Chapter 1 vocabulary", _nw, mins=6, ref="Guide \u00a72\u201311"))
 add(instr("One point per word. Answers are single words, no spaces."))

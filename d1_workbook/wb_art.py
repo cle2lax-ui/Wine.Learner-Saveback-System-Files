@@ -250,16 +250,22 @@ class Zones(Art):
         # ---- soil block
         soil = K.path(c, [("M", W * 0.02, 0), ("L", W * 0.60, 0), ("L", W * 0.60, soil_y), ("L", W * 0.02, soil_y), ("Z",)])
         K.fill_linear(c, soil, 0, soil_y, 0, 0, [(0, K.SOIL_L), (1, K.SOIL_D)])
-        c.saveState()
-        for i in range(34):                                           # fine aggregate
-            x = W * 0.03 + ((i * 53.7) % (W * 0.56))
-            y = 3 + ((i * 29.3) % (soil_y - 8))
-            c.setFillColor(K.alpha(HEX("#9C8760"), 0.45)); c.circle(x, y, 0.6 + (i % 3) * 0.35, stroke=0, fill=1)
-        c.restoreState()
-        for (px, py, r) in ((0.09, 0.06, 4.0), (0.52, 0.10, 3.4), (0.44, 0.04, 2.6), (0.15, 0.21, 2.8)):
-            K.blob(c, W * px, H * py, r * 1.3 * self.s + 1, r * self.s + 1, 20, light=HEX("#F3EBD8"), mid=HEX("#D8CDB4"),
-                   dark=HEX("#B7AA8A"), ink=HEX("#7A6C4E"), lw=0.8)
+        topsoil = K.path(c, [("M", W * 0.02, soil_y * 0.64), ("L", W * 0.60, soil_y * 0.64), ("L", W * 0.60, soil_y), ("L", W * 0.02, soil_y), ("Z",)])
+        K.fill_linear(c, topsoil, 0, soil_y, 0, soil_y * 0.64, [(0, HEX("#BFA77A")), (1, HEX("#D3BD92"))])
+        K.stipple(c, soil, n=190, col=HEX("#6F5A36"), r=0.42, seed=4, bias=(0.1, -0.5), a=0.6)
+        K.stipple(c, topsoil, n=70, col=HEX("#5E4A2A"), r=0.35, seed=9, a=0.5)
+        K.hatch(c, soil, angle=-32, gap=2.6, col=HEX("#6F5A36"), lw=0.28, depth=0.22, shadow=(0.25, -1.0), a=0.5)
+        K.line(c, [(W * 0.02, soil_y * 0.64), (W * 0.15, soil_y * 0.62), (W * 0.33, soil_y * 0.66), (W * 0.60, soil_y * 0.63)], HEX("#8C7347"), 0.6)
+        for (px, py, r) in ((0.09, 0.07, 4.2), (0.52, 0.11, 3.6), (0.44, 0.05, 2.8), (0.15, 0.20, 3.0), (0.56, 0.22, 2.4), (0.05, 0.14, 2.2)):
+            st = K.ellipse_path(c, W * px, H * py, r * 1.3 * self.s + 1.0, r * self.s + 0.8, 20)
+            K.fill_radial(c, st, W * px - 2, H * py + 2, r * 3, [(0, HEX("#F3EBD8")), (0.55, HEX("#D2C6A8")), (1, HEX("#9E9070"))])
+            K.hatch(c, st, angle=55, gap=1.2, col=HEX("#5A4C32"), lw=0.25, depth=0.45)
+            K.outline(c, st, HEX("#5A4C32"), 0.8)
         K.outline(c, soil, K.INK_W, 1.4)
+        for gxp in range(0, 11):                                                      # grass tufts along the surface
+            tx = W * 0.04 + gxp * W * 0.052
+            for d_ in (-1.6, 0, 1.6):
+                K.line(c, [(tx + d_, soil_y), (tx + d_ * 2.2, soil_y + 4.2 + (gxp % 3))], HEX("#4E7A3A"), 0.7, taper=True)
 
         # ---- roots: a tap root and branching laterals, tapering
         roots = [((gx, soil_y), (gx - 3, soil_y * 0.70), (gx + 4, soil_y * 0.38), (gx - 1, soil_y * 0.06), 8.0, 1.6),
@@ -268,11 +274,17 @@ class Zones(Art):
                  ((gx + 2, soil_y * 0.70), (gx + 18, soil_y * 0.60), (gx + 30, soil_y * 0.34), (gx + 36, soil_y * 0.12), 3.2, 0.9),
                  ((gx - 2, soil_y * 0.62), (gx - 16, soil_y * 0.50), (gx - 28, soil_y * 0.28), (gx - 33, soil_y * 0.10), 3.2, 0.9)]
         for (p0, p1, p2, p3, w0, w1) in roots:
-            K.tube(c, K.bezier(p0, p1, p2, p3, n=26), w0, w1, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.0, hi=0.4)
+            ctr_r = K.bezier(p0, p1, p2, p3, n=26)
+            K.tube(c, ctr_r, w0, w1, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.0, hi=0.4)
+            for q_ in range(5, 24, 3):                                                 # fine feeder roots
+                rx, ry = ctr_r[q_]
+                sd = 1 if q_ % 2 else -1
+                K.line(c, [(rx, ry), (rx + sd * 4.5, ry - 3.0), (rx + sd * 8.5, ry - 4.2 - (q_ % 4))], K.INK_W, 0.55)
+                K.line(c, [(rx + sd * 4.5, ry - 3.0), (rx + sd * 7.5, ry - 7.5)], K.INK_W, 0.4)
 
         # ---- trunk: a slightly sinuous tube with bark lines
-        trunk = [(gx + 1.6 * math.sin(i / 30.0 * math.pi * 1.2), soil_y - 2 + (top - soil_y + 2) * i / 30.0) for i in range(31)]
-        K.tube(c, trunk, 19.0, 15.0, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.5, hi=0.45, shade=0.4)
+        trunk = [(gx + 2.4 * math.sin(i / 30.0 * math.pi * 1.2) + 1.1 * math.sin(i * 0.9), soil_y - 2 + (top - soil_y + 2) * i / 30.0) for i in range(31)]
+        K.tube(c, trunk, 23.0, 15.5, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.5, hi=0.45, shade=0.4)
         c.saveState(); c.setStrokeColor(K.alpha(K.WOOD_D, 0.6)); c.setLineWidth(0.7); c.setLineCap(1)
         for off in (-3.4, 0.8, 4.6):
             pts = [(x + off * (1 - 0.2 * i / 30.0), y) for i, (x, y) in enumerate(trunk)]
@@ -306,7 +318,9 @@ class Zones(Art):
                 fy = 0.30 + 0.27 * j
                 pt = ctr[int(fy * 21)]
                 side = 1 if (k + j) % 2 == 0 else -1
-                K.leaf(c, pt[0] + side * 9.5, pt[1] + 3, 11.0 + (j % 2) * 1.2, rot=side * 14 + j * 8, flip=side < 0, stalk=False)
+                K.leaf(c, pt[0] + side * 12.5, pt[1] + 4, 14.5 + (j % 2) * 2.0 - (k % 2) * 1.2, rot=side * 14 + j * 8 + k * 3, flip=side < 0, stalk=False)
+                nd = K.ellipse_path(c, pt[0], pt[1], 2.2, 1.7, 0)
+                K.fill_radial(c, nd, pt[0] - 0.5, pt[1] + 0.5, 3, [(0, HEX("#CDE7AE")), (1, K.G_DARK)]); K.outline(c, nd, K.INK_G, 0.6)
             tx, ty = ctr[-1]
             sp = [(tx + (1.0 + 0.28 * i) * math.cos(i * 0.5 + 3.4) * 1.1 + 2 * i * 0.06, ty + 2 + (1.0 + 0.28 * i) * math.sin(i * 0.5 + 3.4) * 1.1)
                   for i in range(0, 16)]
@@ -315,7 +329,7 @@ class Zones(Art):
             bx, by = self._arm_xy(off)
             by -= 5.5
             K.line(c, [(bx, by + 2), (bx, by - 5)], K.INK_G, 1.4)
-            K.bunch(c, bx, by - 5, 0.066 * W, 0.105 * H)
+            K.bunch(c, bx, by - 5, 0.082 * W, 0.135 * H, rows=(4, 5, 4, 3, 3, 2, 1), seed=int(off * 100))
 
     def _arm_xy(self, off):
         """Centre-line point of the cordon at horizontal offset `off` (fraction of W, signed)."""
@@ -496,3 +510,257 @@ class Flower(Art):
                 ("Pollen tube", T((X(.519), Y(.55))), "R"),
                 ("Ovule", T((X(.520), Y(.304))), "R"),
                 ("Egg", T((X(.543), Y(.342))), "R")]
+
+
+# ===================================================================== trellis systems (Chapter 7)
+def _ground(c, W):
+    g = K.path(c, [("M", 0, 0), ("L", W, 0), ("L", W, 9), ("L", 0, 9), ("Z",)])
+    K.fill_linear(c, g, 0, 9, 0, 0, [(0, K.SOIL_L), (1, HEX("#C4AB7D"))])
+    K.stipple(c, g, n=int(W * 0.8), col=HEX("#6F5A36"), r=0.36, seed=int(W) + 3, a=0.6, bias=(0.0, -0.6))
+    K.hatch(c, g, angle=-30, gap=2.0, col=HEX("#7B6238"), lw=0.25, depth=0.45, shadow=(0.3, -1.0), a=0.5)
+    K.line(c, [(0, 9), (W, 9)], K.INK_W, 1.1)
+    for i in range(0, int(W) - 6, 13):                                  # a few blades of grass along the surface
+        for d_ in (-1.4, 0.0, 1.4):
+            K.line(c, [(i + 6 + d_, 9), (i + 6 + d_ * 2.0, 12.4 + (i % 3))], HEX("#4E7A3A"), 0.6)
+
+
+def _post(c, x, y0, y1, w=4.2):
+    K.tube(c, [(x, y0), (x, y1)], w, w, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.0, hi=0.5, shade=0.4)
+
+
+def _wire(c, x0, x1, y):
+    K.line(c, [(x0, y), (x1, y)], HEX("#4A4A4A"), 0.8)
+
+
+def _shoot_with_leaves(c, ctr, leaves_at, R=5.6, lw=0.6):
+    K.tube(c, ctr, 2.0, 1.4, K.G_MID, light=HEX("#CDE7AE"), ink=K.INK_G, lw=0.7, hi=0.5)
+    n = len(ctr)
+    for k, f in enumerate(leaves_at):
+        x, y = ctr[min(int(f * (n - 1)), n - 1)]
+        side = 1 if k % 2 == 0 else -1
+        K.leaf(c, x + side * (R * 0.9), y, R, rot=side * 12, flip=side < 0, stalk=False, lw=lw)
+
+
+class TrellisBush(Art):
+    name = "bush"
+    aspect = 1.18
+
+    def draw(self, c):
+        W, H = self.W, self.H
+        _ground(c, W)
+        cx = W * 0.5
+        K.tube(c, [(cx, 8), (cx + 1, 30), (cx, 52)], 10, 8.5, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.3, hi=0.5, shade=0.4)
+        K.blob(c, cx, 54, 8, 6, 0, light=K.WOOD_L, mid=K.WOOD_M, dark=K.WOOD_D, ink=K.INK_W, lw=1.2)
+        K.bunch(c, cx - 14, 50, 13, 16)
+        K.bunch(c, cx + 15, 46, 13, 16)
+        for (ax, ay, ctrl, end) in ((cx - 7, 56, ((cx - 30, 92), (cx - 46, 96)), (cx - 46, 60)),
+                                     (cx + 7, 56, ((cx + 30, 92), (cx + 46, 96)), (cx + 46, 60)),
+                                     (cx, 58, ((cx - 6, 110), (cx + 14, 112)), (cx + 20, 84))):
+            ctr = K.bezier((ax, ay), ctrl[0], ctrl[1], end, n=22)
+            _shoot_with_leaves(c, ctr, (0.18, 0.36, 0.54, 0.72, 0.9), R=6.8)
+
+    def _targets(self):
+        return []
+
+
+class TrellisVSP(Art):
+    name = "vsp"
+    aspect = 1.18
+
+    def draw(self, c):
+        W, H = self.W, self.H
+        _ground(c, W)
+        for y in (46, 74, 102, 124):
+            _wire(c, 8, W - 8, y)
+        _post(c, 8, 8, 130); _post(c, W - 8, 8, 130)
+        cx = W * 0.5
+        K.tube(c, [(cx, 8), (cx, 46)], 7.5, 6.5, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.2, hi=0.5, shade=0.4)
+        K.tube(c, [(20, 47), (W - 20, 47)], 5.5, 5.0, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.1, hi=0.5, shade=0.4)
+        for x in (36, 74, 96):
+            K.line(c, [(x, 44), (x, 40)], K.INK_G, 1.0)
+            K.bunch(c, x, 40, 11, 14)
+        for i, x in enumerate((26, 38, 50, 70, 82, 94)):
+            ctr = [(x + 1.2 * math.sin(j / 4.0 + i), 50 + (120 - 50) * j / 18.0) for j in range(19)]
+            _shoot_with_leaves(c, ctr, (0.18, 0.40, 0.62, 0.84), R=5.4)
+
+    def _targets(self):
+        return []
+
+
+class TrellisGDC(Art):
+    name = "gdc"
+    aspect = 1.18
+
+    def draw(self, c):
+        W, H = self.W, self.H
+        _ground(c, W)
+        cx = W * 0.5
+        K.tube(c, [(cx, 8), (cx, 104)], 7.5, 6.5, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.2, hi=0.5, shade=0.4)
+        K.tube(c, [(16, 104), (W - 16, 104)], 4.5, 4.5, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.0, hi=0.5, shade=0.4)
+        for x in (16, W - 16):
+            K.blob(c, x, 104, 3.4, 3.4, 0, light=HEX("#C9CCCF"), mid=HEX("#8A8D90"), dark=HEX("#4A4A4A"), ink=HEX("#2A2A2A"), lw=0.9)
+        for side in (-1, 1):
+            base = 16 if side < 0 else W - 16
+            for i, dx in enumerate((-9, -3, 3, 9)):
+                x = base + dx
+                ctr = [(x + 1.2 * math.sin(j / 3.0 + i), 101 - (101 - 44) * j / 16.0) for j in range(17)]
+                _shoot_with_leaves(c, ctr, (0.15, 0.38, 0.62, 0.86), R=5.2)
+            K.bunch(c, base + side * 2, 58, 10, 12)
+
+    def _targets(self):
+        return []
+
+
+class TrellisSH(Art):
+    name = "scott_henry"
+    aspect = 1.18
+
+    def draw(self, c):
+        W, H = self.W, self.H
+        _ground(c, W)
+        for y in (90, 118, 36, 24):
+            _wire(c, 8, W - 8, y)
+        _post(c, 8, 8, 130); _post(c, W - 8, 8, 130)
+        cx = W * 0.5
+        K.tube(c, [(cx, 8), (cx, 58)], 7.5, 6.5, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.2, hi=0.5, shade=0.4)
+        K.tube(c, [(20, 59), (W - 20, 59)], 5.5, 5.0, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.1, hi=0.5, shade=0.4)
+        for i, x in enumerate((32, 60, 88)):                            # upward shoots
+            ctr = [(x + 1.2 * math.sin(j / 4.0 + i), 62 + (123 - 62) * j / 16.0) for j in range(17)]
+            _shoot_with_leaves(c, ctr, (0.2, 0.45, 0.7, 0.92), R=5.4)
+        for i, x in enumerate((46, 74, 100)):                           # downward shoots
+            ctr = [(x + 1.2 * math.sin(j / 4.0 + i), 56 - (56 - 20) * j / 12.0) for j in range(13)]
+            _shoot_with_leaves(c, ctr, (0.25, 0.55, 0.85), R=5.0)
+        K.bunch(c, 40, 52, 10, 12)
+        K.bunch(c, 66, 52, 10, 12)
+
+    def _targets(self):
+        return []
+
+
+# ===================================================================== presses (Chapter 13)
+STEEL_L, STEEL_M, STEEL_D, INK_S = HEX("#EDF0F2"), HEX("#B3BBC1"), HEX("#6E777E"), HEX("#2E353B")
+JUICE_L, JUICE_D = HEX("#F1D98C"), HEX("#D8AE45")
+
+
+def _steel(c, x, y, w, h, r=5, horizontal=True, lw=1.1):
+    p = K.rrect(c, x, y, w, h, r)
+    if horizontal:
+        K.fill_linear(c, p, x, y + h, x, y, [(0, STEEL_M), (0.25, STEEL_L), (0.6, STEEL_M), (1, STEEL_D)])
+    else:
+        K.fill_linear(c, p, x, y, x + w, y, [(0, STEEL_M), (0.3, STEEL_L), (0.65, STEEL_M), (1, STEEL_D)])
+    K.hatch(c, p, angle=-38, gap=1.7, col=INK_S, lw=0.24, depth=0.28, a=0.55)
+    if min(w, h) > 5:
+        K.line(c, [(x + r * 0.9, y + h - 1.6), (x + w - r * 0.9, y + h - 1.6)] if horizontal else [(x + 1.6, y + r * 0.9), (x + 1.6, y + h - r * 0.9)],
+               HEX("#FFFFFF"), 0.7, pen=False)
+    K.outline(c, p, INK_S, lw)
+    if w > 40 and h > 22:                                               # rivets along a large panel
+        for k in range(int(w // 14)):
+            rx = x + 9 + k * 14
+            if rx < x + w - 6:
+                for ry in (y + 4.5, y + h - 4.5):
+                    K.blob(c, rx, ry, 1.2, 1.2, 0, light=STEEL_L, mid=STEEL_M, dark=STEEL_D, ink=INK_S, lw=0.4)
+
+
+def _steel_poly(c, pts, horizontal=True, lw=1.1):
+    p = K.poly(c, pts)
+    ys = [q[1] for q in pts]; xs = [q[0] for q in pts]
+    if horizontal:
+        K.fill_linear(c, p, 0, max(ys), 0, min(ys), [(0, STEEL_M), (0.3, STEEL_L), (1, STEEL_D)])
+    else:
+        K.fill_linear(c, p, min(xs), 0, max(xs), 0, [(0, STEEL_M), (0.3, STEEL_L), (1, STEEL_D)])
+    K.hatch(c, p, angle=-38, gap=1.7, col=INK_S, lw=0.24, depth=0.28, a=0.55)
+    K.outline(c, p, INK_S, lw)
+
+
+def _juice(c, x0, x1, y):
+    p = K.path(c, [("M", x0, y), ("L", x1, y), ("L", x1 - 2, y + 4), ("L", x0 + 2, y + 4), ("Z",)])
+    K.fill_linear(c, p, 0, y + 4, 0, y, [(0, JUICE_L), (1, JUICE_D)])
+
+
+class PressPneumatic(Art):
+    name = "pneumatic"
+    aspect = 0.95
+
+    def draw(self, c):
+        W, H = self.W, self.H
+        for x in (30, 112):
+            _steel_poly(c, [(x - 9, 4), (x + 9, 4), (x + 5, 46), (x - 5, 46)], horizontal=False)
+        _steel(c, 20, 30, 110, 11, r=3)
+        _juice(c, 28, 122, 33)
+        _steel(c, 8, 44, 134, 72, r=16)
+        p = c.beginPath(); p.roundRect(20, 54, 110, 52, 8)
+        K.fill_linear(c, p, 20, 106, 20, 54, [(0, HEX("#FBF3DC")), (1, HEX("#EBDDB4"))]); K.outline(c, p, INK_S, 0.9)
+        for j, y in enumerate(range(60, 104, 7)):                       # the grape mass
+            for x in range(27 + (4 if j % 2 else 0), 80, 8):
+                K.berry(c, x, y, 3.6, lw=0.6)
+        m = K.path(c, [("M", 130, 54), ("L", 108, 54), ("C", 90, 62, 90, 98, 108, 106), ("L", 130, 106), ("Z",)])   # the air bag
+        K.fill_linear(c, m, 90, 0, 130, 0, [(0, HEX("#B9CADA")), (0.5, HEX("#8DA6BD")), (1, HEX("#5E7890"))])
+        K.outline(c, m, HEX("#1F2F3D"), 1.1)
+        for y in (70, 90):
+            K.line(c, [(122, y), (104, y)], HEX("#F4F8FB"), 1.6)
+            K.line(c, [(104, y), (110, y + 4)], HEX("#F4F8FB"), 1.6); K.line(c, [(104, y), (110, y - 4)], HEX("#F4F8FB"), 1.6)
+        K.line(c, [(20, 106), (20, 54)], INK_S, 1.0)
+        _steel(c, 142, 76, 6, 8, r=2)                                   # air inlet
+        K.blob(c, 70, 118, 6, 3, 0, light=STEEL_L, mid=STEEL_M, dark=STEEL_D, ink=INK_S, lw=1.0)   # loading port
+
+    def _targets(self):
+        return []
+
+
+class PressBasket(Art):
+    name = "basket"
+    aspect = 0.95
+
+    def draw(self, c):
+        W, H = self.W, self.H
+        _steel(c, 18, 22, 114, 12, r=3)                                 # base tray and spout
+        _steel_poly(c, [(130, 24), (146, 18), (146, 26), (130, 32)])
+        _juice(c, 24, 126, 27)
+        for x in (143, 144):
+            K.blob(c, x, 12, 1.8, 2.6, 0, light=JUICE_L, mid=JUICE_D, dark=JUICE_D, ink=HEX("#8A6A1E"), lw=0.6)
+        body = c.beginPath(); body.roundRect(42, 34, 66, 76, 5)
+        K.fill_linear(c, body, 42, 0, 108, 0, [(0, K.WOOD_M), (0.35, K.WOOD_L), (1, K.WOOD_D)])
+        for i in range(1, 11):                                          # slats, with the grapes showing through the gaps
+            x = 42 + i * 66 / 11.0
+            K.line(c, [(x, 36), (x, 108)], HEX("#5B2342"), 1.5)
+            K.line(c, [(x - 2.4, 36), (x - 2.4, 108)], K.WOOD_D, 0.5)
+        K.outline(c, body, K.INK_W, 1.3)
+        for y in (50, 92):                                              # hoops
+            _steel(c, 40, y, 70, 6, r=2)
+        _steel(c, 44, 110, 62, 8, r=2)                                  # pressing plate
+        _steel(c, 71.5, 118, 7, 18, r=2, horizontal=False)              # screw
+        _steel(c, 56, 133, 38, 4.5, r=2)                                # handle bar
+        for x in (56, 94):
+            K.blob(c, x, 135, 3.6, 3.6, 0, light=STEEL_L, mid=STEEL_M, dark=STEEL_D, ink=INK_S, lw=0.9)
+
+    def _targets(self):
+        return []
+
+
+class PressContinuous(Art):
+    name = "continuous"
+    aspect = 0.95
+
+    def draw(self, c):
+        W, H = self.W, self.H
+        for x in (30, 100):
+            _steel_poly(c, [(x - 9, 4), (x + 9, 4), (x + 5, 44), (x - 5, 44)], horizontal=False)
+        _steel(c, 16, 28, 98, 11, r=3)
+        _juice(c, 22, 108, 31)
+        _steel(c, 14, 44, 104, 46, r=8)
+        p = c.beginPath(); p.roundRect(22, 52, 88, 30, 5)
+        K.fill_linear(c, p, 22, 82, 22, 52, [(0, HEX("#FBF3DC")), (1, HEX("#EBDDB4"))]); K.outline(c, p, INK_S, 0.9)
+        for x in range(26, 108, 9):                                     # the screw flights
+            K.line(c, [(x, 54), (x + 7, 80)], INK_S, 1.5)
+        K.line(c, [(22, 67), (110, 67)], INK_S, 2.2)                   # shaft
+        for x in range(24, 116, 7):                                     # perforations
+            K.blob(c, x, 47.5, 1.0, 1.0, 0, light=INK_S, mid=INK_S, dark=INK_S, ink=INK_S, lw=0.2)
+        _steel_poly(c, [(12, 124), (62, 124), (50, 90), (26, 90)])      # hopper
+        for (x, y) in ((28, 132), (40, 137), (50, 130), (36, 128)):
+            K.berry(c, x, y, 3.8, lw=0.6)
+        cone = K.path(c, [("M", 118, 46), ("L", 142, 58), ("L", 142, 76), ("L", 118, 88), ("Z",)])
+        K.fill_linear(c, cone, 0, 88, 0, 46, [(0, STEEL_M), (0.3, STEEL_L), (1, STEEL_D)]); K.outline(c, cone, INK_S, 1.1)
+        K.blob(c, 140, 67, 6, 8, 0, light=K.BERRY_L, mid=K.BERRY_M, dark=K.BERRY_D, ink=K.INK_P, lw=0.9)   # pomace cake
+
+    def _targets(self):
+        return []

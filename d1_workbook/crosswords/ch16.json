@@ -1,0 +1,157 @@
+{
+ "chapter": 16,
+ "seed": 9,
+ "size": 13,
+ "placed": [
+  [
+   "CHARCOAL",
+   "Strips brown color and off-odors",
+   0,
+   4,
+   "D"
+  ],
+  [
+   "CAP",
+   "The floating layer of skins in a red ferment",
+   10,
+   6,
+   "D"
+  ],
+  [
+   "STUCK",
+   "___ fermentation: a risk when solids are too low",
+   0,
+   1,
+   "A"
+  ],
+  [
+   "SULFITE",
+   "A preservative",
+   2,
+   7,
+   "D"
+  ],
+  [
+   "SPARGING",
+   "Flushing wine with inert gas",
+   6,
+   2,
+   "A"
+  ],
+  [
+   "FILTRATION",
+   "Removing particles by depth or surface",
+   1,
+   11,
+   "D"
+  ],
+  [
+   "CELLAR",
+   "Cool place to mature wine",
+   4,
+   4,
+   "A"
+  ],
+  [
+   "GELATIN",
+   "Fining agent from pork",
+   8,
+   6,
+   "A"
+  ],
+  [
+   "SOIL",
+   "Where the vine’s roots grow",
+   0,
+   1,
+   "D"
+  ],
+  [
+   "CASK",
+   "A barrel",
+   8,
+   0,
+   "D"
+  ],
+  [
+   "AMBER",
+   "Another color name for skin-fermented white",
+   0,
+   9,
+   "D"
+  ],
+  [
+   "CASEIN",
+   "Milk protein used as a fining agent",
+   10,
+   6,
+   "A"
+  ],
+  [
+   "GRAPE",
+   "The fruit of the vine",
+   6,
+   9,
+   "D"
+  ],
+  [
+   "RIOJA",
+   "White ___ may be fermented warm in oak",
+   2,
+   0,
+   "A"
+  ],
+  [
+   "HEAD",
+   "The flat end of a barrel",
+   9,
+   4,
+   "D"
+  ],
+  [
+   "SURFACE",
+   "Small barrels have a high ___-to-volume ratio",
+   6,
+   2,
+   "D"
+  ],
+  [
+   "HEADSPACE",
+   "Usually the biggest source of package oxygen",
+   12,
+   1,
+   "A"
+  ],
+  [
+   "MLF",
+   "Short for malolactic fermentation",
+   1,
+   9,
+   "A"
+  ],
+  [
+   "CORK",
+   "A natural bottle closure",
+   8,
+   0,
+   "A"
+  ],
+  [
+   "STAVE",
+   "A curved plank of a barrel",
+   10,
+   0,
+   "A"
+  ]
+ ],
+ "stats": {
+  "words": 20,
+  "across": 10,
+  "down": 10,
+  "crossings": 27,
+  "min_cross": 2,
+  "avg_cross": 2.7,
+  "grid": "13x13",
+  "fill": "52%"
+ }
+}

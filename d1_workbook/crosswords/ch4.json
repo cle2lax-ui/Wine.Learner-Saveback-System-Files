@@ -1,0 +1,157 @@
+{
+ "chapter": 4,
+ "seed": 3,
+ "size": 13,
+ "placed": [
+  [
+   "ASPECT",
+   "The direction a slope faces",
+   4,
+   7,
+   "A"
+  ],
+  [
+   "CONTINENTAL",
+   "Climate type with hot summers, cold winters and low rain",
+   6,
+   1,
+   "A"
+  ],
+  [
+   "VERAISON",
+   "Onset of ripening: berries soften and change color",
+   2,
+   5,
+   "D"
+  ],
+  [
+   "STEINER",
+   "Rudolf ___ founded biodynamics",
+   9,
+   1,
+   "A"
+  ],
+  [
+   "SWEET",
+   "High in sugar",
+   0,
+   12,
+   "D"
+  ],
+  [
+   "SOIL",
+   "Where the vine’s roots grow",
+   9,
+   1,
+   "D"
+  ],
+  [
+   "RODALE",
+   "The institute that coined ‘regenerative’",
+   2,
+   7,
+   "A"
+  ],
+  [
+   "POLLEN",
+   "The male cells carried to the stigma",
+   1,
+   3,
+   "D"
+  ],
+  [
+   "YEAR",
+   "Weather varies from one to the next",
+   8,
+   3,
+   "D"
+  ],
+  [
+   "RESERVES",
+   "Carbohydrate ___ stored in perennial wood",
+   0,
+   5,
+   "A"
+  ],
+  [
+   "ACID",
+   "Gives freshness",
+   8,
+   9,
+   "A"
+  ],
+  [
+   "LEES",
+   "Spent yeast and other sediment",
+   3,
+   3,
+   "A"
+  ],
+  [
+   "ORGANIC",
+   "Rejects synthetic fertilizers and pesticides",
+   0,
+   1,
+   "D"
+  ],
+  [
+   "NITROGEN",
+   "Nutrient in proteins and chlorophyll",
+   11,
+   0,
+   "A"
+  ],
+  [
+   "CALCIUM",
+   "Nutrient for cell structure",
+   4,
+   11,
+   "D"
+  ],
+  [
+   "AGE",
+   "What fine wine does in the bottle",
+   2,
+   10,
+   "D"
+  ],
+  [
+   "TOAST",
+   "Level of charring on a barrel",
+   6,
+   9,
+   "D"
+  ],
+  [
+   "RED",
+   "Wine made with skin contact",
+   0,
+   9,
+   "D"
+  ],
+  [
+   "GRAPE",
+   "The fruit of the vine",
+   1,
+   0,
+   "A"
+  ],
+  [
+   "STEM",
+   "The stalk of a bunch",
+   10,
+   8,
+   "A"
+  ]
+ ],
+ "stats": {
+  "words": 20,
+  "across": 10,
+  "down": 10,
+  "crossings": 26,
+  "min_cross": 2,
+  "avg_cross": 2.6,
+  "grid": "13x13",
+  "fill": "53%"
+ }
+}
