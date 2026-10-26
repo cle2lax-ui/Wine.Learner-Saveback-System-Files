@@ -62,8 +62,12 @@ def one_page(draw, pageno):
     return PdfReader(io.BytesIO(buf.getvalue())).pages[0]
 
 
+def _bold(t):
+    return t.replace("<b>", '<font name="Sans-B">').replace("</b>", "</font>")
+
+
 def para(c, text, style, x, y_top, width):
-    p = Paragraph(text, style)
+    p = Paragraph(_bold(text), style)
     w, h = p.wrap(width, 2000)
     p.drawOn(c, x, y_top - h)
     return h
@@ -102,13 +106,15 @@ def draw_about(c, pageno):
     c.setFont("Sans-B", 7.2); c.setFillColor(GOLD); tracked(c, cx, y, "READ THIS FIRST", 1.6)
     c.setFont("Serif-B", 24); c.setFillColor(BURGUNDY); c.drawString(cx, y - 30, "About this workbook")
     body = _p("ab_b", fontSize=10.0, leading=14.0, spaceAfter=5)
-    h = _p("ab_h", fontName="Sans-B", fontSize=9.4, leading=12, textColor=BURGUNDY, spaceBefore=8, spaceAfter=2)
+    h = _p("ab_h", fontName="Sans-B", fontSize=10.0, leading=12.5, textColor=BURGUNDY, spaceBefore=0, spaceAfter=0)
     items = [
         ("What it is", "A companion to <b>D1: Wine Production</b> in 21 chapters, one for each textbook chapter (Chapter 22 is a reading list and has no workbook). "
                        "Each chapter is a short set of exercises, followed by a one-page answer key and a scorecard. Match, tick, sort, order, label a drawing, "
                        "complete a diagram, fill a calculation, true-or-false with correction, multiple choice and a written \u2018explain it\u2019 with a self-marking checklist."),
-        ("How to use a chapter", "<b>1 Attempt</b> in pencil, from memory, with the textbook closed. <b>2 Check</b> against the key at the back of the chapter and correct every miss in ink. "
-                                  "<b>3 Revisit</b> what you missed on days 3, 7 and 21 and tick the boxes on the chapter scorecard. The last page of the book collects all 21 chapters in one tracker."),
+        ("How to use a chapter", ["<b>Attempt</b> in pencil, from memory, with the textbook closed.",
+                                  "<b>Check</b> against the key at the back of the chapter, and correct every miss in ink.",
+                                  "<b>Revisit</b> what you missed on days 3, 7 and 21, and tick the boxes on the chapter scorecard.",
+                                  "The last page of the book collects all 21 chapters in one tracker."]),
         ("Marks and the real exam", "Each chapter totals its own points. The live D1 paper is written, not multiple choice: the multiple-choice and tick-box exercises are for finding gaps, "
                                     "and the \u2018explain it\u2019 questions rehearse the answer style the examiners reward: cause and effect, the named reason, and the named example."),
         ("Every third chapter", "Chapters 1, 4, 7, 10, 13, 16 and 19 each include a crossword that reviews the vocabulary of the last three chapters. Every word in each grid crosses at least two others."),
@@ -119,10 +125,19 @@ def draw_about(c, pageno):
                                      "<b>Notes</b> page follows. Each page carries its chapter and page number (for example 7\u20093) at the foot, and a running page number for the whole book (p. 29, for example) beside it. "
                                      "In a PDF reader, use the bookmarks panel to jump to any chapter, its answer key, or a letter of the glossary."),
     ]
-    yy = y - 50
-    for ttl, txt in items:
-        hh = para(c, ttl, h, cx, yy, W); yy -= hh
-        hh = para(c, txt, body, cx, yy, W); yy -= hh
+    bullet = _p("ab_bl", fontSize=10.0, leading=14.0, spaceAfter=2, leftIndent=14, bulletIndent=2, bulletFontName="Sans-B", bulletColor=BURGUNDY)
+    yy = y - 54
+    for k, (ttl, txt) in enumerate(items):
+        if k:
+            yy -= 14                                     # a blank space between sections
+        hh = para(c, ttl, h, cx, yy, W); yy -= hh + 2
+        if isinstance(txt, list):
+            for b_ in txt:
+                p = Paragraph(_bold(b_), bullet, bulletText="\u2022")
+                pw_, ph_ = p.wrap(W, 2000)
+                p.drawOn(c, cx, yy - ph_); yy -= ph_ + 2
+        else:
+            hh = para(c, txt, body, cx, yy, W); yy -= hh
     # source line
     c.setFont("Sans", 8.0); c.setFillColor(SLATE)
     c.drawString(cx, BOT_Y + 6, "Built from the D1: Wine Production textbook, August 2026 edition (Issue 1.7). Independent study aid: not affiliated with or endorsed by WSET.")
