@@ -134,7 +134,7 @@ ch.page()
 
 # ============================================================ PAGE 6
 _e = ["It lowers vigor by adding competition for water and nutrients.", "It fights erosion.",
-      "It adds biodiversity.", "It gives a firmer driving surface (but raises frost risk and suits flat ground)."]
+      "It adds biodiversity.", "It gives a firmer driving surface (but raises frost risk)."]
 ch.ex("EXPLAIN", "Write like an examiner", 3, "Name every function. <b>The exam rewards naming them all.</b>",
       explain("Explain why a <b>cover crop</b> is more than a weed-control method.", [], lines=3) + [Checklist(_e)],
       kp("Any 3 of 4: lowers vigor \u00b7 fights erosion \u00b7 adds biodiversity \u00b7 driving surface."), mins=4, ref="2")

@@ -30,7 +30,7 @@ ch.page()
 # ============================================================ PAGE 2
 _bar = A2.Barrel(330)
 ch.ex("LABEL", "Anatomy of a barrel", 5,
-      "Label the four parts. Then finish the sentence. <b>1 point per label, 1 for the sentence.</b>",
+      "Label the four parts (D1 names staves and the bung hole; hoop and head are standard cooperage terms). Then finish the sentence. <b>1 point per label, 1 for the sentence.</b>",
       [LabelFigure(_bar, align="center"),
        LineFill("Small vessels age wine faster because of their higher", w=W, h=19)],
       kp(label_key(_bar) + ".  <b>Surface-area-to-volume ratio</b> (not different wood)."), mins=4, ref="1\u20132")

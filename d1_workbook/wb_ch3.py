@@ -142,8 +142,10 @@ _tf = [("Vines need full sunshine to photosynthesize well.", False, "Light limit
        ("Rain at flowering and fruit set can cut yields or cause uneven ripening.", True, ""),
        ("Sunlight and UV are weaker at high altitude.", False, "They are more intense at altitude."),
        ("Vintage variation is unwanted in every wine style.", False,
-        "It is welcomed in some styles, but unwanted in non-vintage sparkling and many high-volume, inexpensive wines.")]
-ch.ex("DECIDE", "True or false \u2014 then fix it", 7,
+        "It is welcomed in some styles, but unwanted in non-vintage sparkling and many high-volume, inexpensive wines."),
+       ("Hawke\u2019s Bay (1,000 mm rain) never needs irrigation; Jerez (650 mm) always does.", False,
+        "The reverse: Hawke\u2019s Bay\u2019s free-draining gravels often need irrigation; Jerez\u2019s water-holding albariza soil does not.")]
+ch.ex("DECIDE", "True or false \u2014 then fix it", 8,
       "Circle T or F; correct any false statement. <b>1 point only if the call and the correction are both right.</b>",
       [TFItem(i + 1, t) for i, (t, v, fx) in enumerate(_tf)],
       numbered([(str(i + 1), ("<b><font color=\"%s\">T</font></b>" % hexc(ANS)) if v else
@@ -155,7 +157,7 @@ ch.ex("FLOW", "Climate change in the glass", 3,
       VFlow(["Warmer temperatures", Blank("The vine cycle runs faster"),
              Blank("Sugar rises and acid falls fast; aroma and tannin ripening do not keep pace"),
              Blank("Growers pick at higher sugar to protect aroma, tannin and color"),
-             "Higher alcohol, lower acidity, higher pH"], box_h=27, gap=14, width=400),
+             "Higher alcohol, lower acidity, higher pH"], box_h=24, gap=10, width=400),
       kp("Cycle runs faster \u2192 sugar and acid change faster than aroma and tannin ripen \u2192 pick later at higher sugar "
          "\u2192 higher alcohol, lower acidity, higher pH."), mins=3, ref="9")
 ch.page()

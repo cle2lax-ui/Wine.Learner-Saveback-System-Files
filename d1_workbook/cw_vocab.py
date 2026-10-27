@@ -156,7 +156,7 @@ RODALE|The institute that coined \u2018regenerative\u2019
 SUSTAINABLE|Approach with environmental, social and economic aims
 CONVENTIONAL|Approach built on mechanization and chemical inputs
 STEINER|Rudolf ___ founded biodynamics
-LUNAR|___ calendar guiding biodynamic timing
+MOON|When ascending, sap rises and pruning is avoided (biodynamics)
 YARROW|Plant in preparation 502
 CHAMOMILE|Plant in preparation 503
 NETTLE|Stinging plant in preparation 504
@@ -315,8 +315,6 @@ ALCOHOL|Ethanol, the second most abundant component
 GLYCEROL|Adds body; the third most abundant component of dry wine
 TANNIN|Causes a drying, astringent sensation
 ANTHOCYANIN|Pigment that colors red wine
-GLUCOSE|Grape sugar, with fructose
-FRUCTOSE|The sweeter of the two main grape sugars
 MALIC|Sharp apple acid that falls in warm grapes
 LACTIC|Milder acid produced in malolactic conversion
 TARTARIC|The main grape acid, and the usual acidifier
@@ -424,7 +422,7 @@ def pool(chapters, current=None, common=True):
 
 
 V[14] = """BARREL|Small wooden vessel for maturing wine
-HOOP|Steel band that holds a barrel together
+COOPER|Barrel maker; wineries often buy from several
 BUNG|The plug that seals a barrel
 HEAD|The flat end of a barrel
 AMERICAN|___ oak: higher lactones, can be sawn

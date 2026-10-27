@@ -53,7 +53,7 @@ tb.setStyle(TableStyle([("VALIGN", (0, 0), (-1, -1), "MIDDLE"), ("LEFTPADDING", 
                         ("LINEBELOW", (0, 1), (-1, -2), 0.3, FEINT), ("LINEBELOW", (0, -1), (-1, -1), LINE_BOLD, INK)]))
 _ay = [kg * d for (_, kg, d) in _v]
 ch.ex("CALCULATE", "Area yield", 4,
-      "Area yield = yield per vine \u00d7 planting density. A low per-vine yield can still give a high area yield. "
+      "Area yield = yield per vine \u00d7 planting density (illustrative figures). A low per-vine yield can still give a high area yield. "
       "<b>1 point per vineyard, 1 for the last question.</b>",
       [tb, Spacer(1, 4), LineFill("Which vineyard crops the most per hectare?", w=W, h=19)],
       kp("A <b>%s</b> \u00b7 B <b>%s</b> \u00b7 C <b>%s</b> kg/ha. Highest per hectare: <b>B</b>, though A and C have lower per-vine yields." %

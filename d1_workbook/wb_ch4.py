@@ -69,7 +69,8 @@ f, a = cloze([
     "Organic growers use {{sulfur}} and {{copper sulfate}} against mildews; build-up of {{copper}} in soil is the main criticism.",
     "<i>Bacillus subtilis</i> competes with {{Botrytis cinerea}} for space on the grape.",
     "Pheromone tags create \u2018{{sexual confusion}}\u2019 in moths and mealy bugs.",
-    "{{Demeter}} is the commonest biodynamic certifier; organic bodies should all meet {{IFOAM}} standards.",
+    "{{Demeter}} is the commonest biodynamic certifier; organic bodies should all meet {{IFOAM}} standards. {{Lodi Rules}} (California) is a sustainable-winegrowing example.",
+    "In 2017, {{5.4}}% of the world\u2019s vineyards were certified organic; {{Europe}} held 84% of the organic total and {{Italy}} had the highest share (15.8%).",
 ], width=84)
 ch.ex("COMPLETE", "Treatments and certifiers", len(a), "Fill each blank. <b>1 point per blank.</b>", f, kp(ans_inline(a)), mins=4, ref="2\u20134")
 ch.page()

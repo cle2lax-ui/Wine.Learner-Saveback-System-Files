@@ -12,7 +12,7 @@ Alcohol (ethanol) | Produced from sugar in fermentation; the second most abundan
 Altitude | Height above sea level. Temperature falls about 0.6\u00b0C per 100 m; sunlight and UV are more intense and the diurnal range larger. | 3
 Ambient yeast | Wild yeast present on grapes and in the winery. Adds complexity, but starts slowly and cannot guarantee a result. | 13
 Amphora | Terracotta vessel for fermenting or maturing wine; porous, with a long history of use. | 13
-Anthocyanins | Red-blue pigments in black grape skins. Unstable alone; bound to tannin they give lasting color. | 11, 18
+Anthocyanins | The source of color in young red wines. As single molecules they are unstable; bound to tannins (with oxygen\u2019s help) they give more lasting color. | 11, 18
 Anther | The part of a flower\u2019s stamen that makes pollen. | 1, 2
 Appassimento | Italian method of drying picked grapes, in the sun or a humidity-controlled room, to concentrate sugar. | 17
 Argon | An inert gas used to flush vessels and protect wine from oxygen. | 13
@@ -58,7 +58,7 @@ Cold stabilization | Chilling wine to about \u22124\u00b0C for around eight days
 Compost | Decomposed organic matter, used as a soil improver and fertilizer. | 4, 6
 Continental climate | Hot summers, cold winters and low rain. Burgundy and Alsace are examples. | 3
 Conventional | The approach that aims to raise production and cut labor: mechanization, chemical inputs, irrigation, clonal selection. | 4, 12
-Continuous screw press | A screw conveys grapes through a perforated cylinder. High volume and fast, but less gentle. | 13
+Continuous screw press | A press that loads grapes continuously with a screw mechanism, so large volumes press quickly; less gentle, so used for inexpensive, high-volume wines. | 13
 Cordon | A permanent horizontal arm of the vine. | 1, 7
 Coulure | Failed fruit set: flowers drop without forming berries, after cool or cloudy weather or excess vigor. | 2
 Cover crop | Plants grown between the rows. Lowers vigor, fights erosion, adds biodiversity. | 6
@@ -139,6 +139,9 @@ Lees | Spent yeast and other sediment left after fermentation. | 14, 16
 Light strike | A fault from UV and visible light reacting with wine compounds; dark glass protects. | 15
 Lignification | Turning woody, rigid and brown as a green shoot matures. | 1
 Lyre | A canopy split horizontally into two curtains, shaped like the instrument. | 7
+Lodi Rules | A sustainable-winegrowing certification program for Lodi, California: a framework of challenges, record keeping and thresholds rather than absolute standards. | 4
+Flexitank | A flexible bag fitted inside a shipping container to carry wine in bulk; like the ISO tank, it saves moving bottles. A container holds about 24,000 liters. | 15
+ISO tank | A tank built into a standard shipping-container frame, used to carry wine in bulk. | 15
 Lysozyme | An enzyme that blocks malolactic conversion. | 13
 Malic acid | A sharp acid that falls as grapes ripen, especially in warmth; converted in malolactic conversion. | 11, 13
 Malolactic conversion (MLF) | Bacteria turn malic acid into softer lactic acid: acidity falls, pH rises, the wine is smoother. | 13, 14, 16, 18
@@ -210,7 +213,7 @@ Rotary fermenter | A tank that rotates with internal blades; the most extractive
 Rotundone | A pepper compound, notably in Syrah. | 11
 Saign\u00e9e | Bleeding off juice after crushing to concentrate a red must; the pale juice often becomes ros\u00e9. | 18, 19
 Scott-Henry | A canopy split vertically into upward and downward shoots. | 7
-Screwcap | An aluminum closure with a liner; no TCA risk. | 15
+Screwcap | A closure opened without a special tool: low oxygen transmission, no cork taint, and cheaper than high-quality cork. | 15, 21
 Seasoning | Drying oak staves outdoors for two to three years to lower bitterness. | 14
 Semi-carbonic maceration | Whole-bunch fermentation with no added CO2: bottom grapes crush and blanket the rest. | 18
 Shoot | The green stem grown in the current season. | 1
@@ -270,7 +273,7 @@ Barrel fill | How many times a barrel has held wine: about half its oak flavor i
 Synthetic closure | A plastic stopper with no risk of TCA. | 15
 Glass stopper | A glass closure sealed by an O-ring (Vinolok); no TCA risk. | 15
 Cork taint | A moldy, wet-cardboard fault from TCA in a contaminated natural cork. | 15
-HACCP | A company\u2019s own hazard-by-hazard plan for managing food-safety risks. | 15
+HACCP | Hazard Analysis of Critical Control Points: a common approach to quality assurance, managing significant threats to consumer safety and the company\u2019s reputation. | 15
 Traceability | Lot numbers that let a batch be traced back through the winery. | 15
 Flash pasteurization | Brief heating, about 80\u201390\u00b0C, to kill microbes before bottling. | 15
 Cold bottling | Bottling after sterile filtration, with no heat treatment. | 15
@@ -286,7 +289,7 @@ Saccharomyces cerevisiae | The standard wine yeast: tolerates acidity and rising
 Wine-based beverage | Below about 5.5% abv some countries no longer class a product as wine. | 20
 UK labeling terms | Low alcohol: 1.2% abv or less; non-alcoholic: 0.5% or less; alcohol free: 0.05% or less. | 20
 Style (inexpensive or premium) | Four styles, inexpensive and premium white and red, set by one aim: volume and price, or quality and complexity. Every later choice follows from it. | 21
-Reason, not just choice | D1 marking rewards the reason a choice fits a style and its influence on the wine, not the choice alone. | 21
+Choice, reason, influence | The three columns of D1\u2019s Chapter 21 tables: each process choice, the reason for it, and its influence on style, quality and price. | 21
 Huglin Index | A heat model like GDD that uses mean and maximum temperatures and day length; bands are mapped to varieties; widely used in Europe. | 3
 Mean July/January temperature (MJT) | A climate model using the mean temperature of July (north) or January (south) with continentality, humidity and sunshine; six bands. | 3
 Winkler zones | The five bands of growing degree days, from Zone I (coolest) to Zone V (very hot). | 3

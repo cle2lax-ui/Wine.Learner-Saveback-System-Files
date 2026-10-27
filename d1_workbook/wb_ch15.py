@@ -56,7 +56,7 @@ ch.ex("MATCH", "Tartrate stabilization", 6, "Match each method to how it works o
 
 f, a = cloze(["Target free SO2 at bottling: white {{25\u201345}} mg/L, red {{30\u201355}} mg/L, sweet {{30\u201360}} mg/L. Flash pasteurization "
               "briefly heats to {{80\u201390}}\u00b0C; cold bottling uses {{sterile}} filtration. Too-high dissolved oxygen is corrected by "
-              "{{sparging}}."], width=70)
+              "{{sparging}}. Bottles are steam-cleaned at {{82}}\u00b0C for {{20}} minutes; bottle aging is best at {{10\u201315}}\u00b0C."], width=70)
 ch.ex("COMPLETE", "Finishing numbers", len(a), "<b>1 point per blank.</b>", f, kp(ans_inline(a)), mins=3, ref="3, 6")
 ch.page()
 

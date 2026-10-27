@@ -58,7 +58,7 @@ ch.ex("MATCH", "Post-dealcoholization adjustments", 5, "Match each adjustment to
 
 f, a = cloze(["Vacuum distillation boils alcohol off at about {{48\u00b0C}}; reverse osmosis removes up to {{1.5}}% abv per pass. Yield loss is "
               "{{15\u201330}}%. Shelf life: {{two}} years in glass, {{one}} year in cans. Below about {{5.5}}% abv many countries do not call it wine. "
-              "UK low alcohol is {{1.2}}% or less, non-alcoholic {{0.5}}% or less, alcohol free {{0.05}}% or less."], width=72)
+              "UK low alcohol is {{1.2}}% or less, non-alcoholic {{0.5}}% or less, alcohol free {{0.05}}% or less. Heat evaporation needs the wine to reach {{78}}\u00b0C, hence cooked flavors."], width=72)
 ch.ex("COMPLETE", "No- and low-alcohol numbers", len(a), "<b>1 point per blank.</b>", f, kp(ans_inline(a)), mins=4, ref="2\u20134")
 ch.page()
 

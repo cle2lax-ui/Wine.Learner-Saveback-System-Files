@@ -9,7 +9,7 @@ ch = Chapter("21", "Winemaking Choices by Style",
               "see one aim cascading into every later decision",
               "spot the same technique serving opposite goals",
               "name what premium white and premium red share",
-              "never answer with the choice alone"])
+              "give each choice with its reason"])
 
 # ============================================================ PAGE 1
 _rc = [["Inexpensive", Blank("Aromatic variety; machine harvest, no skin contact, cool steel, avoid MLF and oak, screwcap. Volume and speed.", 3),
@@ -74,7 +74,7 @@ _tf = [("Heat extraction appears in premium red.", False, "Carbonic and heat ext
        ("A technique is inherently either a quality choice or a budget choice.", False, "Most serve either goal depending on context: MLF timing, blending and mechanization appear in both."),
        ("Extended post-fermentation maceration is skipped in inexpensive red to save tank space.", True, ""),
        ("Inexpensive red is just premium red done cheaply.", False, "It is a different set of choices for a different aim entirely."),
-       ("Naming the correct choice alone earns full marks.", False, "D1 marking rewards the reason and its influence, not just the choice.")]
+       ("In D1\u2019s examples a process choice is listed without any reason.", False, "Each choice is set out with its reason and its influence on style, quality and price.")]
 ch.ex("DECIDE", "True or false \u2014 then fix it", 6,
       "Circle T or F; correct any false statement. <b>1 point only if the call and the correction are both right.</b>",
       [TFItem(i + 1, t) for i, (t, v, fx) in enumerate(_tf)],
@@ -117,7 +117,7 @@ ch.page()
 
 _e = ["Both cut cost and time.", "Machine harvest is cheaper for large vineyards, keeping the price low.",
       "Carbonic or heat extraction is fast, and does not tie up tanks in long macerations.", "Both serve the same aim: volume and speed."]
-ch.ex("EXPLAIN", "Write like an examiner", 3, "Give the choice <b>and</b> the reason. A choice alone earns little.",
+ch.ex("EXPLAIN", "Write like an examiner", 3, "Give the choice <b>and</b> the reason. Give each choice with its reason and influence, as D1\u2019s tables do.",
       explain("Explain why <b>machine harvest and carbonic maceration</b> both suit inexpensive red wine.", [], lines=3) + [Checklist(_e)],
       kp("Any 3 of 4: lower cost and time \u00b7 cheaper for large vineyards, price kept low \u00b7 fast extraction, tanks not tied up \u00b7 shared aim of volume and speed."),
       mins=5, ref="1")

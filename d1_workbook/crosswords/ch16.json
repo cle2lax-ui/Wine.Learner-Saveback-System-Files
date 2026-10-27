@@ -1,145 +1,145 @@
 {
  "chapter": 16,
- "seed": 9,
+ "seed": 16,
  "size": 13,
  "placed": [
   [
+   "FLOTATION",
+   "Bubbles carry solids to the surface",
+   6,
+   2,
+   "A"
+  ],
+  [
+   "MLF",
+   "Short for malolactic fermentation",
+   4,
+   2,
+   "D"
+  ],
+  [
+   "AMBER",
+   "Another color name for skin-fermented white",
+   4,
+   1,
+   "A"
+  ],
+  [
+   "AROMA",
+   "The smell of a wine",
+   0,
+   1,
+   "D"
+  ],
+  [
+   "ORANGE",
+   "___ wine: white fermented on its skins",
+   2,
+   1,
+   "A"
+  ],
+  [
+   "LEES",
+   "Spent yeast and other sediment",
+   0,
+   6,
+   "D"
+  ],
+  [
+   "STEM",
+   "The stalk of a bunch",
+   3,
+   6,
+   "A"
+  ],
+  [
+   "PRICE",
+   "Reason to blend in a cheaper variety",
+   7,
+   11,
+   "D"
+  ],
+  [
+   "COOPER",
+   "Barrel maker; wineries often buy from several",
+   5,
+   9,
+   "D"
+  ],
+  [
+   "RACK",
+   "To move wine off its sediment",
+   10,
+   9,
+   "A"
+  ],
+  [
+   "TARTRATE",
+   "Harmless crystals often mistaken for glass",
+   5,
+   6,
+   "D"
+  ],
+  [
+   "PACKAGE",
+   "___ oxygen: total from wine, headspace and closure",
+   12,
+   0,
+   "A"
+  ],
+  [
+   "FLAVOR",
+   "Taste and aroma together",
+   0,
+   5,
+   "A"
+  ],
+  [
+   "TCA",
+   "The compound behind cork taint",
+   0,
+   3,
+   "D"
+  ],
+  [
+   "STOPPER",
+   "Glass ___: the Vinolok closure",
+   8,
+   5,
+   "A"
+  ],
+  [
    "CHARCOAL",
    "Strips brown color and off-odors",
+   10,
    0,
-   4,
+   "A"
+  ],
+  [
+   "LAYER",
+   "The soil has several",
+   6,
+   3,
    "D"
   ],
   [
    "CAP",
    "The floating layer of skins in a red ferment",
    10,
-   6,
-   "D"
-  ],
-  [
-   "STUCK",
-   "___ fermentation: a risk when solids are too low",
    0,
-   1,
-   "A"
-  ],
-  [
-   "SULFITE",
-   "A preservative",
-   2,
-   7,
    "D"
   ],
   [
-   "SPARGING",
-   "Flushing wine with inert gas",
-   6,
-   2,
-   "A"
-  ],
-  [
-   "FILTRATION",
-   "Removing particles by depth or surface",
-   1,
-   11,
-   "D"
-  ],
-  [
-   "CELLAR",
-   "Cool place to mature wine",
-   4,
-   4,
-   "A"
-  ],
-  [
-   "GELATIN",
-   "Fining agent from pork",
+   "VINE",
+   "A climbing plant trained on a trellis",
+   0,
    8,
-   6,
-   "A"
+   "D"
   ],
   [
-   "SOIL",
-   "Where the vine’s roots grow",
+   "TART",
+   "Sharply acidic",
    0,
-   1,
-   "D"
-  ],
-  [
-   "CASK",
-   "A barrel",
-   8,
-   0,
-   "D"
-  ],
-  [
-   "AMBER",
-   "Another color name for skin-fermented white",
-   0,
-   9,
-   "D"
-  ],
-  [
-   "CASEIN",
-   "Milk protein used as a fining agent",
-   10,
-   6,
-   "A"
-  ],
-  [
-   "GRAPE",
-   "The fruit of the vine",
-   6,
-   9,
-   "D"
-  ],
-  [
-   "RIOJA",
-   "White ___ may be fermented warm in oak",
-   2,
-   0,
-   "A"
-  ],
-  [
-   "HEAD",
-   "The flat end of a barrel",
-   9,
-   4,
-   "D"
-  ],
-  [
-   "SURFACE",
-   "Small barrels have a high ___-to-volume ratio",
-   6,
-   2,
-   "D"
-  ],
-  [
-   "HEADSPACE",
-   "Usually the biggest source of package oxygen",
-   12,
-   1,
-   "A"
-  ],
-  [
-   "MLF",
-   "Short for malolactic fermentation",
-   1,
-   9,
-   "A"
-  ],
-  [
-   "CORK",
-   "A natural bottle closure",
-   8,
-   0,
-   "A"
-  ],
-  [
-   "STAVE",
-   "A curved plank of a barrel",
-   10,
    0,
    "A"
   ]
@@ -148,10 +148,10 @@
   "words": 20,
   "across": 10,
   "down": 10,
-  "crossings": 27,
+  "crossings": 25,
   "min_cross": 2,
-  "avg_cross": 2.7,
+  "avg_cross": 2.5,
   "grid": "13x13",
-  "fill": "52%"
+  "fill": "48%"
  }
 }

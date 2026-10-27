@@ -1,157 +1,150 @@
 {
  "chapter": 4,
- "seed": 3,
+ "seed": 2,
  "size": 13,
  "placed": [
   [
-   "ASPECT",
-   "The direction a slope faces",
-   4,
-   7,
-   "A"
-  ],
-  [
-   "CONTINENTAL",
-   "Climate type with hot summers, cold winters and low rain",
-   6,
-   1,
-   "A"
-  ],
-  [
-   "VERAISON",
-   "Onset of ripening: berries soften and change color",
-   2,
-   5,
-   "D"
-  ],
-  [
-   "STEINER",
-   "Rudolf ___ founded biodynamics",
+   "HARVEST",
+   "Picking the ripe grapes",
    9,
    1,
    "A"
   ],
   [
-   "SWEET",
-   "High in sugar",
-   0,
+   "STIGMA",
+   "Receives the pollen",
+   6,
+   9,
+   "D"
+  ],
+  [
+   "LABEL",
+   "Tells you what is in the bottle",
+   11,
+   8,
+   "A"
+  ],
+  [
+   "CHAMOMILE",
+   "Plant in preparation 503",
+   4,
    12,
    "D"
   ],
   [
-   "SOIL",
-   "Where the vine’s roots grow",
-   9,
-   1,
-   "D"
-  ],
-  [
-   "RODALE",
-   "The institute that coined ‘regenerative’",
-   2,
-   7,
-   "A"
-  ],
-  [
-   "POLLEN",
-   "The male cells carried to the stigma",
-   1,
-   3,
-   "D"
-  ],
-  [
-   "YEAR",
-   "Weather varies from one to the next",
-   8,
-   3,
-   "D"
-  ],
-  [
-   "RESERVES",
-   "Carbohydrate ___ stored in perennial wood",
-   0,
-   5,
-   "A"
-  ],
-  [
-   "ACID",
-   "Gives freshness",
-   8,
-   9,
-   "A"
-  ],
-  [
-   "LEES",
-   "Spent yeast and other sediment",
-   3,
-   3,
-   "A"
-  ],
-  [
-   "ORGANIC",
-   "Rejects synthetic fertilizers and pesticides",
-   0,
-   1,
-   "D"
-  ],
-  [
-   "NITROGEN",
-   "Nutrient in proteins and chlorophyll",
-   11,
-   0,
-   "A"
-  ],
-  [
-   "CALCIUM",
-   "Nutrient for cell structure",
+   "MALIC",
+   "Acid that falls as grapes ripen",
    4,
-   11,
-   "D"
+   8,
+   "A"
   ],
   [
-   "AGE",
-   "What fine wine does in the bottle",
-   2,
+   "NETTLE",
+   "Stinging plant in preparation 504",
+   0,
    10,
    "D"
   ],
   [
-   "TOAST",
-   "Level of charring on a barrel",
-   6,
-   9,
+   "SULFUR",
+   "Sprayed with copper sulfate against mildews",
+   4,
+   0,
+   "A"
+  ],
+  [
+   "NOIR",
+   "Black, as in Pinot ___",
+   8,
+   7,
+   "A"
+  ],
+  [
+   "PLANT",
+   "To set vines in the ground",
+   5,
+   7,
    "D"
+  ],
+  [
+   "FLOWERING",
+   "Vine flowers open and are pollinated",
+   4,
+   3,
+   "D"
+  ],
+  [
+   "ROSE",
+   "A pink wine",
+   2,
+   0,
+   "D"
+  ],
+  [
+   "FRUITSET",
+   "Fertilized flowers become berries",
+   3,
+   5,
+   "D"
+  ],
+  [
+   "TANK",
+   "A steel vessel for fermenting or storing wine",
+   11,
+   1,
+   "A"
+  ],
+  [
+   "ROOT",
+   "Anchors the vine and takes up water",
+   2,
+   0,
+   "A"
+  ],
+  [
+   "SOIL",
+   "Where the vine’s roots grow",
+   1,
+   2,
+   "D"
+  ],
+  [
+   "GROWING",
+   "___ degree days measure accumulated warmth",
+   0,
+   5,
+   "A"
   ],
   [
    "RED",
    "Wine made with skin contact",
    0,
-   9,
+   6,
    "D"
   ],
   [
-   "GRAPE",
-   "The fruit of the vine",
-   1,
-   0,
+   "DEMETER",
+   "The most common biodynamic certifier",
+   2,
+   6,
    "A"
   ],
   [
-   "STEM",
-   "The stalk of a bunch",
-   10,
+   "WHITE",
+   "Wine usually made without skin contact",
    8,
-   "A"
+   1,
+   "D"
   ]
  ],
  "stats": {
-  "words": 20,
-  "across": 10,
+  "words": 19,
+  "across": 9,
   "down": 10,
-  "crossings": 26,
+  "crossings": 22,
   "min_cross": 2,
-  "avg_cross": 2.6,
+  "avg_cross": 2.3157894736842106,
   "grid": "13x13",
-  "fill": "53%"
+  "fill": "51%"
  }
 }

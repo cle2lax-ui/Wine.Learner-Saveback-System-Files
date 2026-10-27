@@ -89,7 +89,7 @@ _mc = [("Cold soaking is common on which grape, because of its naturally low ant
        ("Which cap-management method is the most extractive and most automatable?", ["Punching down", "Pumping over", "Rack and return", "Rotary fermenters"]),
        ("Semi-carbonic maceration is distinguished by:", ["Added CO2", "No added CO2: the bottom grapes crush and blanket the rest", "Heat", "Cold soaking"]),
        ("Saign\u00e9e is:", ["Adding white grapes", "Drawing off juice after crushing, concentrating the must", "Adding sugar", "Flash heating"]),
-       ("Which reds deliberately skip oak for primary fruit?", ["Unoaked Loire Cabernet Franc, Menc\u00eda, Argentine Malbec", "All premium Bordeaux", "Barolo", "Amarone"])]
+       ("Which reds deliberately skip oak for primary fruit?", ["Unoaked Loire Cabernet Franc, Menc\u00eda, Argentine Malbec", "All premium Bordeaux", "All premium red wines", "Only wines above 15% abv"])]
 ch.ex("CHOOSE", "Multiple choice", 5, "Circle one answer. The live D1 paper is written \u2014 use these to find gaps.",
       [MCQ(i + 1, q, o) for i, (q, o) in enumerate(_mc)],
       numbered([("1", "<b>B</b> \u2014 Pinot Noir"), ("2", "<b>D</b> \u2014 rotary fermenters"), ("3", "<b>B</b> \u2014 no added CO2"),

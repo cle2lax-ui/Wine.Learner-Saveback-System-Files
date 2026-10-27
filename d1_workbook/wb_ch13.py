@@ -131,13 +131,13 @@ _mc = [("The press most popular worldwide, suited to medium and large wineries, 
         ["Basket press", "Pneumatic press", "Continuous screw press", "Horizontal screw press"]),
        ("Destemming is typically skipped for:", ["Fresh, fruity whites", "Carbonic maceration and whole-bunch pressing", "All reds", "Machine-harvested fruit"]),
        ("The EU maximum SO2 for red wine is:", ["100 mg/L", "150 mg/L", "200 mg/L", "250 mg/L"]),
-       ("<i>Saccharomyces cerevisiae</i> is the standard wine yeast because it:",
-        ["Needs no nitrogen", "Tolerates high acidity and rising alcohol and ferments reliably to dryness", "Is killed by SO2", "Makes buttery notes"]),
+       ("In a \u2018wild\u2019 fermentation, most ambient species die out as alcohol passes about 5%, and which yeast quickly dominates?",
+        ["<i>Kloeckera</i>", "<i>Saccharomyces cerevisiae</i>", "<i>Candida</i>", "<i>Brettanomyces</i>"]),
        ("Fermentation above which temperature risks slowing or sticking?", ["25\u00b0C", "30\u00b0C", "35\u00b0C", "40\u00b0C"])]
 ch.ex("CHOOSE", "Multiple choice", 5, "Circle one answer. The live D1 paper is written \u2014 use these to find gaps.",
       [MCQ(i + 1, q, o) for i, (q, o) in enumerate(_mc)],
       numbered([("1", "<b>B</b> \u2014 pneumatic"), ("2", "<b>B</b> \u2014 carbonic maceration, whole-bunch pressing"), ("3", "<b>B</b> \u2014 150 mg/L (white 200)"),
-                ("4", "<b>B</b> \u2014 acid- and alcohol-tolerant, reliably dry"), ("5", "<b>C</b> \u2014 above 35\u00b0C")]), mins=4, ref="1\u20136")
+                ("4", "<b>B</b> \u2014 Saccharomyces cerevisiae"), ("5", "<b>C</b> \u2014 above 35\u00b0C")]), mins=4, ref="1\u20136")
 
 if __name__ == "__main__":
     ch.build(sys.argv[1] if len(sys.argv) > 1 else "/tmp/wb_ch13.pdf")
