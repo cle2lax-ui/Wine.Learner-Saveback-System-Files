@@ -22,7 +22,7 @@ ch.ex("TICK", "Reduce the risk or combat the threat?", 6,
 
 _p9 = [("Drought", "Stomata close and photosynthesis falls; choose a drought-tolerant rootstock (110R, 140R) and variety (Garnacha)"),
        ("Excess water", "Too much shoot growth, a humid canopy, waterlogging; plant on a slope or free-draining soil, or drain"),
-       ("Untimely rain", "Coulure or millerandage at flowering; swollen, split grapes and grey rot near harvest"),
+       ("Untimely rain", "Coulure or millerandage at flowering; swollen, split grapes and gray rot near harvest"),
        ("Winter freeze", "Below \u221220\u00b0C the graft and canes are at risk; hill up soil, hardy varieties, warmer sites"),
        ("Hail", "Rips shoots and leaves, and wounds invite botrytis; netting in sunny Mendoza, silver iodide rockets, insurance")]
 _d9 = [3, 0, 4, 1, 2]
@@ -60,7 +60,7 @@ ch.ex("ORDER", "The phylloxera story", 6,
 ch.page()
 
 # ============================================================ PAGE 3
-_p6 = [("Nematodes", "Biofumigation (mustard cover crop ploughed in); nematode-resistant rootstock (Ramsey, Dog Ridge)"),
+_p6 = [("Nematodes", "Biofumigation (mustard cover crop plowed in); nematode-resistant rootstock (Ramsey, Dog Ridge)"),
        ("Grape moths", "<i>Bacillus thuringiensis</i>; pheromone \u2018sexual confusion\u2019; parasitic wasps and lacewings"),
        ("Spider mites", "Encourage predatory mites; targeted sprays, since general pesticides kill the predators too"),
        ("Birds", "Netting (justified in high-value areas); rotated scarers; falcons"),
@@ -71,7 +71,7 @@ ch.ex("MATCH", "Pests and their management", 5, "Match each pest to its manageme
       match([p[0] for p in _p6], [_p6[i][1] for i in _d6], _l6),
       pairs([(str(i + 1), _l6[i]) for i in range(5)], ncols=5, width=COLW), mins=3, ref="2")
 
-_r7 = ["Lives on the surface; dull grey patches", "A water mold living within the vine tissue", "Needs rainfall and warmth (about 20\u00b0C)",
+_r7 = ["Lives on the surface; dull gray patches", "A water mold living within the vine tissue", "Needs rainfall and warmth (about 20\u00b0C)",
        "Optimum about 25\u00b0C; thrives in shade; no high humidity needed", "Treated with sulfur, budburst to v\u00e9raison",
        "Treated with copper (Bordeaux mixture)", "Yellow \u2018oil spots\u2019 with white downy growth underneath"]
 _a7 = ["Powdery", "Downy", "Downy", "Powdery", "Powdery", "Downy", "Downy"]
@@ -81,7 +81,7 @@ ch.ex("TICK", "Powdery or downy mildew?", 7, "The classic confusion pair. Tick o
 ch.page()
 
 # ============================================================ PAGE 4
-_p8 = [("Grey rot", "Needs an entry point; rain and humidity activate spores; sulfur and copper are ineffective"),
+_p8 = [("Gray rot", "Needs an entry point; rain and humidity activate spores; sulfur and copper are ineffective"),
        ("Eutypa dieback", "Spores enter pruning wounds; kills vines over about ten years; prune late"),
        ("Phomopsis", "Canes whiten and snap after a cool, wet spring; fungicide three weeks after budburst"),
        ("Esca", "Tiger-striped leaves; warm, dry climates; no chemical control")]
@@ -101,7 +101,7 @@ ch.ex("NAME", "Which mildew?", 2,
       "The classic confusion pair. Write <b>powdery</b> or <b>downy</b> and its treatment under each drawing. "
       "<b>1 point per drawing for the name and treatment together.</b>",
       [PanelFigure([A2.MildewPowdery(140), A2.MildewDowny(140)], gap=60)],
-      kp("<b>1</b> Powdery mildew (grey-white bloom on the surface) \u2014 sulfur. <b>2</b> Downy mildew (yellow \u2018oil spots\u2019, white downy growth "
+      kp("<b>1</b> Powdery mildew (gray-white bloom on the surface) \u2014 sulfur. <b>2</b> Downy mildew (yellow \u2018oil spots\u2019, white downy growth "
          "underneath) \u2014 copper."), mins=2, ref="3")
 ch.page()
 
@@ -139,9 +139,9 @@ ch.ex("NAME", "Name the frost protection", 3,
 
 _mc = [("The only method effective against advective frost is:", ["Wind machines", "Aspersion", "Heaters", "Helicopters"]),
        ("The Bordeaux mixture is:", ["Sulfur and lime, against powdery mildew", "Copper sulfate and lime, against downy mildew",
-                                      "A systemic fungicide for grey rot", "A pheromone for moths"]),
+                                      "A systemic fungicide for gray rot", "A pheromone for moths"]),
        ("Which pest transmits fanleaf virus?", ["Mealybug", "Dagger nematode", "Sharpshooter", "Leafhopper"]),
-       ("Grey rot most threatens:", ["Thick-skinned, small-grape varieties", "Tight-bunch, thin-skinned varieties such as Semillon",
+       ("Gray rot most threatens:", ["Thick-skinned, small-grape varieties", "Tight-bunch, thin-skinned varieties such as Semillon",
                                        "Vines on sandy soil", "Very young vines only"]),
        ("Smoke-taint compounds become aromatic:", ["Instantly in the vineyard", "During fermentation", "Only in barrel", "Never"])]
 ch.ex("CHOOSE", "Multiple choice", 5, "Circle one answer. The live D1 paper is written \u2014 use these to find gaps.",

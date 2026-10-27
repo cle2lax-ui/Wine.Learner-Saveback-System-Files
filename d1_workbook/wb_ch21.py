@@ -107,7 +107,7 @@ ch.ex("MATCH", "Premium neutral white: the effects", 5, "Match each choice to it
       pairs([(str(i + 1), _l15[i]) for i in range(5)], ncols=5, width=COLW), mins=3, ref="2")
 
 _r16 = ["Pneumatic press during or at the end of fermentation, to limit tannin", "At most 3\u20135 days of post-fermentation maceration, or none",
-        "Fermentation at about 30\u00b0C to promote extraction", "Longer maceration to polymerize tannins and build ageing potential",
+        "Fermentation at about 30\u00b0C to promote extraction", "Longer maceration to polymerize tannins and build aging potential",
         "Metatartaric acid: quicker and cheaper than cold stabilization", "Glass only: impermeable to oxygen, so the wine can age"]
 _a16 = ["Inexpensive red", "Inexpensive red", "Premium red", "Premium red", "Inexpensive red", "Premium red"]
 ch.ex("TICK", "Inexpensive or premium red?", 6, "Tick the one style each statement describes.",
@@ -124,7 +124,7 @@ ch.ex("EXPLAIN", "Write like an examiner", 3, "Give the choice <b>and</b> the re
 
 _mc = [("Which set best marks an inexpensive aromatic white?", ["Hand harvest, skin contact, barrel", "Machine harvest, no skin contact, cool steel, screwcap",
                                                                 "Whole-bunch press, oak, cork", "Carbonic maceration, oak"]),
-       ("The clearest single marker of ageing-focused red is:", ["Screwcap closure", "Extended post-fermentation maceration", "Cultured yeast", "Machine harvest"]),
+       ("The clearest single marker of aging-focused red is:", ["Screwcap closure", "Extended post-fermentation maceration", "Cultured yeast", "Machine harvest"]),
        ("Rotary fermenters and mechanized pump-overs suit:", ["Premium red", "High-volume inexpensive red", "Premium white", "Ros\u00e9 only"]),
        ("Partial MLF in premium white serves:", ["Throughput", "Blending options for complexity", "Lower cost", "Higher alcohol"]),
        ("Inexpensive red often uses what in place of oak barrels?", ["Alternatives such as chips or staves", "New French barrels", "Amphorae", "Nothing, ever"])]

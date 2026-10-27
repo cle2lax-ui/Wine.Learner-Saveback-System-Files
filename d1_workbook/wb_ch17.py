@@ -7,12 +7,12 @@ from wb_chapter import *
 ch = Chapter("17", "Wines with Residual Sugar",
              ["name the route a wine used from its style, price and example",
               "say why concentration raises quality and price together",
-              "keep noble rot, grey rot and cryoextraction apart",
+              "keep noble rot, gray rot and cryoextraction apart",
               "state the legal limits on Icewine and on sweetening",
               "weigh control against complexity when stopping fermentation"])
 
 # ============================================================ PAGE 1
-_r1 = ["Sauternes", "Eiswein", "Recioto della Valpolicella", "Vin Santo", "Vendanges Tardives (Alsace)", "Jura\u00e7on (cane-cut)",
+_r1 = ["Sauternes", "Eiswein", "Recioto della Valpolicella", "Vin Santo", "Vendanges Tardives (Alsace)", "Juran\u00e7on (cane-cut)",
        "Trockenbeerenauslese", "Canadian Icewine"]
 _a1 = ["Noble rot", "Frozen", "Dried off the vine", "Dried off the vine", "Dried on the vine", "Dried on the vine", "Noble rot", "Frozen"]
 ch.ex("TICK", "Which way was the must concentrated?", 8, "Tick the method that made each wine.",
@@ -65,8 +65,8 @@ ch.page()
 # ============================================================ PAGE 4
 _tf = [("Cryoextraction wines may be labeled Icewine.", False,
         "Icewine and Eiswein are protected: grapes must freeze naturally on the vine. Cryoextraction is winery-based."),
-       ("Noble rot and grey rot are caused by different fungi.", False,
-        "Same fungus (<i>Botrytis cinerea</i>); the conditions decide, and wrong ones give grey rot."),
+       ("Noble rot and gray rot are caused by different fungi.", False,
+        "Same fungus (<i>Botrytis cinerea</i>); the conditions decide, and wrong ones give gray rot."),
        ("Sugar may be used to sweeten EU wines at bottling.", False, "The EU bans sugar for this use."),
        ("Concentration methods are costly chiefly because of low juice yield.", True, ""),
        ("Stopping fermentation earlier leaves less residual sugar.", False, "An earlier halt leaves more sugar and less alcohol."),

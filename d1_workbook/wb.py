@@ -769,7 +769,7 @@ class Checklist(Flowable):
         c.setStrokeColor(HAIRLINE); c.setLineWidth(LINE_HAIR); c.line(0, self.h - 12, self.w, self.h - 12)
         y = self.h - 16
         for p, h in zip(self.ps, self.hs):
-            c.setStrokeColor(INK); c.setLineWidth(0.7); c.rect(2, y - h + 1.5, 9, 9, stroke=1, fill=0)
+            c.setStrokeColor(INK); c.setLineWidth(0.7); c.rect(2, y - 9.5, 9, 9, stroke=1, fill=0)      # the box sits beside the first line
             p.drawOn(c, 22, y - h)
             y -= h + 4
 

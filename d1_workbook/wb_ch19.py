@@ -14,7 +14,7 @@ ch = Chapter("19", "Specific Options for Ros\u00e9 Winemaking",
 # ============================================================ PAGE 1
 _r1 = ["Black grapes pressed at once, then fermented like white wine", "Hours to days of skin contact before pressing",
        "A little red wine blended into much more white wine", "The palest method (vin gris, pale Provence styles)",
-       "Often a by-product of red-wine sa\u00ecgn\u00e9e", "Banned in most EU geographical indications",
+       "Often a by-product of red-wine saign\u00e9e", "Banned in most EU geographical indications",
        "The only method with fully predictable final color", "Traditional Spanish ros\u00e9 and Tavel"]
 _a1 = ["Direct pressing", "Short maceration", "Blending", "Direct pressing", "Short maceration", "Blending", "Blending", "Short maceration"]
 ch.ex("TICK", "Which method?", 8, "Tick the one method each statement describes.",
@@ -82,7 +82,7 @@ ch.ex("DECIDE", "Red into white: allowed or banned?", 3, "Circle <b>A</b> if ble
 ch.page()
 
 # ============================================================ PAGE 5
-_mc = [("Which method gives the palest ros\u00e9?", ["Blending", "Short maceration", "Direct pressing", "Sa\u00ecgn\u00e9e"]),
+_mc = [("Which method gives the palest ros\u00e9?", ["Blending", "Short maceration", "Direct pressing", "Saign\u00e9e"]),
        ("Ros\u00e9 is usually fermented at:", ["12\u201316\u00b0C, as for white", "25\u201330\u00b0C", "35\u00b0C", "Any temperature"]),
        ("MLF is usually avoided in ros\u00e9 because:", ["It lowers pH", "Buttery flavors mask the fresh fruit", "It raises sugar", "It is banned"]),
        ("Hand harvest enables which ros\u00e9 technique?", ["Whole-bunch pressing, giving the lowest color", "Machine blending", "Flash d\u00e9tente", "Carbonic maceration"]),

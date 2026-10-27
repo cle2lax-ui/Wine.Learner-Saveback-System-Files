@@ -54,10 +54,10 @@ ch.page()
 
 # ============================================================ PAGE 3
 _ch = [("Rain near harvest", ["Rain forecast near harvest", Blank("Grapes swell fast: juice dilutes, skins split"),
-                               Blank("Grey rot sets in; the crop may be lost"), "Pick underripe now, or wait and risk it"])]
+                               Blank("Gray rot sets in; the crop may be lost"), "Pick underripe now, or wait and risk it"])]
 ch.ex("CHAIN", "The trump card", 2, "Rain is the one factor that can override a ripeness plan. Complete the dotted boxes.",
       [Chain(items, label=lab, box_h=46) for lab, items in _ch],
-      kp("Grapes swell, juice dilutes and skins split \u2192 grey rot and possible loss of the crop."), mins=2, ref="1")
+      kp("Grapes swell, juice dilutes and skins split \u2192 gray rot and possible loss of the crop."), mins=2, ref="1")
 
 _p6 = [("White Zinfandel", "Early to mid August"), ("Red Zinfandel", "September"),
        ("Botrytised wines", "Hand-harvested over several passes to select only affected bunches"),

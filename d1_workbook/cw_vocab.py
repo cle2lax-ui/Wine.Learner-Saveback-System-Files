@@ -173,11 +173,11 @@ RUPESTRIS|Species behind a high-vigor rootstock such as 140R
 BERLANDIERI|Species behind 41B and its high-lime tolerance
 NEMATODES|Root-knot ones are resisted by Ramsey and Dog Ridge
 SALINITY|Dissolved salt that some rootstocks tolerate
-LIME|Spread on acidic soil, then ploughed in
+LIME|Spread on acidic soil, then plowed in
 GRAFTING|How a variety is joined to its roots
-PLOUGH|___ pan: impervious layer from ploughing at one depth
+PLOW|___ pan: impervious layer from plowing at one depth
 TERRACES|Flat steps built on steep slopes such as the Douro
-DRAINAGE|Promoted by breaking down a plough pan
+DRAINAGE|Promoted by breaking down a plow pan
 VARIETY|The grape type chosen to suit site and market
 RIESLING|Late-budding, winter-hardy variety
 GRENACHE|Variety that withstands high water stress
@@ -186,7 +186,7 @@ VIDAL|Hybrid that tolerates very cold winters
 CASABLANCA|Chilean region cooled by sea breezes
 LUJAN|___ de Cuyo: high-altitude Mendoza district
 CHARDONNAY|Early budding and early ripening
-CABERNET|Less prone to grey rot than Merlot
+CABERNET|Less prone to gray rot than Merlot
 SELECTION|Choosing clones or mass material for planting
 MARGIN|Low-priced wine from a cool site leaves a thin one
 """.strip().split("\n")
@@ -248,9 +248,9 @@ ASPERSION|Water sprinklers that protect against advective frost
 HAIL|Ice stones that tear leaves and bunches
 NETTING|Protects against hail and birds, but shades vines
 MILDEW|Powdery and downy are the two main kinds
-POWDERY|Mildew with a grey-white surface bloom
+POWDERY|Mildew with a gray-white surface bloom
 DOWNY|Mildew with yellow oil spots and white fuzz underneath
-BOTRYTIS|Genus of the fungus behind grey rot
+BOTRYTIS|Genus of the fungus behind gray rot
 ESCA|Fungal disease with tiger-striped leaves
 EUTYPA|Dieback fungus that enters pruning wounds
 PHOMOPSIS|Fungus that whitens and snaps canes

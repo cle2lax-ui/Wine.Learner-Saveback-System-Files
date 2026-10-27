@@ -13,7 +13,7 @@ Altitude | Height above sea level. Temperature falls about 0.6\u00b0C per 100 m;
 Ambient yeast | Wild yeast present on grapes and in the winery. Adds complexity, but starts slowly and cannot guarantee a result. | 13
 Amphora | Terracotta vessel for fermenting or maturing wine; porous, with a long history of use. | 13
 Anthocyanins | Red-blue pigments in black grape skins. Unstable alone; bound to tannin they give lasting color. | 11, 18
-Anther | The part of a flower's stamen that makes pollen. | 1, 2
+Anther | The part of a flower\u2019s stamen that makes pollen. | 1, 2
 Appassimento | Italian method of drying picked grapes, in the sun or a humidity-controlled room, to concentrate sugar. | 17
 Argon | An inert gas used to flush vessels and protect wine from oxygen. | 13
 Aroma precursors | Non-aromatic building blocks in grapes, often bound to sugar, that become aromatic only during fermentation. | 11
@@ -29,7 +29,7 @@ Biodynamic | An organic-based approach following Rudolf Steiner, with horn prepa
 Blending | Combining batches or varieties. Reasons: balance, consistency, style, complexity, minimizing faults, volume and price. | 14
 Body | The weight or fullness of a wine in the mouth, from alcohol, glycerol and extract. | 11
 Bordeaux mixture | Copper sulfate and lime, sprayed against downy mildew. | 8
-Botrytis cinerea | The fungus behind both grey rot and noble rot; the conditions decide which. | 8, 17
+Botrytis cinerea | The fungus behind both gray rot and noble rot; the conditions decide which. | 8, 17
 Brettanomyces | A spoilage yeast, hard to eradicate once wood is infected. | 14, 15
 Brix | A scale of sugar in grapes. Most dry still wine is picked at about 19\u201325\u00b0 Brix. | 9
 Bud | Structure at a node containing the next season\u2019s shoot, leaves and flowers. | 1, 2
@@ -103,11 +103,11 @@ Free SO2 | Sulfur dioxide not bound to other compounds. The fraction that protec
 Free-run juice | Juice that drains before pressing: low solids and tannin, higher acidity. | 13, 16
 Frost | Temperatures below 0\u00b0C that damage buds and shoots. Radiative or advective. | 8
 Fruit set | Fertilized flowers developing into berries. | 2
-Ganim\u00e9de | A trade-named cap-management system that uses gas to burst the cap. | 18
+Ganimede | A trade-named cap-management system that uses gas to burst the cap. | 18
 Geneva Double Curtain | A canopy split horizontally into two hanging curtains, for vigorous vines. | 7
 Glycerol | A smooth, viscous by-product of fermentation that adds body; the third most abundant component of dry wine. | 11
 Grafting | Joining a vine variety to a different rootstock, mainly to protect against phylloxera. | 1, 5
-Grey rot | Botrytis in the wrong conditions: an outright fault. Threatens tight-bunched, thin-skinned varieties. | 8
+Gray rot (grey rot) | Botrytis in the wrong conditions: an outright fault. Threatens tight-bunched, thin-skinned varieties. | 8
 Gross lees | Heavy sediment that settles within 24 hours of fermentation; removed at the first racking. | 14
 Growing degree days (GDD) | A heat summation: for each month, (mean temperature \u2212 10\u00b0C) \u00d7 days; negative months are ignored. | 3
 Growing season temperature (GST) | Average temperature of the growing season. WSET bands: cool \u226416.5\u00b0C, moderate to 18.5, warm to 21, hot above. | 3
@@ -183,13 +183,13 @@ Phylloxera | A root louse that destroyed European vineyards; defeated by graftin
 Pierce\u2019s Disease | A bacterial disease carried by sharpshooters; no cure. | 8
 Pinching | Removing shoot tips at flowering to improve fruit set. | 7
 Planting density | Vines per hectare. Area yield = yield per vine \u00d7 vines per hectare. | 7, 10
-Plough pan | An impervious layer formed by years of ploughing at one depth; broken down before planting. | 5
+Plow pan (plough pan) | An impervious layer formed by years of plowing at one depth; broken down before planting. | 5
 Pneumatic press | Press with an inflating air membrane. The most popular worldwide for medium and large wineries. | 13
 Pollination | Transfer of pollen to the stigma, followed by fertilization. | 1, 2
 Pomace | The solid remains (skins, seeds, stems) after pressing. | 13
-Post-fermentation maceration | Days or weeks on the skins after fermentation, polymerizing tannin for structure and ageing. | 18
+Post-fermentation maceration | Days or weeks on the skins after fermentation, polymerizing tannin for structure and aging. | 18
 Potential alcohol | The alcohol a must could produce, from its sugar. | 9, 13
-Powdery mildew | A surface fungus with a grey-white bloom; treated with sulfur. | 8
+Powdery mildew | A surface fungus with a gray-white bloom; treated with sulfur. | 8
 Precision viticulture | Sensors, GPS and GIS map variation so interventions can be targeted; needs large investment. | 4
 Press wine | The more tannic, colored juice or wine from later press fractions. | 13, 16
 Pruning | Winter cutting that sets the number of buds and the vine\u2019s shape. | 7
@@ -208,7 +208,7 @@ Reverse osmosis | A membrane pulls off an alcohol and water permeate; the most c
 Rootstock | The root system of a grafted vine, chosen for resistance and site. | 1, 5
 Rotary fermenter | A tank that rotates with internal blades; the most extractive and most automatable cap management. | 18
 Rotundone | A pepper compound, notably in Syrah. | 11
-Sa\u00ecgn\u00e9e | Bleeding off juice after crushing to concentrate a red must; the pale juice often becomes ros\u00e9. | 18, 19
+Saign\u00e9e | Bleeding off juice after crushing to concentrate a red must; the pale juice often becomes ros\u00e9. | 18, 19
 Scott-Henry | A canopy split vertically into upward and downward shoots. | 7
 Screwcap | An aluminum closure with a liner; no TCA risk. | 15
 Seasoning | Drying oak staves outdoors for two to three years to lower bitterness. | 14
@@ -294,7 +294,7 @@ Continentality | The difference between the mean temperatures of the hottest and
 Vintage variation | Year-to-year differences in wine style and quality caused by weather; welcomed in some styles, unwanted in non-vintage sparkling and inexpensive volume wines. | 3
 Drought | Too little water: stomata close, photosynthesis falls, ripening slows and, if prolonged, vines die. | 8
 Waterlogging | Soil so wet that roots lack oxygen; slows growth and can kill the vine. | 3, 8
-Untimely rainfall | Rain at flowering (coulure, millerandage) or near harvest (swollen, split grapes and grey rot). | 8
+Untimely rainfall | Rain at flowering (coulure, millerandage) or near harvest (swollen, split grapes and gray rot). | 8
 Winter freeze | Damage to dormant vines below about \u221220\u00b0C; the graft and canes are most at risk. | 8
 Oak alternatives | Chips or staves, in a sack, floating or fixed inside a tank: much cheaper than barrels and quick to act. | 14
 Reduction | Sulfur-like odors from onion to rotten egg, from stressed yeast or near-total oxygen exclusion; a fault at higher levels. | 15

@@ -86,7 +86,7 @@ _tf = [("Most white wine gets significant skin contact.", False, "Most uses zero
        ("Higher must solids are always a quality risk.", False,
         "A little solids content feeds yeast and adds complexity; the risks sit at both ends of the range."),
        ("B\u00e2tonnage releases lees compounds faster but adds oxygen whenever the vessel is opened.", True, ""),
-       ("Lees ageing matters more for white wine than for red.", True, "")]
+       ("Lees aging matters more for white wine than for red.", True, "")]
 ch.ex("DECIDE", "True or false \u2014 then fix it", 6,
       "Circle T or F; correct any false statement. <b>1 point only if the call and the correction are both right.</b>",
       [TFItem(i + 1, t) for i, (t, v, fx) in enumerate(_tf)],

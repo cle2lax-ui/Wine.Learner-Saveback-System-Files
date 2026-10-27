@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """More workbook artwork in the house style: irrigation (Ch6), frost protection and mildews (Ch8), California sprawl (Ch10),
-soil profile with a plough pan (Ch5)."""
+soil profile with a plow pan (Ch5)."""
 import math
 import random as _random
 import wb_ink as K
@@ -17,23 +17,10 @@ def _drop(c, x, y, s=1.0):
     K.blob(c, x, y, 1.7 * s, 2.5 * s, 0, light=BL_L, mid=BL_M, dark=BL_D, ink=BL_I, lw=0.5)
 
 
-def _vine(c, cx, y0, th=24, ch=44, spread=15, bunches=True, R=5.0, seed=None):
-    """A small, realistic vine: gnarled trunk, knuckled head, two spurred cordons, shoots, bunches."""
-    sd = int(cx) if seed is None else seed
-    cen, wid = vine_trunk(c, cx, y0, y0 + th, 6.8, seed=sd % 9, lean=((sd % 3) - 1) * 1.2)
-    hx, hy = cen[-1]
-    tops = []
-    for sgn in (-1, 1):
-        tp, cc = vine_cordon(c, hx, hy + 1.0, sgn, spread, 4.0, seed=sd % 7 + (0 if sgn < 0 else 3), arch=0.8, spur_gap=6.5)
-        tops += tp
-    vine_head(c, hx, hy + 0.5, 6.2, seed=sd % 5)
-    tops = sorted(tops)
-    for i, (x, y) in enumerate(tops):
-        ctr = [(x + 1.0 * math.sin(j / 3.0 + i), y + ch * j / 12.0) for j in range(13)]
-        _shoot_with_leaves(c, ctr, (0.25, 0.5, 0.75, 0.95), R=R)
-    if bunches:
-        for dx in (-0.55, 0.55):
-            K.bunch(c, hx + dx * spread, hy - 4, 8, 11)
+def _vine(c, cx, y0, th=24, ch=44, spread=15, bunches=True, R=5.0, seed=None, young=False):
+    """A small, correctly drawn vine for the scene drawings (see wb_vine.mini_vine)."""
+    from wb_vine import mini_vine
+    mini_vine(c, cx, y0, th=th, ch=ch, spread=spread, bunches=bunches, R=R, seed=seed, young=young)
 
 
 def _arrow(c, pts, col, lw=1.6):
@@ -151,7 +138,7 @@ class FrostWindMachine(Art):
         _frost_bg(c, W, H, warm_band=True)
         _ground(c, W)
         for cx in (26, 124):
-            _vine(c, cx, 9, th=18, ch=32, spread=11, R=4.6)
+            _vine(c, cx, 9, th=18, ch=32, spread=11, R=4.6, young=True)
         _steel(c, 72, 9, 6, 92, r=2, horizontal=False)
         _steel(c, 66, 100, 18, 8, r=3)
         for sgn in (-1, 1):
@@ -171,7 +158,7 @@ class FrostSprinklers(Art):
         _frost_bg(c, W, H)
         _ground(c, W)
         for cx in (26, 124):
-            _vine(c, cx, 9, th=18, ch=32, spread=11, R=4.6)
+            _vine(c, cx, 9, th=18, ch=32, spread=11, R=4.6, young=True)
         _steel(c, 72, 9, 5, 52, r=2, horizontal=False)
         K.blob(c, 74.5, 63, 5, 4.6, 0, light=STEEL_L, mid=STEEL_M, dark=STEEL_D, ink=INK_S, lw=1.0)
         for side in (-1, 1):
@@ -195,7 +182,7 @@ class FrostHeaters(Art):
         _frost_bg(c, W, H)
         _ground(c, W)
         for cx in (22, 128):
-            _vine(c, cx, 9, th=18, ch=32, spread=11, R=4.6)
+            _vine(c, cx, 9, th=18, ch=32, spread=11, R=4.6, young=True)
         for px in (58, 96):
             body = K.path(c, [("M", px - 8, 9), ("L", px + 8, 9), ("L", px + 6, 38), ("L", px - 6, 38), ("Z",)])
             K.fill_linear(c, body, px - 8, 0, px + 8, 0, [(0, PIPE_L), (0.35, PIPE_M), (1, PIPE_D)]); K.outline(c, body, PIPE_I, 1.1)
@@ -240,7 +227,7 @@ class MildewPowdery(Art):
         K.leaf(c, 100, 92, 44, rot=-6, stalk=False, lw=1.0)
         K.line(c, [(48, 130), (48, 118)], K.INK_G, 2.0)
         K.bunch(c, 50, 118, 48, 64, rows=(5, 5, 4, 4, 3, 2, 1))
-        # the bloom: a fine grey-white dust, denser in patches (stippled, not painted)
+        # the bloom: a fine gray-white dust, denser in patches (stippled, not painted)
         for (cx, cy, rx, ry, rot, n) in ((42, 100, 17, 11, 15, 150), (60, 84, 15, 10, -20, 120), (50, 66, 13, 9, 10, 90), (100, 100, 20, 12, -20, 170),
                                          (112, 82, 14, 10, 20, 110), (92, 76, 13, 8, 0, 90)):
             reg = K.ellipse_path(c, cx, cy, rx, ry, rot)
@@ -249,32 +236,14 @@ class MildewPowdery(Art):
 
 
 # ===================================================================== California sprawl (Chapter 10)
-class TrellisSprawl(Art):
-    name = "sprawl"
-    aspect = 1.18
-
-    def draw(self, c):
-        W, H = self.W, self.H
-        _ground(c, W)
-        _post(c, 8, 8, 100); _post(c, W - 8, 8, 100)
-        _wire(c, 8, W - 8, 88)
-        cx = W * 0.5
-        cen, wid = vine_trunk(c, cx, 8, 58, 10.0, seed=2, lean=-2.0)
-        hx, hy = cen[-1]
-        tops = []
-        for sgn, sd in ((-1, 1), (1, 2)):
-            tp, cc = vine_cordon(c, hx, 61, sgn, 40, 6.2, seed=sd + 5, arch=1.0)
-            tops += tp
-        vine_head(c, hx, 61, 9.5, seed=5)
-        for x in (34, 62, 88):
-            K.bunch(c, x, 56, 10, 12)
-        for i, (x, y) in enumerate(sorted(tops)):
-            sgn = -1 if i % 2 == 0 else 1
-            ctr = K.bezier((x, y), (x + 2, 98), (x + sgn * 10, 108), (x + sgn * 14, 74), n=22)
-            _shoot_with_leaves(c, ctr, (0.2, 0.4, 0.6, 0.8, 0.95), R=5.6)
+def __getattr__(name):
+    if name == "TrellisSprawl":
+        import wb_vine
+        return wb_vine.TrellisSprawl
+    raise AttributeError(name)
 
 
-# ===================================================================== soil profile with a plough pan (Chapter 5)
+# ===================================================================== soil profile with a plow pan (Chapter 5)
 class SoilProfile(Art):
     name = "soil_profile"
     aspect = 0.50
@@ -314,10 +283,7 @@ class SoilProfile(Art):
         for yy in (pan_t, pan_b):
             K.line(c, [(x, wave(yy, x)) for x in xs_], HEX("#1C1612"), 0.9, taper=False)
         vx = 92
-        vine_trunk(c, vx, top - 3, top + 17, 8.5, seed=6)
-        for i, dx in enumerate((-12, -4, 6, 14)):
-            ctr = [(vx + dx + 1.2 * math.sin(j / 3.0 + i), top + 14 + 2 + 15 * j / 8.0) for j in range(9)]
-            _shoot_with_leaves(c, ctr, (0.3, 0.6, 0.9), R=6.2, lw=0.7)
+        _vine(c, vx, top - 3, th=15, ch=24, spread=11, bunches=False, R=5.2, seed=6)
         for (dx, wend, sg) in ((0, 48, 1), (0, 62, -1)):                  # roots spread, then are checked at the pan
             r0 = (vx, top - 2)
             ctr = K.bezier(r0, (vx + sg * 10, top - 14), (vx + sg * 32, pan_t + 17), (vx + sg * wend, pan_t + 8), n=18)
@@ -329,7 +295,7 @@ class SoilProfile(Art):
         W, H = self.W, self.H
         top = H - 50
         pan_t, pan_b = top - 38, top - 47
-        return [("Topsoil", (200, top - 14), "R"), ("Plough pan", (230, (pan_t + pan_b) / 2.0), "R"), ("Subsoil", (240, pan_b - 20), "R"),
+        return [("Topsoil", (200, top - 14), "R"), ("Plow pan", (230, (pan_t + pan_b) / 2.0), "R"), ("Subsoil", (240, pan_b - 20), "R"),
                 ("Roots", (92 - 38, pan_t + 12), "L"), ("Pooled water", (170, pan_t + 5), "L")]
 
 
@@ -746,8 +712,8 @@ class ConcOffVine(Art):
             tray = K.rrect(c, 6, yy, W - 12, 7, 2)
             K.fill_linear(c, tray, 0, yy + 7, 0, yy, [(0, K.WOOD_L), (1, K.WOOD_D)]); K.outline(c, tray, K.INK_W, 1.1)
             for k in range(n):
-                c.saveState(); c.translate(26 + k * 52, yy + 18); c.rotate(-90)
-                K.bunch(c, 0, 0, 26, 40, rows=(3, 4, 3, 3, 2, 1), seed=k + yy, berry_fn=None)
+                c.saveState(); c.translate(18 + k * 46, yy + 19); c.rotate(90)
+                K.bunch(c, 0, 0, 24, 34, rows=(3, 4, 3, 3, 2, 1), seed=k + yy, berry_fn=None)
                 c.restoreState()
         tray3 = K.rrect(c, 6, 118, W - 12, 7, 2)
         K.fill_linear(c, tray3, 0, 125, 0, 118, [(0, K.WOOD_L), (1, K.WOOD_D)]); K.outline(c, tray3, K.INK_W, 1.1)
@@ -1068,12 +1034,7 @@ class HarvestMachine(Art):
         _ground(c, W)
         for xp in (6, W - 6):
             K.tube(c, [(xp, 8), (xp, 106)], 4, 4, K.WOOD_M, light=K.WOOD_L, dark=K.WOOD_D, ink=K.INK_W, lw=1.0, hi=0.5, shade=0.4)
-        vine_trunk(c, W / 2.0, 9, 44, 6.8, seed=4)
-        for i, dx in enumerate((-7, -2.5, 2.5, 7)):                                  # the vine's canopy
-            ctr = [(W / 2.0 + dx + 0.9 * math.sin(j * 0.5 + i), 44 + j * 4.2) for j in range(14)]
-            _shoot_with_leaves_(c, ctr)
-        K.bunch(c, W / 2.0 - 6, 46, 11, 14, rows=(3, 3, 2, 1))
-        K.bunch(c, W / 2.0 + 7, 44, 11, 14, rows=(3, 3, 2, 1))
+        _vine(c, W / 2.0, 9, th=30, ch=48, spread=18, R=5.4, seed=4)
         for x in (24, W - 24):                                                       # the wheels
             K.blob(c, x, 22, 17, 17, 0, light=HEX("#4A4F55"), mid=HEX("#2A2E32"), dark=HEX("#0F1214"), ink=HEX("#0A0C0E"), lw=1.2)
             K.blob(c, x, 22, 7, 7, 0, light=STEEL_L, mid=STEEL_M, dark=STEEL_D, ink=INK_S, lw=0.9)

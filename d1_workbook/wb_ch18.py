@@ -21,7 +21,7 @@ ch.ex("NAME", "Name the cap-management method", 5,
          "Gentlest pair: punching down and <b>pumping over</b>."), mins=4, ref="1")
 
 _o = ["Rack and return (d\u00e9lestage) \u2014 more extractive, used sparingly", "Punching down (pigeage) \u2014 the gentlest; labor-intensive by hand",
-      "Rotary fermenter or Ganim\u00e9de \u2014 the most extractive and most automatable", "Pumping over (remontage) \u2014 still gentle; aerobic or anaerobic"]
+      "Rotary fermenter or Ganimede \u2014 the most extractive and most automatable", "Pumping over (remontage) \u2014 still gentle; aerobic or anaerobic"]
 ch.ex("ORDER", "Gentlest to most extractive", 4, "Cap management is a ladder, not four equal options. Number the steps 1\u20134.",
       order(_o, [3, 1, 4, 2]), kp("Top to bottom: <b>3 \u00b7 1 \u00b7 4 \u00b7 2</b> (punching down, pumping over, rack and return, rotary)."), mins=2, ref="1")
 ch.page()
@@ -46,7 +46,7 @@ ch.page()
 _p5 = [("Cold soak", "4\u201310\u00b0C for 3\u20137 days: gentle color, little tannin; common on Pinot Noir"),
        ("Thermovinification", "50\u201360\u00b0C and above: fast color, less tannin; denatures laccase"),
        ("Flash d\u00e9tente", "85\u201390\u00b0C for about 2 minutes, then vacuum-cooled; also fixes smoke taint"),
-       ("Sa\u00ecgn\u00e9e", "Draws off juice after crushing; the pale juice often becomes ros\u00e9"),
+       ("Saign\u00e9e", "Draws off juice after crushing; the pale juice often becomes ros\u00e9"),
        ("Co-fermentation", "A little white grape added, often 5% or less, such as Viognier with Syrah")]
 _d5 = [4, 1, 3, 0, 2]
 _l5 = [chr(65 + _d5.index(i)) for i in range(5)]
@@ -76,7 +76,7 @@ ch.ex("DECIDE", "True or false \u2014 then fix it", 6,
                  ("<b><font color=\"%s\">F</font></b> \u2014 %s" % (hexc(ANS), fx))) for i, (t, v, fx) in enumerate(_tf)]),
       mins=5, ref="1\u20133")
 
-_e = ["Anthocyanins alone are unstable: lees ageing or SO2 can strip them and they fade toward brown.",
+_e = ["Anthocyanins alone are unstable: lees aging or SO2 can strip them and they fade toward brown.",
       "Binding with tannin gives a far more stable compound.",
       "Oxygen drives that reaction, so gentle oxidation (micro-oxygenation, barrels) supports red color."]
 ch.ex("EXPLAIN", "Write like an examiner", 3, "Oxygen helps here; it is the reverse of white wine\u2019s usual story.",
@@ -88,12 +88,12 @@ ch.page()
 _mc = [("Cold soaking is common on which grape, because of its naturally low anthocyanins?", ["Cabernet Sauvignon", "Pinot Noir", "Syrah", "Malbec"]),
        ("Which cap-management method is the most extractive and most automatable?", ["Punching down", "Pumping over", "Rack and return", "Rotary fermenters"]),
        ("Semi-carbonic maceration is distinguished by:", ["Added CO2", "No added CO2: the bottom grapes crush and blanket the rest", "Heat", "Cold soaking"]),
-       ("Sa\u00ecgn\u00e9e is:", ["Adding white grapes", "Drawing off juice after crushing, concentrating the must", "Adding sugar", "Flash heating"]),
-       ("Which reds deliberately skip oak for primary fruit?", ["Unoaked Loire Cabernet Franc, Mencia, Argentine Malbec", "All premium Bordeaux", "Barolo", "Amarone"])]
+       ("Saign\u00e9e is:", ["Adding white grapes", "Drawing off juice after crushing, concentrating the must", "Adding sugar", "Flash heating"]),
+       ("Which reds deliberately skip oak for primary fruit?", ["Unoaked Loire Cabernet Franc, Menc\u00eda, Argentine Malbec", "All premium Bordeaux", "Barolo", "Amarone"])]
 ch.ex("CHOOSE", "Multiple choice", 5, "Circle one answer. The live D1 paper is written \u2014 use these to find gaps.",
       [MCQ(i + 1, q, o) for i, (q, o) in enumerate(_mc)],
       numbered([("1", "<b>B</b> \u2014 Pinot Noir"), ("2", "<b>D</b> \u2014 rotary fermenters"), ("3", "<b>B</b> \u2014 no added CO2"),
-                ("4", "<b>B</b> \u2014 drawing off juice after crushing"), ("5", "<b>A</b> \u2014 unoaked Loire Cabernet Franc, Mencia, Malbec")]), mins=4, ref="1\u20133")
+                ("4", "<b>B</b> \u2014 drawing off juice after crushing"), ("5", "<b>A</b> \u2014 unoaked Loire Cabernet Franc, Menc\u00eda, Malbec")]), mins=4, ref="1\u20133")
 
 if __name__ == "__main__":
     ch.build(sys.argv[1] if len(sys.argv) > 1 else "/tmp/wb_ch18.pdf")

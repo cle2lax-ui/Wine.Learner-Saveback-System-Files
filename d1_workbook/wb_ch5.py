@@ -50,12 +50,12 @@ f, a = cloze(["The geological claim is contested because {{photosynthesis}} is t
 ch.ex("COMPLETE", "Why the geological claim is contested", len(a), "Three grounds. <b>1 point per blank.</b>", f, kp(ans_inline(a)),
       mins=2, ref="1")
 
-_p5 = [("A plough pan", "Break it down: promotes drainage and easier later cultivation"),
+_p5 = [("A plow pan", "Break it down: promotes drainage and easier later cultivation"),
        ("Roots of uprooted vines", "Remove and burn: they can harbor disease"),
        ("A serious weed problem", "Apply systemic herbicides before planting"),
-       ("Acidic soil (Beaujolais)", "Spread lime and plough it in; surface lime acts slowly"),
+       ("Acidic soil (Beaujolais)", "Spread lime and plow it in; surface lime acts slowly"),
        ("A steep slope (Douro)", "Build terraces to give flat land for planting"),
-       ("Low nutrients and organic matter", "Manure, compost and fertilizers, ploughed in")]
+       ("Low nutrients and organic matter", "Manure, compost and fertilizers, plowed in")]
 _d5 = [4, 2, 0, 5, 1, 3]
 _l5 = [chr(65 + _d5.index(i)) for i in range(6)]
 ch.ex("MATCH", "Soil preparation: problem and fix", 6, "Rectifying now is easier than after planting. Match each problem to its fix.",
@@ -68,7 +68,7 @@ _p6 = [("Chardonnay", "Early budding (spring frost risk) and early ripening"),
        ("Riesling", "Late budding, and winter hardy"),
        ("Mourv\u00e8dre", "Late ripening: suits warm and hot climates"),
        ("Grenache", "Withstands high water stress: drought tolerant"),
-       ("Cabernet Sauvignon", "Less susceptible to grey rot than Merlot"),
+       ("Cabernet Sauvignon", "Less susceptible to gray rot than Merlot"),
        ("Vidal", "Tolerates very cold winters (Ontario, Finger Lakes)")]
 _d6 = [3, 5, 0, 2, 4, 1]
 _l6 = [chr(65 + _d6.index(i)) for i in range(6)]
@@ -147,16 +147,16 @@ ch.page()
 
 # ============================================================ PAGE 6
 _sp = A2.SoilProfile(330)
-f, a = cloze(["Breaking down a plough pan promotes {{drainage}} and easier later {{cultivation}}."], width=70)
-ch.ex("LABEL", "Soil profile: the plough pan", 5 + len(a),
-      "Label the five features. A plough pan is an impervious layer formed by years of ploughing at the same depth. <b>1 point per label and per blank.</b>",
+f, a = cloze(["Breaking down a plow pan promotes {{drainage}} and easier later {{cultivation}}."], width=70)
+ch.ex("LABEL", "Soil profile: the plow pan", 5 + len(a),
+      "Label the five features. A plow pan is an impervious layer formed by years of plowing at the same depth. <b>1 point per label and per blank.</b>",
       [LabelFigure(_sp, align="left")] + f,
       kp(label_key(_sp) + ".  " + ans_inline(a)), mins=4, ref="2")
 
 _mc = [("The hardest square of the price-and-climate grid is:",
         ["Warm and inexpensive", "Warm and premium", "Cool and inexpensive", "Cool and premium"]),
-       ("A plough pan is:",
-        ["An impervious layer from ploughing at one depth", "A weed", "A rootstock", "A fungal disease"]),
+       ("A plow pan is:",
+        ["An impervious layer from plowing at one depth", "A weed", "A rootstock", "A fungal disease"]),
        ("Chardonnay is:",
         ["Late budding and late ripening", "Early budding and early ripening", "Early budding and late ripening",
          "Late budding and early ripening"]),
