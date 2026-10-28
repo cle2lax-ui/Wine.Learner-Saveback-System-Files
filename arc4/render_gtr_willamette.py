@@ -3,7 +3,7 @@
 Two pages per GTR_STYLE_GUIDE.md. It tests The Field Guide: Climate's Impact on Wine (slide 6, the Willamette-vs-Margaux duel), posted days earlier.
 
 CLUES (escalating: the hardest first, the release valve last; each checkable against D1 Ch. 3, p. 30, or D3 Ch. 24):
-  A  "Its growing season averages just 15.9C."   D1 p. 30: "average growing season temperature in Willamette Valley is 15.9C / 61F".
+  A  "Its growing season averages just 15.9C."   D1 p. 30: "average growing season temperature in Willamette Valley is 15.9C / 61F" (the Fahrenheit is D1's own, added at Steve's request).
   B  "A cold Pacific current cools it."           D1 p. 30: the west coast of North America, "including Oregon, is cooled by the cold California current,
                                                   which flows from the northern Pacific". The current is not NAMED: "California" would mislead half the solvers.
   C  "Its main grape ripens early: Pinot Noir."   D1 p. 30: "the main grape in the Willamette is early-ripening Pinot Noir".
@@ -43,7 +43,7 @@ SLOT_COVER = dict(
     photo="gtr_willamette_blade.jpg",
     swipe_label="READ MORE",
     clues=[
-        "Its growing season averages just 15.9\u00b0C.",
+        "Its growing season averages 15.9\u00b0C (61\u00b0F).",
         "A cold Pacific current cools it.",
         "Its main grape ripens early: Pinot Noir.",
         "Level with Margaux in Bordeaux: about 45\u00b0 N.",

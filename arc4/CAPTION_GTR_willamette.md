@@ -7,7 +7,7 @@
 
 It sits level with Bordeaux's Margaux, but a different ocean makes it cooler. Name the American wine region.
 
-Four clues on the first slide, answer on the second. Its growing season averages just 15.9°C, a cold Pacific current cools it, its main grape ripens early, and it sits at about 45° N, the same latitude as Margaux in Bordeaux.
+Four clues on the first slide, answer on the second. Its growing season averages 15.9°C (61°F), a cold Pacific current cools it, its main grape ripens early, and it sits at about 45° N, the same latitude as Margaux in Bordeaux.
 
 If you swiped The Field Guide: Climate's Impact on Wine, slide 6 was your way in.
 
