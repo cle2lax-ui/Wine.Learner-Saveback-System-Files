@@ -8,7 +8,8 @@ shared QA harness, distinct visual languages per series.
 """
 
 # ---------- Canvas ----------
-W, H = 2160, 2700                 # 4:5 portrait, built @2x
+import os
+W, H = 2160, int(os.environ.get("CANVAS_H", 2700))                 # 4:5 portrait, built @2x
 EXPORT = (1080, 1350)
 M = 120                           # side/top margin (60px @1080 — published safe zone)
 FOOTER_Y = H - 150                # footer baseline zone (inside caption-overlay risk band, by design)

@@ -1315,7 +1315,7 @@ def card_grid(slot, slide_no, total, pal):
 
 
 # ─────────────────────── M08 SHOWCASE SHELF ───────────────────────
-def _glass_mark_patch(img, d, pal, text, bg_color=None):
+def _glass_mark_patch(img, d, pal, text, bg_color=None, size=90, max_w=None, full_w=False):
     """Quick Sips glass-glyph + custom text, on a solid color patch,
     anchored top-left. Same visual lockup as quick_sips.py's
     qs_mark_patch (colored patch, white glass icon, white text) but
@@ -1324,17 +1324,21 @@ def _glass_mark_patch(img, d, pal, text, bg_color=None):
     bg_color overrides the patch color (default pal['SIGNATURE']) --
     for a one-off deck that wants the mark in a specific color
     independent of the rest of the palette's use of SIGNATURE."""
-    pad, gap = 40, 26
-    gh = 108
-    tf = font("display_bold", 90)
-    tw = text_w(d, text, tf)
+    icon = Image.open(f"{PHOTO_DIR}/QS_glass_icon.png").convert("RGBA")
+    while True:                              # size=90 is the default lockup; a longer line shrinks until the patch fits max_w
+        k_ = size / 90
+        pad, gap, gh = round(40 * k_), round(26 * k_), round(108 * k_)
+        tf = font("display_bold", size)
+        tw = text_w(d, text, tf)
+        gw = int(gh * icon.size[0] / icon.size[1])
+        patch_w = pad + gw + gap + tw + pad
+        if not max_w or patch_w <= max_w or size <= 40:
+            break
+        size -= 2
     asc, desc = tf.getmetrics()
     content_h = max(gh, asc + desc)
-    icon = Image.open(f"{PHOTO_DIR}/QS_glass_icon.png").convert("RGBA")
-    gw = int(gh * icon.size[0] / icon.size[1])
-    patch_w = pad + gw + gap + tw + pad
     patch_h = pad + content_h + pad
-    d.rectangle([0, 0, patch_w, patch_h], fill=bg_color or pal["SIGNATURE"])
+    d.rectangle([0, 0, W if full_w else patch_w, patch_h], fill=bg_color or pal["SIGNATURE"])
     gy = pad + (content_h - gh) // 2
     icon = icon.resize((gw, gh), Image.LANCZOS)
     img.paste(icon, (pad, gy), icon)
@@ -1345,6 +1349,26 @@ def _glass_mark_patch(img, d, pal, text, bg_color=None):
     ty = int(icon_center - ink_center)
     d.text((pad + gw + gap, ty), text, font=tf, fill=PAPER)
     return patch_h
+
+
+def _score_badges(d, x, y, w, scores, num_size, color, label_color, label_size=None, stack=False, rows=1):
+    """Review-score badges for one shelf column: a large numeral and its critic's initials, baselines aligned, side by side.
+    Returns the y below the row. Raises if the badges do not fit the column -- never wraps or clips silently."""
+    nf = font("display_black", num_size); lf = font("body", label_size or FLOOR)
+    na, nd = nf.getmetrics(); la, ld = lf.getmetrics()
+    xx = x
+    for k, (num, src) in enumerate(scores):
+        nw, sw = text_w(d, num, nf), text_w(d, src, lf)
+        if stack:                                  # one score per line, so a full critic name fits the column
+            xx = x
+        yy = y + k * (na + nd) if stack else y
+        if xx + nw + 12 + sw > x + w:
+            raise ValueError(f"showcase_shelf: the score badge '{num} {src}' does not fit the {w}px column; shorten the critic label")
+        d.text((xx, yy), num, font=nf, fill=color)
+        d.text((xx + nw + 12, yy + na - la), src, font=lf, fill=label_color)
+        if not stack:
+            xx += nw + 12 + sw + 34
+    return y + (rows if stack else 1) * (na + nd)
 
 
 def showcase_shelf(slot, slide_no, total, pal):
@@ -1385,10 +1409,14 @@ def showcase_shelf(slot, slide_no, total, pal):
     headline_color = slot.get("headline_color", pal["SIGNATURE"])
     top_mark = slot.get("top_mark")
     if top_mark:
-        mark_h = _glass_mark_patch(img, d, pal, top_mark, bg_color=slot.get("mark_bg_color"))
+        mark_h = _glass_mark_patch(img, d, pal, top_mark, bg_color=slot.get("mark_bg_color"),
+                                   size=slot.get("top_mark_size", 90), max_w=slot.get("top_mark_max_w"), full_w=slot.get("top_mark_full", False))
         d = ImageDraw.Draw(img)
         kicker_y = mark_h + 60
-    y = kicker_block(d, slot["kicker"], pal, y=kicker_y, text_fill=kicker_color); qa.size("kicker", 70)
+    if slot.get("kicker"):
+        y = kicker_block(d, slot["kicker"], pal, y=kicker_y, text_fill=kicker_color); qa.size("kicker", 70)
+    else:
+        y = (kicker_y - 30) if top_mark else kicker_y      # no kicker: the title lives in the mark, so the shelf rises to meet it
     headline_y0 = y
     has_headline = bool(slot.get("headline"))
     if has_headline:
@@ -1444,6 +1472,20 @@ def showcase_shelf(slot, slide_no, total, pal):
         else:
             scrim_bottom = H
         d.rectangle([0, scrim_top, W, scrim_bottom], fill=shelf_scrim_color)
+    # optional structure/score bands (Three Bottles): every column's bands start on the same line so the rows read across the shelf
+    aligned = bool(slot.get("scores") or slot.get("structure"))
+    head_max = 0
+    if aligned:
+        pa_, pd_ = producer_f.getmetrics(); na_, nd_ = name_f.getmetrics(); sa_, sd_ = style_f.getmetrics(); oa_, od_ = org_f.getmetrics()
+        for (_p, producer_, name_, style_, origin_, _n) in prods:
+            hh = len(wrap(d, producer_, producer_f, col_w - 14)) * int((pa_ + pd_) * 0.95) + 4
+            hh += len(wrap(d, name_, name_f, col_w - 14)) * int((na_ + nd_) * 0.92)
+            hh += len(wrap(d, style_, style_f, col_w - 14)) * int((sa_ + sd_) * 0.94) + 6
+            hh += len(wrap(d, origin_, org_f, col_w - 14)) * int((oa_ + od_) * 1.0)
+            head_max = max(head_max, hh)
+    head_core = head_max                      # heading stack alone; the optional price line sits just under it, on one line across the shelf
+    if aligned and slot.get("prices"):
+        _pf = font("display_bold", slot.get("price_size", 66)); head_max += sum(_pf.getmetrics()) + 10
     for i, (photo, producer, name, style, origin, note) in enumerate(prods):
         cx = col_x_positions[i] if col_x_positions else M + (i % cols) * (col_w + gap_x)
         cy = panel_top + (i // cols) * (row_h + 24)
@@ -1481,6 +1523,37 @@ def showcase_shelf(slot, slide_no, total, pal):
         oa2, od2 = org_f.getmetrics()
         for ln in wrap(d, origin, org_f, text_w_budget):
             d.text((cx, my), ln, font=org_f, fill=origin_color); my += int((oa2 + od2) * 1.0)
+        if aligned and slot.get("prices") and slot["prices"][i]:
+            lf_ = font("body", slot.get("price_label_size", 48)); pf_ = font("display_bold", slot.get("price_size", 66))
+            la_, pa2_ = lf_.getmetrics()[0], pf_.getmetrics()[0]
+            py_ = shelf_y + 22 + head_core + 10
+            lab_ = slot.get("price_label", "Binny's")
+            lw_ = text_w(d, lab_ + "  ", lf_)
+            d.text((cx, py_ + pa2_ - la_), lab_, font=lf_, fill=slot.get("price_label_color", MUTED))
+            d.text((cx + lw_, py_), slot["prices"][i], font=pf_, fill=slot.get("price_color") or pal["SIGNATURE"])
+            qa.size("price", slot.get("price_size", 66))
+        if aligned:
+            bg_ = slot.get("band_gap", 26)
+            my = shelf_y + 22 + head_max + bg_
+            sc_ = (slot.get("scores") or [None] * len(prods))[i]
+            if sc_:
+                my = _score_badges(d, cx, my, text_w_budget, sc_, slot.get("score_size", 110),
+                                   slot.get("score_color") or pal["SIGNATURE"], slot.get("score_label_color", INK),
+                                   label_size=slot.get("score_label_size"), stack=slot.get("score_stack", False),
+                                   rows=max(len(x_) for x_ in slot["scores"] if x_)) + bg_
+                qa.size("score", slot.get("score_size", 110))
+                if slot.get("score_label_size", FLOOR) < FLOOR:
+                    qa.size("!score_label", slot["score_label_size"])    # below the floor with the deck owner's sign-off
+            qa.box(f"prod{i}", (cx, cy, cx + col_w, my))          # heading + score band (the dashboard registers its own box)
+            st_ = (slot.get("structure") or [None] * len(prods))[i]
+            if st_:
+                import quick_sips
+                dk_ = {k: slot[k] for k in ("header_gap", "pre_row_gap", "row_gap") if k in slot}
+                dk_.update({kw: slot[sk] for sk, kw in (("dash_label_font", "label_font"), ("dash_label_size", "label_size"),
+                                                         ("dash_header_size", "header_size"), ("dash_desc_color", "desc_color"),
+                                                         ("dash_bar_h", "bar_h"), ("dash_text_bar_gap", "text_bar_gap")) if sk in slot})
+                my = quick_sips.qs_tasting_dashboard(d, my, cx, text_w_budget, pal, qa, st_,
+                                                     header=slot.get("structure_header", "STRUCTURE"), **dk_) + bg_
         if show_note and note:
             my += 4
             e = paragraph(d, (cx, my), note, note_f, note_color, text_w_budget, 1.18)
@@ -1488,7 +1561,11 @@ def showcase_shelf(slot, slide_no, total, pal):
         else:
             e = my
         box_label = f"!prod{i}" if stretch else f"prod{i}"
-        qa.box(box_label, (cx, cy, cx + col_w, e))
+        if aligned:
+            box_label = box_label.replace("prod", "note", 1)       # note band only; heading band registered above
+            qa.box(box_label, (cx, my, cx + col_w, e))
+        else:
+            qa.box(box_label, (cx, cy, cx + col_w, e))
 
     if bottle_lift > 0:
         # bottle necks now reach up into the kicker/headline row -- redraw
@@ -1498,7 +1575,8 @@ def showcase_shelf(slot, slide_no, total, pal):
         d = ImageDraw.Draw(img)
         if top_mark:
             pass  # mark patch is above the kicker row, never in the overlap zone
-        kicker_block(d, slot["kicker"], pal, y=kicker_y, text_fill=kicker_color)
+        if slot.get("kicker"):
+            kicker_block(d, slot["kicker"], pal, y=kicker_y, text_fill=kicker_color)
         if has_headline:
             headline(d, slot["headline"], headline_y0, fill=headline_color, show_underline=False)
 
@@ -1509,6 +1587,14 @@ def showcase_shelf(slot, slide_no, total, pal):
         names = [rp[0] if isinstance(rp, (tuple, list)) else rp for rp in region_photos]
         captions = [rp[1] if isinstance(rp, (tuple, list)) and len(rp) > 1 else None for rp in region_photos]
         photo_stripe(img, names, band_top, band_h)
+        if slot.get("region_caption_shade"):
+            # a soft dark foot on the photo strip so the white captions keep their contrast on any photo
+            sh_h = int(band_h * 0.62)
+            shade = Image.new("RGBA", (W, sh_h), (0, 0, 0, 0))
+            sd_ = ImageDraw.Draw(shade)
+            for yy_ in range(sh_h):
+                sd_.line([(0, yy_), (W, yy_)], fill=(0, 0, 0, int(slot["region_caption_shade"] * (yy_ / sh_h) ** 1.4)))
+            img.paste(shade, (0, H - sh_h), shade)
         d = ImageDraw.Draw(img)
         n = len(names)
         xacc = 0
@@ -1542,9 +1628,19 @@ def showcase_shelf(slot, slide_no, total, pal):
             xacc += seg
         qa.box("!region_photos", (0, band_top, W, H))
         if slot.get("region_credit"):
-            photo_credit(img, (W - M, 60), slot["region_credit"], size=32, align="right",
-                         fill=slot.get("region_credit_color", MUTED), qa=qa)
+            rc_ = slot["region_credit"]
+            for k_, ln_ in enumerate(rc_ if isinstance(rc_, (list, tuple)) else [rc_]):   # a list stacks the credit on several lines
+                photo_credit(img, (W - M, 60 + 42 * k_), ln_, size=32, align="right",
+                             fill=slot.get("region_credit_color", MUTED), qa=qa)
 
+    if slot.get("score_legend"):
+        # tiny credit-style key for the critic initials, just above the photo band (or the page foot), inside the scrim
+        d = ImageDraw.Draw(img)
+        lg_f = font("body", slot.get("legend_size", 34)); lga, lgd = lg_f.getmetrics()
+        lg_bottom = (H - int(H * slot.get("region_band_frac", 0.25))) if region_photos else H - 120
+        lg_y = lg_bottom - 22 - (lga + lgd)
+        d.text((M, lg_y), slot["score_legend"], font=lg_f, fill=slot.get("legend_color", MUTED))
+        qa.box("legend", (M, lg_y, M + text_w(d, slot["score_legend"], lg_f), lg_y + lga + lgd))
     return _finish(img, d, qa, slide_no, total, footer_label=slot.get("footer_label"),
                     footer_adaptive=bool(region_photos), show_page_num=slot.get("show_page_num", True))
 def _chaikin(pts, iters=3, closed=True):

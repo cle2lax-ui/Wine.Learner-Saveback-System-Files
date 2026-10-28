@@ -273,7 +273,8 @@ def qs_benchmark_bottle(img, d, pal, qa, heading, photo, wine, producer, origin,
 
 # ----------------------------------------------------- tasting dashboard --
 def qs_tasting_dashboard(d, y0, x0, w, pal, qa, attributes,
-                          header_gap=58, pre_row_gap=26, row_gap=22, text_bar_gap=8, bar_h=14):
+                          header_gap=58, pre_row_gap=26, row_gap=22, text_bar_gap=8, bar_h=14,
+                          header="TASTING & STRUCTURE", label_font="italbold", label_size=60, header_size=60, desc_color=None):
     """A compact structure profile: label + descriptor + a slim filled
     bar, one row per attribute. attributes: list of (label, frac 0-1,
     descriptor) tuples, e.g. ("Tannin", 0.75, "Medium+"). Redesigned as
@@ -294,12 +295,12 @@ def qs_tasting_dashboard(d, y0, x0, w, pal, qa, attributes,
     (e.g. a wide benchmark-bottle lockup eating most of the column)
     silently overlapped them into unreadable text. Don't remove this
     fit check."""
-    kf = font("kicker_bold", 60)
-    tracked_text(d, (x0, y0), "TASTING & STRUCTURE", kf, pal["SIGNATURE"], tracking=4)
+    kf = font("kicker_bold", header_size)
+    tracked_text(d, (x0, y0), header, kf, pal["SIGNATURE"], tracking=4)
     y = y0 + header_gap
     d.line([(x0, y), (x0 + w, y)], fill=LINE, width=2)
     y += pre_row_gap
-    val_f = font("italbold", 60)
+    val_f = font(label_font, label_size)
     va, vd = val_f.getmetrics()
     line_h = va + vd
     min_gap = 40
@@ -308,18 +309,18 @@ def qs_tasting_dashboard(d, y0, x0, w, pal, qa, attributes,
         dw = text_w(d, descriptor, val_f)
         d.text((x0, y), label, font=val_f, fill=INK)
         if lw + min_gap + dw <= w:
-            d.text((x0 + w - dw, y), descriptor, font=val_f, fill=legible(GOLD, PAPER))
+            d.text((x0 + w - dw, y), descriptor, font=val_f, fill=desc_color or legible(GOLD, PAPER))
             y += line_h + text_bar_gap
         else:
             y += line_h + 4
-            d.text((x0, y), descriptor, font=val_f, fill=legible(GOLD, PAPER))
+            d.text((x0, y), descriptor, font=val_f, fill=desc_color or legible(GOLD, PAPER))
             y += line_h + text_bar_gap
         d.rounded_rectangle([x0, y, x0 + w, y + bar_h], radius=bar_h // 2, fill=LINE)
         fill_w = max(bar_h, int(w * frac))
         d.rounded_rectangle([x0, y, x0 + fill_w, y + bar_h], radius=bar_h // 2, fill=pal["SIGNATURE"])
         y += bar_h + row_gap
     qa.box("!dashboard", (x0, y0, x0 + w, y))
-    qa.size("dashboard_label", 60)
+    qa.size("dashboard_label" if label_size >= 60 else "!dashboard_label", label_size)   # below the floor only with the deck owner's sign-off
     return y
 
 

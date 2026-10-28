@@ -101,12 +101,42 @@ def _image_flag(path):
 
 _NZ_FLAG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "flags", "nz.png")
 
+def _us_flag(img, x, y, height, width=None):
+    """Stars and Stripes, drawn 4x and reduced: 13 stripes, a canton 0.76 of the hoist wide and 7 stripes tall, 50 stars in nine
+    alternating rows of six and five. Official ratio is 1.9:1 (see _FLAG_RATIOS)."""
+    import math
+    width = width or int(height * 1.9)
+    ss = 4
+    fw, fh = width * ss, height * ss
+    f = Image.new("RGB", (fw, fh), (255, 255, 255))
+    d = ImageDraw.Draw(f)
+    sh = fh / 13.0
+    for i in range(0, 13, 2):
+        d.rectangle([0, round(i * sh), fw, round((i + 1) * sh)], fill=(178, 34, 52))
+    cw, ch = int(0.76 * fh), round(7 * sh)
+    d.rectangle([0, 0, cw, ch], fill=(60, 59, 110))
+    rad = 0.0308 * fh
+    for r in range(9):
+        n = 6 if r % 2 == 0 else 5
+        cy = ch * (r + 1) / 10.0
+        for c in range(n):
+            cx = cw * ((2 * c + 1) / 12.0 if r % 2 == 0 else (2 * c + 2) / 12.0)
+            pts = []
+            for k in range(10):
+                a = -math.pi / 2 + k * math.pi / 5
+                rr = rad if k % 2 == 0 else rad * 0.382
+                pts.append((cx + rr * math.cos(a), cy + rr * math.sin(a)))
+            d.polygon(pts, fill=(255, 255, 255))
+    img.paste(f.resize((width, height), Image.LANCZOS), (int(x), int(y)))
+    return width, height
+
+
 _FLAGS = {"french": _french_flag, "italian": _italian_flag, "nz": _image_flag(_NZ_FLAG_PATH),
-          "german": _german_flag}
+          "german": _german_flag, "us": _us_flag}
 
 # width / height per flag. Default 3:2; Germany's national flag is 5:3, so
 # drawing it at the default would visibly squash it.
-_FLAG_RATIOS = {"german": 5 / 3}
+_FLAG_RATIOS = {"german": 5 / 3, "us": 1.9}
 
 
 # ------------------------------------------------------------- glyph ---
