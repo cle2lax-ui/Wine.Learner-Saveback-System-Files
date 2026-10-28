@@ -15,8 +15,9 @@ NOT DERIVED: the 1.8C gap (17.7 minus 15.9) stays off the slide; both of D1's ow
 
 DELIBERATELY NOT USED: the Willamette's 11,000 ha, 700 wineries and Portland (true, but they place the region for anyone who knows Oregon); the Van Duzer
   Corridor wind (the best Willamette fact, saved for a later post); the California Current by name.
-PHOTOS: cover, a foggy headland and the cold Pacific (Bonnie Moreland, public domain, Wikimedia Commons; "Foggy morning on Beverly Beach, Oregon"; no caption on the
-  slide, so no place is claimed; chosen because the cover must not repeat a photo from an earlier post, and it carries clue B's cold Pacific);
+PHOTOS: cover, vineyard rows and forested hills (RickObst, CC BY 4.0, Wikimedia Commons; the Commons file is titled "Willamette Valley view from King Estate Winery", which
+  confirms the place; a vertical crop. Changed twice at Steve's request: the first photo had been used in other posts, and the second, a Pacific coast, was
+  replaced by an actual Willamette Valley shot);
   reveal, vineyard in the Willamette Valley (Sheila Sund, CC BY 2.0, Wikimedia Commons; place from the Commons file title).
 FLAG: the reveal needed a US flag, so formats/guess_the_region.py gained "us" (13 stripes, 50 stars, the official 1.9:1). Existing decks are unchanged.
 Social gates on a two-page quiz: open question ... the format is the question; callback ... clue D, and the caption points to the Field Guide's slide 6.
@@ -48,7 +49,7 @@ SLOT_COVER = dict(
         "Its main grape ripens early: Pinot Noir.",
         "Level with Margaux in Bordeaux: about 45\u00b0 N.",
     ],
-    photo_credit="Bonnie Moreland / Wikimedia Commons (public domain)",
+    photo_credit="RickObst / Wikimedia Commons (CC BY 4.0)",
 )
 
 SLOT_REVEAL = dict(

@@ -33,6 +33,6 @@ Answer in the comments before you swipe. And how many clues did you need?
 
 **Hashtags: five, to the cap.** Rotated from the Baden block (`#germanwine` out, `#winestudy` in); not a repeat of the Field Guide's block.
 
-**Credits** are in the slide footers: Bonnie Moreland / Wikimedia Commons, public domain (cover) and Sheila Sund / Wikimedia Commons, CC BY 2.0 (reveal).
+**Credits** are in the slide footers: RickObst / Wikimedia Commons, CC BY 4.0 (cover) and Sheila Sund / Wikimedia Commons, CC BY 2.0 (reveal).
 
 **New in the engine:** a US flag for the reveal ("us": 13 stripes, 50 stars, the official 1.9:1). Existing decks are unchanged (42/42 renders and 26/26 Reel frames match).

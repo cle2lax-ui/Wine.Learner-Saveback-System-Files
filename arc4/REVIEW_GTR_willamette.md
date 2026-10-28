@@ -12,7 +12,7 @@ Run before presenting: the four-designer pass (in the guide's order), then the g
 - The awkward "yet cooled by a cold current it averages ..." became "A cold current cools it to 15.9°C, while Margaux, at the same latitude, averages 17.7°C."
 
 ## Jony Ive (craft)
-- Legibility audit: 0 of 12 text groups below threshold. Cover blade (changed at Steve's request, because the first photo had been used in other posts): a foggy headland and the cold Pacific, public domain, new to the arc. Reveal crop keeps the red house and the vine rows. US flag drawn at 4x and reduced; it sits level with the name's x-height.
+- Legibility audit: 0 of 12 text groups below threshold. Cover blade (changed twice at Steve's request: the first photo had been used in other posts, and the second, a Pacific coast, became an actual Willamette Valley shot): vineyard rows and forested hills, "Willamette Valley view from King Estate Winery", RickObst, CC BY 4.0. Reveal crop keeps the red house and the vine rows. US flag drawn at 4x and reduced; it sits level with the name's x-height.
 
 ## Massimo Vignelli (grid)
 - Page 1: clue block ends at 68% of the page and the cue at 77%, the same rhythm as Baden. Page 2: photo 66%, name and flag centered as one group, blurb justified inside the 200 px bottom margin.
