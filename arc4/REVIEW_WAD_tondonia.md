@@ -28,3 +28,6 @@ Page 1 "names nothing" guard passes (16 hidden terms); layout QA passes both pag
 
 ## Open items
 The bottle photo is 122 x 490 px and is enlarged about 4x: soft, with the large label type legible and the fine print not. A shot 1,500 px tall or more would fix it.
+
+## LOCKED
+Locked at Steve's word on 29 Oct 2026 as git tag `wad-tondonia-final`. The renderer (`arc4/render_wad_tondonia.py`) re-renders both pages pixel for pixel (page 1 `9d26885352146f95`, page 2 `bf38639eda95da8a`, hashes of the decoded pixels). The format's regression subject remains the Loosen deck (`engine/regress.py`); a change to `formats/what_am_i_drinking.py` that alters this deck should be checked against it before it ships.
