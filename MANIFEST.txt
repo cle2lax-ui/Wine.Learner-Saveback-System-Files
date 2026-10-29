@@ -356,6 +356,8 @@ photos/qs_bottle_clape_sp.png
 photos/qs_bottle_paris.png
 photos/qs_bottle_placeholder.png
 photos/qs_cornas_church.jpg
+photos/ts_rioja_ebro.jpg
+photos/ts_rioja_ebro_band.jpg
 photos/us_mendo_av_esterlina_view_prater.jpg
 photos/us_mendo_av_hillside_murayama.jpg
 photos/us_mendo_av_slope_prater.jpg
@@ -405,6 +407,7 @@ sourcing/wc_commons.py
 sourcing/wc_search.py
 specs/FG_MOSEL_SPEC.md
 specs/FG_NORTHERN_RHONE_SPEC.md
+tasting_sheet/render_ts_tondonia_2012.py
 three_bottles/CHANGELOG_three_bottles_v1.md
 three_bottles/NEW_DECK_STARTER_three_bottles.md
 three_bottles/README_SAVEBACK_three_bottles_v1.md
