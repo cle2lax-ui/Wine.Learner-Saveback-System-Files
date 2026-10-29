@@ -69,12 +69,15 @@ arc3/sample_fg_classic_palette.py
 arc4/ARC4_CLIMATE_PLAN.md
 arc4/CAPTION_FG_climate.md
 arc4/CAPTION_GTR_willamette.md
+arc4/CAPTION_WAD_tondonia.md
 arc4/REVIEW_FG_climate.md
 arc4/REVIEW_GTR_willamette.md
+arc4/REVIEW_WAD_tondonia.md
 arc4/brevity_count.py
 arc4/prepare_climate_maps.py
 arc4/render_fg_climate.py
 arc4/render_gtr_willamette.py
+arc4/render_wad_tondonia.py
 archive/CHANGELOG_fffa_v4.md
 archive/CHANGELOG_quicksips_rrv.md
 archive/CHANGELOG_saveback_v2.md
@@ -372,6 +375,7 @@ photos/us_mendo_ukiah_vineyard_missvain.jpg
 photos/wad_loosen_treppchen_bottle.png
 photos/wad_loosen_treppchen_bottle2.jpg
 photos/wad_roederer_lermitage_bottle.jpg
+photos/wad_tondonia_bottle.png
 reels/CAPTION_FFFA_mendocino_reel.md
 reels/CAPTION_FG_mendocino.md
 reels/CAPTION_GTR_anderson_valley.md
