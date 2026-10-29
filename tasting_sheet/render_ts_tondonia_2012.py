@@ -80,9 +80,12 @@ def build():
     kf = core.font("kicker_bold", 60)
     core.tracked_text(d, (M, y), SUB, kf, BURG, tracking=4)
     y += sum(kf.getmetrics()) + 40
-    band_bot = core.photo_band(img, "ts_rioja_ebro_band", y, BAND_H, caption_txt="Vineyards along the Ebro, La Rioja")
+    band_bot = core.photo_band(img, "ts_rioja_ebro_band", y, BAND_H)
     d = ImageDraw.Draw(img)
-    top = band_bot + 56
+    cap_f = core.font("body", 34)                       # a small caption under the photo, right-aligned: no chip, nothing over the vines
+    cap = "Vineyards along the Ebro, La Rioja"
+    d.text((W - M - core.text_w(d, cap, cap_f), band_bot + 10), cap, font=cap_f, fill=(110, 100, 104))
+    top = band_bot + 82
 
     # ---- left: scores, tasting notes
     x0, yl = M, top
