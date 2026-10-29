@@ -17,7 +17,8 @@ FACTS: blend Tempranillo 70 / Garnacha 20 / Graciano and Mazuelo 10 (Decanter vi
 PRICES, checked 28 Oct 2026: Binny's $54.99 regular, $48.99 Binny's Rewards price (binnys.com page, 96 points); Prima Vini $59.99 regular / $49.99 sale (sold out);
   K&L $59.99 (out of stock); JJ Buckley $64.94; Flatiron NYC $69.99 (sold out); Bin Ends $84 / $67.20 sale; Wine Advocate "[$65 list]". Approximate range $55-$65.
 PHOTO: Vinas junto al Ebro en El Cortijo, La Rioja (CC0, Wikimedia Commons). It is captioned as Rioja and the Ebro, NOT as Haro: no Haro photo was found.
-The bottle photo is missing: Prima Vini's image sits on a domain the sandbox cannot reach, and bottle photos are the deck owner's to supply.
+BOTTLE: Steve's own photo (a 122 x 490 px cutout inside a 500 px file, so it is soft at 2x). The file was already a transparent cutout; a small Vivino watermark at the
+  base was repainted with the surrounding dark glass (the gold netting line there has a hairline break).
 """
 import os
 import sys
@@ -26,11 +27,11 @@ os.environ.setdefault("CANVAS_H", "2795")          # US Letter proportions
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "engine"))
 sys.path.insert(0, os.path.join(HERE, "..", "formats"))
-from PIL import Image, ImageDraw      # noqa: E402
+from PIL import Image, ImageDraw, ImageFilter      # noqa: E402
 import core                           # noqa: E402
 import modules                        # noqa: E402
 import quick_sips                     # noqa: E402
-from tokens import W, H, M            # noqa: E402
+from tokens import W, H, M, PHOTO_DIR            # noqa: E402
 
 OUT = "/home/claude/out_ts_tondonia"
 BURG, GOLD = (122, 30, 44), (196, 158, 84)
@@ -108,25 +109,44 @@ def build():
         yl = core.run_in(d, (x0, yl), lead, body, LEFT_W, PAL, lead_size=60, body_size=60, leading=1.3) + 14
     qa.box("left", (x0, top, x0 + LEFT_W, yl))
 
-    # ---- right: structure, price, facts
+    # ---- right: structure + price beside the bottle, then the facts across the column
     x1 = M + LEFT_W + GAP
     wr = W - M - x1
+    bottle = Image.open(f"{PHOTO_DIR}/ts_tondonia_bottle.png").convert("RGBA")
+    BH = 1020
+    bw = round(BH * bottle.width / bottle.height)
+    bottle = bottle.resize((bw, BH), Image.LANCZOS)
+    wd = wr - bw - 36                                  # the text stack beside the bottle
     yr = top
-    yr = quick_sips.qs_tasting_dashboard(d, yr, x1, wr, PAL, qa, STRUCTURE, header="STRUCTURE", label_font="body_light", label_size=44,
+    yr = quick_sips.qs_tasting_dashboard(d, yr, x1, wd, PAL, qa, STRUCTURE, header="STRUCTURE", label_font="body_light", label_size=44,
                                          header_size=44, desc_color=(118, 88, 34), bar_h=10, text_bar_gap=6, header_gap=40,
                                          pre_row_gap=12, row_gap=10) + 34
     price_top = yr
-    yr = section(d, x1, yr, wr, "APPROXIMATE PRICE")
-    pf = core.font("display_black", 130)
+    yr = section(d, x1, yr, wd, "PRICE")                 # a longer header ("APPROXIMATE PRICE") would run under the bottle
+    af = core.font("body", 44)
+    d.text((x1, yr), "Approximately", font=af, fill=(110, 100, 104))
+    yr += sum(af.getmetrics()) + 2
+    pf = core.font("display_black", 105)
     pa, pd_ = pf.getmetrics()
     d.text((x1, yr), "$55\u2013$65", font=pf, fill=BURG)
     yr += pa + pd_ + 6
-    yr = core.paragraph(d, (x1, yr), "Binny's $54.99 (Rewards $48.99).", lf, INK, wr, 1.3) + 10
-    yr = core.paragraph(d, (x1, yr), "Elsewhere: about $60\u2013$70.", lf, INK, wr, 1.3) + 30
+    yr = core.paragraph(d, (x1, yr), "Binny's $54.99", lf, INK, wd, 1.3) + 10
+    yr = core.paragraph(d, (x1, yr), "Elsewhere about $60\u2013$70.", lf, INK, wd, 1.3) + 10
+    qa.box("price", (x1, price_top, x1 + wd, yr))
+    bx, by = x1 + wr - bw, top
+    shadow = Image.new("RGBA", (bw + 100, 70), (0, 0, 0, 0))
+    ImageDraw.Draw(shadow).ellipse([30, 18, bw + 70, 52], fill=(0, 0, 0, 95))
+    shadow = shadow.filter(ImageFilter.GaussianBlur(11))
+    img.paste(shadow, (bx - 50, by + BH - 34), shadow)
+    img.paste(bottle, (bx, by), bottle)
+    qa.box("bottle", (bx, by, bx + bw, by + BH))
+    d = ImageDraw.Draw(img)
+    yr = max(yr, by + BH) + 40
+    facts_top = yr
     yr = section(d, x1, yr, wr, "ABOUT THE WINE")
     for lead, body in FACTS:
         yr = core.run_in(d, (x1, yr), lead, body, wr, PAL, lead_size=60, body_size=60, leading=1.3) + 14
-    qa.box("right", (x1, price_top, x1 + wr, yr))
+    qa.box("facts", (x1, facts_top, x1 + wr, yr))
 
     # a small dated note on the prices (credit-sized, bottom left)
     nf = core.font("body", 34)

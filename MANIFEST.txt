@@ -358,6 +358,7 @@ photos/qs_bottle_placeholder.png
 photos/qs_cornas_church.jpg
 photos/ts_rioja_ebro.jpg
 photos/ts_rioja_ebro_band.jpg
+photos/ts_tondonia_bottle.png
 photos/us_mendo_av_esterlina_view_prater.jpg
 photos/us_mendo_av_hillside_murayama.jpg
 photos/us_mendo_av_slope_prater.jpg
