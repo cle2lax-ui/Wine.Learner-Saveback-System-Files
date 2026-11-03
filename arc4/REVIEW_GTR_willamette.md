@@ -22,3 +22,6 @@ Decode layer: clue D's "Margaux" (a Field Guide figure) rewards the careful read
 
 ## Guards
 regress 42/42; Reel frames 26/26; spelling 0 British forms; text_audit 0 below threshold; QA word budgets (60 / 90) pass.
+
+## LOCKED
+Approved by Steve and locked on 3 Nov 2026 as git tag `gtr-willamette-final`. The renderer (`arc4/render_gtr_willamette.py`) re-renders both pages pixel for pixel from the pushed files (hashes of the decoded pixels: page 1 `b49dc6a65dee8e03`, page 2 `0962ddfab4c7e0a8`). The cover is the Willamette Valley photo with its bottom burned for footer contrast (`photos/gtr_willamette_blade.jpg`); the reveal carries the new US flag (`formats/guess_the_region.py`, option `"us"`). The format's regression subject (the Cornas GTR) is unchanged; a change to `formats/guess_the_region.py` that alters this deck should be checked against it before it ships.
