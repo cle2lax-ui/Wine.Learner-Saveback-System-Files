@@ -27,3 +27,7 @@ Gates 4 (a question on the last slide) and 6 (a cover hook) fail structurally on
 
 ## Guards
 Layout QA passes all six pages; text_audit 0 of 18 groups below threshold except the icon artwork; spelling 0 British forms. No engine files changed in this work, so the pixel regression is unaffected.
+
+## LOCKED
+Locked at Steve's word on 3 Nov 2026 as git tag `fffa-climate-final`. The renderer (`arc4/render_fffa_climate.py`) re-renders all six pages pixel for pixel from the pushed files (hashes of the decoded pixels: cover `5a2c89c0db883751`, fact 1 `e150805e959a01d4`, fact 2 `707af6b270ad7e3d`, fact 3 `5b56efc26c5054f1`, fact 4 `ee0a30d806ad2e88`, fact 5 `7a24906f54e58fd2`). The cover is the graded copy (`photos/fffa_climate_cover.jpg`, floor 0.66). The format's regression subject is unchanged; a change to `formats/fff_facts.py` that alters this deck should be checked against it before it ships.
+Open item carried: fact 4's photo (young vines in dry sandy soil) is a weaker match than the others; replace under a new tag if a better one turns up.
