@@ -291,6 +291,10 @@ photos/cl_rioja_a.jpg
 photos/cl_rioja_b.jpg
 photos/cl_vineyard_sunset_dischner.jpg
 photos/cl_willamette_sund.jpg
+photos/cmp_burgundy.jpg
+photos/cmp_napa.jpg
+photos/cmp_pavie.jpg
+photos/cmp_tasmania.jpg
 photos/de_baden_kaiserstuhl_terraces.jpg
 photos/de_baden_red_grapes.jpg
 photos/de_bernkastel_aerial.jpg
@@ -407,6 +411,8 @@ reels/reel_audio.py
 reels/reel_lib.py
 reels/tfg_bumper.py
 reference/PIXEL_HASHES.json
+region_slides/NOTES_region_slides.md
+region_slides/render_region_slides.py
 renders/render_fff_cabfranc.py
 renders/render_fff_champagne.py
 renders/render_fff_southaustralia.py
