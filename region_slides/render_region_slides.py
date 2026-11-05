@@ -1,4 +1,4 @@
-"""REGION COMPARISON SLIDES (two landscape slides, 16:9, 13.33 x 7.5 in). Each slide compares three regions in the same two blocks:
+"""REGION COMPARISON SLIDES, brief edition (the on-slide copy is condensed to short fragments; the ledger below is the fuller D3 source) (two landscape slides, 16:9, 13.33 x 7.5 in). Each slide compares three regions in the same two blocks:
   HOW IT'S UNIQUE   soil, climate, viticulture, winemaking tradition        HOW IT SHOWS UP IN THE GLASS   the region's characteristic traits
 Slide 1: Napa Valley, Left Bank Bordeaux, Right Bank Bordeaux.   Slide 2: Burgundy, Willamette Valley (Oregon), Tasmania.
 All facts are from the WSET Diploma D3 textbook (Wines of the World), written in plain language, never quoted; the page ledger is below.
@@ -67,8 +67,8 @@ BG, INK, MUTED = (247, 243, 236), (28, 24, 26), (105, 98, 102)
 PAL = dict(SIGNATURE=BURG, ACCENT=GOLD, LEAD=(128, 88, 40), MARK=BURG)
 M, GAP = 100, 60
 COLW = (CW - 2 * M - 2 * GAP) // 3
-BODY, LEAD, LEADING = 38, 38, 1.26
-ROWGAP = 16
+BODY, LEAD, LEADING = 46, 46, 1.22
+ROWGAP = 34
 
 UNIQUE_LABELS = ["Soil.", "Climate.", "Viticulture.", "Tradition."]
 
@@ -84,29 +84,29 @@ SLIDES = [
         credit="Photos: John Morgan (Napa Valley) and Megan Mallen (Left Bank, Right Bank), CC BY 2.0, via Wikimedia Commons.",
         regions=[
             R("Napa Valley", "CALIFORNIA · CABERNET SAUVIGNON", "cmp_napa", 0.45,
-              ["Tectonic and volcanic origins: thin mountain soils, silt and clay on the floor.",
-               "Mountains shelter it; bay fog cools the south while the north runs warm to hot.",
-               "Floor mechanized, slopes hand-worked; drip irrigation; frost risk on the floor.",
-               "Cabernet-led blends across AVAs; style moved from extra-ripe and heavily oaked to earlier picking."],
-              [("Fruit.", "Juicy blackcurrant, blackberry and plum, with spice (licorice, cloves) or herbs."),
-               ("Structure.", "Concentrated ripe fruit, medium (+) to full body, high ripe tannins; mountain wines are firmer."),
-               ("Oak and price.", "A high proportion of new oak is still common; premium to super-premium in price.")]),
+              ["Volcanic hills; river silt, clay.",
+               "Fog-cooled south, warmer north.",
+               "Machines below, hands on slopes.",
+               "Cabernet-led blends."],
+              [("Fruit.", "Blackcurrant, plum, spice."),
+               ("Structure.", "Full body, high tannins, new oak."),
+               ("Price.", "Premium to super-premium.")]),
             R("Left Bank Bordeaux", "MÉDOC AND GRAVES · CABERNET-LED BLENDS", "cl_margaux_cabernet_mallen", 0.80,
-              ["Gravel mounds (croupes) left by ancient floods: they drain well and hold heat.",
-               "Maritime; the Gironde estuary moderates it and often shields top sites from frost.",
-               "Late-ripening Cabernet needs warm gravel; many top estates pick plot by plot.",
-               "The 1855 classification still shapes prices; blended wines sold through négociants; First growths of 80–100 ha."],
-              [("Fruit.", "Pronounced blackcurrant and red plum, green bell pepper in cooler years, with vanilla and cedar."),
-               ("Structure.", "High tannins, medium (+) body; Pauillac most structured, Margaux silky."),
-               ("Quality and price.", "Very good to outstanding; premium to super-premium in price.")]),
+              ["Gravel mounds: drain, hold heat.",
+               "Maritime; Gironde moderates.",
+               "Cabernet ripens on warm gravel.",
+               "1855 classification; blends."],
+              [("Fruit.", "Blackcurrant, plum, cedar."),
+               ("Structure.", "High tannins; Pauillac firmest."),
+               ("Price.", "Premium to super-premium.")]),
             R("Right Bank Bordeaux", "SAINT-ÉMILION AND POMEROL · MERLOT-LED", "cmp_pavie", 0.5,
-              ["Cool clay, plus limestone plateau and gravel; Pomerol soils rarely top 1 m.",
-               "Less maritime than the Left Bank; Merlot ripens fully in almost every vintage.",
-               "Early-budding Merlot risks frost; shallow Pomerol soils can struggle in drought.",
-               "Many small estates (Pétrus under 12 ha); Saint-Émilion has its own classification, Pomerol has none."],
-              [("Fruit.", "Pronounced red and black plum, with vanilla and clove from new oak."),
-               ("Structure.", "Full body, high alcohol, medium (+) to high acidity and tannins."),
-               ("Quality and price.", "The best wines age for many years; Pomerol is premium to super-premium in price.")]),
+              ["Cool clay; limestone, gravel.",
+               "Less maritime; Merlot ripens.",
+               "Merlot: frost, drought risks.",
+               "Small estates, some just 1 ha."],
+              [("Fruit.", "Red and black plum, vanilla."),
+               ("Structure.", "Full body, high alcohol, tannins."),
+               ("Top wines.", "Premium to super-premium.")]),
         ]),
     dict(
         title="Burgundy, Willamette Valley and Tasmania",
@@ -114,31 +114,32 @@ SLIDES = [
         credit="Photos: Michal Osmenda (Burgundy), Sheila Sund (Willamette Valley) and Stefano Lubiana Wines (Tasmania), CC BY 2.0, via Wikimedia Commons.",
         regions=[
             R("Burgundy", "CÔTE D'OR · PINOT NOIR AND CHARDONNAY", "cmp_burgundy", 0.5,
-              ["Limestone and clay: Côte de Nuits is limestone-rich, Côte de Beaune clay-richer.",
-               "Moderate continental; Morvan hills shelter it; ripening Pinot Noir is precarious.",
-               "Mid-slope sites; no irrigation; Guyot pruning; 8,000–10,000 vines per hectare.",
-               "Named plots (climats) classified as grand cru and premier cru; a complex trade of domaines and négociants."],
-              [("Pinot Noir.", "Strawberry and red cherry, earthy with age; low to medium tannins, high acidity."),
-               ("Chardonnay.", "Lemon and wet stone in Chablis; ripe citrus and stone fruit in the Côte d'Or."),
-               ("Quality and price.", "Mainly good to outstanding; prices run mid to super-premium.")]),
+              ["Limestone and clay.",
+               "Continental; ripening precarious.",
+               "Mid-slope sites; no irrigation.",
+               "Named plots: grand, premier cru."],
+              [("Pinot Noir.", "Red cherry; high acidity."),
+               ("Chardonnay.", "Lemon, wet stone."),
+               ("Price.", "Mid to super-premium.")]),
             R("Willamette Valley", "OREGON · PINOT NOIR", "gtr_willamette_reveal", 0.55,
-              ["Fertile loam on the floor; basalt, marine sediment and loess on the slopes.",
-               "Cool, wet valley; warm, dry summers, long daylight and a high day-night range.",
-               "Dry-farmed where possible; 47% of Oregon's vineyards are certified sustainable.",
-               "Small, family-owned wineries; Burgundy-inspired since the 1960s; more whole bunches, less new oak."],
-              [("Pinot Noir.", "Red cherry and raspberry to black cherry and plum; medium (+) acidity, medium tannins."),
-               ("Chardonnay.", "Medium (+) acidity and body; lemon and peach flavors, often in old oak."),
-               ("Quality and price.", "Medium to high alcohol; good to outstanding, generally premium priced.")]),
+              ["Volcanic, sediment, loess.",
+               "Cool, wet; dry summers.",
+               "Dry-farmed; sustainable.",
+               "Family-run; Burgundy-inspired."],
+              [("Pinot Noir.", "Cherry, raspberry, plum."),
+               ("Chardonnay.", "Lemon, peach; old oak."),
+               ("Price.", "Generally premium.")]),
             R("Tasmania", "AUSTRALIA · PINOT NOIR AND CHARDONNAY", "cmp_tasmania", 0.5,
-              ["Soils vary by sub-region (Coal River, Tamar, Pipers River); no single signature.",
-               "Cool maritime (41–43°S); the west takes the rain; spring frost is a threat.",
-               "Careful siting (north and east-facing in the south); frost fans; phylloxera-free.",
-               "Known for sparkling, yet 60% of production is still wine; small in volume, with little exported."],
-              [("Pinot Noir.", "Light to medium body, medium (+) to high acidity, strawberry and cherry."),
-               ("Chardonnay.", "Medium body, naturally high acidity; apple, white peach and pear, barrel-fermented."),
-               ("Quality and price.", "A key source of premium-priced wines.")]),
+              ["Varies by sub-region.",
+               "Cool maritime; spring frost.",
+               "Careful siting; phylloxera-free.",
+               "Known for sparkling wine."],
+              [("Pinot Noir.", "Strawberry, cherry; light."),
+               ("Chardonnay.", "Apple, peach, pear."),
+               ("Price.", "Premium priced.")]),
         ]),
 ]
+
 
 class _Measure:
     """A no-op stand-in for ImageDraw, used only to measure row heights. It draws nothing, so the legibility audit (which hooks every real
@@ -190,7 +191,7 @@ def build_slide(idx, sl):
     d = ImageDraw.Draw(img)
     bh = banner(img, d, sl["title"])
     regs = sl["regions"]
-    PH = 400
+    PH = 600
     top = bh + 30
     # measure so the rows align across the three columns
     uh = [max(row_height(UNIQUE_LABELS[i], r["unique"][i]) for r in regs) for i in range(4)]
