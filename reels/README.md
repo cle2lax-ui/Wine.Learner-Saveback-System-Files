@@ -123,3 +123,21 @@ under -1 dBTP after encoding (check true peak again whenever timing moves: AAC o
 **v8, re-locked:** the series title is GUESS THE WINE REGION; vines are drawn as trunk + lobed leaf + grape bunch (`_vine`).
 Lesson for small icons: a vine must show its FRUIT to read as a vine; canopy shapes alone read as trees.
 
+
+## COMING UP: a 30-second trailer (November 2026)
+`trailer_reel.py` + `trailer_audio.py` (assets in `trailer_assets/`, caption in `CAPTION_TRAILER_coming_up.md`). 1080 x 1920, 30 fps, 900 frames, H.264 High + AAC 48 kHz, -14.0 LUFS, -3.6 dBFS peak.
+It trails the next two weeks of posts: the four locked Arc 4 posts as their real pages (cards that slide in, drift and swipe), then a six-second tease of Arc 5 (South Africa), then FOLLOW.
+| Time | Beat |
+|---|---|
+| 0-2 s | COMING UP (on frame 1) |
+| 2-8 s | The Field Guide, "Climate's Impact on Wine": cover, then three swipes |
+| 8-12 s | Guess the Wine Region: the clues page and a pulsing "?" |
+| 12-18 s | Five Fascinating Facts: the cover, then all five facts |
+| 18-22 s | What Am I Drinking?: the mystery page and a pulsing "?" |
+| 22-28 s | THEN, A NEW ARC: Wines of South Africa (tease from the Arc 5 plan; removable) |
+| 28-30 s | FOLLOW; fades to black so the Reel loops into its opening |
+**The progress element** (spec category 1): five nodes, one per beat, empty on frame 1 and complete on the last beat, so the loop reads as continuous.
+**Safe zone:** the sub-line and the strip sit above y = 1650 (the bottom 270 px is Instagram's own interface); the first build had them at y = 1700 and 1587 and they were moved up.
+**Render:** six 150-frame chunks (`--render segN.mp4 START END`), joined with the concat demuxer, then muxed. QA was run on the encoded file: the step across each chunk seam matches the steps on either side (2.0-2.5), every cut jumps exactly on its scene-start frame, and the impact stem starts at 0.00 ms on every cut (measured by subtracting a build with silent impacts, same seed).
+**Lessons:** (1) type over a photo needs measured contrast against the *brightest 5%* of the background, not a glance: the tease headline measured 3.1:1 white and about 2.5:1 gold at first; the darkening was swept (0.28 to 0.52 at the top of the ramp) until white was 6.0:1, gold 3.5:1 and the bullets 11.7:1. (2) Bullets must fade in with their text, not before it. (3) An envelope detector adds 15-50 ms of lag to an onset: to verify a sound's start, subtract a silent-event build instead.
+**Guard:** eight trailer frames are in `REEL_HASHES.json` (34 of 34 now match).
