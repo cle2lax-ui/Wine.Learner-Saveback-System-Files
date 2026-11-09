@@ -1,5 +1,7 @@
 # ARC 4: THE CLIMATE ARC (plan for Steve's approval, Oct 20, 2026)
 
+**STATUS: CLOSED by Steve, Nov 2026, and replaced by Arc 5 (arc5/ARC5_SOUTH_AFRICA_PLAN.md).** Built and locked: entry 1 (Field Guide, tag `fg-climate-final`), entry 2 (GTR Willamette, `gtr-willamette-final`), entry 3 (FFFA, `fffa-climate-final`), and the Tondonia What Am I Drinking? (`wad-tondonia-final`, which took the planned entry 5 slot). Not built, dropped: entry 4 (Split Decision) and entry 6 (summary Reel). The plan below is kept as written.
+
 The first topical arc (not regional). Anchor: WSET Diploma D1, Chapter 3, The Growing Environment (pp. 24-46). It follows the Mendocino arc on purpose: fog funnels, cold air pooling, a ridge above the fog and heat classes were all Chapter 3 ideas applied to one county. Arc 4 gives the audience the rules behind what they just saw.
 
 **Thesis:** Climate is the first cause of wine style. Seven natural Factors set it, thirty years define it, and a few degrees can erase a signature.
