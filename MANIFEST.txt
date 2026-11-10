@@ -83,6 +83,9 @@ arc4/render_fg_climate.py
 arc4/render_gtr_willamette.py
 arc4/render_wad_tondonia.py
 arc5/ARC5_SOUTH_AFRICA_PLAN.md
+arc5/CAPTION_FG_SA.md
+arc5/REVIEW_FG_SA.md
+arc5/render_fg_sa.py
 archive/CHANGELOG_fffa_v4.md
 archive/CHANGELOG_quicksips_rrv.md
 archive/CHANGELOG_saveback_v2.md
@@ -377,6 +380,7 @@ photos/qs_bottle_placeholder.png
 photos/qs_cornas_church.jpg
 photos/sa_boschendal_cellar.jpg
 photos/sa_boschendal_meadow.jpg
+photos/sa_cape_point.jpg
 photos/sa_muratie_bottles.jpg
 photos/sa_muratie_vines.jpg
 photos/sa_stell_sunset.jpg

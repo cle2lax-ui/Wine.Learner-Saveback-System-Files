@@ -1674,6 +1674,9 @@ def atlas(slot, slide_no, total, pal):
       context: [(nx, ny, text)]            muted italic province/neighbor names
       inset:   dict(outline=[pts], marker=(nx,ny))   locator, top-right (optional)
       legend:  [(name, note)]              key-value strip under the map
+      sea:        (r, g, b)  optional tint for the sea behind the land (default: none)
+      open_edges: True       optional, for a map that is a CROP: the polygon edges that lie on the map frame are not ruled in ink,
+                             so the land reads as running on beyond the frame (default: every edge ruled, as before)
     """
     img, d, qa = _start("M09 atlas", slide_no, total, pal)
     y = kicker_block(d, slot["kicker"], pal, y=150); qa.size("kicker", 70)
@@ -1691,10 +1694,28 @@ def atlas(slot, slide_no, total, pal):
     # want when the source polygon IS the accurate geometry)
     # (optional `outlines` list draws extra landmasses, e.g. islands)
     _outl = ([slot["outline"]] if slot.get("outline") else []) + list(slot.get("outlines", []))
+    if slot.get("sea"):                                   # optional: a tint for the sea behind the land (default: none, as before)
+        d.rectangle([mx0, map_top, mx0 + mw, map_top + map_h], fill=slot["sea"])
     for _o in _outl:
         pts = [P(p) for p in _chaikin(_o, 1, True)]
-        d.polygon(pts, fill=(255, 255, 255), outline=INK)
-        d.line(pts + [pts[0]], fill=INK, width=4, joint="curve")
+        if not slot.get("open_edges"):
+            d.polygon(pts, fill=(255, 255, 255), outline=INK)
+            d.line(pts + [pts[0]], fill=INK, width=4, joint="curve")
+        else:                                             # optional: a map that is a CROP: do not rule the edges where the land is cut by the frame
+            d.polygon(pts, fill=(255, 255, 255))
+            bx0, bx1, by0, by1 = mx0, mx0 + mw, map_top, map_top + map_h
+            on_edge = lambda p: p[0] <= bx0 + 8 or p[0] >= bx1 - 8 or p[1] <= by0 + 8 or p[1] >= by1 - 8
+            ring = pts + [pts[0]]
+            run = []
+            for a_, b_ in zip(ring, ring[1:]):
+                if on_edge(a_) and on_edge(b_) and ((abs(a_[0] - b_[0]) < 8 and (a_[0] <= bx0 + 8 or a_[0] >= bx1 - 8)) or (abs(a_[1] - b_[1]) < 8 and (a_[1] <= by0 + 8 or a_[1] >= by1 - 8))):
+                    if len(run) > 1:
+                        d.line(run, fill=INK, width=4, joint="curve")
+                    run = []
+                else:
+                    run = run + [a_, b_] if not run else run + [b_]
+            if len(run) > 1:
+                d.line(run, fill=INK, width=4, joint="curve")
 
     # optional faded latitude (or generic horizontal) bands, e.g. the
     # 30-50 degree "wine belt" in each hemisphere -- drawn over both
