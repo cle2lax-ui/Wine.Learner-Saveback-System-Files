@@ -38,7 +38,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from reel_lib import (W, H, FPS, Photo, clamp, darken, finish, in_cubic, in_out_cubic, out_back, out_cubic, prog,  # noqa: E402
+from reel_lib import (W, H, FPS, Photo, clamp, darken, finish, font, in_cubic, in_out_cubic, out_back, out_cubic, prog,  # noqa: E402
                       round_rect, text, text_width, vgrad)
 
 DUR = 30.0
@@ -146,6 +146,55 @@ def count(v, p):
     return int(round(v * clamp(out_cubic(p))))
 
 
+# ------------------------------------------------------------------------------------------ kinetic type
+SHINE = (255, 244, 214)
+
+
+def _mix(a, b, w):
+    return tuple(int(round(a[i] + (b[i] - a[i]) * w)) for i in range(3))
+
+
+def kinetic(dst, txt, fname, size, base, x, y, u, first=0, stagger=0.03, sweeps=(), wave=True, tint=SHINE):
+    """Per-letter animation that is FULLY LEGIBLE from u=0 (the Reel spec: the whole hook reads on frame 1).
+    Entrance: each letter starts 40 px low, 14% large and 3 degrees off, then springs into place, left to right (a wave), so frame 1 is a readable line of
+    type that is visibly alive. After it settles: a slow rolling wave, and `sweeps` (windows in seconds) send a light sweep through the letters."""
+    f = font(fname, int(size))
+    tw = text_width(txt, fname, int(size), 0)
+    cur = x - tw / 2
+    for k, c in enumerate(txt):
+        w = f.getlength(c)
+        if c != " ":
+            gi = first + k
+            d0 = stagger * gi
+            p = prog(u, d0, d0 + 0.75)
+            e = out_back(p, 1.9)
+            dy = 40 * (1 - e)
+            if wave:
+                dy += 5.0 * math.sin(u * 3.4 - gi * 0.45) * clamp(prog(u, 1.2, 1.8))
+            wgt = 0.0
+            for (a, b) in sweeps:
+                sx = -160 + (W + 320) * prog(u, a, b)
+                wgt = max(wgt, math.exp(-(((cur + w / 2) - sx) / 130.0) ** 2))
+            text(dst, c, fname, size, _mix(base, tint, 0.85 * wgt), cur, y, alpha=0.9 + 0.1 * p, scale=1 + 0.14 * (1 - e), dy=dy,
+                 rot=(3.0 if gi % 2 else -3.0) * (1 - e), glow=(9, (0, 0, 0), 0.75))
+        cur += w
+
+
+def karaoke(dst, txt, fname, size, base, x, y, u, t0, t1, hi=(255, 226, 150)):
+    """Words stay readable; a highlight travels through them from t0 to t1."""
+    words = txt.split(" ")
+    f = font(fname, int(size))
+    sp = f.getlength(" ")
+    tw = text_width(txt, fname, int(size), 0)
+    cur = x - tw / 2
+    pos = (len(words) + 1.2) * prog(u, t0, t1) - 0.6
+    for i, wd in enumerate(words):
+        w = f.getlength(wd)
+        wgt = clamp(1 - abs(i - pos) / 1.1)
+        text(dst, wd, fname, size, _mix(base, hi, wgt), cur, y - 6 * wgt, scale=1 + 0.05 * wgt, glow=(9, (0, 0, 0), 0.75))
+        cur += w + sp
+
+
 # ------------------------------------------------------------------------------------------ scenes (text=False draws the photo only: used to measure contrast)
 def s_hook(u, ur=0.0, D=4.0, text_on=True):
     z = 1.0 + 0.20 * in_out_cubic(prog(u, 0, D + 0.5))               # moving from frame 0
@@ -153,12 +202,13 @@ def s_hook(u, ur=0.0, D=4.0, text_on=True):
     shade(f, top=0.46, bottom=0.62, mid=0.0)
     darken(f, vgrad(860, 1000, 0.0, 0.50) * vgrad(1420, 1500, 1.0, 0.0), SHADE)        # a band of shade behind the title, on the dark vine rows
     if text_on:
-        rise = 24 * (1 - out_cubic(prog(u, 0, 0.9)))                  # the supers settle, but are fully visible on frame 1
-        chip(f, "WINES OF SOUTH AFRICA", 0.6, D)
+        chip(f, "WINES OF SOUTH AFRICA", 0.6 + 0.04 * math.sin(u * 4.0), D)                      # fully shown on frame 1, with a gentle pulse
+        first = 0
         for i, ln in enumerate(TITLE):
             s = fit(ln, "serif_x", 124, 960)
-            T(f, ln, "serif_x", s, GOLD if i == 0 else WHITE, 540, 1090 + i * 140 + rise, align="center")
-        T(f, "The Field Guide is out now. These come next.", "med", 50, WHITE, 540, 1390 + rise, align="center")
+            kinetic(f, ln, "serif_x", s, GOLD if i == 0 else WHITE, 540, 1090 + i * 140, u, first=first, sweeps=((0.9, 2.0), (2.8, 3.8)))
+            first += len(ln)
+        karaoke(f, "The Field Guide is out now. These come next.", "med", 50, WHITE, 540, 1390, u, 0.8, 3.0)
     return f
 
 
@@ -270,9 +320,8 @@ def s_outro(u, ur=0.0, D=4.0, text_on=True):
     shade(f, top=0.46, bottom=0.62)
     darken(f, vgrad(860, 1000, 0.0, 0.50) * vgrad(1420, 1500, 1.0, 0.0), SHADE)
     if text_on:
-        p = out_back(prog(u, 0.0, 0.5), 1.3)
-        T(f, "FOLLOW", "serif_x", 200, GOLD, 540, 1160, align="center", scale=0.92 + 0.08 * p, alpha=min(1, p))
-        T(f, TITLE[0] + " " + TITLE[1], "med", 54, WHITE, 540, 1290, align="center", alpha=out_cubic(prog(u, 0.3, 0.8)))
+        kinetic(f, "FOLLOW", "serif_x", 200, GOLD, 540, 1160, u, stagger=0.05, sweeps=((1.0, 2.2),))
+        karaoke(f, TITLE[0] + " " + TITLE[1], "med", 54, WHITE, 540, 1290, u, 0.6, 2.4)
     return f
 
 
