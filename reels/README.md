@@ -141,3 +141,20 @@ It trails the next two weeks of posts: the four locked Arc 4 posts as their real
 **Render:** six 150-frame chunks (`--render segN.mp4 START END`), joined with the concat demuxer, then muxed. QA was run on the encoded file: the step across each chunk seam matches the steps on either side (2.0-2.5), every cut jumps exactly on its scene-start frame, and the impact stem starts at 0.00 ms on every cut (measured by subtracting a build with silent impacts, same seed).
 **Lessons:** (1) type over a photo needs measured contrast against the *brightest 5%* of the background, not a glance: the tease headline measured 3.1:1 white and about 2.5:1 gold at first; the darkening was swept (0.28 to 0.52 at the top of the ramp) until white was 6.0:1, gold 3.5:1 and the bullets 11.7:1. (2) Bullets must fade in with their text, not before it. (3) An envelope detector adds 15-50 ms of lag to an onset: to verify a sound's start, subtract a silent-event build instead.
 **Guard:** eight trailer frames are in `REEL_HASHES.json` (34 of 34 now match).
+
+## WATCH OUR PAGE FOR THESE POSTS: the Wines of South Africa trailer (November 2026)
+`sa_trailer_reel.py` + `sa_trailer_audio.py` (photos `photos/sa_*.jpg`, caption `CAPTION_SA_TRAILER.md`). 1080 x 1920, 30 fps, 900 frames, H.264 High + AAC 48 kHz, -14.0 LUFS, -2.9 dBFS peak.
+It replaces the Arc 4 trailer (`trailer_reel.py`, kept but unused). Steve's brief: all about the South Africa arc; titled "Watch our Page for These Posts"; posted with the South Africa Field Guide; tease the posts that follow; photography and motion immediately.
+| Time | Beat |
+|---|---|
+| 0-4 s | the title over vines at sunset: a photograph already pushing in on frame 1 |
+| 4-8 s | OUT NOW, the Field Guide: a Franschhoek meadow under the mountains |
+| 8-12 s | Guess the Wine Region: a vineyard in a slow focus pull, a pulsing "?" (names no place) |
+| 12-18 s | Five Fascinating Facts: a Stellenbosch valley, three numbers counting up (12 months, about 90 days, 2x) |
+| 18-22 s | Split Decision, Cap Classique: 12 months or 36? two photos, two sides, VS |
+| 22-26 s | What Am I Drinking?: a glass in a hand, a pulsing "?" |
+| 26-30 s | FOLLOW over the opening photo at its opening framing; fades to black and loops |
+**No pages are shown** because none of the South Africa posts exist yet; the teasers rest only on facts the textbooks fix (see the module docstring for the ledger). **Photos:** seven Wikimedia Commons images (CC BY 2.0, nothing share-alike), credited in the caption.
+**Checks (all on the encoded file or by measurement):** motion from frame 1 (mean pixel change 3.9 by frame 1, 13.4 by 0.5 s); the step across each chunk seam matches the steps either side; every cut jumps on its scene-start frame; every cut's impact starts at 0.00 ms; **24 text-over-photo contrast measurements** (white and gold against the brightest 5% of each text band, across each beat) all clear their thresholds (lowest: gold 3.66:1 on large type, needs 3:1).
+**Lessons:** (1) the first build put the hook title over the brightest part of the sky and 10 of 24 measurements failed; titles belong over the dark part of a photo, and the shade must be measured per band, not judged by eye. (2) Animated text sizes can round to 0 for one frame (`int(size * p)`): clamp them. (3) A `fade_out` helper called with a made-up time silently hides what it draws (the hook chip vanished): pass a real time. (4) A close-up of a stranger's face in a promo is the wrong photo; a tight crop on the glass says "wine" and removes the problem.
+**Guard:** nine `sa_trailer_reel` frames are in `REEL_HASHES.json`.

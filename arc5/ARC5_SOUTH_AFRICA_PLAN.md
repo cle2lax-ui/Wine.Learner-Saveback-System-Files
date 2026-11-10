@@ -51,6 +51,8 @@ Built and locked: The Field Guide, "Climate's Impact on Wine" (`fg-climate-final
 
 **6. Summary Reel** (optional): The Cape in a handful of beats, ending on Cap Classique.
 
+**Trailer Reel (built, draft):** "Watch our Page for These Posts", 30 s, posted with the Field Guide to tease entries 2-5 (`reels/sa_trailer_reel.py`, caption `reels/CAPTION_SA_TRAILER.md`). It rests only on facts the textbooks fix, so it stays true if the posts change; its strings are listed in the caption notes. It replaces the Arc 4 trailer.
+
 ## 4. Rules for this arc
 - **Facts: D3 first.** D4 for Cap Classique only. The CSW guide is a cross-check, and where it differs (older planting figures, the 1918 KWV date), D3 wins and the difference is logged.
 - **Known D3 inconsistency:** Swartland rainfall is 400 mm in the climate section (p. 506) and "around 500 mm" in the district entry (p. 516). The deck prints "400 to 500 mm" or leaves it out.

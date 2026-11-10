@@ -375,6 +375,13 @@ photos/qs_bottle_clape_sp.png
 photos/qs_bottle_paris.png
 photos/qs_bottle_placeholder.png
 photos/qs_cornas_church.jpg
+photos/sa_boschendal_cellar.jpg
+photos/sa_boschendal_meadow.jpg
+photos/sa_muratie_bottles.jpg
+photos/sa_muratie_vines.jpg
+photos/sa_stell_sunset.jpg
+photos/sa_stell_valley.jpg
+photos/sa_taster.jpg
 photos/ts_rioja_ebro.jpg
 photos/ts_rioja_ebro_band.jpg
 photos/ts_tondonia_bottle.png
@@ -395,6 +402,7 @@ photos/wad_tondonia_bottle.png
 reels/CAPTION_FFFA_mendocino_reel.md
 reels/CAPTION_FG_mendocino.md
 reels/CAPTION_GTR_anderson_valley.md
+reels/CAPTION_SA_TRAILER.md
 reels/CAPTION_TRAILER_coming_up.md
 reels/README.md
 reels/REEL_HASHES.json
@@ -411,6 +419,8 @@ reels/mendo_gtr_audio.py
 reels/mendo_gtr_reel.py
 reels/reel_audio.py
 reels/reel_lib.py
+reels/sa_trailer_audio.py
+reels/sa_trailer_reel.py
 reels/tfg_bumper.py
 reels/trailer_assets/ff1.jpg
 reels/trailer_assets/ff2.jpg
