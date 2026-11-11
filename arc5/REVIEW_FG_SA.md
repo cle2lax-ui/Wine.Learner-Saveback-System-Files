@@ -30,3 +30,19 @@ Four-designer pass in the guide's order, then the Social Pass and the guards. Al
 
 ## Guards
 Layout QA passes on all 15 slides; `text_audit` 0 of 136 text groups below threshold; spelling 0 British forms; every slide at or under 68 words. **Engine change:** the atlas layout gained `sea` and `open_edges` (documented in its docstring), both default-off; the regression guard re-rendered every locked deck and **42 of 42 match the reference**.
+
+
+---
+
+## Round 2 (Steve: no pink filter on the first and last slides; a map with good fidelity at ward and district level)
+
+**The pink filter.** Measured, not assumed: the cover layout adds no tint ("no scrim, no color block"); the pink is baked into the photo file (the sky averages R 233, G 162, B 155). Three color corrections were tried (white balance; plus a magenta-to-orange hue shift; stronger with a cool top). All failed: the cast is clipped, so a hue shift turns the sky olive and blotchy. The honest fix was a different photo: "Cape vineyards, Stellenbosch" (Mister-E, CC BY 2.0; green vine rows, a real mountain range, blue sky). Slide 15's Franschhoek photo had the same grading, so it was replaced too (young vines, Stellenbosch, Mister-E). The trailer still uses the old photo (open item).
+
+**The map.** No open dataset of Wine of Origin boundaries exists on a source the build sandbox can reach, and the Wines of South Africa district maps are PDF and JPG files (the sandbox cannot reach wosa.co.za or sawis.co.za, and the fetch tool cannot read their binary files). A search of GitHub found the Vitis Mundi repository, which republishes the VinPro/SAWIS Wine of Origin layer: 32 districts and 102 wards, all marked "official", checked here against the SAWIS October 2023 list (79 of 80 names; the other a spelling variant) and against WOSA's own count. It also carries Shaw's Mountain, a newer Overberg ward (Wineland confirms it), so it is more current than the 2023 list. **It has no stated license** (the repository says so): see `data/geo/WO_SOURCE.md`; fine for this post, ask SAWIS before any promoted use.
+
+**Wintour (claims).** Every area on both maps is drawn from the polygon, never approximated; Stellenbosch's eight wards and Walker Bay's seven match the official list exactly. Region membership of each district is the SAWIS list. Slide 13 pairs Simonsberg-Stellenbosch with Simonsberg-Paarl, which D3 describes as "on the warmer, opposite side of the Simonsberg".
+**Chanel (edit).** The first ward-map draft numbered 13 areas in a window dominated by huge neighbors (Franschhoek, Durbanville, Philadelphia). It was cut to nine wards in a window fitted to them (26 x 21 km), with the neighbors named quietly. A third map (Hemel-en-Aarde and neighbors) was built and dropped because the engine allows a layout twice per deck.
+**Ive (craft).** New engine layout `wo_map`: polygons drawn at 2x and downsampled; holes cut even-odd; numbered badges placed at each ward's most interior point and moved, with a leader line, only when a ward is too small to hold one (the first version tested spacing on the diagonal, so diagonal neighbors still overlapped; it now tests each axis); numbered key at the 60 px floor, with manual column breaks; the focus district in its region's color and neighbors neutral; context names darkened until they read on the ground under them (the audit caught one at 3.5:1).
+**Vignelli (grid).** 11 distinct layouts in 16 slides; wo_map twice (the limit).
+
+**Guards.** Layout QA passes on all 16 slides; `text_audit` 0 of 147 below threshold; spelling clean (11 British forms in comments and docs normalized); every slide at or under 68 words; engine `regress` 42 of 42 (the new layout and options are additive).

@@ -3,8 +3,9 @@ Forest-green arc signature (the plan's default). Steve's steer: less Pinotage (i
 
 SOURCES: WSET Diploma D3 ch. 30 (South Africa) and D4 ch. 20 (Cap Classique). Every claim below was re-read against the book before it was written.
   1  cover.
-  2  D3 p.505: vineyards between 32 and 35 S (comparable with the central band of Chile's vineyards and much of Mendoza); regional climate warm
-     Mediterranean; most main regions within about 50 km (30 miles) of the coast. The map places towns by latitude and longitude (schematic: not appellation boundaries).
+  2  D3 p.505: vineyards between 32 and 35 S (comparable with the central band of Chile's vineyards and much of Mendoza); most main regions within about 50 km (30 miles)
+     of the coast. THE MAP is drawn from the real Wine of Origin polygons (data/geo/za_wo_winelands.geojson; see data/geo/WO_SOURCE.md), colored by region, with 16 districts numbered.
+     Region membership of each district is the official SAWIS production-areas list (October 2023).
   3  D3 p.505: the cold Benguela Current flows north from Antarctica up the west coast; the warmer Agulhas flows south down the east coast; they meet at
      Cape Agulhas; early morning coastal fog; the Cape Doctor, a strong south-easterly, in spring and summer: cools, helps inhibit vineyard disease, can compromise
      flowering and fruit set and lower yields.
@@ -28,18 +29,20 @@ SOURCES: WSET Diploma D3 ch. 30 (South Africa) and D4 ch. 20 (Cap Classique). Ev
   10 D3 p.516: Swartland: warm Mediterranean; "around 500 mm"; irrigation for most vineyards; low-fertility granite and shale; a significant share of the country's
      old vines (over 35 years), tending to be unirrigated; since 2000 the movement began by Charles Back at Spice Route, then Eben Sadie and Chris and Andrea Mullineux;
      themes: low yields, dry farming, often organic or biodynamic, old vines, ambient yeasts, old oak.
+  13 (map) Stellenbosch's eight wards (Banghoek, Bottelary, Devon Valley, Jonkershoek Valley, Papegaaiberg, Polkadraai Hills, Simonsberg-Stellenbosch, Vlottenburg), the Paarl wards
+     and Durbanville in the window, and the Franschhoek district; D3 p.514-515.
   11 D3 p.513 Constantia (history from 1685; revived Vin de Constance; east-facing slopes; False Bay 10 km; about 1,000 mm; no Pinot Noir: it fares less well in the wind);
      p.520 Elgin (inland plateau 250-500 m; coast about 20 km south; "the coolest wine-growing area of South Africa"); p.521 Walker Bay (Hermanus; about 800 mm;
      Hamilton-Russell planted Chardonnay and Pinot Noir in the Hemel-en-Aarde Valley from 1975; clay up to 55%).
   12 D3 p.511-512: the four-tier Wine of Origin hierarchy and its examples; 100% from the place named; 85% for a stated vintage or variety; a tasting by the Wine
      Certification Authority; Western Cape accounts for nearly all South African wine by volume.
-  13 D4 p.115-116: traditional-method production began in 1971 (Simonsig); the CCPA founded 1992 (members over 90% of traditional-method production); whole-bunch pressing
+  14 D4 p.115-116: traditional-method production began in 1971 (Simonsig); the CCPA founded 1992 (members over 90% of traditional-method production); whole-bunch pressing
      mandatory; at least three bars of pressure after disgorgement; at least 12 months on the lees; the Cap Classique extended-lees aging tier from 2022 (Chardonnay, Pinot Noir
      and Pinot Meunier only; at least 36 months).
-  14 D4 p.116-117: Robertson and Bonnievale (Breede River Valley): significant limestone, "argued to be beneficial"; narrow, shaded valleys; cool ocean breezes up the Breede
+  15 D4 p.116-117: Robertson and Bonnievale (Breede River Valley): significant limestone, "argued to be beneficial"; narrow, shaded valleys; cool ocean breezes up the Breede
      River; the biggest diurnal range; picking about 90 days after flowering with extra foliage; 9.5-11% potential alcohol, about 12% abv finished; medium (+) acidity, ripe
      apple and citrus; good to very good; mid- to premium-priced.
-  15 D4 p.119: 2021-2023 an average of 3.9 million bottles of Cap Classique a year, 40% of all sparkling wine sold; nearly 70% exported.
+  16 D4 p.119: 2021-2023 an average of 3.9 million bottles of Cap Classique a year, 40% of all sparkling wine sold; nearly 70% exported.
 NOT USED: Pinotage (Steve's steer); the CSW guide's older figures (D3 and D4 win where they differ).
 """
 import glob
@@ -75,60 +78,29 @@ C_FAB = "fabulousfabs / Wikimedia Commons (CC BY 2.0)"
 C_ROO = "rooymans2000 / Wikimedia Commons (CC BY 2.0)"
 
 
-# ------------------------------------------------------------------------------------------ the map (schematic: places, not appellation boundaries)
-LON0, LON1, LAT0, LAT1 = 17.2, 21.4, -34.95, -32.55          # west, east, south, north
-MAP_W = W - 2 * M
-MAP_H = int(MAP_W / ((LON1 - LON0) * 0.8335 / (LAT1 - LAT0)))   # cos(33.75 degrees) keeps the shape true
+# ------------------------------------------------------------------------------------------ the maps: REAL Wine of Origin polygons (arc5/wo_maps.py)
+import wo_maps as WM      # noqa: E402
 
-
-def NN(lon, lat):
-    return ((lon - LON0) / (LON1 - LON0), (LAT1 - lat) / (LAT1 - LAT0))
-
-
-def _land():
-    from shapely.geometry import shape, box
-    gj = json.load(open("/tmp/ne_10m_land.geojson")) if os.path.exists("/tmp/ne_10m_land.geojson") else json.load(open(os.path.join(HERE, "..", "data", "geo", "ne_10m_sa_clip.geojson")))
-    if gj.get("_clipped"):
-        geoms = [shape(f["geometry"]) for f in gj["features"]]
-    else:
-        bx = box(LON0, LAT0, LON1, LAT1)
-        geoms = [shape(f["geometry"]).intersection(bx) for f in gj["features"]]
-    rings = []
-    for g in geoms:
-        for p in (g.geoms if hasattr(g, "geoms") else [g]):
-            if p.is_empty or p.geom_type != "Polygon" or p.area < 1e-4:
-                continue
-            pts = [NN(x, y) for x, y in p.simplify(0.002).exterior.coords]
-            pts = [(min(max(a, 0.0), 1.0), min(max(b, 0.0), 1.0)) for a, b in pts]            # exactly inside the frame
-            dense = []
-            for (x0, y0), (x1, y1) in zip(pts, pts[1:]):                                       # densify long straight runs, so the layout's corner smoothing cuts only tiny corners
-                n = max(1, int(max(abs(x1 - x0), abs(y1 - y0)) / 0.01))
-                dense += [(x0 + (x1 - x0) * k / n, y0 + (y1 - y0) * k / n) for k in range(n)]
-            dense.append(pts[-1])
-            rings.append(dense)
-    rings.sort(key=len, reverse=True)
-    return rings
-
-
-def _atlas():
-    rings = _land()
-    towns = dict(Cape_Town=(18.42, -33.92), Stellenbosch=(18.86, -33.93), Paarl=(18.97, -33.73), Franschhoek=(19.12, -33.91),
-                 Malmesbury=(18.73, -33.46), Elgin=(19.03, -34.16), Hermanus=(19.24, -34.42), Robertson=(19.88, -33.80),
-                 Citrusdal=(19.0, -32.59), Cape_Agulhas=(20.0, -34.83))
-    mk = lambda name, key, lab, side: dict(name=name, target=NN(*towns[key]), label=lab, side=side)
-    markers = [mk("Cape Town", "Cape_Town", (0.22, 0.66), "left"), mk("Stellenbosch", "Stellenbosch", (0.30, 0.86), "left"),
-               mk("Paarl", "Paarl", (0.47, 0.40), "right"), mk("Franschhoek", "Franschhoek", (0.56, 0.60), "right"),
-               mk("Swartland", "Malmesbury", (0.185, 0.29), "left"), mk("Elgin", "Elgin", (0.54, 0.71), "right"),
-               mk("Hermanus", "Hermanus", (0.57, 0.83), "right"), mk("Robertson", "Robertson", (0.70, 0.49), "right"),
-               mk("Citrusdal", "Citrusdal", (0.47, 0.07), "right"), mk("Cape Agulhas", "Cape_Agulhas", (0.62, 0.945), "left")]
-    return dict(
-        kicker="WHERE IT GROWS", headline="32\u00b0 to 35\u00b0 South", map_h=MAP_H,
-        outline=rings[0], outlines=rings[1:], markers=markers, sea=(222, 233, 240), open_edges=True,
-        context=[(0.03, 0.50, "Atlantic Ocean"), (0.78, 0.93, "Indian Ocean")],
-        legend=[("32\u00b0 to 35\u00b0 S", "Almost all vineyards sit in the Western Cape, a latitude like central Chile and Mendoza."),
-                ("Close to the sea", "Most main regions lie within about 50 km (30 miles) of the coast."),
-                ("Warm Mediterranean", "Mountains, slope, aspect and elevation vary the climate from place to place.")],
-    )
+DISTRICT_MAP = WM.district_overview(
+    bbox=(17.2, 21.4, -34.95, -32.95),
+    key_groups=[("COASTAL REGION", ["Cape Town", "Stellenbosch", "Paarl", "Franschhoek", "Wellington", "Tulbagh", "Swartland", "Darling"]),
+                ("CAPE SOUTH COAST", ["Elgin", "Walker Bay", "Overberg", "Cape Agulhas", "Swellendam"]),
+                ("BREEDE RIVER VALLEY", ["Breedekloof", "Worcester", "Robertson"])],
+    kicker="WHERE IT GROWS", headline="The Winelands, by District",
+    standfirst="Vineyards lie between 32\u00b0 and 35\u00b0 S, mostly near the sea.")
+DISTRICT_MAP["key_pitch"] = 1.15
+DISTRICT_MAP["context"] = [(0.03, 0.60, "Atlantic Ocean"), (0.72, 0.925, "Indian Ocean")]
+import core as _core     # noqa: E402
+STELL_MAP = WM.ward_map(
+    bbox=(18.670, 19.010, -34.012, -33.790),
+    numbered=[("Stellenbosch", "Simonsberg-Stellenbosch"), ("Stellenbosch", "Banghoek"), ("Stellenbosch", "Devon Valley"), ("Stellenbosch", "Bottelary"),
+              ("Stellenbosch", "Jonkershoek Valley"), ("Stellenbosch", "Papegaaiberg"), ("Stellenbosch", "Polkadraai Hills"), ("Stellenbosch", "Vlottenburg"),
+              ("Paarl", "Simonsberg-Paarl")],
+    kicker="WARD BY WARD", headline="Stellenbosch Up Close",
+    standfirst=None,
+    highlight="Simonsberg-Stellenbosch", context_districts=("Stellenbosch", "Paarl", "Franschhoek", "Cape Town"), ctx_font=_core.font("caption_italic", 64),
+    focus_district="Stellenbosch")
+STELL_MAP["key_pitch"] = 1.2
 
 
 # ------------------------------------------------------------------------------------------ the Wine of Origin circles (page pixels)
@@ -141,17 +113,17 @@ def _euler():
 
 
 SLIDES = [
-    # 1 -- COVER: vines at sunset in the Stellenbosch winelands (South African Tourism). The trailer's opening photo.
+    # 1 -- COVER: vine rows and mountains in the Stellenbosch winelands (Mister-E), natural color. The first version used a sunset photo whose pink grade was baked into the file.
     ("cover_bleed", dict(
-        photo="sa_stell_sunset", photo_anchor=0.5, photo_zoom=1.0,
+        photo="sa_cape_vineyards_stell", photo_anchor=0.5, photo_zoom=1.0,
         kicker="THE FIELD GUIDE: SOUTH AFRICA", kicker_size=84,
         kicker_chip=dict(color=(250, 246, 236), alpha=0.45, text=INK),
         title="Two Currents,\nOne Wind", title_top=0.44,
-        photo_credit=C_SAT,
+        photo_credit="Mister-E / Wikimedia Commons (CC BY 2.0)",
     )),
 
-    # 2 -- WHERE IT GROWS: D3 p.505.
-    ("atlas", _atlas()),
+    # 2 -- WHERE IT GROWS: D3 p.505 (latitude, distance from the sea) on REAL Wine of Origin district polygons (see the ledger above).
+    ("wo_map", DISTRICT_MAP),
 
     # 3 -- TWO CURRENTS, ONE WIND: D3 p.505. Cape Point has no place claim in the copy.
     ("hero_facts", dict(
@@ -260,7 +232,10 @@ SLIDES = [
         circles=_euler(),
     )),
 
-    # 13 -- CAP CLASSIQUE: THE RULES: D4 p.115-116.
+    # 13 -- STELLENBOSCH UP CLOSE: D3 p.514-515 and the official production-areas list; real polygons; Simonsberg-Stellenbosch is D3's example ward.
+    ("wo_map", STELL_MAP),
+
+    # 14 -- CAP CLASSIQUE: THE RULES: D4 p.115-116.
     ("stat_wall", dict(
         kicker="CAP CLASSIQUE", headline="Bubbles With Rules",
         standfirst="South Africa's traditional-method sparkling wine, made to its own regulations.",
@@ -271,9 +246,9 @@ SLIDES = [
         famous=["Whole-bunch pressing is mandatory", "Three bars of pressure after disgorgement"], famous_label="ALSO REQUIRED", cell_max=650,
     )),
 
-    # 14 -- CAP CLASSIQUE: THE GRAPES: D4 p.116-117. A Franschhoek vineyard (D3: some of its leading producers make Cap Classique).
+    # 15 -- CAP CLASSIQUE: THE GRAPES: D4 p.116-117. Young vines in Stellenbosch (D4: Stellenbosch is one of the principal sources of Cap Classique grapes), natural color.
     ("side_rail", dict(
-        photo="fffa_climate_cover_franschhoek", photo_caption="Franschhoek", side="right", photo_credit=C_SAT,
+        photo="sa_young_vines_stell", photo_caption="Young vines, Stellenbosch", side="right", photo_credit="Mister-E / Wikimedia Commons (CC BY 2.0)",
         kicker="CAP CLASSIQUE", headline="Picked for\nFreshness",
         standfirst="",
         items=[("Slow ripening", "Growers wait about 90 days after flowering, with extra leaf cover for shade."),
@@ -282,12 +257,12 @@ SLIDES = [
                ("In the glass", "Medium (+) acidity, ripe apple and citrus. Good to very good.")],
     )),
 
-    # 15 -- CLOSE: D4 p.119. The cover's sunset vineyard again, a bookend (the layout's text panel covers the lower half of the photo, so a glass crop would be hidden).
+    # 16 -- CLOSE: D4 p.119. The cover's vineyard again, a bookend (the layout's text panel covers the lower half of the photo).
     ("statement", dict(
-        variant="cover", photo="sa_stell_sunset", photo_anchor=0.30,
+        variant="cover", photo="sa_cape_vineyards_stell", photo_anchor=0.30,
         title="The Cape in\nthe Glass",
         subtitle="Cap Classique is now 40% of the sparkling wine sold in South Africa, and nearly 70% of it is exported.",
-        photo_credit=C_SAT,
+        photo_credit="Mister-E / Wikimedia Commons (CC BY 2.0)",
     )),
 ]
 

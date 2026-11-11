@@ -22,6 +22,7 @@ A deck manifest chooses modules and fills slots; nothing else is decided per-dec
     M15 fact_file      key-value data rail with hairline rules + famous names
     M16 mosaic         one large + small photos, captions only (pacing breather)
     M17 photo_quote    full-bleed photo, one large white sentence-case quote
+    M27 wo_map         appellation map from real polygons: numbered areas + a numbered key
     M18 euler_nesting  containment diagram for true nested-set relationships
                        (not a ladder: shows branching, siblings, and set
                        exceptions that a single-path pyramid can't)
@@ -3568,10 +3569,147 @@ def tile_grid(slot, slide_no, total, pal):
     return _finish(img, d, qa, slide_no, total)
 
 
+# ────────────────────────── M27 WO MAP ─────────────────────────
+def wo_map(slot, slide_no, total, pal):
+    """M27 WO MAP -- an appellation map drawn from REAL polygons (a GeoJSON subset), with numbered areas and a numbered key.
+    Use it where an atlas() schematic is not enough: districts and wards at true shape and position.
+    slots:
+      kicker, headline, standfirst (optional)
+      bbox = (lon0, lon1, lat0, lat1)          the map window; map_h follows from it (cos of the middle latitude) unless map_h is given
+      sea  = (r, g, b)                         the sea behind the land (default: none)
+      land = [ring, ...]                       rings of (lon, lat): drawn white, under the areas (optional)
+      areas = [dict(rings=[outer, hole, ...], fill=(r, g, b), outline=(r, g, b) optional, width=px optional,
+                    number=int optional, at=(lon, lat) badge anchor optional, tip=(lon, lat) optional (an offset badge's true spot: a leader is drawn to it),
+                    highlight=bool optional)]
+          drawn in list order; a highlighted area is re-ruled in the ACCENT color on top
+      key = [dict(number, name, fill) | dict(header="TEXT")]   flowed down the columns, under the map
+      key_cols (default 2), key_gap (px under the map, default 36), key_pitch (row height as a multiple of the 60 px type, default 1.42); put {"colbreak": True} between entries to set the columns by hand
+      context = [(nx, ny, text)]               muted italic names (ocean names) in map fractions
+      credit                                   the footer credit line (the data source)
+    Real data: every area is drawn from the polygon given, never approximated. Polygons are clipped to the window by the frame, and a ring's
+    holes are cut out (even-odd). Badges and key text are at least the 60 px floor; badges are collision-checked by the QA."""
+    img, d, qa = _start("M27 wo_map", slide_no, total, pal)
+    y = kicker_block(d, slot["kicker"], pal, y=150); qa.size("kicker", 70)
+    if slot.get("headline"):
+        y, hs = one_line_headline(d, slot["headline"], y, pal); qa.size("headline", hs, headline=True)
+    if slot.get("standfirst"):
+        y = standfirst(d, (M, y + 8), slot["standfirst"], W - 2 * M, leading=1.14) + 40
+        qa.size("standfirst", TYPE["standfirst"]); qa.add_words(slot["standfirst"])
+    lon0, lon1, lat0, lat1 = slot["bbox"]
+    import math
+    mid = math.radians((lat0 + lat1) / 2)
+    mw = W - 2 * M
+    map_h = slot.get("map_h") or int(mw / ((lon1 - lon0) * math.cos(mid) / (lat1 - lat0)))
+    map_top, mx0 = y + slot.get("map_top_pad", 20), M
+    S = 2
+    Lw, Lh = mw * S, map_h * S
+
+    def LP(pt):
+        return ((pt[0] - lon0) / (lon1 - lon0) * Lw, (lat1 - pt[1]) / (lat1 - lat0) * Lh)
+
+    def MP(pt):
+        return (mx0 + (pt[0] - lon0) / (lon1 - lon0) * mw, map_top + (lat1 - pt[1]) / (lat1 - lat0) * map_h)
+
+    layer = Image.new("RGB", (Lw, Lh), slot.get("sea") or PAPER)
+    ld = ImageDraw.Draw(layer)
+    for ring in slot.get("land", []):
+        ld.polygon([LP(p) for p in ring], fill=(255, 255, 255))
+
+    def paint(rings, fill, outline, width):
+        pts0 = [LP(p) for p in rings[0]]
+        xs, ys = [p[0] for p in pts0], [p[1] for p in pts0]
+        x0, y0, x1, y1 = int(max(min(xs) - 4, 0)), int(max(min(ys) - 4, 0)), int(min(max(xs) + 4, Lw)), int(min(max(ys) + 4, Lh))
+        if x1 <= x0 or y1 <= y0:
+            return
+        mask = Image.new("L", (x1 - x0, y1 - y0), 0)
+        md = ImageDraw.Draw(mask)
+        md.polygon([(a - x0, b - y0) for a, b in pts0], fill=255)
+        for hole in rings[1:]:
+            md.polygon([(a - x0, b - y0) for a, b in (LP(p) for p in hole)], fill=0)
+        layer.paste(Image.new("RGB", (x1 - x0, y1 - y0), fill), (x0, y0), mask)
+        if outline:
+            for r_ in rings:
+                pp = [LP(p) for p in r_]
+                ld.line(pp + [pp[0]], fill=outline, width=width * S, joint="curve")
+
+    for a in slot.get("areas", []):
+        paint(a["rings"], a["fill"], a.get("outline") or _darken(a["fill"], 0.62), a.get("width", 2))
+    for a in slot.get("areas", []):
+        if a.get("highlight"):
+            for r_ in a["rings"]:
+                pp = [LP(p) for p in r_]
+                ld.line(pp + [pp[0]], fill=pal["ACCENT"], width=9 * S, joint="curve")
+    img.paste(layer.resize((mw, map_h), Image.LANCZOS), (mx0, map_top))
+    d = ImageDraw.Draw(img)
+    d.rectangle([mx0, map_top, mx0 + mw, map_top + map_h], outline=LINE, width=3)
+
+    xf = font("caption_italic", 64); qa.size("context", 64)
+    for (nx, ny, text) in slot.get("context", []):
+        cx0, cy0 = mx0 + nx * mw, map_top + ny * map_h
+        asc_, desc_ = xf.getmetrics()
+        ink_ = legible_over(img, (int(cx0), int(cy0), int(cx0 + text_w(d, text, xf)), int(cy0 + asc_ + desc_)), MUTED)   # darkened until it reads on the ground under it
+        d.text((cx0, cy0), text, font=xf, fill=ink_)
+
+    # numbered badges (white disc, ink ring, ink numeral), collision-checked
+    bf = font("body_bold", FLOOR); qa.size("badge", FLOOR)
+    for a in slot.get("areas", []):
+        if a.get("number") is None or not a.get("at"):
+            continue
+        cx, cy = MP(a["at"])
+        r_ = 46
+        if a.get("tip"):                                      # an offset badge: a leader from the area's own spot, ending in a dot
+            tx_, ty_ = MP(a["tip"])
+            d.line([(tx_, ty_), (cx, cy)], fill=INK, width=4)
+            d.ellipse([tx_ - 9, ty_ - 9, tx_ + 9, ty_ + 9], fill=INK)
+        d.ellipse([cx - r_, cy - r_, cx + r_, cy + r_], fill=(255, 255, 255), outline=INK, width=5)
+        txt = str(a["number"])
+        tw = text_w(d, txt, bf)
+        asc, desc = bf.getmetrics()
+        d.text((cx - tw / 2, cy - (asc + desc) / 2 - 2), txt, font=bf, fill=INK)
+        qa.box(f"badge:{a['number']}", (cx - r_, cy - r_, cx + r_, cy + r_))
+
+    # the numbered key, flowed down the columns
+    key = slot.get("key", [])
+    cols = slot.get("key_cols", 2)
+    ky0 = map_top + map_h + slot.get("key_gap", 36)
+    kf, hf = font("body", FLOOR), font("kicker_bold", FLOOR - 8)
+    qa.size("key", FLOOR)
+    pitch = int(FLOOR * slot.get("key_pitch", 1.42))
+    col_w = (W - 2 * M) // cols
+    placed, col, row, n_rows = [], 0, 0, 0
+    if any(e.get("colbreak") for e in key):                  # manual columns: {"colbreak": True} starts the next column
+        for e in key:
+            if e.get("colbreak"):
+                col, row = col + 1, 0
+                continue
+            placed.append((col, row, e)); row += 1; n_rows = max(n_rows, row)
+    else:
+        n_rows = -(-len(key) // cols)
+        placed = [(i // n_rows, i % n_rows, e) for i, e in enumerate(key)]
+    for col, row, e in placed:
+        x_, y_ = M + col * col_w, ky0 + row * pitch
+        if e.get("header"):
+            tracked_text(d, (x_, y_ + 6), e["header"], hf, pal["SIGNATURE"], tracking=4)
+            qa.add_words(e["header"])
+            continue
+        d.rectangle([x_, y_ + 14, x_ + 30, y_ + 44], fill=e["fill"], outline=pal["ACCENT"] if e.get("highlight") else _darken(e["fill"], 0.62), width=5 if e.get("highlight") else 2)
+        d.text((x_ + 44, y_), str(e["number"]), font=font("body_bold", FLOOR), fill=pal["SIGNATURE"])
+        nx_ = x_ + 44 + text_w(d, "00", font("body_bold", FLOOR)) + 14
+        if nx_ + text_w(d, e["name"], kf) > x_ + col_w - 8:
+            raise ValueError(f"wo_map key: \"{e['name']}\" does not fit its column ({text_w(d, e['name'], kf)} px in {x_ + col_w - 8 - nx_}); cut copy or use fewer columns")
+        d.text((nx_, y_), e["name"], font=kf, fill=INK)
+        qa.add_words(e["name"])
+    key_bottom = ky0 + n_rows * pitch
+    if key_bottom > CONTENT_BOTTOM:
+        raise ValueError(f"wo_map: the key ends at {key_bottom}, past the content floor {CONTENT_BOTTOM}; fewer entries, or a shorter map")
+    qa.add_words(slot["kicker"])
+    return _finish(img, d, qa, slide_no, total, credit=slot.get("credit"))
+
+
 NEW_MODULES = dict(
     cover_bleed=cover_bleed, region_map=region_map, blades=blades,
     stair_ladder=stair_ladder, thermometer=thermometer, factor_wheel=factor_wheel, cross_section=cross_section, chart_stack=chart_stack, rail_rings=rail_rings,
-    hero_facts=hero_facts, tile_grid=tile_grid,
+    hero_facts=hero_facts, tile_grid=tile_grid, wo_map=wo_map,
 )
 
 

@@ -85,7 +85,9 @@ arc4/render_wad_tondonia.py
 arc5/ARC5_SOUTH_AFRICA_PLAN.md
 arc5/CAPTION_FG_SA.md
 arc5/REVIEW_FG_SA.md
+arc5/prepare_wo_geo.py
 arc5/render_fg_sa.py
+arc5/wo_maps.py
 archive/CHANGELOG_fffa_v4.md
 archive/CHANGELOG_quicksips_rrv.md
 archive/CHANGELOG_saveback_v2.md
@@ -182,6 +184,7 @@ data/NR_PHOTO_MANIFEST.json
 data/NR_STOCK_MANIFEST.json
 data/cdn_geo.json
 data/france_locator.json
+data/geo/WO_SOURCE.md
 data/geo/anbaugebiete.geojson
 data/geo/california.geojson
 data/geo/de_rivers.geojson
@@ -189,10 +192,12 @@ data/geo/germany.geojson
 data/geo/mendocino_avas.geojson
 data/geo/mendocino_counties.geojson
 data/geo/mosel_river.geojson
+data/geo/ne_10m_sa_clip.geojson
 data/geo/ne_110m_land.geojson
 data/geo/ne_rivers_na.geojson
 data/geo/rhineland_palatinate.geojson
 data/geo/source_WeinbaugebieteDeutschland.svg
+data/geo/za_wo_winelands.geojson
 data/nrhone_geo.json
 data/nrhone_locator.json
 engine/build.py
@@ -381,11 +386,13 @@ photos/qs_cornas_church.jpg
 photos/sa_boschendal_cellar.jpg
 photos/sa_boschendal_meadow.jpg
 photos/sa_cape_point.jpg
+photos/sa_cape_vineyards_stell.jpg
 photos/sa_muratie_bottles.jpg
 photos/sa_muratie_vines.jpg
 photos/sa_stell_sunset.jpg
 photos/sa_stell_valley.jpg
 photos/sa_taster.jpg
+photos/sa_young_vines_stell.jpg
 photos/ts_rioja_ebro.jpg
 photos/ts_rioja_ebro_band.jpg
 photos/ts_tondonia_bottle.png
