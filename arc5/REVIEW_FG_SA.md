@@ -46,3 +46,19 @@ Layout QA passes on all 15 slides; `text_audit` 0 of 136 text groups below thres
 **Vignelli (grid).** 11 distinct layouts in 16 slides; wo_map twice (the limit).
 
 **Guards.** Layout QA passes on all 16 slides; `text_audit` 0 of 147 below threshold; spelling clean (11 British forms in comments and docs normalized); every slide at or under 68 words; engine `regress` 42 of 42 (the new layout and options are additive).
+
+
+---
+
+## Round 3 (Steve: use the Wines of South Africa course to bring the wines and the place to life; more beautiful photos; a "so what" on every slide; up to 16 slides)
+
+**Reading.** The 74-page WOSA course was read in full except the Pinotage lesson (Steve's steer) and the Shiraz and Merlot lessons (not needed). Its facts are used for color and story, and D3/D4 still win where they differ (conflicts listed in the caption notes and the renderer's docstring; the contested Cap Classique volume and export numbers are not printed).
+
+**Wintour (claims).** Each new claim carries a source and page in the ledger. Corrections made on review: "Pinot Noir fails in the wind" became "struggles" (D3: "fares less well"); the straight "Vilaf\u00f4nt\u00e9" in the old draft was a misspelling of Vilafont\u00e9; the Elgin altitude and the Cap Classique volume conflicts were kept off the slides; "world's smallest, richest plant kingdom" is WOSA's own wording (one of six, "the smallest, yet richest").
+**Chanel (edit).** A "so what" is the headline, not an add-on strip: each headline says the point and the standfirst or first fact says what it means in the glass. To stay at 16: the rain chart, the soils tiles, the cool-south tiles, the Wine of Origin circles and the Cap Classique rules page were folded in (the label promise became the district map's standfirst). Swartland gained its "what it tastes like" (rich, concentrated fruit).
+**Ive (craft).** Twelve new natural-color photographs (the cover is now the Overberg vineyards under blue mountains). The closing slide's first version (the sugarbird under white type) put white type on pale petals, so it moved to the green-panel layout with the photo composed to put the bird and petals in the visible band. Slide 8 and slide 13 overran the content floor and were cut by copy (and a shorter photo band), never by type size. Straight apostrophes are now curly everywhere. Engine: `wo_map` registered as a graphic-led layout in the variety check.
+**Vignelli (grid).** 12 distinct layouts in 16 slides; graphic-led slides 3, 6, 9, 11 (two maps, the timeline, the Swartland numbers); no layout more than twice.
+
+**Photos (all open-licensed, natural color).** Cover: Overberg vineyards (Axel B\u00fchrmann, CC BY 4.0). Table Mountain from Blouberg, Bo-Kaap, Boschendal (South African Tourism). Cape Peninsula coast, Boulders Beach granite, a southern right whale in Walker Bay, Groot Constantia (lumoplank, CC0). Cederberg sandstone (Zaian, CC0), Klapmuts shale (Abu Shawka, CC0). Constantia vines (fabulousfabs), riddling rack (Craig Hatfield), Cape sugarbird on a king protea (Derek Keats), young vines and Stellenbosch vineyards (Mister-E). Captions say only what each file's own title says (for example "Shale hills, Klapmuts", not Swartland).
+
+**Guards.** Layout QA passes on all 16 slides; `text_audit` 0 of 126 below threshold; spelling clean; every slide at or under 68 words; engine `regress` 42 of 42.

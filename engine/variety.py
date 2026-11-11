@@ -17,7 +17,7 @@ have their own structures.
 GRAPHIC_MODULES = {
     "atlas", "map_facsimile", "region_map", "ladder", "stair_ladder", "thermometer", "factor_wheel", "cross_section",
     "euler_nesting", "timeline", "process_map", "stat_wall",
-    "chart_stack", "rail_rings",
+    "chart_stack", "rail_rings", "wo_map",
 }
 
 

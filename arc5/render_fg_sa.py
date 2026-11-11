@@ -1,49 +1,49 @@
-"""THE FIELD GUIDE: SOUTH AFRICA -- "Two Currents, One Wind". A classic carousel (2160x2700, 15 slides). Arc 5 entry 1 (arc5/ARC5_SOUTH_AFRICA_PLAN.md).
-Forest-green arc signature (the plan's default). Steve's steer: less Pinotage (it is not named on any slide), more Bordeaux blends and Cap Classique.
+"""THE FIELD GUIDE: SOUTH AFRICA -- "Two Currents, One Wind". A classic carousel (2160x2700, 16 slides). Arc 5 entry 1 (arc5/ARC5_SOUTH_AFRICA_PLAN.md).
+Forest-green arc signature. Round 3 (Steve, with the Wines of South Africa "Spectacular South Africa in 10 Lessons" course): bring the wines to life, say why
+the place is amazing, more beautiful photographs, and a "so what" on every slide. Pinotage is not named on any slide (Steve's steer). 16 slides is the Field Guide limit.
+How "so what" is done: each headline states the point (not the topic), and the standfirst or the first fact says what it means in the glass.
 
-SOURCES: WSET Diploma D3 ch. 30 (South Africa) and D4 ch. 20 (Cap Classique). Every claim below was re-read against the book before it was written.
-  1  cover.
-  2  D3 p.505: vineyards between 32 and 35 S (comparable with the central band of Chile's vineyards and much of Mendoza); most main regions within about 50 km (30 miles)
-     of the coast. THE MAP is drawn from the real Wine of Origin polygons (data/geo/za_wo_winelands.geojson; see data/geo/WO_SOURCE.md), colored by region, with 16 districts numbered.
-     Region membership of each district is the official SAWIS production-areas list (October 2023).
-  3  D3 p.505: the cold Benguela Current flows north from Antarctica up the west coast; the warmer Agulhas flows south down the east coast; they meet at
-     Cape Agulhas; early morning coastal fog; the Cape Doctor, a strong south-easterly, in spring and summer: cools, helps inhibit vineyard disease, can compromise
-     flowering and fruit set and lower yields.
-  4  D3 p.505-506 (climate) and the district entries, pp.513-519: Constantia 1,000 mm; Paarl 800-900 mm; Franschhoek 800 mm; Stellenbosch more than 700 mm;
-     Durbanville about 500 mm; Swartland 400 mm (climate section) but "around 500 mm" in its own entry (p.516), so the bar says 400-500; Olifants River 150-250 mm.
-     Ranges are drawn at their midpoint and say so. Winter rainfall pattern (p.506). The 2015-18 drought (p.506).
-  5  D3 p.506: three main soils: Table Mountain sandstone (sandy, low nutrient and water retention; higher slopes, e.g. Stellenbosch and Constantia); granite (good
-     water retention, dry farming; lower slopes, e.g. Paarl); shale (good nutrients and water retention; e.g. Swartland). Many soils acidic: lime at planting.
-  6  D3 p.504: 1652; "more than 370 years"; slavery abolished in the 1860s; the 'dop' system (workers paid in low-quality alcohol), formally abolished in 1961 but
-     continued as a reward until 1994 "and in some places beyond"; the KWV (regulatory powers over volumes and prices; supported apartheid; Chenin Blanc, Colombard
-     and Cinsaut required for brandy; under a third of wine grapes made into wine); 1994 the first democratic elections; the KWV ceased as a cooperative in 1997;
-     by 2017 around 85% of wine grapes were used for wines marketed as such.
-  7  D3 p.507-508: Chenin Blanc 16,000 ha, double the Loire's; the high-volume vs small-volume comparison (high yields, regular spraying against botrytis, minimal sorting,
-     up to 15% Colombard / low yields, unirrigated old vines, careful hand sorting, a little botrytis if wanted, 100% Chenin Blanc).
-  8  D3 p.514-515: Stellenbosch: warm climate favors Cabernet Sauvignon, Merlot; reputation on very good to outstanding, premium-priced Cabernet and related blends;
-     vineyards from about 100 to 500 m; Simonsberg peak 1,390 m; cooler, higher slopes with granite- or shale-derived soils; False Bay winds cool the lower sites;
-     Simonsberg-Stellenbosch ward (Cabernet-based blends; Kanonkop, Rustenberg); Rust en Vrede and Raats at district level; Stellenbosch University, the only oenology degree.
-  9  D3 p.511 (three main blends: white Cape, red Bordeaux, red Cape), p.515 (Paarl: warmer, "a distinct ripeness and fuller body compared to those of Stellenbosch";
-     Vilafonte at super-premium prices; Simonsberg-Paarl: higher, greater diurnal range) and Franschhoek (wrapped by mountains; Sauvignon Blanc, Cabernet Sauvignon and
-     Shiraz most grown; fruit prized for freshness as a blending component; some leading Cap Classique producers).
-  10 D3 p.516: Swartland: warm Mediterranean; "around 500 mm"; irrigation for most vineyards; low-fertility granite and shale; a significant share of the country's
-     old vines (over 35 years), tending to be unirrigated; since 2000 the movement began by Charles Back at Spice Route, then Eben Sadie and Chris and Andrea Mullineux;
-     themes: low yields, dry farming, often organic or biodynamic, old vines, ambient yeasts, old oak.
-  13 (map) Stellenbosch's eight wards (Banghoek, Bottelary, Devon Valley, Jonkershoek Valley, Papegaaiberg, Polkadraai Hills, Simonsberg-Stellenbosch, Vlottenburg), the Paarl wards
-     and Durbanville in the window, and the Franschhoek district; D3 p.514-515.
-  11 D3 p.513 Constantia (history from 1685; revived Vin de Constance; east-facing slopes; False Bay 10 km; about 1,000 mm; no Pinot Noir: it fares less well in the wind);
-     p.520 Elgin (inland plateau 250-500 m; coast about 20 km south; "the coolest wine-growing area of South Africa"); p.521 Walker Bay (Hermanus; about 800 mm;
-     Hamilton-Russell planted Chardonnay and Pinot Noir in the Hemel-en-Aarde Valley from 1975; clay up to 55%).
-  12 D3 p.511-512: the four-tier Wine of Origin hierarchy and its examples; 100% from the place named; 85% for a stated vintage or variety; a tasting by the Wine
-     Certification Authority; Western Cape accounts for nearly all South African wine by volume.
-  14 D4 p.115-116: traditional-method production began in 1971 (Simonsig); the CCPA founded 1992 (members over 90% of traditional-method production); whole-bunch pressing
-     mandatory; at least three bars of pressure after disgorgement; at least 12 months on the lees; the Cap Classique extended-lees aging tier from 2022 (Chardonnay, Pinot Noir
-     and Pinot Meunier only; at least 36 months).
-  15 D4 p.116-117: Robertson and Bonnievale (Breede River Valley): significant limestone, "argued to be beneficial"; narrow, shaded valleys; cool ocean breezes up the Breede
-     River; the biggest diurnal range; picking about 90 days after flowering with extra foliage; 9.5-11% potential alcohol, about 12% abv finished; medium (+) acidity, ripe
-     apple and citrus; good to very good; mid- to premium-priced.
-  16 D4 p.119: 2021-2023 an average of 3.9 million bottles of Cap Classique a year, 40% of all sparkling wine sold; nearly 70% exported.
-NOT USED: Pinotage (Steve's steer); the CSW guide's older figures (D3 and D4 win where they differ).
+SOURCES. D3 = WSET Diploma D3 ch. 30; D4 = D4 ch. 20; WOSA = the Wines of South Africa Level 2 online course "Spectacular South Africa in 10 Lessons" (2023), page numbers
+below. WHERE THEY DIFFER, D3/D4 WIN, and a contested number is left off the slide. Known conflicts: (1) Cap Classique sales: D4 says about 3.9 million bottles a year, nearly 70% exported;
+WOSA says about 10.5 million produced, 80% drunk in South Africa. NOT PRINTED; both agree the UK is the top export market, which is printed. (2) Elgin's altitude: D3 250-500 m, WOSA 250-400 m;
+D3 used (and not printed on a slide now). (3) Counts: WOSA's 2023 course says 30 districts and 98 wards; WOSA's website, D3-era sources and the polygon file say 32 and 102; 32 and 102 used.
+(4) Years of winemaking: D3 "more than 370 years" (from 1652); WOSA "more than 360" (first wine 1659): D3 used.
+  1  cover: vineyards in the Overberg under blue mountains; no claim is made about the mountains; the caption is the photo's own title ("Vineyards, Overberg, Western Cape").
+  2  WOSA p5 (two oceans meet at the tip of Africa; Cape Town a cultural gateway where the cultures of Africa, Europe and the East mingle), p7 (Stellenbosch 40 km, Paarl 60 km, Elgin 65 km from Cape Town),
+     p63 (some 22 wine routes and experiences).
+  3  D3 p.511 (a place name on the label: 100% of the grapes from it). The map is drawn from the real Wine of Origin polygons (data/geo/za_wo_winelands.geojson; data/geo/WO_SOURCE.md); region membership
+     of each district is the SAWIS production-areas list (October 2023).
+  4  D3 p.505: the cold Benguela flows north from Antarctica up the west coast (the main cooling influence); the warmer Agulhas flows south down the east coast; they meet at Cape Agulhas; early morning
+     fog (clears by mid-morning); the Cape Doctor, a strong south-easter in spring and summer, cools, helps inhibit disease and can lower yields. WOSA p5 (a sunny country with the energy of the New World
+     and the restraint of the Old).
+  5  D3 p.506: three main soils (Table Mountain sandstone: sandy, low nutrient and water retention, higher slopes e.g. Stellenbosch and Constantia; granite: good water retention, dry farming, lower slopes e.g. Paarl;
+     shale: good nutrients and water retention, dry farming, e.g. Swartland). WOSA p26: "some of the world's oldest viticultural soils, 1,000-500 million years ago".
+     Photos: Cederberg sandstone (Cederberg is a Wine of Origin ward; its caption says "Cederberg"), granite boulders at Boulders Beach (Cape Peninsula granite), Klapmuts shale hills (the file's own title).
+  6  D3 p.504: 1652; slavery abolished in the 1860s; the dop system (workers paid in low-quality alcohol), formally abolished in 1961 but continued as a reward until 1994 "and in some places beyond"; the KWV (volumes and
+     prices; supported apartheid); 1994 first democratic elections; KWV ceased as a cooperative in 1997; 2017 about 85% of wine grapes made into wine (under a third before the 1990s). Background: Bo-Kaap, Cape Town.
+  7  D3 p.507-508 (Chenin 16,000 ha, double the Loire's; high-volume vs small-volume Chenin). WOSA p19 (Chenin = 52% of all certified old vines, 35+ years), p21 (aromas: lemon and lime, pawpaw, mango, apples,
+     honeysuckle, chalky, wet stone; with age honey, biscuit, marzipan), p22 (Ken Forrester's Old Vines Reserve 2021, 97 points, Decanter Best in Show 2022: not printed, room).
+  8  WOSA p44 (the Helderberg's Golden Triangle: granite, shale, sandstone and clay, 60 to 400 m, False Bay cooling breezes; flavor profile: blackcurrant, black cherry, plum, cassis; violets; pencil shavings;
+     cedary spice; firm styles soften with time), p45 (Stellenbosch Cabernet Collective, 2017, 35 producers, aiming at parity with French and US Cabernet). D3 p.514: Stellenbosch's reputation for very good to
+     outstanding, premium-priced Cabernet and related blends.
+  9  Stellenbosch's eight wards (Banghoek, Bottelary, Devon Valley, Jonkershoek Valley, Papegaaiberg, Polkadraai Hills, Simonsberg-Stellenbosch, Vlottenburg) and Simonsberg-Paarl (D3 p.515), real polygons.
+  10 D3 p.511 (three main blends), p.515 (Paarl: distinct ripeness, fuller body than Stellenbosch; Vilafonte at super-premium prices; Franschhoek: fresh fruit prized for blending; ringed by mountains),
+     WOSA p44 ("Bordeaux-style blends are amongst South Africa's finest red wine styles"). The producers named are D3's.
+  11 D3 p.516 (Swartland: around 500 mm [and 400 mm in the climate section: printed 400-500]; low-fertility granite and shale; a significant share of the country's old vines over 35 years, mostly unirrigated;
+     since 2000 Charles Back at Spice Route, then Eben Sadie and Chris and Andrea Mullineux; themes). WOSA p9 (shortage of water: lower yields, smaller, more concentrated fruit, less fungal disease; bush vines;
+     Malmesbury shale). No Swartland photograph exists in the open collections, so this slide is typographic.
+  12 D3 p.513 (Constantia: False Bay 10 km, cooling sea breezes, granite over sandstone, no Pinot Noir because it fares less well in the wind; main varieties Sauvignon Blanc, Chardonnay, Cabernet Sauvignon, Shiraz),
+     p.520-521 (Walker Bay: cooling ocean breezes slow ripening and preserve acidity; clay up to 55% in parts of Hemel-en-Aarde; Pinot Noir and Chardonnay fresher and brighter than areas further inland; Elgin "the coolest
+     wine-growing area of South Africa", immediately NW of Walker Bay). WOSA p7 (Hermanus, a whale-watching town).
+  13 D3 p.513 (Constantia, Vin de Constance: a dried Muscat dessert wine, highly rated in the 1700s and 1800s, revived in the 1980s by Klein Constantia). WOSA p57 (rumored to be Napoleon's favorite; he ordered up to
+     297 gallons / 1,126 liters for St Helena; written about by Jane Austen and Charles Dickens), p58 (Mullineux Olerasay: a solera-style straw wine; 99 points Wine Advocate, 100 Vinous, 98 Neal Martin).
+  14 D4 p.115-116 (1971 Simonsig; traditional method; whole-bunch pressing mandatory; at least 12 months on the lees; the 2022 extended-lees tier, 36 months), WOSA p11 (first released 1973 as "Kaapse Vonkel", Cape Sparkle;
+     over 250 producers), p12 (UK first of the top export markets; D4 also names the UK first).
+  15 D4 p.117 (picked about 90 days after flowering; 9.5-11% potential alcohol; limestone in Robertson and Bonnievale), WOSA p12 (the first grapes harvested, often at night; regions: Robertson, Paarl, Walker Bay,
+     Franschhoek, Elgin, Darling, Durbanville, Constantia), p15 (flavor profile: apples, citrus, floral, brioche-like baked notes; food: oysters and sashimi with blanc de blancs, fried chicken and sushi with brut blends).
+  16 WOSA p63-64: about 95% of South African wine is made in the Cape Floral Kingdom, one of six plant kingdoms, the smallest and richest, over 9,600 plant species, 70% found nowhere else; the Cape sugarbird and protea
+     are the emblem of the WWF Conservation Champions wineries; 94.3% of certified wines meet the requirements for the sustainability seal (caption). Photo: Cape sugarbird on a king protea.
+NOT USED: Pinotage (Steve's steer), the Cap Classique volume and export-share numbers (conflict above), Shiraz and Merlot lessons (not needed for this story).
 """
 import glob
 import json
@@ -62,21 +62,17 @@ from tokens import W, M, INK, PAPER    # noqa: E402
 OUT = "/home/claude/out_fg_sa"
 os.makedirs(OUT, exist_ok=True)
 
-# ---- the arc's forest green (engine/themes.py), the house gold, and a warm-to-dry ramp for the rain chart
 GREEN = (28, 70, 48)
 GOLD = (196, 158, 84)
 PAL = dict(SIGNATURE=GREEN, ACCENT=GOLD, LEAD=(128, 88, 40), MARK=GREEN)
-SEA, SAGE, OCHRE, TERRA, CLAY = (74, 118, 140), (112, 140, 104), (190, 150, 70), (168, 96, 60), (130, 70, 48)
-CHART = dict(
-    ripe=[SEA, SAGE, OCHRE, TERRA, CLAY], focus=GREEN, cool=SEA, warm=GOLD, vine=(86, 104, 70), shade=GREEN, amber=TERRA, gold=GOLD,
-    grape=(120, 22, 62), stone=(110, 100, 92), track=(220, 208, 196), ice=SEA, ice_fill=(226, 234, 240), ice_text=(54, 78, 100),
-)
 
 C_SAT = "South African Tourism / Wikimedia Commons (CC BY 2.0)"
-C_YEO = "yeowatzup / Wikimedia Commons (CC BY 2.0)"
+C_BUHR = "Axel B\u00fchrmann / Wikimedia Commons (CC BY 4.0)"
+C_LUMO = "lumoplank / Wikimedia Commons (CC0)"
+C_KEATS = "Derek Keats / Wikimedia Commons (CC BY 2.0)"
 C_FAB = "fabulousfabs / Wikimedia Commons (CC BY 2.0)"
-C_ROO = "rooymans2000 / Wikimedia Commons (CC BY 2.0)"
-
+C_HATF = "Craig Hatfield / Wikimedia Commons (CC BY 2.0)"
+C_MISTER = "Mister-E / Wikimedia Commons (CC BY 2.0)"
 
 # ------------------------------------------------------------------------------------------ the maps: REAL Wine of Origin polygons (arc5/wo_maps.py)
 import wo_maps as WM      # noqa: E402
@@ -87,7 +83,7 @@ DISTRICT_MAP = WM.district_overview(
                 ("CAPE SOUTH COAST", ["Elgin", "Walker Bay", "Overberg", "Cape Agulhas", "Swellendam"]),
                 ("BREEDE RIVER VALLEY", ["Breedekloof", "Worcester", "Robertson"])],
     kicker="WHERE IT GROWS", headline="The Winelands, by District",
-    standfirst="Vineyards lie between 32\u00b0 and 35\u00b0 S, mostly near the sea.")
+    standfirst="Name a district on a label and every grape comes from it.")
 DISTRICT_MAP["key_pitch"] = 1.15
 DISTRICT_MAP["context"] = [(0.03, 0.60, "Atlantic Ocean"), (0.72, 0.925, "Indian Ocean")]
 import core as _core     # noqa: E402
@@ -96,73 +92,62 @@ STELL_MAP = WM.ward_map(
     numbered=[("Stellenbosch", "Simonsberg-Stellenbosch"), ("Stellenbosch", "Banghoek"), ("Stellenbosch", "Devon Valley"), ("Stellenbosch", "Bottelary"),
               ("Stellenbosch", "Jonkershoek Valley"), ("Stellenbosch", "Papegaaiberg"), ("Stellenbosch", "Polkadraai Hills"), ("Stellenbosch", "Vlottenburg"),
               ("Paarl", "Simonsberg-Paarl")],
-    kicker="WARD BY WARD", headline="Stellenbosch Up Close",
+    kicker="WARD BY WARD", headline="Eight Wards, Eight Terroirs",
     standfirst=None,
     highlight="Simonsberg-Stellenbosch", context_districts=("Stellenbosch", "Paarl", "Franschhoek", "Cape Town"), ctx_font=_core.font("caption_italic", 64),
     focus_district="Stellenbosch")
 STELL_MAP["key_pitch"] = 1.2
 
 
-# ------------------------------------------------------------------------------------------ the Wine of Origin circles (page pixels)
-def _euler():
-    return [("Western Cape", 1080, 1650, 760, None, "above"),
-            ("Coastal Region", 852, 1707, 513, "Western Cape", "above"),
-            ("Breede River Valley", 1590, 1530, 235, "Western Cape", "in"),
-            ("Stellenbosch", 814, 1783, 361, "Coastal Region", "above"),
-            ("Simonsberg-Stellenbosch", 814, 1821, 276, "Stellenbosch", "in")]
-
 
 SLIDES = [
-    # 1 -- COVER: vine rows and mountains in the Stellenbosch winelands (Mister-E), natural color. The first version used a sunset photo whose pink grade was baked into the file.
+    # 1 -- COVER: the most beautiful vineyard photograph in the open collections, natural color. (The first cover's sunset had a pink grade baked into the file.)
     ("cover_bleed", dict(
-        photo="sa_cape_vineyards_stell", photo_anchor=0.5, photo_zoom=1.0,
+        photo="sa_overberg_vineyards", photo_anchor=0.5, photo_zoom=1.0,
         kicker="THE FIELD GUIDE: SOUTH AFRICA", kicker_size=84,
         kicker_chip=dict(color=(250, 246, 236), alpha=0.45, text=INK),
-        title="Two Currents,\nOne Wind", title_top=0.44,
-        photo_credit="Mister-E / Wikimedia Commons (CC BY 2.0)",
+        title="Two Currents,\nOne Wind", title_top=0.50,
+        photo_credit=C_BUHR,
     )),
 
-    # 2 -- WHERE IT GROWS: D3 p.505 (latitude, distance from the sea) on REAL Wine of Origin district polygons (see the ledger above).
+    # 2 -- THE PLACE: why the Cape is amazing. WOSA p5, p7, p63.
+    ("hero_facts", dict(
+        photo="sa_table_mountain_blouberg", anchor=0.42, hero_h=1340, photo_caption="Table Mountain from Blouberg", photo_credit=C_SAT,
+        kicker="WHY THE CAPE", headline="Wine Country Beside a Great City",
+        facts=[("Two oceans", "The Atlantic and the Indian meet at the tip of Africa, and both cool the vineyards."),
+               ("Close to town", "Stellenbosch is 40 km from Cape Town, Paarl 60 km, Elgin 65 km."),
+               ("Made to visit", "About 22 wine routes, from farm stays to mountain biking."),
+               ("A cultural mix", "Africa, Europe and the East meet in Cape Town, the gateway to the winelands.")],
+    )),
+
+    # 3 -- THE DISTRICT MAP: D3 p.511 (the label promise) on real polygons.
     ("wo_map", DISTRICT_MAP),
 
-    # 3 -- TWO CURRENTS, ONE WIND: D3 p.505. Cape Point has no place claim in the copy.
-    ("hero_facts", dict(
-        photo="sa_cape_point", anchor=0.5, hero_h=1340, photo_caption="Cape Point", photo_credit=C_YEO,
-        kicker="THE CLIMATE ENGINE", headline="Two Oceans Cool the Cape",
-        facts=[("The Benguela", "A cold current from Antarctica, up the west coast: the main cooling influence."),
-               ("The Agulhas", "A warmer current down the east coast. The two meet at Cape Agulhas."),
-               ("Morning fog", "Warm, moist air meets the cold sea and forms fog that clears by mid-morning."),
-               ("The Cape Doctor", "A strong south-easter in spring and summer: it cools and curbs disease, but can cut yields.")],
+    # 4 -- THE CLIMATE ENGINE: D3 p.505. The Cape Peninsula coast, in color.
+    ("spotlight", dict(
+        photo="sa_cape_peninsula_coast", hero_h=1500, kicker="THE CLIMATE ENGINE", headline="Sun-Drenched, Sea-Cooled",
+        callouts=[(0.20, 0.50, "A", "The cold current", "The Benguela flows up from Antarctica: the main cooling influence."),
+                  (0.90, 0.12, "B", "The warm current", "The Agulhas flows down the east coast. They meet at Cape Agulhas."),
+                  (0.74, 0.28, "C", "Morning fog", "Warm, moist air over cold sea: fog that lifts by mid-morning."),
+                  (0.42, 0.78, "D", "The Cape Doctor", "A strong south-easter that cools vines and curbs disease, but can cut yields.")],
     )),
 
-    # 4 -- THE RAIN GRADIENT: D3 p.505-506 and the district entries. Ranges are drawn at their midpoint and the chart says so.
-    ("chart_stack", dict(
-        chart=CHART, kicker="HOW MUCH RAIN", headline="From Wet Peninsula to Dry North",
-        standfirst="Rain falls mainly in winter, and thins out to the north. The 2015\u201318 drought made water a top priority.",
-        bar_chart=dict(title="ANNUAL RAINFALL IN MILLIMETERS (A RANGE IS DRAWN AT ITS MIDPOINT)",
-                       bars=[("Constantia", 70, "about 1,000", "cool", True),
-                             ("Paarl", 60, "800\u2013900", "vine", False),
-                             ("Franschhoek", 56, "about 800", "vine", False),
-                             ("Stellenbosch", 49, "over 700", "vine", False),
-                             ("Swartland", 32, "400\u2013500", "warm", False),
-                             ("Olifants River", 14, "150\u2013250", "amber", True)]),
+    # 5 -- THE GROUND BENEATH: D3 p.506, WOSA p26. Three real rocks.
+    ("blades", dict(
+        blades=[dict(photo="sa_sandstone_cederberg", caption="Sandstone, Cederberg", anchor=0.5),
+                dict(photo="sa_boulders_granite", caption="Granite, Boulders Beach", anchor=0.5),
+                dict(photo="sa_shale_klapmuts", caption="Shale hills, Klapmuts", anchor=0.5)],
+        blade_h=1180, kicker="THE GROUND BENEATH", headline="Some of Earth's Oldest Vineyard Soils",
+        items=[("Sandstone", "Sandy and lean, on high slopes in Stellenbosch and Constantia. Needs careful irrigation."),
+               ("Granite", "Holds water, so vines can be dry-farmed. Common on lower slopes, as in Paarl."),
+               ("Shale", "Fertile and holds water too. Common in Swartland, where old vines are dry-farmed.")],
+        photo_credit="Zaian, lumoplank, Abu Shawka / Wikimedia Commons (CC0)",
     )),
 
-    # 5 -- THREE SOILS: D3 p.506.
-    ("tile_grid", dict(
-        kicker="THREE SOILS", headline="Sandstone, Granite and Shale",
-        standfirst="Soils are varied and complex, but three types dominate the Western Cape.",
-        tile_colors=[((196, 158, 84), INK), (GREEN, PAPER), ((110, 100, 92), PAPER), ((168, 96, 60), PAPER)],
-        tiles=[("Sandstone", "Table Mountain", "Sandy and poor, on higher slopes, as in Stellenbosch and Constantia. Holds little water or nutrient."),
-               ("Granite", "Holds water", "On foothills and lower slopes, as in Paarl. Good for dry farming."),
-               ("Shale", "Fertile and holds water", "Common in Swartland. Good nutrients, and good for dry farming."),
-               ("Acidic", "Lime at planting", "Many Western Cape soils are acidic enough to limit nutrients.")],
-    )),
-
-    # 6 -- FROM 1652 TO 1994: D3 p.504. Stated plainly, once.
+    # 6 -- THE HISTORY: D3 p.504, with Bo-Kaap ghosted behind.
     ("timeline", dict(
-        kicker="THE HISTORY", headline="From 1652 to 1994",
-        standfirst="Over 370 years of winemaking, and a very recent freedom.",
+        bg_photo="sa_bokaap", kicker="THE HISTORY", headline="From 1652 to 1994",
+        standfirst="Over 370 years of wine, but a modern Cape only about 30 years old.",
         events=[("1652", "Europeans settle the Cape", "Grapes are grown for wine ever since."),
                 ("1860s", "Slavery abolished", "Wine had relied on enslaved labor."),
                 ("1961", "The \u2018dop\u2019 system abolished", "Workers were paid in low-quality alcohol. It continued as a reward to 1994, and in places beyond."),
@@ -170,43 +155,46 @@ SLIDES = [
                 ("2017", "About 85% made into wine", "Before the 1990s, under a third was.")],
     )),
 
-    # 7 -- CHENIN BLANC: D3 p.507-508. Two ways to make one grape. The photos are decorative; the labels are the categories.
+    # 7 -- CHENIN BLANC: D3 p.507-508, WOSA p19, p21.
     ("duel", dict(
         photos=("fffa_climate_young_vines", "sa_muratie_vines"), labels=("High volume", "Small volume"),
-        kicker="CHENIN BLANC", headline="One Grape, Two Worlds",
-        standfirst="Chenin covers 16,000 ha, double the Loire's area, and is made two ways.",
-        mode="table", col_heads=("Inexpensive", "Premium"),
+        kicker="CHENIN BLANC", headline="The Cape's White Flagship",
+        standfirst="Over half the Cape's certified old vines are Chenin. That is where the depth comes from.",
+        mode="table", col_heads=("Everyday", "Premium"),
         rows=[("In the vineyard", "High yields, sprayed against botrytis", "Low yields, old unirrigated vines"),
               ("At harvest", "Minimal or no sorting", "Careful hand sorting"),
-              ("In the bottle", "May include up to 15% Colombard", "100% Chenin Blanc")],
+              ("In the glass", "Fresh citrus and pawpaw", "Honey, marzipan and chalk with age")],
         photo_credit="Mister-E; South African Tourism / Wikimedia Commons (CC BY 2.0)",
     )),
 
-    # 8 -- CABERNET COUNTRY: D3 p.514-515.
+    # 8 -- CABERNET: WOSA p44-45, D3 p.514.
     ("hero_facts", dict(
         photo="sa_stell_valley", anchor=0.5, hero_h=1340, photo_caption="Stellenbosch", photo_credit=C_SAT,
-        kicker="CABERNET COUNTRY", headline="Stellenbosch Wears Cabernet",
-        facts=[("The reputation", "Very good to outstanding, premium-priced Cabernet and related blends."),
-               ("The mountains", "Simonsberg peaks at 1,390 m. Vineyards climb from about 100 to 500 m."),
-               ("The slopes", "Higher, cooler slopes on granite or shale help make better grapes."),
-               ("The wind", "Cool False Bay winds reach the lower sites.")],
+        kicker="CABERNET COUNTRY", headline="Cabernet With a Sea Breeze",
+        facts=[("The place", "The \u201cGolden Triangle\u201d: four soils, 60 to 400 m, cooled by False Bay."),
+               ("In the glass", "Blackcurrant, cassis, violets, cedar and pencil shavings. It softens with age."),
+               ("The standing", "Very good to outstanding, at premium prices."),
+               ("The team", "35 producers formed a Cabernet Collective in 2017 to match Bordeaux.")],
     )),
 
-    # 9 -- THE BORDEAUX BLEND, CAPE-STYLE: D3 p.511, 515.
+    # 9 -- STELLENBOSCH, WARD BY WARD: real polygons.
+    ("wo_map", STELL_MAP),
+
+    # 10 -- THE BORDEAUX BLEND: D3 p.511, p.515; WOSA p44.
     ("side_rail", dict(
         photo="sa_boschendal_meadow", photo_caption="Boschendal, Franschhoek", side="right", photo_credit=C_SAT,
-        kicker="THE BORDEAUX BLEND", headline="Three Valleys,\nOne Blend",
+        kicker="THE BORDEAUX BLEND", headline="The Cape's Finest\nReds Are Blends",
         standfirst="",
         items=[("One of three", "South Africa's main blends: white Cape, red Bordeaux and red Cape."),
                ("Stellenbosch", "Cabernet-based blends carry the name. Simonsberg: Kanonkop, Rustenberg."),
-               ("Paarl", "Warmer: a distinct ripeness and fuller body. Vilaf\u00f4nt\u00e9 sells at super-premium prices."),
+               ("Paarl", "Warmer: a distinct ripeness and fuller body. Vilafont\u00e9 sells at super-premium prices."),
                ("Franschhoek", "Ringed by mountains. Its fresh fruit is prized for blending.")],
     )),
 
-    # 10 -- SWARTLAND: D3 p.516.
+    # 11 -- SWARTLAND: D3 p.516, WOSA p9. Typographic: no open Swartland photograph exists.
     ("stat_wall", dict(
-        kicker="THE NEW WAVE", headline="Swartland Starts Over",
-        standfirst="A warm, dry district whose old vines inspired a new generation.",
+        kicker="THE NEW WAVE", headline="Old Vines Reinvent the Swartland",
+        standfirst="Dry-farmed old vines give small crops of rich, concentrated fruit.",
         stats=[("35+", "YEARS OLD", "A large share of the country's old vines, mostly unirrigated."),
                ("2000", "THE TURNING POINT", "Charles Back at Spice Route, then Eben Sadie, and Chris and Andrea Mullineux."),
                ("400\u2013500", "MM OF RAIN", "Low for a warm climate: most vineyards need irrigation."),
@@ -214,57 +202,71 @@ SLIDES = [
         famous=["Granite and shale soils", "Very good to outstanding quality", "Premium to super-premium prices"], famous_label="ALSO", cell_max=650,
     )),
 
-    # 11 -- THE COOL SOUTH: D3 p.513, 520, 521.
-    ("tile_grid", dict(
+    # 12 -- THE COOL SOUTH: D3 p.513, p.520-521; WOSA p7.
+    ("duel", dict(
+        photos=("sa_whale_walker_bay", "sa_constantia_vines"), labels=("Walker Bay", "Constantia"),
         kicker="THE COOL SOUTH", headline="Where the Ocean Takes Over",
-        standfirst="Four cooler places, all within reach of the sea.",
-        tile_colors=[(GREEN, PAPER), (SEA, PAPER), ((196, 158, 84), INK), ((110, 100, 92), PAPER)],
-        tiles=[("Constantia", "Wine since 1685", "False Bay is 10 km away. About 1,000 mm of rain. No Pinot Noir: too windy."),
-               ("Elgin", "The coolest area", "An inland plateau at 250\u2013500 m, with cloud cover and fresh, high-acid wines."),
-               ("Hemel-en-Aarde", "Burgundy-inspired", "Hamilton-Russell planted Chardonnay and Pinot Noir here from 1975."),
-               ("Walker Bay", "Cool maritime", "Hermanus is its town. About 800 mm of rain, all year.")],
+        standfirst="Elgin, next door to Walker Bay, is the coolest wine area of all.",
+        mode="table", col_heads=("Walker Bay", "Constantia"),
+        rows=[("The sea", "Cold breezes slow ripening and keep acidity", "False Bay, 10 km away, sends cool breezes"),
+              ("The soil", "Clay, up to 55% in parts", "Granite over sandstone"),
+              ("The wines", "Fresh, bright Pinot Noir and Chardonnay", "Chardonnay, Sauvignon Blanc; Pinot Noir struggles in the wind")],
+        photo_credit=f"{C_LUMO}; {C_FAB}",
     )),
 
-    # 12 -- WINE OF ORIGIN: D3 p.511-512.
-    ("euler_nesting", dict(
-        kicker="THE LABEL", headline="Four Tiers of Place",
-        standfirst="A place named on the label means 100% of the grapes. A stated vintage or grape needs 85%.",
-        circles=_euler(),
+    # 13 -- A LEGEND: D3 p.513, WOSA p57-58.
+    ("editorial_lead", dict(
+        photo="sa_groot_constantia_house", photo_caption="Groot Constantia", band_h=1050,
+        kicker="A LEGEND IN A BOTTLE", headline="A Wine Fit for Napoleon",
+        standfirst="Constantia's sweet wine was prized across Europe in the 1700s and 1800s.",
+        items=[("The legend", "Rumored to be Napoleon's favorite: he ordered 297 gallons for his exile on St Helena."),
+               ("The revival", "Klein Constantia revived Vin de Constance, a dried-Muscat wine, in the 1980s."),
+               ("The new wave", "Mullineux's straw wine, Olerasay, has scored 98 to 100 points.")],
+        photo_credit=C_LUMO,
     )),
 
-    # 13 -- STELLENBOSCH UP CLOSE: D3 p.514-515 and the official production-areas list; real polygons; Simonsberg-Stellenbosch is D3's example ward.
-    ("wo_map", STELL_MAP),
-
-    # 14 -- CAP CLASSIQUE: THE RULES: D4 p.115-116.
-    ("stat_wall", dict(
-        kicker="CAP CLASSIQUE", headline="Bubbles With Rules",
-        standfirst="South Africa's traditional-method sparkling wine, made to its own regulations.",
-        stats=[("1971", "THE FIRST", "Simonsig starts traditional-method production."),
-               ("12", "MONTHS ON LEES", "The legal minimum, in the bottle."),
-               ("36", "MONTHS, EXTENDED", "Since 2022: only Chardonnay, Pinot Noir and Pinot Meunier."),
-               ("1992", "THE ASSOCIATION", "Its members make over 90% of the traditional-method wine.")],
-        famous=["Whole-bunch pressing is mandatory", "Three bars of pressure after disgorgement"], famous_label="ALSO REQUIRED", cell_max=650,
+    # 14 -- CAP CLASSIQUE: D4 p.115-116, WOSA p11-13.
+    ("fact_file", dict(
+        photo="sa_riddling_rack", photo_caption="A riddling rack", photo_credit=C_HATF,
+        kicker="CAP CLASSIQUE", headline="Champagne's Method, the Cape's Sun",
+        facts=[("The first", "Simonsig, 1971. Released in 1973 as \u201cKaapse Vonkel,\u201d Cape Sparkle."),
+               ("The method", "Traditional: a second fermentation in the bottle. Whole-bunch pressing is mandatory."),
+               ("The wait", "At least 12 months on the lees. The 2022 extended tier needs 36."),
+               ("The scale", "Over 250 producers. The UK is its top export market."),
+               ("The point", "Sunny fruit kept fresh, because the grapes are picked early.")],
     )),
 
-    # 15 -- CAP CLASSIQUE: THE GRAPES: D4 p.116-117. Young vines in Stellenbosch (D4: Stellenbosch is one of the principal sources of Cap Classique grapes), natural color.
+    # 15 -- CAP CLASSIQUE IN THE GLASS: D4 p.117, WOSA p12, p15.
     ("side_rail", dict(
-        photo="sa_young_vines_stell", photo_caption="Young vines, Stellenbosch", side="right", photo_credit="Mister-E / Wikimedia Commons (CC BY 2.0)",
-        kicker="CAP CLASSIQUE", headline="Picked for\nFreshness",
+        photo="sa_young_vines_stell", photo_caption="Young vines, Stellenbosch", side="right", photo_credit=C_MISTER,
+        kicker="CAP CLASSIQUE", headline="Fresh, Toasty and\nMade for Food",
         standfirst="",
-        items=[("Slow ripening", "Growers wait about 90 days after flowering, with extra leaf cover for shade."),
-               ("Low sugar", "Picked at 9.5\u201311% potential alcohol: about 12% in the finished wine."),
-               ("Limestone and cool air", "Robertson and Bonnievale: limestone, shaded valleys, river breezes."),
-               ("In the glass", "Medium (+) acidity, ripe apple and citrus. Good to very good.")],
+        items=[("Picked early", "The first grapes of the season, often at night, to keep acidity."),
+               ("In the glass", "Apple and citrus, then brioche, toast and nuts as time on the lees builds."),
+               ("Where", "Limestone in Robertson; cool coast in Walker Bay and Elgin."),
+               ("With food", "Blanc de blancs with oysters and sashimi; blends with fried chicken and sushi.")],
     )),
 
-    # 16 -- CLOSE: D4 p.119. The cover's vineyard again, a bookend (the layout's text panel covers the lower half of the photo).
+    # 16 -- WHY IT IS AMAZING: WOSA p63-64. The Cape sugarbird on a king protea, the emblem of the WWF Conservation Champions wineries.
+    # The closing layout's text panel covers the lower half of the photo, so the photo is composed (photos/sa_sugarbird_close.jpg) with the bird and petals in the visible band.
     ("statement", dict(
-        variant="cover", photo="sa_cape_vineyards_stell", photo_anchor=0.30,
-        title="The Cape in\nthe Glass",
-        subtitle="Cap Classique is now 40% of the sparkling wine sold in South Africa, and nearly 70% of it is exported.",
-        photo_credit="Mister-E / Wikimedia Commons (CC BY 2.0)",
+        variant="cover", photo="sa_sugarbird_close", photo_anchor=0.5,
+        title="Grown Among\n9,600 Plants",
+        subtitle="About 95% of Cape wine grows inside the world's smallest, richest plant kingdom.",
+        photo_credit=C_KEATS,
     )),
 ]
+
+
+def _curly(v):
+    """Typographic apostrophes in every string of a slide's content (house style: never a straight apostrophe in type)."""
+    if isinstance(v, str):
+        return v.replace("'", "\u2019")
+    if isinstance(v, (list, tuple)):
+        return type(v)(_curly(x) for x in v)
+    if isinstance(v, dict):
+        return {k: (x if k in ("photo", "photos", "bg_photo", "variant", "mode", "side", "blades", "chart") else _curly(x)) for k, x in v.items()}
+    return v
 
 
 def build():
@@ -274,7 +276,7 @@ def build():
     paths = []
     total = len(SLIDES)
     for i, (name, slot) in enumerate(SLIDES, start=1):
-        img = modules.MODULES[name](dict(slot), i, total, PAL)
+        img = modules.MODULES[name](_curly(dict(slot)), i, total, PAL)
         p = f"{OUT}/{i:02d}_{name}.png"
         img.save(p)
         paths.append(p)
