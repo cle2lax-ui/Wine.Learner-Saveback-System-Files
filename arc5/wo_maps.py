@@ -142,6 +142,7 @@ def ward_map(bbox, numbered, headline, kicker, standfirst, highlight=None, conte
     color; the districts in `context_districts` are named quietly (muted italic) in the open ground between the wards."""
     win = box(bbox[0], bbox[2], bbox[1], bbox[3])
     mw = 1920
+    hl = set(highlight) if isinstance(highlight, (list, tuple, set)) else ({highlight} if highlight else set())
     areas, items = [], {}
     dist_feats = [f for f in feats("District") if any(g.intersects(win) for g in _poly_geoms(f))]
     for f in dist_feats:        # the focus district in its region's color; its neighbors neutral, so the district a ward sits in reads at once
@@ -158,7 +159,7 @@ def ward_map(bbox, numbered, headline, kicker, standfirst, highlight=None, conte
     pos = relax(items, bbox)
     ward_areas = []
     for n_, par, f, fill in meta:
-        a_ = _area_dict(f, fill, number=n_, at=pos.get(f["name"]), highlight=(f["name"] == highlight), width=3)
+        a_ = _area_dict(f, fill, number=n_, at=pos.get(f["name"]), highlight=(f["name"] in hl), width=3)
         if f["name"] in pos:
             a_["tip"] = tip_for(items, pos, f["name"], bbox)
         ward_areas.append(a_)
@@ -167,7 +168,7 @@ def ward_map(bbox, numbered, headline, kicker, standfirst, highlight=None, conte
         if par != last:
             key.append(dict(header=par.upper()))
             last = par
-        key.append(dict(number=n_, name=f["name"], fill=fill, highlight=(f["name"] == highlight)))
+        key.append(dict(number=n_, name=f["name"], fill=fill, highlight=(f["name"] in hl)))
     # quiet district names, set in ground not covered by a numbered ward or badge
     ctx = []
     if context_districts and ctx_font is not None:

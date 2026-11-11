@@ -62,3 +62,16 @@ Layout QA passes on all 15 slides; `text_audit` 0 of 136 text groups below thres
 **Photos (all open-licensed, natural color).** Cover: Overberg vineyards (Axel B\u00fchrmann, CC BY 4.0). Table Mountain from Blouberg, Bo-Kaap, Boschendal (South African Tourism). Cape Peninsula coast, Boulders Beach granite, a southern right whale in Walker Bay, Groot Constantia (lumoplank, CC0). Cederberg sandstone (Zaian, CC0), Klapmuts shale (Abu Shawka, CC0). Constantia vines (fabulousfabs), riddling rack (Craig Hatfield), Cape sugarbird on a king protea (Derek Keats), young vines and Stellenbosch vineyards (Mister-E). Captions say only what each file's own title says (for example "Shale hills, Klapmuts", not Swartland).
 
 **Guards.** Layout QA passes on all 16 slides; `text_audit` 0 of 126 below threshold; spelling clean; every slide at or under 68 words; engine `regress` 42 of 42.
+
+
+---
+
+## Round 4 (Steve: an Africa line drawing on the cover; the "so what" of the ward map, and its title; Sauvignon Blanc and Chardonnay)
+
+**Cover.** A line drawing of Africa (Natural Earth 1:50m country outlines, public domain; `data/geo/africa_countries.geojson`) in the upper-right quadrant, South Africa filled gold with Lesotho left as the hole it is. The first placement crowded the kicker chip and the thin lines faded on cloud, so it moved down and right and gained a faint deep-blue plate inside the continent.
+
+**Slide 10 (the ward map): Steve was right on both counts.** The headline said "Eight Wards, Eight Terroirs" over a map that numbers nine wards (Stellenbosch has eight; Simonsberg-Paarl is Paarl's), and "eight terroirs" was an unsupported flourish with no "so what". The real point, from D3: a ward is defined by common soils, climate and ecology, so it is a tighter promise than a district; and the Simonsberg shows it, two wards on two sides of one mountain with two styles (Cabernet; fresh Chardonnay). New headline "One Mountain, Two Wards, Two Styles", standfirst "A ward is a tighter promise. On the Simonsberg: Cabernet one side, fresh Chardonnay the other." Both Simonsberg wards are ringed in gold and keyed in gold; the key is grouped Stellenbosch (eight) and Paarl (one).
+
+**Slide 8 (new): Sauvignon Blanc and Chardonnay.** Four Cape styles each (flavors and where they come from) from the WOSA course, with D3 for Durbanville and Elgin; the unique Cape notes are the fynbos and sea-salt edge on Sauvignon Blanc and Robertson's limestone on Chardonnay (the course compares it to Chablis). To stay at 16 slides, the old standalone Bordeaux-blend slide became a fact on the Cabernet slide (9), which keeps the Paarl (fuller) and Franschhoek (fresher) nuance. Producers named on the old blend slide (Kanonkop, Rustenberg, Vilafont\u00e9) were dropped for room; Kanonkop and Rustenberg are in the caption notes.
+
+**Guards.** Layout QA passes on all 16 slides; `text_audit` 0 of 126 below threshold; spelling clean; every slide at or under 68 words; engine `regress` 42 of 42; variety 12 distinct layouts, graphic-led slides 3, 6, 10, 11.

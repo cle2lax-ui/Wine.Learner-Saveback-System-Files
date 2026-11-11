@@ -85,6 +85,7 @@ arc4/render_wad_tondonia.py
 arc5/ARC5_SOUTH_AFRICA_PLAN.md
 arc5/CAPTION_FG_SA.md
 arc5/REVIEW_FG_SA.md
+arc5/prepare_africa_geo.py
 arc5/prepare_wo_geo.py
 arc5/render_fg_sa.py
 arc5/wo_maps.py
@@ -185,6 +186,7 @@ data/NR_STOCK_MANIFEST.json
 data/cdn_geo.json
 data/france_locator.json
 data/geo/WO_SOURCE.md
+data/geo/africa_countries.geojson
 data/geo/anbaugebiete.geojson
 data/geo/california.geojson
 data/geo/de_rivers.geojson

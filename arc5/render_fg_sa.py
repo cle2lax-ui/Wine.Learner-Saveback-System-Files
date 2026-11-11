@@ -23,12 +23,16 @@ D3 used (and not printed on a slide now). (3) Counts: WOSA's 2023 course says 30
      prices; supported apartheid); 1994 first democratic elections; KWV ceased as a cooperative in 1997; 2017 about 85% of wine grapes made into wine (under a third before the 1990s). Background: Bo-Kaap, Cape Town.
   7  D3 p.507-508 (Chenin 16,000 ha, double the Loire's; high-volume vs small-volume Chenin). WOSA p19 (Chenin = 52% of all certified old vines, 35+ years), p21 (aromas: lemon and lime, pawpaw, mango, apples,
      honeysuckle, chalky, wet stone; with age honey, biscuit, marzipan), p22 (Ken Forrester's Old Vines Reserve 2021, 97 points, Decanter Best in Show 2022: not printed, room).
-  8  WOSA p44 (the Helderberg's Golden Triangle: granite, shale, sandstone and clay, 60 to 400 m, False Bay cooling breezes; flavor profile: blackcurrant, black cherry, plum, cassis; violets; pencil shavings;
-     cedary spice; firm styles soften with time), p45 (Stellenbosch Cabernet Collective, 2017, 35 producers, aiming at parity with French and US Cabernet). D3 p.514: Stellenbosch's reputation for very good to
-     outstanding, premium-priced Cabernet and related blends.
-  9  Stellenbosch's eight wards (Banghoek, Bottelary, Devon Valley, Jonkershoek Valley, Papegaaiberg, Polkadraai Hills, Simonsberg-Stellenbosch, Vlottenburg) and Simonsberg-Paarl (D3 p.515), real polygons.
-  10 D3 p.511 (three main blends), p.515 (Paarl: distinct ripeness, fuller body than Stellenbosch; Vilafonte at super-premium prices; Franschhoek: fresh fruit prized for blending; ringed by mountains),
-     WOSA p44 ("Bordeaux-style blends are amongst South Africa's finest red wine styles"). The producers named are D3's.
+  8  WOSA p25-28 (Sauvignon Blanc: the most-exported cultivar in 2022; four profiles: lime, green melon and grapefruit; tropical and yellow fruit; spicy and herbaceous; flinty and mineral; a fynbos thread and
+     "maritime salinity"), p30-33 (Chardonnay: planted in the 1980s; several critics say some of the best outside Burgundy; unoaked and oaked styles; Hemel-en-Aarde "full, but minerally"), p7 (Robertson's
+     limestone clay "similar to the French region of Chablis"). D3 p.514 (Durbanville Sauvignon Blanc "towards the greener end"), p.520-521 (Elgin and Hemel-en-Aarde: fresher styles).
+  9  WOSA p44 (the Helderberg's Golden Triangle: granite, shale, sandstone and clay, 60 to 400 m, False Bay cooling breezes; flavor profile: blackcurrant, black cherry, plum, cassis; violets; pencil shavings;
+     cedary spice; firm styles soften with time; "Bordeaux-style blends are amongst South Africa's finest red wine styles"), p45 (Stellenbosch Cabernet Collective, 2017, 35 producers, aiming at parity with French
+     and US Cabernet). D3 p.515 (Paarl: a distinct ripeness and fuller body than Stellenbosch; Franschhoek: fresher fruit prized for blending).
+  10 THE WARD MAP (Simonsberg-Stellenbosch and Simonsberg-Paarl ringed in gold). D3 p.512: at ward level the scheme is based on common soils, climate and ecological factors. D3 p.515: Simonsberg-Stellenbosch is
+     "especially recognized for Cabernet Sauvignon, Cabernet Sauvignon-based blends" (Kanonkop, Rustenberg); Simonsberg-Paarl, "on the warmer, opposite side of the Simonsberg", higher, with "a greater diurnal
+     temperature range and a longer, marginally cooler ripening season": "its Chardonnay shows notable freshness and intensity" (Glen Carlou, Plaisir de Merle). The key lists Stellenbosch's eight wards (Banghoek,
+     Bottelary, Devon Valley, Jonkershoek Valley, Papegaaiberg, Polkadraai Hills, Simonsberg-Stellenbosch, Vlottenburg) and Paarl's Simonsberg-Paarl: nine on the map, eight in Stellenbosch.
   11 D3 p.516 (Swartland: around 500 mm [and 400 mm in the climate section: printed 400-500]; low-fertility granite and shale; a significant share of the country's old vines over 35 years, mostly unirrigated;
      since 2000 Charles Back at Spice Route, then Eben Sadie and Chris and Andrea Mullineux; themes). WOSA p9 (shortage of water: lower yields, smaller, more concentrated fruit, less fungal disease; bush vines;
      Malmesbury shale). No Swartland photograph exists in the open collections, so this slide is typographic.
@@ -88,13 +92,13 @@ DISTRICT_MAP["key_pitch"] = 1.15
 DISTRICT_MAP["context"] = [(0.03, 0.60, "Atlantic Ocean"), (0.72, 0.925, "Indian Ocean")]
 import core as _core     # noqa: E402
 STELL_MAP = WM.ward_map(
-    bbox=(18.670, 19.010, -34.012, -33.790),
+    bbox=(18.600, 19.050, -34.012, -33.790),
     numbered=[("Stellenbosch", "Simonsberg-Stellenbosch"), ("Stellenbosch", "Banghoek"), ("Stellenbosch", "Devon Valley"), ("Stellenbosch", "Bottelary"),
               ("Stellenbosch", "Jonkershoek Valley"), ("Stellenbosch", "Papegaaiberg"), ("Stellenbosch", "Polkadraai Hills"), ("Stellenbosch", "Vlottenburg"),
               ("Paarl", "Simonsberg-Paarl")],
-    kicker="WARD BY WARD", headline="Eight Wards, Eight Terroirs",
-    standfirst=None,
-    highlight="Simonsberg-Stellenbosch", context_districts=("Stellenbosch", "Paarl", "Franschhoek", "Cape Town"), ctx_font=_core.font("caption_italic", 64),
+    kicker="WARD BY WARD", headline="One Mountain, Two Wards, Two Styles",
+    standfirst="A ward is a tighter promise. On the Simonsberg: Cabernet one side, fresh Chardonnay the other.",
+    highlight=("Simonsberg-Stellenbosch", "Simonsberg-Paarl"), context_districts=("Stellenbosch", "Paarl", "Franschhoek", "Cape Town"), ctx_font=_core.font("caption_italic", 64),
     focus_district="Stellenbosch")
 STELL_MAP["key_pitch"] = 1.2
 
@@ -167,29 +171,37 @@ SLIDES = [
         photo_credit="Mister-E; South African Tourism / Wikimedia Commons (CC BY 2.0)",
     )),
 
-    # 8 -- CABERNET: WOSA p44-45, D3 p.514.
+    # 8 -- SAUVIGNON BLANC AND CHARDONNAY, CAPE STYLE: WOSA p25-28 (Sauvignon Blanc: the most exported cultivar; four profiles; fynbos and a maritime saltiness), p30-33 (Chardonnay: critics rank the best
+    # beside Burgundy's; unoaked, oaked; Hemel-en-Aarde "full but minerally"), p7 (Robertson's limestone, like Chablis); D3 p.514 (Durbanville Sauvignon Blanc at the greener end), p.516 (Groenekloof), p.520-521.
+    ("editorial_lead", dict(
+        photo="sa_cape_vineyards_stell", photo_caption="Vineyards, Stellenbosch", band_h=900,
+        kicker="SAUVIGNON BLANC & CHARDONNAY", headline="Two Whites, Many Personalities",
+        standfirst="Sauvignon Blanc is the Cape's most exported grape. Some critics rank its Chardonnay beside Burgundy's.",
+        table=dict(groups=[("SAUVIGNON BLANC", [("Zesty", "lime, green melon", "Cool coast and high sites, like Elgin."),
+                                                ("Tropical", "papaya, guava", "Warm sites with big day-night swings."),
+                                                ("Herbaceous", "gooseberry, grass", "Breezy, cool sites, like Durbanville."),
+                                                ("Flinty", "gunflint, smoke", "Lean, with a fynbos and sea-salt edge.")]),
+                           ("CHARDONNAY", [("Unoaked", "citrus, green apple", "Pure and fresh, made in steel."),
+                                           ("Oaked", "butterscotch, vanilla", "Rich and buttery."),
+                                           ("Coastal", "full, mineral", "Hemel-en-Aarde: fresh and bright."),
+                                           ("Limestone", "chalky", "Robertson's soils, like Chablis's.")])]),
+        photo_credit=C_MISTER,
+    )),
+
+    # 9 -- CABERNET AND THE BLENDS: WOSA p44-45, D3 p.514-515 (merged with the old Bordeaux-blend slide to make room for the whites).
     ("hero_facts", dict(
-        photo="sa_stell_valley", anchor=0.5, hero_h=1340, photo_caption="Stellenbosch", photo_credit=C_SAT,
-        kicker="CABERNET COUNTRY", headline="Cabernet With a Sea Breeze",
+        photo="sa_stell_valley", anchor=0.5, hero_h=1240, photo_caption="Stellenbosch", photo_credit=C_SAT,
+        kicker="CABERNET COUNTRY", headline="Cabernet Leads the Finest Reds",
         facts=[("The place", "The \u201cGolden Triangle\u201d: four soils, 60 to 400 m, cooled by False Bay."),
                ("In the glass", "Blackcurrant, cassis, violets, cedar and pencil shavings. It softens with age."),
-               ("The standing", "Very good to outstanding, at premium prices."),
+               ("The blends", "Bordeaux-style blends are among the Cape's finest. Paarl's run fuller, Franschhoek's fresher."),
                ("The team", "35 producers formed a Cabernet Collective in 2017 to match Bordeaux.")],
     )),
 
-    # 9 -- STELLENBOSCH, WARD BY WARD: real polygons.
+    # 10 -- ONE MOUNTAIN, TWO WARDS: real polygons. D3 p.512 (a ward is defined by common soils, climate and ecology), p.515 (Simonsberg-Stellenbosch: slightly warmer than sites near False Bay, open
+    # to ocean breezes, higher diurnal range than flatter sites, recognized for Cabernet and Cabernet blends; Simonsberg-Paarl: on the warmer, opposite side, higher, greater diurnal range, a longer, marginally
+    # cooler ripening season, Chardonnay of notable freshness and intensity).
     ("wo_map", STELL_MAP),
-
-    # 10 -- THE BORDEAUX BLEND: D3 p.511, p.515; WOSA p44.
-    ("side_rail", dict(
-        photo="sa_boschendal_meadow", photo_caption="Boschendal, Franschhoek", side="right", photo_credit=C_SAT,
-        kicker="THE BORDEAUX BLEND", headline="The Cape's Finest\nReds Are Blends",
-        standfirst="",
-        items=[("One of three", "South Africa's main blends: white Cape, red Bordeaux and red Cape."),
-               ("Stellenbosch", "Cabernet-based blends carry the name. Simonsberg: Kanonkop, Rustenberg."),
-               ("Paarl", "Warmer: a distinct ripeness and fuller body. Vilafont\u00e9 sells at super-premium prices."),
-               ("Franschhoek", "Ringed by mountains. Its fresh fruit is prized for blending.")],
-    )),
 
     # 11 -- SWARTLAND: D3 p.516, WOSA p9. Typographic: no open Swartland photograph exists.
     ("stat_wall", dict(
@@ -258,6 +270,66 @@ SLIDES = [
 ]
 
 
+def _africa_overlay(img, box=(1330, 330, 2040, 1130)):
+    """A line drawing of Africa, South Africa filled in gold, in the cover's upper-right quadrant (Steve). Natural Earth country outlines (data/geo/africa_countries.geojson).
+    White hairlines for the borders and a heavier white coast, a soft shadow beneath so the lines read on bright cloud; Lesotho is left as the hole it is."""
+    from PIL import Image, ImageDraw, ImageFilter
+    countries = json.load(open(os.path.join(HERE, "..", "data", "geo", "africa_countries.geojson")))["countries"]
+    lon0, lon1, lat0, lat1 = -18.0, 52.0, -35.5, 38.0
+    bx0, by0, bx1, by1 = box
+    bw, bh = bx1 - bx0, by1 - by0
+    sc = min(bw / (lon1 - lon0), bh / (lat1 - lat0))
+    ox = bx0 + (bw - sc * (lon1 - lon0)) / 2
+    oy = by0 + (bh - sc * (lat1 - lat0)) / 2
+    S = 2
+
+    def P(pt):
+        return ((ox + (pt[0] - lon0) * sc) * S, (oy + (lat1 - pt[1]) * sc) * S)
+
+    W2, H2 = img.width * S, img.height * S
+    lines = Image.new("RGBA", (W2, H2), (0, 0, 0, 0))
+    ld = ImageDraw.Draw(lines)
+    fill = Image.new("L", (W2, H2), 0)
+    fd = ImageDraw.Draw(fill)
+    for c in countries:
+        for ring in c["rings"]:
+            pts = [P(p) for p in ring]
+            if c["name"] == "South Africa":
+                fd.polygon(pts, fill=255)
+            elif c["name"] == "Lesotho":
+                fd.polygon(pts, fill=0)                       # the hole in South Africa
+    for c in countries:
+        for ring in c["rings"]:
+            pts = [P(p) for p in ring]
+            ld.line(pts + [pts[0]], fill=(255, 255, 255, 215), width=3 * S, joint="curve")
+    # the continental coast heavier: every ring drawn once more at a wider, fainter stroke is not needed; the highlight carries the weight
+    plate = Image.new("RGBA", (W2, H2), (14, 40, 70, 0))                # a faint deep-blue plate inside the continent, so hairlines hold on bright cloud
+    pm = Image.new("L", (W2, H2), 0)
+    pd = ImageDraw.Draw(pm)
+    for c in countries:
+        for ring in c["rings"]:
+            pd.polygon([P(p) for p in ring], fill=88)
+    plate.putalpha(pm)
+    sa = Image.new("RGBA", (W2, H2), (196, 158, 84, 0))
+    sa.putalpha(fill.point(lambda v: 235 if v else 0))
+    shadow = Image.new("RGBA", (W2, H2), (0, 0, 0, 0))
+    sm = Image.new("L", (W2, H2), 0)
+    sm.paste(lines.getchannel("A").point(lambda v: 150 if v else 0))
+    sm.paste(fill.point(lambda v: 150 if v else 0), mask=fill)
+    shadow.putalpha(sm.filter(ImageFilter.GaussianBlur(7 * S)))
+    layer = Image.alpha_composite(Image.alpha_composite(Image.alpha_composite(shadow, plate), sa), lines)
+    # a white edge around South Africa itself
+    sd = ImageDraw.Draw(layer)
+    for c in countries:
+        if c["name"] in ("South Africa", "Lesotho"):
+            for ring in c["rings"]:
+                pts = [P(p) for p in ring]
+                sd.line(pts + [pts[0]], fill=(255, 255, 255, 255), width=5 * S, joint="curve")
+    layer = layer.resize((img.width, img.height), Image.LANCZOS)
+    out = Image.alpha_composite(img.convert("RGBA"), layer).convert("RGB")
+    return out
+
+
 def _curly(v):
     """Typographic apostrophes in every string of a slide's content (house style: never a straight apostrophe in type)."""
     if isinstance(v, str):
@@ -277,6 +349,8 @@ def build():
     total = len(SLIDES)
     for i, (name, slot) in enumerate(SLIDES, start=1):
         img = modules.MODULES[name](_curly(dict(slot)), i, total, PAL)
+        if i == 1:
+            img = _africa_overlay(img)
         p = f"{OUT}/{i:02d}_{name}.png"
         img.save(p)
         paths.append(p)
