@@ -75,3 +75,35 @@ Layout QA passes on all 15 slides; `text_audit` 0 of 136 text groups below thres
 **Slide 8 (new): Sauvignon Blanc and Chardonnay.** Four Cape styles each (flavors and where they come from) from the WOSA course, with D3 for Durbanville and Elgin; the unique Cape notes are the fynbos and sea-salt edge on Sauvignon Blanc and Robertson's limestone on Chardonnay (the course compares it to Chablis). To stay at 16 slides, the old standalone Bordeaux-blend slide became a fact on the Cabernet slide (9), which keeps the Paarl (fuller) and Franschhoek (fresher) nuance. Producers named on the old blend slide (Kanonkop, Rustenberg, Vilafont\u00e9) were dropped for room; Kanonkop and Rustenberg are in the caption notes.
 
 **Guards.** Layout QA passes on all 16 slides; `text_audit` 0 of 126 below threshold; spelling clean; every slide at or under 68 words; engine `regress` 42 of 42; variety 12 distinct layouts, graphic-led slides 3, 6, 10, 11.
+
+
+---
+
+## LOCKED
+
+**The Field Guide: South Africa, "Two Currents, One Wind": 16 slides, approved by Steve (November 2026).** Tag `sa-field-guide-final`.
+
+Verified at lock: every pushed file equal to the working copy (0 differences); all 16 slides re-rendered from the pushed script match the approved PNGs pixel for pixel (16 of 16); `text_audit` 0 of 126 below threshold; `spelling` clean; engine `regress` 42 of 42; layout QA passes on every slide.
+
+**Open items carried past the lock.** (1) The trailer Reel still opens and closes on the original pink-graded sunset photo and two of its teasers no longer match the slides (see CAPTION_FG_SA.md). (2) The Wine of Origin boundary file has no stated license (data/geo/WO_SOURCE.md): ask SAWIS or Wines of South Africa before any promoted use. (3) Cap Classique volume and export figures conflict between D4 and the WOSA course and are not printed. (4) Optional: tag Wines of South Africa after confirming the handle.
+
+Pixel hashes (SHA-256 of the RGB bytes, first 16 characters):
+
+| Slide | Hash |
+| --- | --- |
+| 01_cover_bleed.png | d03e4244142df87b |
+| 02_hero_facts.png | 35ba51bf23458c8e |
+| 03_wo_map.png | afcf5b5d1805411c |
+| 04_spotlight.png | e06d2def267ccbed |
+| 05_blades.png | f0e30a4d31c15496 |
+| 06_timeline.png | 4d91b93ace59d4e5 |
+| 07_duel.png | 442cdc0f3039b1cd |
+| 08_editorial_lead.png | 79915fcd25137126 |
+| 09_hero_facts.png | c842a9690a9c9a30 |
+| 10_wo_map.png | 42eea6141e01210e |
+| 11_stat_wall.png | 73bce7aa245404ee |
+| 12_duel.png | 58c4ff3265c7b33d |
+| 13_editorial_lead.png | 454507399a3d2c32 |
+| 14_fact_file.png | d0e501233dacb541 |
+| 15_side_rail.png | 75a407bcd6f3df42 |
+| 16_statement.png | c8b98575006aad45 |
