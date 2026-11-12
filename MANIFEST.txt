@@ -406,6 +406,8 @@ photos/sa_sugarbird_close.jpg
 photos/sa_sugarbird_protea.jpg
 photos/sa_table_mountain_blouberg.jpg
 photos/sa_taster.jpg
+photos/sa_taster_stem.jpg
+photos/sa_taster_stem_crop.jpg
 photos/sa_whale_walker_bay.jpg
 photos/sa_young_vines_stell.jpg
 photos/ts_rioja_ebro.jpg

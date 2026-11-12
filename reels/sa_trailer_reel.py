@@ -8,7 +8,7 @@ v2 changes (Steve): graphics pulled from the FINAL Field Guide; the score is qui
   8-12   2  GUESS THE WINE REGION  the Field Guide's real district map with every name masked, in a slow focus pull, a pulsing "?": a mystery that names no place
   12-18  3  FIVE FASCINATING FACTS   a Stellenbosch valley; three facts counting up: 12 months, about 90 days, 2x
   18-22  4  SPLIT DECISION   Cap Classique: 12 MONTHS or 36?  two photos (a riddling rack, a bottle stack), two sides, pick one
-  22-26  5  WHAT AM I DRINKING?   a taster at Blaauwklippen, a mystery Cape wine, a pulsing "?"
+  22-26  5  WHAT AM I DRINKING?   a taster nosing a red, the glass held by its stem (never the bowl), a mystery Cape wine, a pulsing "?"
   26-30  outro     back to the opening photo at its opening framing, with the Africa drawing: FOLLOW; the Reel fades to black and loops into its own first frame
 Every scene is a whole number of 2-second bars; SCENE_TABLE is the single source of truth and the audio reads it.
 
@@ -23,7 +23,7 @@ PHOTOS (Wikimedia Commons; nothing share-alike, because a video is a derivative 
   hook and outro  "Vineyards, Overberg, Western Cape" (Axel Buhrmann, CC BY 4.0)         beat 1 backdrop  "Table Mountain from Blouberg" (South African Tourism, CC BY 2.0)
   beat 2 backdrop Cape Peninsula coast (lumoplank, CC0)                                  beat 3  "Stellenbosch Wine Route" (South African Tourism)
   beat 4          "Bottles in riddling rack" (Craig Hatfield) and "Stock de bouteilles a la Muratie Winery" (fabulousfabs)
-  beat 5          "Enjoying a glass of wine, Blaauwklippen Wine Estate" (South African Tourism)
+  beat 5          "Humer en degustation a Stellenbosch" (marko8904, CC BY 2.0): a taster nosing a red by the stem of the glass, the bowl untouched (Steve: never show a hand on the bowl)
 
 THE SPEC (guides/REELS_SPEC_v2.md): hard cuts between beats; motion inside a beat; a progress element (five nodes, one per post), EMPTY on frame 1 and COMPLETE on the last beat;
 silent-legible; the bottom 270 px stays clear of text for Instagram's own interface.
@@ -429,8 +429,8 @@ def s_sd(u, ur=0.0, D=4.0, text_on=True):
 
 
 def s_wad(u, ur=0.0, D=4.0, text_on=True):
-    f = ph("sa_taster").view(1.4 + 0.14 * in_out_cubic(prog(u, 0, D)), 0.27 + 0.02 * (u / D), 0.88).copy()          # tight on the glass, the face out of frame
-    shade(f, top=0.62, bottom=0.76)
+    f = ph("sa_taster_stem_crop").view(1.0 + 0.10 * in_out_cubic(prog(u, 0, D)), 0.5, 0.56).copy()     # tight on the glass held by its STEM (never the bowl), the face out of frame
+    shade(f, top=0.80, bottom=0.78)
     if text_on:
         chip(f, "WHAT AM I DRINKING?", u, D)
         headline(f, ["A Mystery", "Cape Wine"], u, D)

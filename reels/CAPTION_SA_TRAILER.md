@@ -17,13 +17,15 @@ Follow so you never miss one.
 
 #wine #winestudy #WSETDiploma #southafricanwine #winetasting
 
-Photos via Wikimedia Commons: Axel Bührmann (CC BY 4.0); South African Tourism, fabulousfabs, Craig Hatfield (CC BY 2.0); lumoplank (CC0). Wine of Origin boundaries: Wine and Spirit Board / SAWIS. Music: original, quiet piano.
+Photos via Wikimedia Commons: Axel Bührmann (CC BY 4.0); South African Tourism, fabulousfabs, Craig Hatfield, marko8904 (CC BY 2.0); lumoplank (CC0). Wine of Origin boundaries: Wine and Spirit Board / SAWIS. Music: original, quiet piano.
 
 ---
 
 ## NOTES (not for the caption)
 
 **What changed in version 2 (Steve).** Graphics now come from the final Field Guide: its Africa line drawing (South Africa in gold) is on the opening and closing frames; the "out now" beat swipes through four of its real slides (the cover, the climate, Sauvignon Blanc and Chardonnay, and the Simonsberg wards); the Guess beat uses its real district map with every name masked. The pink-graded sunset photo is gone (the opening and closing are now the Field Guide's cover photograph, in natural color). The music is a quiet acoustic piano; the drums, bass, pad, ticks, pops, claps, hats, risers and impacts are gone, and the only effect left is a very soft page-turn swish at each of the six cuts.
+
+**Glass etiquette (Steve).** The "What Am I Drinking?" beat shows a taster nosing a red with the glass held by its stem, the bowl untouched (it replaced a photo with a hand gripping the bowl, which warms the wine and smudges the glass). Rule for every future post: no photo with a hand on the bowl.
 
 **Timing.** The Reel says "The Field Guide is out now", so it must go up with the Field Guide (or after it), never before. If the Field Guide slips, change the hook line (`s_hook`) and the first beat's chip ("OUT NOW") before posting.
 
