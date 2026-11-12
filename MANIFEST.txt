@@ -459,6 +459,12 @@ reels/trailer_assets/fg2.jpg
 reels/trailer_assets/fg3.jpg
 reels/trailer_assets/fg4.jpg
 reels/trailer_assets/gtr1.jpg
+reels/trailer_assets/sa_fg_climate.jpg
+reels/trailer_assets/sa_fg_cover.jpg
+reels/trailer_assets/sa_fg_districts.jpg
+reels/trailer_assets/sa_fg_soils.jpg
+reels/trailer_assets/sa_fg_wards.jpg
+reels/trailer_assets/sa_fg_whites.jpg
 reels/trailer_assets/wad1.jpg
 reels/trailer_audio.py
 reels/trailer_reel.py
